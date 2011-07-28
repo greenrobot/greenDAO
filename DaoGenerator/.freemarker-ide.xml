@@ -1,0 +1,9 @@
+<config>
+	<context-values>
+		<resource path="template/dao.ftl">
+			<value key="table" object-class="de.greenrobot.daogenerator.Table"/>
+		</resource>
+	</context-values>
+	<macro-library>
+	</macro-library>
+</config>
