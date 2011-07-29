@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.greenrobot.daogenerator.Column.ColumnBuilder;
 
-public class Table {
+public class Entity {
     private final Schema schema;
     private final String className;
     private String tableName;
@@ -16,7 +16,7 @@ public class Table {
     private String javaPackageDao;
     private Column pkColumn;
 
-    public Table(Schema schema, String className) {
+    public Entity(Schema schema, String className) {
         this.schema = schema;
         this.className = className;
         columns = new ArrayList<Column>();
@@ -134,6 +134,10 @@ public class Table {
 
         if (javaPackageDao == null) {
             javaPackageDao = schema.getDefaultJavaPackageDao();
+            if (javaPackageDao == null) {
+                javaPackageDao =javaPackage;
+            }
+
         }
 
         for (Column column : columns) {

@@ -9,7 +9,7 @@ public class Schema {
     private final int version;
     private final String defaultJavaPackage;
     private String defaultJavaPackageDao;
-    private final List<Table> tables;
+    private final List<Entity> tables;
     private Map<PropertyType, String> propertyToDbType;
     private Map<PropertyType, String> propertyToJavaTypeNotNull;
     private Map<PropertyType, String> propertyToJavaTypeNullable;
@@ -17,7 +17,7 @@ public class Schema {
     public Schema(int version, String defaultJavaPackage) {
         this.version = version;
         this.defaultJavaPackage = defaultJavaPackage;
-        this.tables = new ArrayList<Table>();
+        this.tables = new ArrayList<Entity>();
 
         initTypeMappings();
     }
@@ -57,8 +57,8 @@ public class Schema {
         propertyToJavaTypeNullable.put(PropertyType.ByteArray, "byte[]");
     }
 
-    public Table addTable(String className) {
-        Table table = new Table(this, className);
+    public Entity addTable(String className) {
+        Entity table = new Entity(this, className);
         tables.add(table);
         return table;
     }
@@ -99,12 +99,12 @@ public class Schema {
         this.defaultJavaPackageDao = defaultJavaPackageDao;
     }
 
-    public List<Table> getTables() {
+    public List<Entity> getTables() {
         return tables;
     }
     
     void init2ndPass() {
-        for (Table table : tables) {
+        for (Entity table : tables) {
             table.init2ndPass();
         }
     }

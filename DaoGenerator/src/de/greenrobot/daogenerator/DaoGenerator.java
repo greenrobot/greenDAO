@@ -28,26 +28,26 @@ public class DaoGenerator {
 
         schema.init2ndPass();
 
-        List<Table> tables = schema.getTables();
+        List<Entity> entities = schema.getTables();
 
-        for (Table table : tables) {
-            processTable(temp, outDirFile, schema, table);
+        for (Entity table : entities) {
+            processEntity(temp, outDirFile, schema, table);
         }
         long time = System.currentTimeMillis()-start ;
-        System.out.println("Processed " + tables.size() + " table(s) in " + time + "ms");
+        System.out.println("Processed " + entities.size() + " entities in " + time + "ms");
     }
 
-    private void processTable(Template daoTemplate, File outDirFile, Schema schema, Table table) throws TemplateException,
+    private void processEntity(Template daoTemplate, File outDirFile, Schema schema, Entity entity) throws TemplateException,
             IOException {
-        String packageSubPath = table.getJavaPackageDao().replace('.', '/');
+        String packageSubPath = entity.getJavaPackageDao().replace('.', '/');
         File packagePath = new File(outDirFile, packageSubPath);
         packagePath.mkdirs();
 
         Map<String, Object> root = new HashMap<String, Object>();
         root.put("schema", schema);
-        root.put("table", table);
+        root.put("entity", entity);
 
-        File file = new File(packagePath, table.getClassNameDao() + ".java");
+        File file = new File(packagePath, entity.getClassNameDao() + ".java");
         Writer writer = new FileWriter(file);
         try {
             daoTemplate.process(root, writer);

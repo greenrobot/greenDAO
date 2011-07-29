@@ -153,7 +153,7 @@ public class Column {
         return javaType;
     }
 
-    void init2ndPass(Schema schema, Table table) {
+    void init2ndPass(Schema schema, Entity table) {
         initConstraint();
         if (columnType == null) {
             columnType = schema.mapToDbType(propertyType);
