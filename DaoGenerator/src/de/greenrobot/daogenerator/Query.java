@@ -13,11 +13,11 @@ public class Query {
         parameters= new ArrayList<QueryParam>();
     }
     
-    public QueryParam addEqualsParam(Column column) {
+    public QueryParam addEqualsParam(Property column) {
         return addParam(column, "=");
     }
 
-    public QueryParam addParam(Column column, String operator) {
+    public QueryParam addParam(Property column, String operator) {
         QueryParam queryParam = new QueryParam(column, operator);
         parameters.add(queryParam);
         return queryParam;

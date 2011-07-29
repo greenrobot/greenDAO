@@ -19,16 +19,16 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
     public static final String TABLENAME = "${entity.tableName}";
     
     protected static final String COLUMNS_COMMA_SEPARATED = 
-        "<#list entity.columns as column>${column.columnName}<#if column_has_next>,<#if column_index != 0 && column_index % 5 == 0>" +
+        "<#list entity.properties as property>${property.columnName}<#if property_has_next>,<#if property_index != 0 && property_index % 5 == 0>" +
         "</#if><#else>";</#if></#list>
     
-    protected static final String VALUE_PLACEHOLDERS = "<#list entity.columns as column>?<#if column_has_next>,<#if column_index != 0 && column_index % 30 == 0>" +
+    protected static final String VALUE_PLACEHOLDERS = "<#list entity.properties as property>?<#if property_has_next>,<#if property_index != 0 && property_index % 30 == 0>" +
         "</#if><#else>";</#if></#list>
 
     public enum Columns {
-<#list entity.columns as column>
-        /** Maps to property ${column.propertyName} and ordinal ${column_index}. */
-        ${column.columnName}<#if column_has_next>,</#if>
+<#list entity.properties as property>
+        /** Maps to property ${property.propertyName} and ordinal ${property_index}. */
+        ${property.columnName}<#if property_has_next>,</#if>
 </#list>         
     }
 
@@ -38,8 +38,8 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
     
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "${entity.tableName} (" + //
-<#list entity.columns as column>
-            "${column.columnName} ${column.columnType}<#if column.constraints??> ${column.constraints} </#if><#if column_has_next>," +<#else>)";</#if> // ${column_index}
+<#list entity.properties as property>
+            "${property.columnName} ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>)";</#if> // ${property_index}
 </#list>         
         db.execSQL(sql);
     }
@@ -67,16 +67,16 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
     /** Binds the entity's values to the statement. Make sure to synchronize the statement outside of the method. */
     protected void bindValues(SQLiteStatement stmt, ${entity.className} entity) {
         stmt.clearBindings();
-<#list entity.columns as column>
-        stmt.bind${toBindType[column.propertyType]}(${column_index + 1}, entity.get${column.propertyName?cap_first}());
+<#list entity.properties as property>
+        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, entity.get${property.propertyName?cap_first}());
 </#list>
     }
 
     /** @inheritdoc Reads the values from the current position of the given cursor and returns a new ${entity.className} object. */
     public ${entity.className} readFrom(Cursor cursor) {
         Builder builder = ${entity.className}.newBuilder();
-<#list entity.columns as column>
-        builder.set${column.propertyName?cap_first}(cursor.get${toCursorType[column.propertyType]}(${column_index}));
+<#list entity.properties as property>
+        builder.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(${property_index}));
 </#list>        
         return builder.build();
     }

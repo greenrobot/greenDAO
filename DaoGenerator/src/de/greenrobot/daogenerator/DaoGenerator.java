@@ -28,7 +28,7 @@ public class DaoGenerator {
 
         schema.init2ndPass();
 
-        List<Entity> entities = schema.getTables();
+        List<Entity> entities = schema.getEntities();
 
         for (Entity table : entities) {
             processEntity(temp, outDirFile, schema, table);

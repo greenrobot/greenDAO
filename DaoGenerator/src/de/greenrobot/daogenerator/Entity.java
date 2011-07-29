@@ -3,73 +3,73 @@ package de.greenrobot.daogenerator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.daogenerator.Column.ColumnBuilder;
+import de.greenrobot.daogenerator.Property.ColumnBuilder;
 
 public class Entity {
     private final Schema schema;
     private final String className;
     private String tableName;
     private String classNameDao;
-    private final List<Column> columns;
-    private final List<Column> columnsPk;
+    private final List<Property> properties;
+    private final List<Property> propertiesPk;
     private String javaPackage;
     private String javaPackageDao;
-    private Column pkColumn;
+    private Property pkProperty;
 
     public Entity(Schema schema, String className) {
         this.schema = schema;
         this.className = className;
-        columns = new ArrayList<Column>();
-        columnsPk = new ArrayList<Column>();
+        properties = new ArrayList<Property>();
+        propertiesPk = new ArrayList<Property>();
     }
 
-    public ColumnBuilder addBooleanColumn(String propertyName) {
-        return addColumn(PropertyType.Boolean, propertyName);
+    public ColumnBuilder addBooleanProperty(String propertyName) {
+        return addProperty(PropertyType.Boolean, propertyName);
     }
 
-    public ColumnBuilder addByteColumn(String propertyName) {
-        return addColumn(PropertyType.Byte, propertyName);
+    public ColumnBuilder addByteProperty(String propertyName) {
+        return addProperty(PropertyType.Byte, propertyName);
     }
 
-    public ColumnBuilder addShortColumn(String propertyName) {
-        return addColumn(PropertyType.Short, propertyName);
+    public ColumnBuilder addShortProperty(String propertyName) {
+        return addProperty(PropertyType.Short, propertyName);
     }
 
-    public ColumnBuilder addIntColumn(String propertyName) {
-        return addColumn(PropertyType.Int, propertyName);
+    public ColumnBuilder addIntProperty(String propertyName) {
+        return addProperty(PropertyType.Int, propertyName);
     }
 
-    public ColumnBuilder addLongColumn(String propertyName) {
-        return addColumn(PropertyType.Long, propertyName);
+    public ColumnBuilder addLongProperty(String propertyName) {
+        return addProperty(PropertyType.Long, propertyName);
     }
 
-    public ColumnBuilder addFloatColumn(String propertyName) {
-        return addColumn(PropertyType.Float, propertyName);
+    public ColumnBuilder addFloatProperty(String propertyName) {
+        return addProperty(PropertyType.Float, propertyName);
     }
 
-    public ColumnBuilder addDoubleColumn(String propertyName) {
-        return addColumn(PropertyType.Double, propertyName);
+    public ColumnBuilder addDoubleProperty(String propertyName) {
+        return addProperty(PropertyType.Double, propertyName);
     }
 
-    public ColumnBuilder addByteArrayColumn(String propertyName) {
-        return addColumn(PropertyType.ByteArray, propertyName);
+    public ColumnBuilder addByteArrayProperty(String propertyName) {
+        return addProperty(PropertyType.ByteArray, propertyName);
     }
 
-    public ColumnBuilder addStringColumn(String propertyName) {
-        return addColumn(PropertyType.String, propertyName);
+    public ColumnBuilder addStringProperty(String propertyName) {
+        return addProperty(PropertyType.String, propertyName);
     }
 
-    public ColumnBuilder addColumn(PropertyType propertyType, String propertyName) {
-        ColumnBuilder builder = new Column.ColumnBuilder(propertyType, propertyName);
-        columns.add(builder.build());
+    public ColumnBuilder addProperty(PropertyType propertyType, String propertyName) {
+        ColumnBuilder builder = new Property.ColumnBuilder(propertyType, propertyName);
+        properties.add(builder.build());
         return builder;
     }
 
     /** Adds a standard _id column required by standard Android classes, e.g. list adapters. */
-    public ColumnBuilder addIdColumn() {
-        ColumnBuilder builder = new Column.ColumnBuilder(PropertyType.Int, "id");
+    public ColumnBuilder addIdProperty() {
+        ColumnBuilder builder = new Property.ColumnBuilder(PropertyType.Int, "id");
         builder.columnName("_id").primaryKey().asc();
-        columns.add(builder.build());
+        properties.add(builder.build());
         return builder;
     }
 
@@ -85,8 +85,8 @@ public class Entity {
         return className;
     }
 
-    public List<Column> getColumns() {
-        return columns;
+    public List<Property> getProperties() {
+        return properties;
     }
 
     public String getJavaPackage() {
@@ -113,12 +113,12 @@ public class Entity {
         this.classNameDao = classNameDao;
     }
 
-    public List<Column> getColumnsPk() {
-        return columnsPk;
+    public List<Property> getPropertiesPk() {
+        return propertiesPk;
     }
 
-    public Column getPkColumn() {
-        return pkColumn;
+    public Property getPkProperty() {
+        return pkProperty;
     }
 
     void init2ndPass() {
@@ -140,15 +140,15 @@ public class Entity {
 
         }
 
-        for (Column column : columns) {
-            column.init2ndPass(schema, this);
-            if (column.isPrimaryKey()) {
-                columnsPk.add(column);
+        for (Property property : properties) {
+            property.init2ndPass(schema, this);
+            if (property.isPrimaryKey()) {
+                propertiesPk.add(property);
             }
         }
 
-        if (columnsPk.size() == 1) {
-            pkColumn = columnsPk.get(0);
+        if (propertiesPk.size() == 1) {
+            pkProperty = propertiesPk.get(0);
         }
 
     }

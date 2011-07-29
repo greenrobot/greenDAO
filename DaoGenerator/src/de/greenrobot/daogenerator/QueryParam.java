@@ -1,15 +1,15 @@
 package de.greenrobot.daogenerator;
 
 public class QueryParam {
-    private Column column;
+    private Property column;
     private String operator;
     
-    public QueryParam(Column column, String operator) {
+    public QueryParam(Property column, String operator) {
         this.column = column;
         this.operator = operator;
     }
 
-    public Column getColumn() {
+    public Property getColumn() {
         return column;
     }
 

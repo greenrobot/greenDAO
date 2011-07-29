@@ -8,24 +8,23 @@ import java.io.File;
 
 import org.junit.Test;
 
-import de.greenrobot.daogenerator.Column;
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.DaoUtil;
-import de.greenrobot.daogenerator.PropertyType;
-import de.greenrobot.daogenerator.Schema;
 import de.greenrobot.daogenerator.Entity;
+import de.greenrobot.daogenerator.Property;
+import de.greenrobot.daogenerator.Schema;
 
 public class SimpleTest {
 
     @Test
     public void testMinimalSchema() throws Exception {
         Schema schema = new Schema(1, "de.greenrobot.testdao");
-        Entity adressTable = schema.addTable("Adresse");
-        Column idColumn = adressTable.addIdColumn().asc().build();
-        adressTable.addColumn(PropertyType.Int, "count");
-        adressTable.addColumn(PropertyType.Int, "dummy").notNull();
-        assertEquals(1, schema.getTables().size());
-        assertEquals(3, adressTable.getColumns().size());
+        Entity adressTable = schema.addEntity("Adresse");
+        Property idColumn = adressTable.addIdProperty().asc().build();
+        adressTable.addIntProperty( "count");
+        adressTable.addIntProperty("dummy").notNull();
+        assertEquals(1, schema.getEntities().size());
+        assertEquals(3, adressTable.getProperties().size());
 
         File daoFile = new File("test-out/de/greenrobot/testdao/" + adressTable.getClassName() + "Dao.java");
         daoFile.delete();

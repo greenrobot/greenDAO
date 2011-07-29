@@ -1,12 +1,12 @@
 package de.greenrobot.daogenerator;
 
-public class Column {
+public class Property {
 
     public static class ColumnBuilder {
-        private final Column column;
+        private final Property column;
 
         public ColumnBuilder(PropertyType propertyType, String propertyName) {
-            column = new Column(propertyType, propertyName);
+            column = new Property(propertyType, propertyName);
         }
 
         public ColumnBuilder columnName(String columnName) {
@@ -57,7 +57,7 @@ public class Column {
             return this;
         }
 
-        public Column build() {
+        public Property build() {
             return column;
         }
     }
@@ -79,7 +79,7 @@ public class Column {
 
     private String javaType;
 
-    public Column(PropertyType propertyType, String propertyName) {
+    public Property(PropertyType propertyType, String propertyName) {
         this.propertyName = propertyName;
         this.propertyType = propertyType;
         columnName = DaoUtil.dbName(propertyName);

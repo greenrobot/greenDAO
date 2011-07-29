@@ -9,7 +9,7 @@ public class Schema {
     private final int version;
     private final String defaultJavaPackage;
     private String defaultJavaPackageDao;
-    private final List<Entity> tables;
+    private final List<Entity> entities;
     private Map<PropertyType, String> propertyToDbType;
     private Map<PropertyType, String> propertyToJavaTypeNotNull;
     private Map<PropertyType, String> propertyToJavaTypeNullable;
@@ -17,7 +17,7 @@ public class Schema {
     public Schema(int version, String defaultJavaPackage) {
         this.version = version;
         this.defaultJavaPackage = defaultJavaPackage;
-        this.tables = new ArrayList<Entity>();
+        this.entities = new ArrayList<Entity>();
 
         initTypeMappings();
     }
@@ -33,7 +33,7 @@ public class Schema {
         propertyToDbType.put(PropertyType.Double, "REAL");
         propertyToDbType.put(PropertyType.String, "TEXT");
         propertyToDbType.put(PropertyType.ByteArray, "BLOB");
-        
+
         propertyToJavaTypeNotNull = new HashMap<PropertyType, String>();
         propertyToJavaTypeNotNull.put(PropertyType.Boolean, "boolean");
         propertyToJavaTypeNotNull.put(PropertyType.Byte, "byte");
@@ -57,9 +57,13 @@ public class Schema {
         propertyToJavaTypeNullable.put(PropertyType.ByteArray, "byte[]");
     }
 
-    public Entity addTable(String className) {
+    /**
+     * Adds a new entity to the schema. There can be multiple entities per table, but only one may be the primary entity
+     * per table to create table scripts, etc.
+     */
+    public Entity addEntity(String className) {
         Entity table = new Entity(this, className);
-        tables.add(table);
+        entities.add(table);
         return table;
     }
 
@@ -90,7 +94,7 @@ public class Schema {
     public String getDefaultJavaPackage() {
         return defaultJavaPackage;
     }
-    
+
     public String getDefaultJavaPackageDao() {
         return defaultJavaPackageDao;
     }
@@ -99,13 +103,13 @@ public class Schema {
         this.defaultJavaPackageDao = defaultJavaPackageDao;
     }
 
-    public List<Entity> getTables() {
-        return tables;
+    public List<Entity> getEntities() {
+        return entities;
     }
-    
+
     void init2ndPass() {
-        for (Entity table : tables) {
-            table.init2ndPass();
+        for (Entity entity : entities) {
+            entity.init2ndPass();
         }
     }
 
