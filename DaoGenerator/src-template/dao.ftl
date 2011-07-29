@@ -27,15 +27,16 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
 
     public enum Columns {
 <#list entity.properties as property>
-        /** Maps to property ${property.propertyName} and ordinal ${property_index}. */
+        /** Maps to property ${property.propertyName} (#${property_index}). */
         ${property.columnName}<#if property_has_next>,</#if>
-</#list>         
+</#list>
     }
 
     public ${entity.classNameDao}(SQLiteDatabase db) {
         super(db);
     }
     
+    /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "${entity.tableName} (" + //
 <#list entity.properties as property>
@@ -44,27 +45,31 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
         db.execSQL(sql);
     }
 
+    /** Drops the underlying database table. */
     public static void dropTable(SQLiteDatabase db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "${entity.tableName}";
         db.execSQL(sql);
     }
 
+    /** @inheritdoc */
     @Override
     protected String getTablename() {
         return TABLENAME;
     }
 
+    /** @inheritdoc */
     @Override
     protected String getValuePlaceholders() {
         return VALUE_PLACEHOLDERS;
     }
 
+    /** @inheritdoc */
     @Override
     protected String getColumnsCommaSeparated() {
         return COLUMNS_COMMA_SEPARATED;
     }
 
-    /** Binds the entity's values to the statement. Make sure to synchronize the statement outside of the method. */
+    /** @inheritdoc */
     protected void bindValues(SQLiteStatement stmt, ${entity.className} entity) {
         stmt.clearBindings();
 <#list entity.properties as property>
@@ -72,7 +77,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
 </#list>
     }
 
-    /** @inheritdoc Reads the values from the current position of the given cursor and returns a new ${entity.className} object. */
+    /** @inheritdoc */
     public ${entity.className} readFrom(Cursor cursor) {
         Builder builder = ${entity.className}.newBuilder();
 <#list entity.properties as property>
