@@ -9,6 +9,14 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
+/**
+ * Base class for all DAOs. Implements some operations. 
+ * 
+ * @author Markus
+ *
+ * @param <T> Entity type
+ * @param <K> Primary key type; use Void if entity does not have one
+ */
 public abstract class AbstractDao<T, K> {
     protected final SQLiteDatabase db;
 
