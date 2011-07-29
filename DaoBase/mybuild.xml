@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="DaoBase" default="jar">
+
+	<target name="jar" description="Depends on Eclipse to have everthing compiled into bin/">
+		<mkdir dir="release" />
+		<jar jarfile="release/dao-base.jar">
+			<fileset dir="bin">
+				<include name="de/greenrobot/**" />
+			</fileset>
+		</jar>
+	</target>
+
+</project>

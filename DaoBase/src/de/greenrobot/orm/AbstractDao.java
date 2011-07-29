@@ -16,7 +16,8 @@ public abstract class AbstractDao<T, K> {
     protected SQLiteStatement insertOrReplaceStatement;
 
     private volatile String selectAll;
-    private volatile String selectById;
+    private volatile String selectByKey;
+    private volatile String selectByRowId;
 
     public AbstractDao(SQLiteDatabase db) {
         this.db = db;
@@ -49,17 +50,30 @@ public abstract class AbstractDao<T, K> {
     }
 
     public T load(K key) {
-        if (selectById == null) {
-            selectById = getSelectAll() + "WHERE " + getPkColumn() + "=?";
+        if (selectByKey == null) {
+            selectByKey = getSelectAll() + "WHERE " + getPkColumn() + "=?";
         }
         String[] keyArray = new String[] { key.toString() };
-        Cursor cursor = db.rawQuery(selectById, keyArray);
+        Cursor cursor = db.rawQuery(selectByKey, keyArray);
+        return readUniqueAndCloseCursor(cursor);
+    }
+
+    public T loadByRowId(long rowId) {
+        if (selectByRowId == null) {
+            selectByRowId = getSelectAll() + "WHERE ROWID=?";
+        }
+        String[] idArray = new String[] { Long.toString(rowId) };
+        Cursor cursor = db.rawQuery(selectByRowId, idArray);
+        return readUniqueAndCloseCursor(cursor);
+    }
+
+    protected T readUniqueAndCloseCursor(Cursor cursor) {
         try {
             boolean available = cursor.moveToFirst();
             if (!available) {
                 return null;
             } else if (!cursor.isLast()) {
-                throw new IllegalStateException("ID must be unique but count was " + cursor.getCount());
+                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
             }
             return readFrom(cursor);
         } finally {
@@ -69,6 +83,10 @@ public abstract class AbstractDao<T, K> {
 
     public List<T> loadAll() {
         Cursor cursor = db.rawQuery(getSelectAll(), null);
+        return readAllAndCloseCursor(cursor);
+    }
+
+    protected List<T> readAllAndCloseCursor(Cursor cursor) {
         try {
             return readAllFrom(cursor);
         } finally {
@@ -124,11 +142,7 @@ public abstract class AbstractDao<T, K> {
     /** SUBJECT TO CHANGE: A raw-style query where you can pass any WHERE clause and arguments. */
     public List<T> query(String where, String[] selectionArgs) {
         Cursor cursor = db.rawQuery(getSelectAll() + where, selectionArgs);
-        try {
-            return readAllFrom(cursor);
-        } finally {
-            cursor.close();
-        }
+        return readAllAndCloseCursor(cursor);
     }
 
     public boolean delete(K key) {
@@ -156,7 +170,7 @@ public abstract class AbstractDao<T, K> {
     abstract protected String getValuePlaceholders();
 
     abstract protected String getColumnsCommaSeparated();
-    
+
     abstract protected void updateKeyAfterInsert(T entity, long rowId);
 
     /** If there is a single PK column, this method will return it. If not, it must return null. */
