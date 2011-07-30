@@ -24,22 +24,26 @@ public class DaoGenerator {
         config.setClassForTemplateLoading(this.getClass(), "/");
         config.setObjectWrapper(new DefaultObjectWrapper());
 
-        Template temp = config.getTemplate("dao.ftl");
+        Template templateDao = config.getTemplate("dao.ftl");
+        Template templateEntity = config.getTemplate("entity.ftl");
 
         schema.init2ndPass();
 
         List<Entity> entities = schema.getEntities();
 
-        for (Entity table : entities) {
-            processEntity(temp, outDirFile, schema, table);
+        for (Entity entity : entities) {
+            generate(templateDao, outDirFile, entity.getJavaPackageDao(), entity.getClassNameDao(), schema, entity);
+            if (!entity.isProtobuf()) {
+                generate(templateEntity, outDirFile, entity.getJavaPackage(), entity.getClassName(), schema, entity);
+            }
         }
-        long time = System.currentTimeMillis()-start ;
+        long time = System.currentTimeMillis() - start;
         System.out.println("Processed " + entities.size() + " entities in " + time + "ms");
     }
 
-    private void processEntity(Template daoTemplate, File outDirFile, Schema schema, Entity entity) throws TemplateException,
-            IOException {
-        String packageSubPath = entity.getJavaPackageDao().replace('.', '/');
+    private void generate(Template template, File outDirFile, String javaPackage, String javaClass, Schema schema,
+            Entity entity) throws TemplateException, IOException {
+        String packageSubPath = javaPackage.replace('.', '/');
         File packagePath = new File(outDirFile, packageSubPath);
         packagePath.mkdirs();
 
@@ -47,12 +51,12 @@ public class DaoGenerator {
         root.put("schema", schema);
         root.put("entity", entity);
 
-        File file = new File(packagePath, entity.getClassNameDao() + ".java");
+        File file = new File(packagePath, javaClass + ".java");
         Writer writer = new FileWriter(file);
         try {
-            daoTemplate.process(root, writer);
+            template.process(root, writer);
             writer.flush();
-            System.out.println("Written "+file.getAbsolutePath());
+            System.out.println("Written " + file.getAbsolutePath());
         } finally {
             writer.close();
         }

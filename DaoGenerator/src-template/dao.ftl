@@ -1,6 +1,6 @@
 <#assign toBindType = {"Boolean":"Long", "Byte":"Long", "Short":"Long", "Int":"Long", "Long":"Long", "Float":"Double", "Double":"Double", "String":"String", "ByteArray":"Blob" }>
 <#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob" }>
-package de.greenrobot.tvguide.sqlite;
+package ${entity.javaPackageDao};
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.orm.AbstractDao;
 
 import ${entity.javaPackage}.${entity.className};
+<#if entity.protobuf>
 import ${entity.javaPackage}.${entity.className}.Builder;
+</#if>
 
 // THIS CODE IS GENERATED, DO NOT EDIT.
 /** 
@@ -18,8 +20,16 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
 
     public static final String TABLENAME = "${entity.tableName}";
     
-    protected static final String COLUMNS_COMMA_SEPARATED = 
+    protected static final String ALL_COLUMNS_SQL = 
         "<#list entity.properties as property>${property.columnName}<#if property_has_next>,<#if property_index != 0 && property_index % 5 == 0>" +
+        "</#if><#else>";</#if></#list>
+    
+    protected static final String PK_COLUMNS_SQL = 
+        "<#list entity.propertiesPk as property>${property.columnName}<#if property_has_next>,<#if property_index != 0 && property_index % 5 == 0>" +
+        "</#if><#else>";</#if></#list>
+    
+    protected static final String NON_PK_COLUMNS_SQL = 
+        "<#list entity.propertiesNonPk as property>${property.columnName}<#if property_has_next>,<#if property_index != 0 && property_index % 5 == 0>" +
         "</#if><#else>";</#if></#list>
     
     protected static final String VALUE_PLACEHOLDERS = "<#list entity.properties as property>?<#if property_has_next>,<#if property_index != 0 && property_index % 30 == 0>" +
@@ -65,8 +75,20 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
 
     /** @inheritdoc */
     @Override
-    protected String getColumnsCommaSeparated() {
-        return COLUMNS_COMMA_SEPARATED;
+    protected String getAllColumnsSql() {
+        return ALL_COLUMNS_SQL;
+    }
+
+    /** @inheritdoc */
+    @Override
+    protected String getPkColumnsSql() {
+        return PK_COLUMNS_SQL;
+    }
+
+    /** @inheritdoc */
+    @Override
+    protected String getNonPkColumnsSql() {
+        return NON_PK_COLUMNS_SQL;
     }
 
     /** @inheritdoc */
@@ -79,20 +101,32 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
 
     /** @inheritdoc */
     public ${entity.className} readFrom(Cursor cursor) {
+<#if entity.protobuf>
         Builder builder = ${entity.className}.newBuilder();
 <#list entity.properties as property>
         builder.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(${property_index}));
 </#list>        
         return builder.build();
+<#else>
+        ${entity.className} entity = new ${entity.className}();
+<#list entity.properties as property>
+        entity.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(${property_index}));
+</#list>        
+        return entity;
+</#if>
     }
     
     protected void updateKeyAfterInsert(${entity.className} entity, long rowId) {
+<#if entity.protobuf>
+        // TODO throw new IllegalStateException("Cannot update protobuf entities after insert");
+<#else>
         // TODO updateKeyAfterInsert
+</#if>
     }
     
     @Override
     /** @inheritdoc */
     protected String getPkColumn() {
-        return null;
+        return "${entity.pkProperty.columnName}";
     }
 }

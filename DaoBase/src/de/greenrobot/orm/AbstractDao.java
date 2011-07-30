@@ -10,12 +10,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 /**
- * Base class for all DAOs. Implements some operations. 
+ * Base class for all DAOs. Implements some operations.
  * 
  * @author Markus
- *
- * @param <T> Entity type
- * @param <K> Primary key type; use Void if entity does not have one
+ * 
+ * @param <T>
+ *            Entity type
+ * @param <K>
+ *            Primary key type; use Void if entity does not have one
  */
 public abstract class AbstractDao<T, K> {
     protected final SQLiteDatabase db;
@@ -33,8 +35,7 @@ public abstract class AbstractDao<T, K> {
 
     protected SQLiteStatement getInsertStatement() {
         if (insertStatement == null) {
-            String sql = "INSERT INTO IMAGE_TO (" + getColumnsCommaSeparated() + ") VALUES (" + getValuePlaceholders()
-                    + ")";
+            String sql = createSqlForInsert("INSERT INTO ");
             insertStatement = db.compileStatement(sql);
         }
         return insertStatement;
@@ -42,17 +43,25 @@ public abstract class AbstractDao<T, K> {
 
     protected SQLiteStatement getInsertOrReplaceStatement() {
         if (insertOrReplaceStatement == null) {
-            String sql = "INSERT OR REPLACE INTO IMAGE_TO (" + getColumnsCommaSeparated() + ") VALUES ("
-                    + getValuePlaceholders() + ")";
+            String sql = createSqlForInsert("INSERT OR REPLACE INTO ");
             insertOrReplaceStatement = db.compileStatement(sql);
         }
         return insertOrReplaceStatement;
     }
 
+    private String createSqlForInsert(String insertInto) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(insertInto).append(getTablename());
+        builder.append(" (").append(getAllColumnsSql());
+        builder.append(") VALUES (").append(getValuePlaceholders()).append(")");
+        String sql = builder.toString();
+        return sql;
+    }
+
     /** ends with an space to simplify appending to this string. */
     protected String getSelectAll() {
         if (selectAll == null) {
-            selectAll = "SELECT " + getColumnsCommaSeparated() + " FROM " + getTablename() + " ";
+            selectAll = "SELECT " + getAllColumnsSql()+ " FROM " + getTablename()  + " ";
         }
         return selectAll;
     }
@@ -177,7 +186,11 @@ public abstract class AbstractDao<T, K> {
 
     abstract protected String getValuePlaceholders();
 
-    abstract protected String getColumnsCommaSeparated();
+    abstract protected String getAllColumnsSql();
+
+    abstract protected String getPkColumnsSql();
+
+    abstract protected String getNonPkColumnsSql();
 
     abstract protected void updateKeyAfterInsert(T entity, long rowId);
 

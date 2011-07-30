@@ -20,7 +20,7 @@ public class SimpleTest {
     public void testMinimalSchema() throws Exception {
         Schema schema = new Schema(1, "de.greenrobot.testdao");
         Entity adressTable = schema.addEntity("Adresse");
-        Property idColumn = adressTable.addIdProperty().asc().build();
+        Property idColumn = adressTable.addIdProperty().build();
         adressTable.addIntProperty( "count");
         adressTable.addIntProperty("dummy").notNull();
         assertEquals(1, schema.getEntities().size());

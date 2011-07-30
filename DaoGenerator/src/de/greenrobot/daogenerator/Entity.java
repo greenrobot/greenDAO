@@ -12,15 +12,18 @@ public class Entity {
     private String classNameDao;
     private final List<Property> properties;
     private final List<Property> propertiesPk;
+    private final List<Property> propertiesNonPk;
     private String javaPackage;
     private String javaPackageDao;
     private Property pkProperty;
+    private boolean protobuf;
 
     public Entity(Schema schema, String className) {
         this.schema = schema;
         this.className = className;
         properties = new ArrayList<Property>();
         propertiesPk = new ArrayList<Property>();
+        propertiesNonPk = new ArrayList<Property>();
     }
 
     public ColumnBuilder addBooleanProperty(String propertyName) {
@@ -73,6 +76,16 @@ public class Entity {
         return builder;
     }
 
+    /** The entity is represented by a protocol buffers object. Requires some special actions like using builders. */
+    public Entity useProtobuf() {
+        protobuf = true;
+        return this;
+    }
+
+    public boolean isProtobuf() {
+        return protobuf;
+    }
+
     public Schema getSchema() {
         return schema;
     }
@@ -116,6 +129,10 @@ public class Entity {
     public List<Property> getPropertiesPk() {
         return propertiesPk;
     }
+    
+    public List<Property> getPropertiesNonPk() {
+        return propertiesNonPk;
+    }
 
     public Property getPkProperty() {
         return pkProperty;
@@ -135,7 +152,7 @@ public class Entity {
         if (javaPackageDao == null) {
             javaPackageDao = schema.getDefaultJavaPackageDao();
             if (javaPackageDao == null) {
-                javaPackageDao =javaPackage;
+                javaPackageDao = javaPackage;
             }
 
         }
@@ -144,6 +161,8 @@ public class Entity {
             property.init2ndPass(schema, this);
             if (property.isPrimaryKey()) {
                 propertiesPk.add(property);
+            } else {
+                propertiesNonPk.add(property);
             }
         }
 
