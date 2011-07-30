@@ -1,4 +1,4 @@
-package de.greenrobot.daogenerator.test;
+package de.greenrobot.daogenerator.gentest;
 
 public class TestDaoGenerator {
     
