@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.orm.AbstractDao;
+import de.greenrobot.orm.Column;
 
 import de.greenrobot.testdao.TestEntitySimple;
 
@@ -11,38 +12,19 @@ import de.greenrobot.testdao.TestEntitySimple;
 /** 
  * DAO for table TEST_ENTITY_SIMPLE (schema version 1).
 */
-public class TestEntitySimpleDao extends AbstractDao<TestEntitySimple, Long> {
+public class TestEntitySimpleDao extends AbstractDao<TestEntitySimple, Integer> {
 
     public static final String TABLENAME = "TEST_ENTITY_SIMPLE";
-    
-    protected static final String ALL_COLUMNS_SQL = 
-        "_id,SIMPLE_INT,SIMPLE_INT_NOT_NULL,SIMPLE_LONG,SIMPLE_LONG_NOT_NULL,SIMPLE_STRING," +
-        "SIMPLE_STRING_NOT_NULL";
-    
-    protected static final String PK_COLUMNS_SQL = 
-        "_id";
-    
-    protected static final String NON_PK_COLUMNS_SQL = 
-        "SIMPLE_INT,SIMPLE_INT_NOT_NULL,SIMPLE_LONG,SIMPLE_LONG_NOT_NULL,SIMPLE_STRING,SIMPLE_STRING_NOT_NULL";
-    
-    protected static final String VALUE_PLACEHOLDERS = "?,?,?,?,?,?,?";
 
-    public enum Columns {
-        /** Maps to property id (#0). */
-        _id,
-        /** Maps to property simpleInt (#1). */
-        SIMPLE_INT,
-        /** Maps to property simpleIntNotNull (#2). */
-        SIMPLE_INT_NOT_NULL,
-        /** Maps to property simpleLong (#3). */
-        SIMPLE_LONG,
-        /** Maps to property simpleLongNotNull (#4). */
-        SIMPLE_LONG_NOT_NULL,
-        /** Maps to property simpleString (#5). */
-        SIMPLE_STRING,
-        /** Maps to property simpleStringNotNull (#6). */
-        SIMPLE_STRING_NOT_NULL
-    }
+    public static Column[] COLUMN_MODEL = {
+        new Column("_id", true),
+        new Column("SIMPLE_INT", false),
+        new Column("SIMPLE_INT_NOT_NULL", false),
+        new Column("SIMPLE_LONG", false),
+        new Column("SIMPLE_LONG_NOT_NULL", false),
+        new Column("SIMPLE_STRING", false),
+        new Column("SIMPLE_STRING_NOT_NULL", false)
+    };
 
     public TestEntitySimpleDao(SQLiteDatabase db) {
         super(db);
@@ -69,66 +51,78 @@ public class TestEntitySimpleDao extends AbstractDao<TestEntitySimple, Long> {
 
     /** @inheritdoc */
     @Override
-    protected String getTablename() {
+    public String getTablename() {
         return TABLENAME;
     }
-
+    
     /** @inheritdoc */
     @Override
-    protected String getValuePlaceholders() {
-        return VALUE_PLACEHOLDERS;
+    protected Column[] getColumnModel() {
+        return COLUMN_MODEL;
     }
 
     /** @inheritdoc */
     @Override
-    protected String getAllColumnsSql() {
-        return ALL_COLUMNS_SQL;
-    }
-
-    /** @inheritdoc */
-    @Override
-    protected String getPkColumnsSql() {
-        return PK_COLUMNS_SQL;
-    }
-
-    /** @inheritdoc */
-    @Override
-    protected String getNonPkColumnsSql() {
-        return NON_PK_COLUMNS_SQL;
-    }
-
-    /** @inheritdoc */
     protected void bindValues(SQLiteStatement stmt, TestEntitySimple entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
-        stmt.bindLong(2, entity.getSimpleInt());
+        Integer id = entity.getId();
+        if(id != null) {
+            stmt.bindLong(1, id);
+        }
+        Integer simpleInt = entity.getSimpleInt();
+        if(simpleInt != null) {
+            stmt.bindLong(2, simpleInt);
+        }
         stmt.bindLong(3, entity.getSimpleIntNotNull());
-        stmt.bindLong(4, entity.getSimpleLong());
+        Long simpleLong = entity.getSimpleLong();
+        if(simpleLong != null) {
+            stmt.bindLong(4, simpleLong);
+        }
         stmt.bindLong(5, entity.getSimpleLongNotNull());
-        stmt.bindString(6, entity.getSimpleString());
+        String simpleString = entity.getSimpleString();
+        if(simpleString != null) {
+            stmt.bindString(6, simpleString);
+        }
         stmt.bindString(7, entity.getSimpleStringNotNull());
     }
 
     /** @inheritdoc */
+    @Override
     public TestEntitySimple readFrom(Cursor cursor) {
         TestEntitySimple entity = new TestEntitySimple();
+        if(!cursor.isNull(0))
         entity.setId(cursor.getInt(0));
+        if(!cursor.isNull(1))
         entity.setSimpleInt(cursor.getInt(1));
         entity.setSimpleIntNotNull(cursor.getInt(2));
+        if(!cursor.isNull(3))
         entity.setSimpleLong(cursor.getLong(3));
         entity.setSimpleLongNotNull(cursor.getLong(4));
+        if(!cursor.isNull(5))
         entity.setSimpleString(cursor.getString(5));
         entity.setSimpleStringNotNull(cursor.getString(6));
         return entity;
     }
     
+    @Override
     protected void updateKeyAfterInsert(TestEntitySimple entity, long rowId) {
         // TODO updateKeyAfterInsert
     }
     
-    @Override
     /** @inheritdoc */
-    protected String getPkColumn() {
-        return null;
+    @Override
+    public Integer getPrimaryKeyValue(TestEntitySimple entity) {
+        if(entity != null) {
+            return entity.getId();
+        } else {
+            return null;
+        }
     }
+
+    /** @inheritdoc */
+    @Override    
+    protected boolean isEntityUpdateable() {
+        return true;
+    }
+
 }

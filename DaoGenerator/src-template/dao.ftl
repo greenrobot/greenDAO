@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.orm.AbstractDao;
+import de.greenrobot.orm.Column;
 
 import ${entity.javaPackage}.${entity.className};
 <#if entity.protobuf>
@@ -16,31 +17,15 @@ import ${entity.javaPackage}.${entity.className}.Builder;
 /** 
  * DAO for table ${entity.tableName} (schema version ${schema.version}).
 */
-public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Long> {
+public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${entity.pkProperty.javaType!"Void"}> {
 
     public static final String TABLENAME = "${entity.tableName}";
-    
-    protected static final String ALL_COLUMNS_SQL = 
-        "<#list entity.properties as property>${property.columnName}<#if property_has_next>,<#if property_index != 0 && property_index % 5 == 0>" +
-        "</#if><#else>";</#if></#list>
-    
-    protected static final String PK_COLUMNS_SQL = 
-        "<#list entity.propertiesPk as property>${property.columnName}<#if property_has_next>,<#if property_index != 0 && property_index % 5 == 0>" +
-        "</#if><#else>";</#if></#list>
-    
-    protected static final String NON_PK_COLUMNS_SQL = 
-        "<#list entity.propertiesNonPk as property>${property.columnName}<#if property_has_next>,<#if property_index != 0 && property_index % 5 == 0>" +
-        "</#if><#else>";</#if></#list>
-    
-    protected static final String VALUE_PLACEHOLDERS = "<#list entity.properties as property>?<#if property_has_next>,<#if property_index != 0 && property_index % 30 == 0>" +
-        "</#if><#else>";</#if></#list>
 
-    public enum Columns {
+    public static Column[] COLUMN_MODEL = {
 <#list entity.properties as property>
-        /** Maps to property ${property.propertyName} (#${property_index}). */
-        ${property.columnName}<#if property_has_next>,</#if>
+        new Column("${property.columnName}", ${property.primaryKey?string})<#if property_has_next>,</#if>
 </#list>
-    }
+    };
 
     public ${entity.classNameDao}(SQLiteDatabase db) {
         super(db);
@@ -63,43 +48,34 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
 
     /** @inheritdoc */
     @Override
-    protected String getTablename() {
+    public String getTablename() {
         return TABLENAME;
     }
-
+    
     /** @inheritdoc */
     @Override
-    protected String getValuePlaceholders() {
-        return VALUE_PLACEHOLDERS;
+    protected Column[] getColumnModel() {
+        return COLUMN_MODEL;
     }
 
     /** @inheritdoc */
     @Override
-    protected String getAllColumnsSql() {
-        return ALL_COLUMNS_SQL;
-    }
-
-    /** @inheritdoc */
-    @Override
-    protected String getPkColumnsSql() {
-        return PK_COLUMNS_SQL;
-    }
-
-    /** @inheritdoc */
-    @Override
-    protected String getNonPkColumnsSql() {
-        return NON_PK_COLUMNS_SQL;
-    }
-
-    /** @inheritdoc */
     protected void bindValues(SQLiteStatement stmt, ${entity.className} entity) {
         stmt.clearBindings();
 <#list entity.properties as property>
+<#if property.notNull>
         stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, entity.get${property.propertyName?cap_first}());
+<#else>
+        ${property.javaType} ${property.propertyName} = entity.get${property.propertyName?cap_first}();
+        if(${property.propertyName} != null) {
+            stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, ${property.propertyName});
+        }
+</#if>
 </#list>
     }
 
     /** @inheritdoc */
+    @Override
     public ${entity.className} readFrom(Cursor cursor) {
 <#if entity.protobuf>
         Builder builder = ${entity.className}.newBuilder();
@@ -110,12 +86,16 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
 <#else>
         ${entity.className} entity = new ${entity.className}();
 <#list entity.properties as property>
+<#if !property.notNull>
+        if(!cursor.isNull(${property_index}))
+</#if>
         entity.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(${property_index}));
 </#list>        
         return entity;
 </#if>
     }
     
+    @Override
     protected void updateKeyAfterInsert(${entity.className} entity, long rowId) {
 <#if entity.protobuf>
         // TODO throw new IllegalStateException("Cannot update protobuf entities after insert");
@@ -124,9 +104,24 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, Lon
 </#if>
     }
     
-    @Override
     /** @inheritdoc */
-    protected String getPkColumn() {
-        return "${entity.pkProperty.columnName}";
+    @Override
+    public ${entity.pkProperty.javaType!"Void"} getPrimaryKeyValue(${entity.className} entity) {
+<#if entity.pkProperty??>
+        if(entity != null) {
+            return entity.get${entity.pkProperty.propertyName?cap_first}();
+        } else {
+            return null;
+        }
+<#else>
+        return null;
+</#if>    
     }
+
+    /** @inheritdoc */
+    @Override    
+    protected boolean isEntityUpdateable() {
+        return ${(!entity.protobuf)?string};
+    }
+
 }
