@@ -185,6 +185,13 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
         assertEquals(pkForQuery, daoAccess.getPrimaryKeyValue(list.get(0)));
     }
 
+    public void testUpdate() {
+        T entity = createEntityWithRandomPk();
+        dao.insert(entity);
+        dao.update(entity);
+        assertEquals(1, dao.count());
+    }
+
     protected K nextPk() {
         for (int i = 0; i < 100000; i++) {
             K pk = createRandomPk();

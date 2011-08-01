@@ -109,16 +109,31 @@ public abstract class AbstractDao<T, K> {
         if (deleteStatement == null) {
             StringBuilder builder = new StringBuilder("DELETE FROM ");
             builder.append(getTablename()).append(" WHERE ");
-            String[] pks = getPkColumns();
-            for (int i = 0; i < pks.length; i++) {
-                builder.append(pks[i]).append("=?");
-                if (i < pks.length - 1) {
-                    builder.append(',');
-                }
-            }
+            appendColumnsEqualPlaceholders(builder, getPkColumns());
             deleteStatement = db.compileStatement(builder.toString());
         }
         return deleteStatement;
+    }
+
+    protected SQLiteStatement getUpdateStatement() {
+        if (updateStatement == null) {
+            StringBuilder builder = new StringBuilder("UPDATE ");
+            builder.append(getTablename()).append(" SET ");
+            appendColumnsEqualPlaceholders(builder, getAllColumns()); // TODO Use getNonPkColumns() only
+            builder.append(" WHERE ");
+            appendColumnsEqualPlaceholders(builder, getPkColumns());
+            updateStatement = db.compileStatement(builder.toString());
+        }
+        return updateStatement;
+    }
+
+    protected void appendColumnsEqualPlaceholders(StringBuilder builder, String[] pks) {
+        for (int i = 0; i < pks.length; i++) {
+            builder.append(pks[i]).append("=?");
+            if (i < pks.length - 1) {
+                builder.append(',');
+            }
+        }
     }
 
     /** ends with an space to simplify appending to this string. */
@@ -319,6 +334,23 @@ public abstract class AbstractDao<T, K> {
                 stmt.bindLong(1, (Long) key);
             } else {
                 stmt.bindString(1, key.toString());
+            }
+            stmt.execute();
+        }
+    }
+
+    public void update(T entity) {
+        assertSinglePk();
+        SQLiteStatement stmt = getUpdateStatement();
+        synchronized (stmt) {
+            // TODO Do not bind PKs here 
+            bindValues(stmt, entity);
+            K key = getPrimaryKeyValue(entity);
+            int index = allColumns.length + 1;
+            if (key instanceof Long) {
+                stmt.bindLong(index, (Long) key);
+            } else {
+                stmt.bindString(index, key.toString());
             }
             stmt.execute();
         }
