@@ -105,6 +105,22 @@ public abstract class AbstractDao<T, K> {
         return builder.toString();
     }
 
+    protected SQLiteStatement getDeleteStatement() {
+        if (deleteStatement == null) {
+            StringBuilder builder = new StringBuilder("DELETE FROM ");
+            builder.append(getTablename()).append(" WHERE ");
+            String[] pks = getPkColumns();
+            for (int i = 0; i < pks.length; i++) {
+                builder.append(pks[i]).append("=?");
+                if (i < pks.length - 1) {
+                    builder.append(',');
+                }
+            }
+            deleteStatement = db.compileStatement(builder.toString());
+        }
+        return deleteStatement;
+    }
+
     /** ends with an space to simplify appending to this string. */
     protected String getSelectAll() {
         if (selectAll == null) {
@@ -187,7 +203,8 @@ public abstract class AbstractDao<T, K> {
     /**
      * Inserts the given entities in the database using a transaction.
      * 
-     * @param entities The entities to insert.
+     * @param entities
+     *            The entities to insert.
      */
     public void insertInTx(Iterable<T> entities) {
         insertInTx(entities, isEntityUpdateable());
@@ -196,7 +213,8 @@ public abstract class AbstractDao<T, K> {
     /**
      * Inserts the given entities in the database using a transaction.
      * 
-     * @param entities The entities to insert.
+     * @param entities
+     *            The entities to insert.
      */
     public void insertInTx(T... entities) {
         insertInTx(Arrays.asList(entities), isEntityUpdateable());
@@ -205,8 +223,10 @@ public abstract class AbstractDao<T, K> {
     /**
      * Inserts the given entities in the database using a transaction.
      * 
-     * @param entities The entities to insert.
-     * @param setPrimaryKey if true, the PKs of the given will be set after the insert; pass false to improve performance. 
+     * @param entities
+     *            The entities to insert.
+     * @param setPrimaryKey
+     *            if true, the PKs of the given will be set after the insert; pass false to improve performance.
      */
     public void insertInTx(Iterable<T> entities, boolean setPrimaryKey) {
         SQLiteStatement stmt = getInsertStatement();
@@ -272,22 +292,36 @@ public abstract class AbstractDao<T, K> {
         return list;
     }
 
-    /** SUBJECT TO CHANGE: A raw-style query where you can pass any WHERE clause and arguments. */
+    /** A raw-style query where you can pass any WHERE clause and arguments. */
     public List<T> query(String where, String... selectionArg) {
         Cursor cursor = db.rawQuery(getSelectAll() + where, selectionArg);
         return readAllAndCloseCursor(cursor);
     }
 
-    public boolean delete(T entity) {
-        assertSinglePk();
-        return deleteByKey(getPrimaryKeyValue(entity));
+    /** Performs a standard Android-style query for entities. */
+    public List<T> query(String selection, String[] selectionArgs, String groupBy, String having, String orderby) {
+        Cursor cursor = db.query(getTablename(), getAllColumns(), selection, selectionArgs, groupBy, having, orderby);
+        return readAllAndCloseCursor(cursor);
     }
 
-    public boolean deleteByKey(K key) {
+    public void delete(T entity) {
         assertSinglePk();
-        String[] idArray = new String[] { key.toString() };
-        int affectedRows = db.delete(getTablename(), pkColumns[0] + "==?", idArray);
-        return affectedRows >= 1;
+        // TODO support multi-value PK
+        deleteByKey(getPrimaryKeyValue(entity));
+    }
+
+    public void deleteByKey(K key) {
+        assertSinglePk();
+        SQLiteStatement stmt = getDeleteStatement();
+        synchronized (stmt) {
+
+            if (key instanceof Long) {
+                stmt.bindLong(1, (Long) key);
+            } else {
+                stmt.bindString(1, key.toString());
+            }
+            stmt.execute();
+        }
     }
 
     protected void assertSinglePk() {

@@ -10,7 +10,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import de.greenrobot.orm.AbstractDao;
@@ -147,11 +146,11 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
 
     public void testDelete() {
         K pk = nextPk();
-        assertFalse(dao.deleteByKey(pk));
+        dao.deleteByKey(pk);
         T entity = createEntity(pk);
         dao.insert(entity);
         assertNotNull(dao.load(pk));
-        assertTrue(dao.deleteByKey(pk));
+        dao.deleteByKey(pk);
         assertNull(dao.load(pk));
     }
 
