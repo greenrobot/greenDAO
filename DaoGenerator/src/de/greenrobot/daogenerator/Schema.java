@@ -62,9 +62,19 @@ public class Schema {
      * per table to create table scripts, etc.
      */
     public Entity addEntity(String className) {
-        Entity table = new Entity(this, className);
-        entities.add(table);
-        return table;
+        Entity entity = new Entity(this, className);
+        entities.add(entity);
+        return entity;
+    }
+
+    /**
+     * Adds a new protocol buffers entity to the schema. There can be multiple entities per table, but only one may be the primary entity
+     * per table to create table scripts, etc.
+     */
+    public Entity addProtobufEntity(String className) {
+        Entity entity = addEntity(className);
+        entity.useProtobuf();
+        return entity;
     }
 
     public String mapToDbType(PropertyType propertyType) {

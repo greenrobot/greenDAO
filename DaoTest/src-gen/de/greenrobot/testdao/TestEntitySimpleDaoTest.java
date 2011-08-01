@@ -2,19 +2,19 @@ package de.greenrobot.testdao;
 
 import de.greenrobot.orm.test.AbstractDaoTest;
 
-public class TestEntitySimpleDaoTest extends AbstractDaoTest<TestEntitySimpleDao, TestEntitySimple, Integer> {
+public class TestEntitySimpleDaoTest extends AbstractDaoTest<TestEntitySimpleDao, TestEntitySimple, Long> {
 
     public TestEntitySimpleDaoTest() {
         super(TestEntitySimpleDao.class);
     }
 
     @Override
-    protected Integer createRandomPk() {
-        return random.nextInt();
+    protected Long createRandomPk() {
+        return random.nextLong();
     }
 
     @Override
-    protected TestEntitySimple createEntity(Integer key) {
+    protected TestEntitySimple createEntity(Long key) {
         TestEntitySimple entity = new TestEntitySimple();
         entity.setId(key);
         entity.setSimpleStringNotNull("green");

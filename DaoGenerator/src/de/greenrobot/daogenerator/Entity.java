@@ -70,7 +70,7 @@ public class Entity {
 
     /** Adds a standard _id column required by standard Android classes, e.g. list adapters. */
     public ColumnBuilder addIdProperty() {
-        ColumnBuilder builder = new Property.ColumnBuilder(PropertyType.Int, "id");
+        ColumnBuilder builder = new Property.ColumnBuilder(PropertyType.Long, "id");
         builder.columnName("_id").primaryKey().asc();
         properties.add(builder.build());
         return builder;

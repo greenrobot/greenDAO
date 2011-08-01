@@ -7,7 +7,7 @@ package de.greenrobot.testdao;
 */
 public class TestEntitySimple {
 
-    private Integer id; 
+    private Long id; 
     private Integer simpleInt; 
     private int simpleIntNotNull; 
     private Long simpleLong; 
@@ -15,11 +15,11 @@ public class TestEntitySimple {
     private String simpleString; 
     private String simpleStringNotNull; 
     
-    public Integer getId() {
+    public Long getId() {
         return id;
     } 
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     } 
 

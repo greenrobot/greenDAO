@@ -12,7 +12,7 @@ import de.greenrobot.testdao.TestEntitySimple;
 /** 
  * DAO for table TEST_ENTITY_SIMPLE (schema version 1).
 */
-public class TestEntitySimpleDao extends AbstractDao<TestEntitySimple, Integer> {
+public class TestEntitySimpleDao extends AbstractDao<TestEntitySimple, Long> {
 
     public static final String TABLENAME = "TEST_ENTITY_SIMPLE";
 
@@ -65,7 +65,7 @@ public class TestEntitySimpleDao extends AbstractDao<TestEntitySimple, Integer> 
     @Override
     protected void bindValues(SQLiteStatement stmt, TestEntitySimple entity) {
         stmt.clearBindings();
-        Integer id = entity.getId();
+        Long id = entity.getId();
         if(id != null) {
             stmt.bindLong(1, id);
         }
@@ -91,7 +91,7 @@ public class TestEntitySimpleDao extends AbstractDao<TestEntitySimple, Integer> 
     public TestEntitySimple readFrom(Cursor cursor) {
         TestEntitySimple entity = new TestEntitySimple();
         if(!cursor.isNull(0))
-        entity.setId(cursor.getInt(0));
+        entity.setId(cursor.getLong(0));
         if(!cursor.isNull(1))
         entity.setSimpleInt(cursor.getInt(1));
         entity.setSimpleIntNotNull(cursor.getInt(2));
@@ -111,7 +111,7 @@ public class TestEntitySimpleDao extends AbstractDao<TestEntitySimple, Integer> 
     
     /** @inheritdoc */
     @Override
-    public Integer getPrimaryKeyValue(TestEntitySimple entity) {
+    public Long getPrimaryKeyValue(TestEntitySimple entity) {
         if(entity != null) {
             return entity.getId();
         } else {

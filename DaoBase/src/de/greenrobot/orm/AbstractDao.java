@@ -122,7 +122,7 @@ public abstract class AbstractDao<T, K> {
             apppendCommaSeparated(builder, pkColumns);
             builder.append('=');
             apppendPlaceholders(builder, pkColumns.length);
-            selectByKey=builder.toString();
+            selectByKey = builder.toString();
         }
         return selectByKey;
     }
@@ -193,7 +193,13 @@ public abstract class AbstractDao<T, K> {
             db.beginTransaction();
             try {
                 for (T entity : entities) {
-                    insert(entity, setPrimaryKey);
+                    bindValues(stmt, entity);
+                    if (setPrimaryKey) {
+                        long rowId = stmt.executeInsert();
+                        updateKeyAfterInsert(entity, rowId);
+                    } else {
+                        stmt.execute();
+                    }
                 }
                 db.setTransactionSuccessful();
             } finally {
@@ -204,22 +210,12 @@ public abstract class AbstractDao<T, K> {
 
     /** Insert an entity into the table associated with a concrete DAO. */
     public long insert(T entity) {
-        return insert(entity, isEntityUpdateable());
-    }
-
-    /** Insert an entity into the table associated with a concrete DAO. */
-    public long insert(T entity, boolean setPrimaryKey) {
         SQLiteStatement stmt = getInsertStatement();
         synchronized (stmt) {
             bindValues(stmt, entity);
-            if (setPrimaryKey) {
-                long rowId = stmt.executeInsert();
-                updateKeyAfterInsert(entity, rowId);
-                return rowId;
-            } else {
-                stmt.execute();
-                return 0;
-            }
+            long rowId = stmt.executeInsert();
+            updateKeyAfterInsert(entity, rowId);
+            return rowId;
         }
     }
 
@@ -235,12 +231,13 @@ public abstract class AbstractDao<T, K> {
     /** Insert an entity into the table associated with a concrete DAO. */
     public long insertOrReplace(T entity) {
         SQLiteStatement stmt = getInsertOrReplaceStatement();
+        long rowId;
         synchronized (stmt) {
             bindValues(stmt, entity);
-            long rowId = stmt.executeInsert();
-            updateKeyAfterInsert(entity, rowId);
-            return rowId;
+            rowId = stmt.executeInsert();
         }
+        updateKeyAfterInsert(entity, rowId);
+        return rowId;
     }
 
     /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
