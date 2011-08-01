@@ -99,17 +99,13 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     }
 
     public void testAssignPk() {
-        if (daoAccess.isEntityUpdateable()) {
-            T entity1 = createEntity(null);
+        T entity1 = createEntity(null);
+        if (daoAccess.isEntityUpdateable() && entity1 != null) {
             T entity2 = createEntity(null);
 
             dao.insert(entity1);
-            try {
-                dao.insert(entity2);
-            } catch (SQLiteConstraintException ex) {
-                Log.d("DAO", "Could not insert twice without PK. Skipping testAssignPk for " + daoClass);
-                return;
-            }
+            dao.insert(entity2);
+
             K pk1 = daoAccess.getPrimaryKeyValue(entity1);
             K pk2 = daoAccess.getPrimaryKeyValue(entity2);
 
@@ -118,7 +114,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
             assertNotNull(dao.load(pk1));
             assertNotNull(dao.load(pk2));
         } else {
-            Log.d("DAO", "Entity not updateable Skipping testAssignPk for " + daoClass);
+            Log.d("DAO", "Skipping testAssignPk for " + daoClass);
         }
     }
 
@@ -207,6 +203,10 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     /** K does not have to be collision free, check nextPk for collision free PKs. */
     protected abstract K createRandomPk();
 
+    /**
+     * Creates an insertable entity. If the given key is null, but the entity's PK is not null the method must return
+     * null.
+     */
     protected abstract T createEntity(K key);
 
 }

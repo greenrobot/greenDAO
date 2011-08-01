@@ -1,5 +1,7 @@
 package de.greenrobot.dao.test;
 
+import java.util.Arrays;
+
 import de.greenrobot.orm.test.AbstractDaoTestLongPk;
 import de.greenrobot.testdao.SimpleEntityNotNull;
 import de.greenrobot.testdao.SimpleEntityNotNullDao;
@@ -28,6 +30,25 @@ public class SimpleEntityNotNullTest extends AbstractDaoTestLongPk<SimpleEntityN
         byte[] bytes = { 42, -17, 23, 0, 127, -128 };
         entity.setSimpleByteArray(bytes);
         return entity;
+    }
+
+    public void testValues() {
+        SimpleEntityNotNull entity = createEntity(1l);
+        dao.insert(entity);
+        SimpleEntityNotNull reloaded = dao.load(1l);
+        assertNotSame(entity, reloaded);
+        
+        assertEquals(entity.getId(), reloaded.getId());
+        assertEquals(entity.getSimpleBoolean(), reloaded.getSimpleBoolean());
+        assertEquals(entity.getSimpleDouble(), reloaded.getSimpleDouble());
+        assertEquals(entity.getSimpleFloat(), reloaded.getSimpleFloat());
+        assertEquals(entity.getSimpleLong(), reloaded.getSimpleLong());
+        assertEquals(entity.getSimpleByte(), reloaded.getSimpleByte());
+        assertEquals(entity.getSimpleInt(), reloaded.getSimpleInt());
+        assertEquals(entity.getSimpleShort(), reloaded.getSimpleShort());
+        assertEquals(entity.getSimpleBoolean(), reloaded.getSimpleBoolean());
+        assertEquals(entity.getSimpleString(), reloaded.getSimpleString());
+        assertTrue(Arrays.equals(entity.getSimpleByteArray(), reloaded.getSimpleByteArray()));
     }
 
 }
