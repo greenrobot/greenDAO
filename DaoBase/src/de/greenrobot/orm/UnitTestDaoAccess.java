@@ -10,5 +10,9 @@ public class UnitTestDaoAccess<T, K> {
     public K getPrimaryKeyValue(T entity) {
         return dao.getPrimaryKeyValue(entity);
     }
+    
+    public Column[] getColumnModel() {
+        return dao.getColumnModel();
+    }
 
 }

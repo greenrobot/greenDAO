@@ -1,7 +1,9 @@
 package de.greenrobot.daogenerator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.greenrobot.daogenerator.Property.ColumnBuilder;
 
@@ -13,9 +15,11 @@ public class Entity {
     private final List<Property> properties;
     private final List<Property> propertiesPk;
     private final List<Property> propertiesNonPk;
+    private final Set<String> propertyNames;
     private String javaPackage;
     private String javaPackageDao;
     private Property pkProperty;
+    private String pkType;
     private boolean protobuf;
 
     public Entity(Schema schema, String className) {
@@ -24,6 +28,7 @@ public class Entity {
         properties = new ArrayList<Property>();
         propertiesPk = new ArrayList<Property>();
         propertiesNonPk = new ArrayList<Property>();
+        propertyNames = new HashSet<String>();
     }
 
     public ColumnBuilder addBooleanProperty(String propertyName) {
@@ -63,6 +68,9 @@ public class Entity {
     }
 
     public ColumnBuilder addProperty(PropertyType propertyType, String propertyName) {
+        if (!propertyNames.add(propertyName)) {
+            throw new RuntimeException("Property already defined: " + propertyName);
+        }
         ColumnBuilder builder = new Property.ColumnBuilder(propertyType, propertyName);
         properties.add(builder.build());
         return builder;
@@ -71,7 +79,7 @@ public class Entity {
     /** Adds a standard _id column required by standard Android classes, e.g. list adapters. */
     public ColumnBuilder addIdProperty() {
         ColumnBuilder builder = new Property.ColumnBuilder(PropertyType.Long, "id");
-        builder.columnName("_id").primaryKey().asc();
+        builder.columnName("_id").primaryKey();
         properties.add(builder.build());
         return builder;
     }
@@ -129,13 +137,17 @@ public class Entity {
     public List<Property> getPropertiesPk() {
         return propertiesPk;
     }
-    
+
     public List<Property> getPropertiesNonPk() {
         return propertiesNonPk;
     }
 
     public Property getPkProperty() {
         return pkProperty;
+    }
+
+    public String getPkType() {
+        return pkType;
     }
 
     void init2ndPass() {
@@ -168,8 +180,10 @@ public class Entity {
 
         if (propertiesPk.size() == 1) {
             pkProperty = propertiesPk.get(0);
+            pkType= schema.mapToJavaTypeNullable(pkProperty.getPropertyType());
+        } else {
+            pkType="Void";
         }
-
     }
 
 }

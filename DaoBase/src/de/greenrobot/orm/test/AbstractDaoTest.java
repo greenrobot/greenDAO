@@ -12,6 +12,7 @@ import junit.framework.TestCase;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.orm.AbstractDao;
+import de.greenrobot.orm.Column;
 import de.greenrobot.orm.UnitTestDaoAccess;
 
 /**
@@ -34,6 +35,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     protected Random random;
     private final Class<D> daoClass;
     private UnitTestDaoAccess<T, K> daoAccess;
+    private Column pkColumn;
 
     public AbstractDaoTest(Class<D> daoClass) {
         random = new Random();
@@ -54,6 +56,20 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
             throw new RuntimeException("Could not prepare DAO Test", e);
         }
         daoAccess = new UnitTestDaoAccess<T, K>(dao);
+
+        Column[] columns = daoAccess.getColumnModel();
+        for (Column column : columns) {
+            if (column.primaryKey) {
+                if (pkColumn != null) {
+                    throw new RuntimeException("Test does not work with multiple PK columns");
+                }
+                pkColumn = column;
+            }
+        }
+        if (pkColumn == null) {
+            throw new RuntimeException("Test does not work without a PK column");
+        }
+
     }
 
     @Override
@@ -71,6 +87,28 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
         assertEquals(daoAccess.getPrimaryKeyValue(entity), daoAccess.getPrimaryKeyValue(entity2));
     }
 
+    public void testInsertInTx() {
+        List<T> list = new ArrayList<T>();
+        for (int i = 0; i < 20; i++) {
+            list.add(createEntityWithRandomPk());
+        }
+        dao.insertInTx(list);
+        assertEquals(list.size(), dao.count());
+    }
+    
+    public void testAssignPk() {
+        
+    }
+
+
+    public void testCount() {
+        assertEquals(0, dao.count());
+        dao.insert(createEntityWithRandomPk());
+        assertEquals(1, dao.count());
+        dao.insert(createEntityWithRandomPk());
+        assertEquals(2, dao.count());
+    }
+
     public void testInsertTwice() {
         K pk = nextPk();
         T entity = createEntity(pk);
@@ -84,8 +122,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     }
 
     public void testInsertOrReplaceTwice() {
-        K pk = nextPk();
-        T entity = createEntity(pk);
+        T entity = createEntityWithRandomPk();
         long rowId1 = dao.insert(entity);
         long rowId2 = dao.insertOrReplace(entity);
         assertEquals(rowId1, rowId2);
@@ -102,8 +139,8 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     }
 
     public void testRowId() {
-        T entity1 = createEntity(nextPk());
-        T entity2 = createEntity(nextPk());
+        T entity1 = createEntityWithRandomPk();
+        T entity2 = createEntityWithRandomPk();
         long rowId1 = dao.insert(entity1);
         long rowId2 = dao.insert(entity2);
         assertTrue(rowId1 != rowId2);
@@ -121,10 +158,10 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     }
 
     public void testQuery() {
-        dao.insert(createEntity(nextPk()));
+        dao.insert(createEntityWithRandomPk());
         K pkForQuery = nextPk();
         dao.insert(createEntity(pkForQuery));
-        dao.insert(createEntity(nextPk()));
+        dao.insert(createEntityWithRandomPk());
 
         String where = "WHERE " + dao.getPkColumns()[0] + "=?";
         List<T> list = dao.query(where, pkForQuery.toString());
@@ -140,6 +177,10 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
             }
         }
         throw new IllegalStateException("Could not find a new PK");
+    }
+
+    protected T createEntityWithRandomPk() {
+        return createEntity(createRandomPk());
     }
 
     /** K does not have to be collision free, check nextPk for collision free PKs. */

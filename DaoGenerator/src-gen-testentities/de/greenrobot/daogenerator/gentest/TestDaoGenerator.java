@@ -20,14 +20,29 @@ public class TestDaoGenerator {
         }
         Schema schema = new Schema(1, "de.greenrobot.testdao");
         
-        Entity simple = schema.addEntity("TestEntitySimple");
+        Entity simple = schema.addEntity("SimpleEntity");
         simple.addIdProperty();
+        simple.addBooleanProperty("simpleBoolean");
+        simple.addByteProperty("simpleByte");
+        simple.addShortProperty("simpleShort");
         simple.addIntProperty("simpleInt");
-        simple.addIntProperty("simpleIntNotNull").notNull();
         simple.addLongProperty("simpleLong");
-        simple.addLongProperty("simpleLongNotNull").notNull();
+        simple.addFloatProperty("simpleFloat");
+        simple.addDoubleProperty("simpleDouble");
         simple.addStringProperty("simpleString");
-        simple.addStringProperty("simpleStringNotNull").notNull();
+        simple.addByteArrayProperty("simpleByteArray");
+
+        Entity notNull = schema.addEntity("SimpleEntityNotNull");
+        notNull.addIdProperty().notNull();
+        notNull.addBooleanProperty("simpleBoolean").notNull();
+        notNull.addByteProperty("simpleByte").notNull();
+        notNull.addShortProperty("simpleShort").notNull();
+        notNull.addIntProperty("simpleInt").notNull();
+        notNull.addLongProperty("simpleLong").notNull();
+        notNull.addFloatProperty("simpleFloat").notNull();
+        notNull.addDoubleProperty("simpleDouble").notNull();
+        notNull.addStringProperty("simpleString").notNull();
+        notNull.addByteArrayProperty("simpleByteArray").notNull();
 
         new DaoGenerator().createDaos(outDir, schema);
     }

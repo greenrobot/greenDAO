@@ -17,7 +17,7 @@ import ${entity.javaPackage}.${entity.className}.Builder;
 /** 
  * DAO for table ${entity.tableName} (schema version ${schema.version}).
 */
-public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${entity.pkProperty.javaType!"Void"}> {
+public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${entity.pkType}> {
 
     public static final String TABLENAME = "${entity.tableName}";
 
@@ -35,7 +35,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "${entity.tableName} (" + //
 <#list entity.properties as property>
-            "${property.columnName} ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>)";</#if> // ${property_index}
+                "${property.columnName} ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>)";</#if> // ${property_index}
 </#list>         
         db.execSQL(sql);
     }
@@ -51,7 +51,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     public String getTablename() {
         return TABLENAME;
     }
-    
+
     /** @inheritdoc */
     @Override
     protected Column[] getColumnModel() {
@@ -64,11 +64,11 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
         stmt.clearBindings();
 <#list entity.properties as property>
 <#if property.notNull>
-        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, entity.get${property.propertyName?cap_first}());
+        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, entity.get${property.propertyName?cap_first}()<#if property.propertyType == "Boolean"> ? 1l: 0l</#if>);
 <#else>
         ${property.javaType} ${property.propertyName} = entity.get${property.propertyName?cap_first}();
-        if(${property.propertyName} != null) {
-            stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, ${property.propertyName});
+        if (${property.propertyName} != null) {
+            stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, ${property.propertyName}<#if property.propertyType == "Boolean"> ? 1l: 0l</#if>);
         }
 </#if>
 </#list>
@@ -83,13 +83,18 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
         builder.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(${property_index}));
 </#list>        
         return builder.build();
-<#else>
+<#else><#--
+############################## readFrom non-protobuff ############################## 
+-->
         ${entity.className} entity = new ${entity.className}();
 <#list entity.properties as property>
 <#if !property.notNull>
-        if(!cursor.isNull(${property_index}))
+        if (!cursor.isNull(${property_index})) {
+    </#if>        entity.set${property.propertyName?cap_first}(<#if property.propertyType == "Byte">(byte) <#--
+--></#if>cursor.get${toCursorType[property.propertyType]}(${property_index})<#if property.propertyType == "Boolean"> != 0</#if>);
+<#if !property.notNull>
+        }
 </#if>
-        entity.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(${property_index}));
 </#list>        
         return entity;
 </#if>
@@ -98,15 +103,19 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     @Override
     protected void updateKeyAfterInsert(${entity.className} entity, long rowId) {
 <#if entity.protobuf>
-        // TODO throw new IllegalStateException("Cannot update protobuf entities after insert");
+        // Do nothing: Cannot update protobuf entities after insert
 <#else>
-        // TODO updateKeyAfterInsert
+<#if entity.pkProperty?? && entity.pkProperty.propertyType == "Long">
+        entity.set${entity.pkProperty.propertyName?cap_first}(rowId);
+<#else>
+        // TODO XXX Only Long PKs are supported currently
+</#if>
 </#if>
     }
     
     /** @inheritdoc */
     @Override
-    public ${entity.pkProperty.javaType!"Void"} getPrimaryKeyValue(${entity.className} entity) {
+    public ${entity.pkType} getPrimaryKeyValue(${entity.className} entity) {
 <#if entity.pkProperty??>
         if(entity != null) {
             return entity.get${entity.pkProperty.propertyName?cap_first}();

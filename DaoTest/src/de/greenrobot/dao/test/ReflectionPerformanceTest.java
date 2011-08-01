@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import junit.framework.TestCase;
 import android.util.Log;
 
-public class ReflectionPerformaceTest //* Not a regular unit test.  */ extends TestCase 
+public class ReflectionPerformanceTest
 {
 
     int intValue;

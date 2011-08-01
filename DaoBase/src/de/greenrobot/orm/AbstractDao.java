@@ -1,6 +1,7 @@
 package de.greenrobot.orm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.database.Cursor;
@@ -183,10 +184,30 @@ public abstract class AbstractDao<T, K> {
         }
     }
 
+    /**
+     * Inserts the given entities in the database using a transaction.
+     * 
+     * @param entities The entities to insert.
+     */
     public void insertInTx(Iterable<T> entities) {
         insertInTx(entities, isEntityUpdateable());
     }
 
+    /**
+     * Inserts the given entities in the database using a transaction.
+     * 
+     * @param entities The entities to insert.
+     */
+    public void insertInTx(T... entities) {
+        insertInTx(Arrays.asList(entities), isEntityUpdateable());
+    }
+
+    /**
+     * Inserts the given entities in the database using a transaction.
+     * 
+     * @param entities The entities to insert.
+     * @param setPrimaryKey if true, the PKs of the given will be set after the insert; pass false to improve performance. 
+     */
     public void insertInTx(Iterable<T> entities, boolean setPrimaryKey) {
         SQLiteStatement stmt = getInsertStatement();
         synchronized (stmt) {
