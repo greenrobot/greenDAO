@@ -13,7 +13,7 @@ public class SimpleEntityNotNullTest extends AbstractDaoTestLongPk<SimpleEntityN
     @Override
     protected SimpleEntityNotNull createEntity(Long key) {
         SimpleEntityNotNull entity = new SimpleEntityNotNull();
-        entity.setId(key);
+        entity.setId(key != null ? key : 0);
         entity.setSimpleBoolean(true);
         entity.setSimpleByte(Byte.MAX_VALUE);
         entity.setSimpleShort(Short.MAX_VALUE);

@@ -6,13 +6,17 @@ public class UnitTestDaoAccess<T, K> {
     public UnitTestDaoAccess(AbstractDao<T, K> dao) {
         this.dao = dao;
     }
-    
+
     public K getPrimaryKeyValue(T entity) {
         return dao.getPrimaryKeyValue(entity);
     }
-    
+
     public Column[] getColumnModel() {
         return dao.getColumnModel();
+    }
+
+    public boolean isEntityUpdateable() {
+        return dao.isEntityUpdateable();
     }
 
 }

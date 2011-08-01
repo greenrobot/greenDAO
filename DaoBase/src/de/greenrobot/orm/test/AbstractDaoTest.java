@@ -10,7 +10,9 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import de.greenrobot.orm.AbstractDao;
 import de.greenrobot.orm.Column;
 import de.greenrobot.orm.UnitTestDaoAccess;
@@ -95,11 +97,30 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
         dao.insertInTx(list);
         assertEquals(list.size(), dao.count());
     }
-    
-    public void testAssignPk() {
-        
-    }
 
+    public void testAssignPk() {
+        if (daoAccess.isEntityUpdateable()) {
+            T entity1 = createEntity(null);
+            T entity2 = createEntity(null);
+
+            dao.insert(entity1);
+            try {
+                dao.insert(entity2);
+            } catch (SQLiteConstraintException ex) {
+                Log.d("DAO", "Could not insert twice without PK. Skipping testAssignPk for " + daoClass);
+                return;
+            }
+            K pk1 = daoAccess.getPrimaryKeyValue(entity1);
+            K pk2 = daoAccess.getPrimaryKeyValue(entity2);
+
+            assertFalse(pk1.equals(pk2));
+
+            assertNotNull(dao.load(pk1));
+            assertNotNull(dao.load(pk2));
+        } else {
+            Log.d("DAO", "Entity not updateable Skipping testAssignPk for " + daoClass);
+        }
+    }
 
     public void testCount() {
         assertEquals(0, dao.count());
