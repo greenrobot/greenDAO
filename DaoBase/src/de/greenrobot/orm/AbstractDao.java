@@ -119,7 +119,7 @@ public abstract class AbstractDao<T, K> {
         if (updateStatement == null) {
             StringBuilder builder = new StringBuilder("UPDATE ");
             builder.append(getTablename()).append(" SET ");
-            appendColumnsEqualPlaceholders(builder, getAllColumns()); // TODO Use getNonPkColumns() only
+            appendColumnsEqualPlaceholders(builder, getAllColumns()); // TODO Use getNonPkColumns() only (performance)
             builder.append(" WHERE ");
             appendColumnsEqualPlaceholders(builder, getPkColumns());
             updateStatement = db.compileStatement(builder.toString());
@@ -343,8 +343,9 @@ public abstract class AbstractDao<T, K> {
         assertSinglePk();
         SQLiteStatement stmt = getUpdateStatement();
         synchronized (stmt) {
-            // TODO Do not bind PKs here 
+            // TODO Do not bind PKs here (performance)
             bindValues(stmt, entity);
+         // TODO support multi-value PK
             K key = getPrimaryKeyValue(entity);
             int index = allColumns.length + 1;
             if (key instanceof Long) {

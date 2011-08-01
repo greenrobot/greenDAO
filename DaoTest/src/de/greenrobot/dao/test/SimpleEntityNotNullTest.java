@@ -1,6 +1,5 @@
 package de.greenrobot.dao.test;
 
-import java.security.KeyStore.LoadStoreParameter;
 import java.util.Arrays;
 
 import de.greenrobot.orm.test.AbstractDaoTestLongPk;
