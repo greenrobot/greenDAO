@@ -12,7 +12,7 @@ import de.greenrobot.orm.AbstractDao;
  * @param <T>
  *            Entity type of the DAO
  */
-public abstract class AbstractDaoTestLongPk<D extends AbstractDao<T, Long>, T> extends AbstractDaoTest<D, T, Long> {
+public abstract class AbstractDaoTestLongPk<D extends AbstractDao<T, Long>, T> extends AbstractDaoTestSinglePk<D, T, Long> {
 
     public AbstractDaoTestLongPk(Class<D> daoClass) {
         super(daoClass);
