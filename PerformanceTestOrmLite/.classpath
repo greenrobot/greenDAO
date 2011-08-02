@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="lib" path="lib/ormlite-android-4.24.jar" sourcepath="lib/ormlite-android-4.24-sources.jar"/>
+	<classpathentry kind="lib" path="lib/ormlite-core-4.24.jar" sourcepath="C:/Users/Markus/.m2/repository/com/j256/ormlite/ormlite-core/4.24/ormlite-core-4.24-sources.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
