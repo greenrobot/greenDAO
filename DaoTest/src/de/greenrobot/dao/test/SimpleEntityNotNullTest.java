@@ -14,22 +14,7 @@ public class SimpleEntityNotNullTest extends AbstractDaoTestLongPk<SimpleEntityN
 
     @Override
     protected SimpleEntityNotNull createEntity(Long key) {
-        if (key == null) {
-            return null;
-        }
-        SimpleEntityNotNull entity = new SimpleEntityNotNull();
-        entity.setId(key);
-        entity.setSimpleBoolean(true);
-        entity.setSimpleByte(Byte.MAX_VALUE);
-        entity.setSimpleShort(Short.MAX_VALUE);
-        entity.setSimpleInt(Integer.MAX_VALUE);
-        entity.setSimpleLong(Long.MAX_VALUE);
-        entity.setSimpleFloat(Float.MAX_VALUE);
-        entity.setSimpleDouble(Double.MAX_VALUE);
-        entity.setSimpleString("greenrobot greenDAO");
-        byte[] bytes = { 42, -17, 23, 0, 127, -128 };
-        entity.setSimpleByteArray(bytes);
-        return entity;
+        return SimpleEntityNotNullHelper.createEntity(key);
     }
 
     public void testValues() {
@@ -39,9 +24,9 @@ public class SimpleEntityNotNullTest extends AbstractDaoTestLongPk<SimpleEntityN
         assertEqualProperties(entity, reloaded);
     }
 
-    protected void assertEqualProperties(SimpleEntityNotNull entity, SimpleEntityNotNull reloaded) {
+    protected static void assertEqualProperties(SimpleEntityNotNull entity, SimpleEntityNotNull reloaded) {
         assertNotSame(entity, reloaded);
-        
+
         assertEquals(entity.getId(), reloaded.getId());
         assertEquals(entity.getSimpleBoolean(), reloaded.getSimpleBoolean());
         assertEquals(entity.getSimpleDouble(), reloaded.getSimpleDouble());
@@ -54,12 +39,12 @@ public class SimpleEntityNotNullTest extends AbstractDaoTestLongPk<SimpleEntityN
         assertEquals(entity.getSimpleString(), reloaded.getSimpleString());
         assertTrue(Arrays.equals(entity.getSimpleByteArray(), reloaded.getSimpleByteArray()));
     }
-    
+
     public void testUpdateValues() {
         SimpleEntityNotNull entity = createEntity(1l);
         dao.insert(entity);
         entity = dao.load(1l);
-        
+
         entity.setSimpleBoolean(false);
         entity.setSimpleByte(Byte.MIN_VALUE);
         entity.setSimpleShort(Short.MIN_VALUE);
@@ -68,10 +53,10 @@ public class SimpleEntityNotNullTest extends AbstractDaoTestLongPk<SimpleEntityN
         entity.setSimpleFloat(Float.MIN_VALUE);
         entity.setSimpleDouble(Double.MIN_VALUE);
         entity.setSimpleString("greenDAO");
-        byte[] bytes = { -1, 0, 1};
+        byte[] bytes = { -1, 0, 1 };
         entity.setSimpleByteArray(bytes);
         dao.update(entity);
-        
+
         SimpleEntityNotNull reloaded = dao.load(1l);
         assertEqualProperties(entity, reloaded);
     }

@@ -343,17 +343,44 @@ public abstract class AbstractDao<T, K> {
         assertSinglePk();
         SQLiteStatement stmt = getUpdateStatement();
         synchronized (stmt) {
-            // TODO Do not bind PKs here (performance)
-            bindValues(stmt, entity);
-         // TODO support multi-value PK
-            K key = getPrimaryKeyValue(entity);
-            int index = allColumns.length + 1;
-            if (key instanceof Long) {
-                stmt.bindLong(index, (Long) key);
-            } else {
-                stmt.bindString(index, key.toString());
+            updateInsideSynchronized(entity, stmt);
+        }
+    }
+
+    protected void updateInsideSynchronized(T entity, SQLiteStatement stmt) {
+        // TODO Do not bind PKs here (performance)
+        bindValues(stmt, entity);
+        // TODO support multi-value PK
+        K key = getPrimaryKeyValue(entity);
+        int index = allColumns.length + 1;
+        if (key instanceof Long) {
+            stmt.bindLong(index, (Long) key);
+        } else {
+            stmt.bindString(index, key.toString());
+        }
+        stmt.execute();
+    }
+
+    /**
+     * Inserts the given entities in the database using a transaction.
+     * 
+     * @param entities
+     *            The entities to insert.
+     * @param setPrimaryKey
+     *            if true, the PKs of the given will be set after the insert; pass false to improve performance.
+     */
+    public void updateInTx(Iterable<T> entities) {
+        SQLiteStatement stmt = getUpdateStatement();
+        synchronized (stmt) {
+            db.beginTransaction();
+            try {
+                for (T entity : entities) {
+                    updateInsideSynchronized(entity, stmt);
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
             }
-            stmt.execute();
         }
     }
 
