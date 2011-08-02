@@ -319,6 +319,10 @@ public abstract class AbstractDao<T, K> {
         return readAllAndCloseCursor(cursor);
     }
 
+    public void deleteAll() {
+        db.execSQL("DELETE FROM " + getTablename());
+    }
+
     public void delete(T entity) {
         assertSinglePk();
         // TODO support multi-value PK
