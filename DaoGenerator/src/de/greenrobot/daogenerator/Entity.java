@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import de.greenrobot.daogenerator.Property.ColumnBuilder;
+import de.greenrobot.daogenerator.Property.PropertyBuilder;
 
 /** Model class for an entity: a Java data object mapped to a data base table. */
 public class Entity {
@@ -34,56 +34,56 @@ public class Entity {
         constructors = true;
     }
 
-    public ColumnBuilder addBooleanProperty(String propertyName) {
+    public PropertyBuilder addBooleanProperty(String propertyName) {
         return addProperty(PropertyType.Boolean, propertyName);
     }
 
-    public ColumnBuilder addByteProperty(String propertyName) {
+    public PropertyBuilder addByteProperty(String propertyName) {
         return addProperty(PropertyType.Byte, propertyName);
     }
 
-    public ColumnBuilder addShortProperty(String propertyName) {
+    public PropertyBuilder addShortProperty(String propertyName) {
         return addProperty(PropertyType.Short, propertyName);
     }
 
-    public ColumnBuilder addIntProperty(String propertyName) {
+    public PropertyBuilder addIntProperty(String propertyName) {
         return addProperty(PropertyType.Int, propertyName);
     }
 
-    public ColumnBuilder addLongProperty(String propertyName) {
+    public PropertyBuilder addLongProperty(String propertyName) {
         return addProperty(PropertyType.Long, propertyName);
     }
 
-    public ColumnBuilder addFloatProperty(String propertyName) {
+    public PropertyBuilder addFloatProperty(String propertyName) {
         return addProperty(PropertyType.Float, propertyName);
     }
 
-    public ColumnBuilder addDoubleProperty(String propertyName) {
+    public PropertyBuilder addDoubleProperty(String propertyName) {
         return addProperty(PropertyType.Double, propertyName);
     }
 
-    public ColumnBuilder addByteArrayProperty(String propertyName) {
+    public PropertyBuilder addByteArrayProperty(String propertyName) {
         return addProperty(PropertyType.ByteArray, propertyName);
     }
 
-    public ColumnBuilder addStringProperty(String propertyName) {
+    public PropertyBuilder addStringProperty(String propertyName) {
         return addProperty(PropertyType.String, propertyName);
     }
 
-    public ColumnBuilder addProperty(PropertyType propertyType, String propertyName) {
+    public PropertyBuilder addProperty(PropertyType propertyType, String propertyName) {
         if (!propertyNames.add(propertyName)) {
             throw new RuntimeException("Property already defined: " + propertyName);
         }
-        ColumnBuilder builder = new Property.ColumnBuilder(propertyType, propertyName);
-        properties.add(builder.build());
+        PropertyBuilder builder = new Property.PropertyBuilder(propertyType, propertyName);
+        properties.add(builder.getProperty());
         return builder;
     }
 
     /** Adds a standard _id column required by standard Android classes, e.g. list adapters. */
-    public ColumnBuilder addIdProperty() {
-        ColumnBuilder builder = new Property.ColumnBuilder(PropertyType.Long, "id");
+    public PropertyBuilder addIdProperty() {
+        PropertyBuilder builder = new Property.PropertyBuilder(PropertyType.Long, "id");
         builder.columnName("_id").primaryKey();
-        properties.add(builder.build());
+        properties.add(builder.getProperty());
         return builder;
     }
 

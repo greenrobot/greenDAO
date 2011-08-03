@@ -3,63 +3,58 @@ package de.greenrobot.daogenerator;
 /** Model class for an entity's property: a Java property mapped to a data base column. */
 public class Property {
 
-    public static class ColumnBuilder {
-        private final Property column;
+    public static class PropertyBuilder {
+        private final Property property;
 
-        public ColumnBuilder(PropertyType propertyType, String propertyName) {
-            column = new Property(propertyType, propertyName);
+        public PropertyBuilder(PropertyType propertyType, String propertyName) {
+            property = new Property(propertyType, propertyName);
         }
 
-        public ColumnBuilder columnName(String columnName) {
-            column.setColumnName(columnName);
+        public PropertyBuilder columnName(String columnName) {
+            property.setColumnName(columnName);
             return this;
         }
 
-        public ColumnBuilder columnType(String columnType) {
-            column.setColumnType(columnType);
+        public PropertyBuilder columnType(String columnType) {
+            property.setColumnType(columnType);
             return this;
         }
 
-        public ColumnBuilder primaryKey() {
-            column.setPrimaryKey(true);
+        public PropertyBuilder primaryKey() {
+            property.setPrimaryKey(true);
             return this;
         }
 
-        public ColumnBuilder asc() {
-            if (!column.isPrimaryKey()) {
+        public PropertyBuilder asc() {
+            if (!property.isPrimaryKey()) {
                 throw new RuntimeException("asc/desc is only available to foreign key columns");
             }
-            column.pkAsc = true;
-            column.pkDesc = false;
+            property.pkAsc = true;
+            property.pkDesc = false;
             return this;
         }
 
-        public ColumnBuilder desc() {
-            if (!column.isPrimaryKey()) {
+        public PropertyBuilder desc() {
+            if (!property.isPrimaryKey()) {
                 throw new RuntimeException("asc/desc is only available to foreign key columns");
             }
-            column.pkDesc = true;
-            column.pkAsc = false;
+            property.pkDesc = true;
+            property.pkAsc = false;
             return this;
         }
 
-        public ColumnBuilder unique() {
-            column.setUnique(true);
+        public PropertyBuilder unique() {
+            property.setUnique(true);
             return this;
         }
 
-        public ColumnBuilder notNull() {
-            column.setNotNull(true);
+        public PropertyBuilder notNull() {
+            property.setNotNull(true);
             return this;
         }
 
-        public ColumnBuilder setForeignKeyTable(String foreignKeyTable) {
-            column.setForeignKeyTable(foreignKeyTable);
-            return this;
-        }
-
-        public Property build() {
-            return column;
+        public Property getProperty() {
+            return property;
         }
     }
 
@@ -73,7 +68,6 @@ public class Property {
 
     private boolean unique;
     private boolean notNull;
-    private String foreignKeyTable;
 
     /** Initialized in 2nd pass */
     private String constraints;
@@ -140,14 +134,6 @@ public class Property {
 
     public void setNotNull(boolean notNull) {
         this.notNull = notNull;
-    }
-
-    public String getForeignKeyTable() {
-        return foreignKeyTable;
-    }
-
-    public void setForeignKeyTable(String foreignKeyTable) {
-        this.foreignKeyTable = foreignKeyTable;
     }
 
     public String getJavaType() {
