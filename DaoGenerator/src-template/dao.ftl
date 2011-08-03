@@ -63,9 +63,14 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     protected void bindValues(SQLiteStatement stmt, ${entity.className} entity) {
         stmt.clearBindings();
 <#list entity.properties as property>
-<#if property.notNull>
-        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, entity.get${property.propertyName?cap_first}()<#if property.propertyType == "Boolean"> ? 1l: 0l</#if>);
-<#else>
+<#if property.notNull || entity.protobuf>
+<#if entity.protobuf>
+        if(entity.has${property.propertyName?cap_first}()) {
+    </#if>        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, entity.get${property.propertyName?cap_first}()<#if property.propertyType == "Boolean"> ? 1l: 0l</#if>);
+<#if entity.protobuf>
+        }
+</#if>
+<#else> <#-- nullable, non-protobuff -->
         ${property.javaType} ${property.propertyName} = entity.get${property.propertyName?cap_first}();
         if (${property.propertyName} != null) {
             stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, ${property.propertyName}<#if property.propertyType == "Boolean"> ? 1l: 0l</#if>);
@@ -80,7 +85,12 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 <#if entity.protobuf>
         Builder builder = ${entity.className}.newBuilder();
 <#list entity.properties as property>
-        builder.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(${property_index}));
+<#if !property.notNull>
+        if (!cursor.isNull(${property_index})) {
+    </#if>        builder.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(${property_index}));
+<#if !property.notNull>
+        }
+</#if>        
 </#list>        
         return builder.build();
 <#elseif entity.constructors>
