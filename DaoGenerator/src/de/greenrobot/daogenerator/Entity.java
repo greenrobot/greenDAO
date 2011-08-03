@@ -11,12 +11,14 @@ import de.greenrobot.daogenerator.Property.PropertyBuilder;
 public class Entity {
     private final Schema schema;
     private final String className;
-    private String tableName;
-    private String classNameDao;
     private final List<Property> properties;
     private final List<Property> propertiesPk;
     private final List<Property> propertiesNonPk;
     private final Set<String> propertyNames;
+    private final List<Index> indexes;
+
+    private String tableName;
+    private String classNameDao;
     private String javaPackage;
     private String javaPackageDao;
     private Property pkProperty;
@@ -31,6 +33,7 @@ public class Entity {
         propertiesPk = new ArrayList<Property>();
         propertiesNonPk = new ArrayList<Property>();
         propertyNames = new HashSet<String>();
+        this.indexes = new ArrayList<Index>();
         constructors = true;
     }
 
@@ -74,17 +77,24 @@ public class Entity {
         if (!propertyNames.add(propertyName)) {
             throw new RuntimeException("Property already defined: " + propertyName);
         }
-        PropertyBuilder builder = new Property.PropertyBuilder(propertyType, propertyName);
+        PropertyBuilder builder = new Property.PropertyBuilder(schema, this, propertyType, propertyName);
         properties.add(builder.getProperty());
         return builder;
     }
 
     /** Adds a standard _id column required by standard Android classes, e.g. list adapters. */
     public PropertyBuilder addIdProperty() {
-        PropertyBuilder builder = new Property.PropertyBuilder(PropertyType.Long, "id");
+        PropertyBuilder builder = addLongProperty("id");
         builder.columnName("_id").primaryKey();
-        properties.add(builder.getProperty());
         return builder;
+    }
+
+    /**
+     * Adds a new index to the entity.
+     */
+    public Entity addIndex(Index index) {
+        indexes.add(index);
+        return this;
     }
 
     /** The entity is represented by a protocol buffers object. Requires some special actions like using builders. */
@@ -148,6 +158,10 @@ public class Entity {
     public Property getPkProperty() {
         return pkProperty;
     }
+    
+    public List<Index> getIndexes() {
+        return indexes;
+    }
 
     public String getPkType() {
         return pkType;
@@ -162,23 +176,7 @@ public class Entity {
     }
 
     void init2ndPass() {
-        if (classNameDao == null) {
-            classNameDao = className + "Dao";
-        }
-        if (tableName == null) {
-            tableName = DaoUtil.dbName(className);
-        }
-        if (javaPackage == null) {
-            javaPackage = schema.getDefaultJavaPackage();
-        }
-
-        if (javaPackageDao == null) {
-            javaPackageDao = schema.getDefaultJavaPackageDao();
-            if (javaPackageDao == null) {
-                javaPackageDao = javaPackage;
-            }
-
-        }
+        initNamesWithDefaults();
 
         for (Property property : properties) {
             property.init2ndPass(schema, this);
@@ -195,6 +193,45 @@ public class Entity {
         } else {
             pkType = "Void";
         }
+
+        initIndexNamesWithDefaults();
     }
 
+    protected void initNamesWithDefaults() {
+        if (classNameDao == null) {
+            classNameDao = className + "Dao";
+        }
+        if (tableName == null) {
+            tableName = DaoUtil.dbName(className);
+        }
+        if (javaPackage == null) {
+            javaPackage = schema.getDefaultJavaPackage();
+        }
+
+        if (javaPackageDao == null) {
+            javaPackageDao = schema.getDefaultJavaPackageDao();
+            if (javaPackageDao == null) {
+                javaPackageDao = javaPackage;
+            }
+        }
+    }
+
+    protected void initIndexNamesWithDefaults() {
+        for (int i = 0; i < indexes.size(); i++) {
+            Index index = indexes.get(i);
+            if (index.getName() == null) {
+                String indexName = "IDX_" + getTableName();
+                List<Property> properties = index.getProperties();
+                for (int j = 0; j < properties.size(); j++) {
+                    Property property = properties.get(j);
+                    indexName += "_" + property.getColumnName();
+                    if ("DESC".equalsIgnoreCase(index.getPropertiesOrder().get(j))) {
+                        indexName += "_DESC";
+                    }
+                }
+                // TODO can this get too long? how to shorten reliably without depending on the order (i)
+                index.setName(indexName);
+            }
+        }
+    }
 }

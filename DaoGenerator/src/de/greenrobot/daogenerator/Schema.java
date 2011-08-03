@@ -19,7 +19,6 @@ public class Schema {
         this.version = version;
         this.defaultJavaPackage = defaultJavaPackage;
         this.entities = new ArrayList<Entity>();
-
         initTypeMappings();
     }
 
@@ -69,8 +68,8 @@ public class Schema {
     }
 
     /**
-     * Adds a new protocol buffers entity to the schema. There can be multiple entities per table, but only one may be the primary entity
-     * per table to create table scripts, etc.
+     * Adds a new protocol buffers entity to the schema. There can be multiple entities per table, but only one may be
+     * the primary entity per table to create table scripts, etc.
      */
     public Entity addProtobufEntity(String className) {
         Entity entity = addEntity(className);

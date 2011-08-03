@@ -1,55 +1,79 @@
 package de.greenrobot.daogenerator;
 
+
 /** Model class for an entity's property: a Java property mapped to a data base column. */
 public class Property {
 
     public static class PropertyBuilder {
         private final Property property;
 
-        public PropertyBuilder(PropertyType propertyType, String propertyName) {
-            property = new Property(propertyType, propertyName);
+        public PropertyBuilder(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
+            property = new Property(schema, entity, propertyType, propertyName);
         }
 
         public PropertyBuilder columnName(String columnName) {
-            property.setColumnName(columnName);
+            property.columnName = columnName;
             return this;
         }
 
         public PropertyBuilder columnType(String columnType) {
-            property.setColumnType(columnType);
+            property.columnType = columnType;
             return this;
         }
 
         public PropertyBuilder primaryKey() {
-            property.setPrimaryKey(true);
+            property.primaryKey = true;
             return this;
         }
 
-        public PropertyBuilder asc() {
-            if (!property.isPrimaryKey()) {
-                throw new RuntimeException("asc/desc is only available to foreign key columns");
-            }
+        public PropertyBuilder primaryKeyAsc() {
+            property.primaryKey = true;
             property.pkAsc = true;
-            property.pkDesc = false;
             return this;
         }
 
-        public PropertyBuilder desc() {
-            if (!property.isPrimaryKey()) {
-                throw new RuntimeException("asc/desc is only available to foreign key columns");
-            }
+        public PropertyBuilder primaryKeyDesc() {
+            property.primaryKey = true;
             property.pkDesc = true;
-            property.pkAsc = false;
             return this;
         }
 
         public PropertyBuilder unique() {
-            property.setUnique(true);
+            property.unique = true;
             return this;
         }
 
         public PropertyBuilder notNull() {
-            property.setNotNull(true);
+            property.notNull = true;
+            return this;
+        }
+
+        public PropertyBuilder index() {
+            Index index = new Index();
+            index.addProperty(property);
+            property.entity.addIndex(index);
+            return this;
+        }
+
+        public PropertyBuilder indexAsc(String indexNameOrNull, boolean isUnique) {
+            Index index = new Index();
+            index.addPropertyAsc(property);
+            if(isUnique) {
+                index.makeUnique();
+            }
+            index.setName(indexNameOrNull);
+            property.entity.addIndex(index);
+            return this;
+        }
+
+        public PropertyBuilder indexDesc(String indexNameOrNull, boolean isUnique) {
+            Index index = new Index();
+            index.addPropertyDesc(property);
+            if(isUnique) {
+                index.makeUnique();
+            }
+            index.setName(indexNameOrNull);
+            property.entity.addIndex(index);
             return this;
         }
 
@@ -58,8 +82,12 @@ public class Property {
         }
     }
 
+    @SuppressWarnings("unused")
+    private final Schema schema;
+    private final Entity entity;
     private final PropertyType propertyType;
     private final String propertyName;
+
     private String columnName;
     private String columnType;
     private boolean primaryKey;
@@ -74,10 +102,11 @@ public class Property {
 
     private String javaType;
 
-    public Property(PropertyType propertyType, String propertyName) {
+    public Property(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
+        this.schema = schema;
+        this.entity = entity;
         this.propertyName = propertyName;
         this.propertyType = propertyType;
-        columnName = DaoUtil.dbName(propertyName);
     }
 
     public String getPropertyName() {
@@ -92,48 +121,24 @@ public class Property {
         return columnName;
     }
 
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
-    }
-
     public String getColumnType() {
         return columnType;
-    }
-
-    public void setColumnType(String columnType) {
-        this.columnType = columnType;
     }
 
     public boolean isPrimaryKey() {
         return primaryKey;
     }
 
-    public void setPrimaryKey(boolean primaryKey) {
-        this.primaryKey = primaryKey;
-    }
-
     public String getConstraints() {
         return constraints;
-    }
-
-    public void setConstraints(String constraints) {
-        this.constraints = constraints;
     }
 
     public boolean isUnique() {
         return unique;
     }
 
-    public void setUnique(boolean unique) {
-        this.unique = unique;
-    }
-
     public boolean isNotNull() {
         return notNull;
-    }
-
-    public void setNotNull(boolean notNull) {
-        this.notNull = notNull;
     }
 
     public String getJavaType() {
@@ -145,6 +150,9 @@ public class Property {
         if (columnType == null) {
             columnType = schema.mapToDbType(propertyType);
         }
+        if (columnName == null) {
+            columnName = DaoUtil.dbName(propertyName);
+        }
         if (notNull) {
             javaType = schema.mapToJavaTypeNotNull(propertyType);
         } else {
@@ -153,25 +161,25 @@ public class Property {
     }
 
     private void initConstraint() {
-        String constraint = "";
+        StringBuilder constraintBuilder = new StringBuilder();
         if (isPrimaryKey()) {
-            constraint += "PRIMARY KEY";
+            constraintBuilder.append("PRIMARY KEY");
             if (pkAsc) {
-                constraint += " ASC";
+                constraintBuilder.append(" ASC");
             }
             if (pkDesc) {
-                constraint += " DESC";
+                constraintBuilder.append(" DESC");
             }
         }
         if (notNull) {
-            constraint += " NOT NULL";
+            constraintBuilder.append(" NOT NULL");
         }
         if (unique) {
-            constraint += " UNIQUE";
+            constraintBuilder.append(" UNIQUE");
         }
-        constraint = constraint.trim();
-        if (constraint.length() > 0) {
-            setConstraints(constraint);
+        String newContraints = constraintBuilder.toString().trim();
+        if (constraintBuilder.length() > 0) {
+            constraints = newContraints;
         }
     }
 

@@ -45,7 +45,7 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
                 "SIMPLE_FLOAT REAL NOT NULL ," + // 6
                 "SIMPLE_DOUBLE REAL NOT NULL ," + // 7
                 "SIMPLE_STRING TEXT NOT NULL ," + // 8
-                "SIMPLE_BYTE_ARRAY BLOB NOT NULL )"; // 9
+                "SIMPLE_BYTE_ARRAY BLOB NOT NULL );"; // 9
         db.execSQL(sql);
     }
 

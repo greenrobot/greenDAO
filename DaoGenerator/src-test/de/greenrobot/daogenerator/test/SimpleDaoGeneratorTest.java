@@ -14,14 +14,14 @@ import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
 
-public class SimpleTest {
+public class SimpleDaoGeneratorTest {
 
     @Test
     public void testMinimalSchema() throws Exception {
         Schema schema = new Schema(1, "de.greenrobot.testdao");
         Entity adressTable = schema.addEntity("Adresse");
-        Property idColumn = adressTable.addIdProperty().getProperty();
-        adressTable.addIntProperty( "count");
+        Property idProperty = adressTable.addIdProperty().getProperty();
+        adressTable.addIntProperty("count").index();
         adressTable.addIntProperty("dummy").notNull();
         assertEquals(1, schema.getEntities().size());
         assertEquals(3, adressTable.getProperties().size());
@@ -29,10 +29,10 @@ public class SimpleTest {
         File daoFile = new File("test-out/de/greenrobot/testdao/" + adressTable.getClassName() + "Dao.java");
         daoFile.delete();
         assertFalse(daoFile.exists());
-        
+
         new DaoGenerator().generateAll("test-out", schema);
-        
-        assertEquals("PRIMARY KEY ASC", idColumn.getConstraints());
+
+        assertEquals("PRIMARY KEY", idProperty.getConstraints());
         assertTrue(daoFile.toString(), daoFile.exists());
     }
 

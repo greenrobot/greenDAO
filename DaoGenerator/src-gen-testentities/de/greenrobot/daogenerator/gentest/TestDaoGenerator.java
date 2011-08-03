@@ -44,6 +44,15 @@ public class TestDaoGenerator {
         notNull.addStringProperty("simpleString").notNull();
         notNull.addByteArrayProperty("simpleByteArray").notNull();
 
+        Entity testEntity = schema.addEntity("TestEntity");
+        testEntity.addIdProperty();
+        testEntity.addIntProperty("simpleInt").notNull();
+        testEntity.addIntProperty("simpleInteger");
+        testEntity.addStringProperty("simpleStringNotNull").notNull();
+        testEntity.addStringProperty("simpleString");
+        testEntity.addStringProperty("indexedString").index();
+        testEntity.addStringProperty("indexedStringAscUnique").indexAsc(null, true);
+
         new DaoGenerator().generateAll(outDir, schema);
     }
 

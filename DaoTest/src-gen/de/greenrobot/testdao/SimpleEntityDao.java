@@ -45,7 +45,7 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
                 "SIMPLE_FLOAT REAL," + // 6
                 "SIMPLE_DOUBLE REAL," + // 7
                 "SIMPLE_STRING TEXT," + // 8
-                "SIMPLE_BYTE_ARRAY BLOB)"; // 9
+                "SIMPLE_BYTE_ARRAY BLOB);"; // 9
         db.execSQL(sql);
     }
 
@@ -71,42 +71,52 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
     @Override
     protected void bindValues(SQLiteStatement stmt, SimpleEntity entity) {
         stmt.clearBindings();
+ 
         Long id = entity.getId();
         if (id != null) {
             stmt.bindLong(1, id);
         }
+ 
         Boolean simpleBoolean = entity.getSimpleBoolean();
         if (simpleBoolean != null) {
             stmt.bindLong(2, simpleBoolean ? 1l: 0l);
         }
+ 
         Byte simpleByte = entity.getSimpleByte();
         if (simpleByte != null) {
             stmt.bindLong(3, simpleByte);
         }
+ 
         Short simpleShort = entity.getSimpleShort();
         if (simpleShort != null) {
             stmt.bindLong(4, simpleShort);
         }
+ 
         Integer simpleInt = entity.getSimpleInt();
         if (simpleInt != null) {
             stmt.bindLong(5, simpleInt);
         }
+ 
         Long simpleLong = entity.getSimpleLong();
         if (simpleLong != null) {
             stmt.bindLong(6, simpleLong);
         }
+ 
         Float simpleFloat = entity.getSimpleFloat();
         if (simpleFloat != null) {
             stmt.bindDouble(7, simpleFloat);
         }
+ 
         Double simpleDouble = entity.getSimpleDouble();
         if (simpleDouble != null) {
             stmt.bindDouble(8, simpleDouble);
         }
+ 
         String simpleString = entity.getSimpleString();
         if (simpleString != null) {
             stmt.bindString(9, simpleString);
         }
+ 
         byte[] simpleByteArray = entity.getSimpleByteArray();
         if (simpleByteArray != null) {
             stmt.bindBlob(10, simpleByteArray);
