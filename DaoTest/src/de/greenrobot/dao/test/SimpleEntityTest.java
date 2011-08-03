@@ -2,7 +2,6 @@ package de.greenrobot.dao.test;
 
 import java.util.Arrays;
 
-import de.greenrobot.orm.test.AbstractDaoTestLongPk;
 import de.greenrobot.testdao.SimpleEntity;
 import de.greenrobot.testdao.SimpleEntityDao;
 

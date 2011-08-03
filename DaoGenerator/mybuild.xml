@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="DaoGenerator" default="jar">
+
+	<target name="jar" description="Depends on Eclipse to have everthing compiled into bin/">
+		<mkdir dir="release" />
+		<jar jarfile="release/greenDAO-generator.jar" basedir="bin">
+		</jar>
+	</target>
+
+	<target name="javadoc" description="Depends on Eclipse to have everthing compiled into bin/">
+		<mkdir dir="release/docs/api" />
+		<javadoc packagenames="de.greenrobot.*" sourcepath="src" defaultexcludes="yes" 
+			destdir="release/docs/api" author="false" version="false" use="true"
+			windowtitle="greenDAO generator API">
+			<doctitle><![CDATA[<h1>Test</h1>]]></doctitle>
+		    <bottom><![CDATA[<i>Copyright &#169; 2011 greenrobot.de. All Rights Reserved.</i>]]></bottom>
+		</javadoc>
+	</target>
+
+</project>

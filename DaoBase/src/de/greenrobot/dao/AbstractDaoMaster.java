@@ -1,4 +1,4 @@
-package de.greenrobot.orm;
+package de.greenrobot.dao;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

@@ -1,4 +1,5 @@
-package de.greenrobot.orm;
+package de.greenrobot.dao;
+
 
 public class UnitTestDaoAccess<T, K> {
     private AbstractDao<T, K> dao;

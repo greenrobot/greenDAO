@@ -5,8 +5,8 @@ package ${entity.javaPackageDao};
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import de.greenrobot.orm.AbstractDao;
-import de.greenrobot.orm.Column;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.Column;
 
 import ${entity.javaPackage}.${entity.className};
 <#if entity.protobuf>

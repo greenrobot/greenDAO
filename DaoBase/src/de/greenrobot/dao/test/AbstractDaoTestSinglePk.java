@@ -1,4 +1,4 @@
-package de.greenrobot.orm.test;
+package de.greenrobot.dao.test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,8 +7,9 @@ import java.util.Set;
 
 import android.database.SQLException;
 import android.util.Log;
-import de.greenrobot.orm.AbstractDao;
-import de.greenrobot.orm.Column;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.Column;
+import de.greenrobot.dao.test.AbstractDaoTest;
 
 /**
  * Default tests for single-PK entities.

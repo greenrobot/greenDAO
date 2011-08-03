@@ -1,5 +1,6 @@
 package de.greenrobot.daogenerator;
 
+/** Model class for an entity's property: a Java property mapped to a data base column. */
 public class Property {
 
     public static class ColumnBuilder {

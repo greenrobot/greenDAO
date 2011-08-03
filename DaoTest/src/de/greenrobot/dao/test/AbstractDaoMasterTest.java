@@ -4,7 +4,7 @@ import java.util.Random;
 
 import junit.framework.TestCase;
 import android.database.sqlite.SQLiteDatabase;
-import de.greenrobot.orm.AbstractDaoMaster;
+import de.greenrobot.dao.AbstractDaoMaster;
 import de.greenrobot.testdao.SimpleEntity;
 import de.greenrobot.testdao.SimpleEntityDao;
 

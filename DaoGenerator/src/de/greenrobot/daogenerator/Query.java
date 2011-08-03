@@ -3,6 +3,7 @@ package de.greenrobot.daogenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+/** NOT IMPLEMENTED YET. Check back later. */
 public class Query {
     private String name;
     private List<QueryParam> parameters;

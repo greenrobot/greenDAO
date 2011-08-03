@@ -1,5 +1,6 @@
 package de.greenrobot.daogenerator;
 
+/** Internal API */
 public class DaoUtil {
     public static String dbName(String javaName) {
         StringBuilder builder = new StringBuilder(javaName);

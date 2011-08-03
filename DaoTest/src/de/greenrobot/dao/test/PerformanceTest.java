@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.util.Log;
-
-import de.greenrobot.orm.AbstractDao;
-import de.greenrobot.orm.test.AbstractDaoTest;
+import de.greenrobot.dao.AbstractDao;
 
 public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends AbstractDaoTest<D, T, K> {
 

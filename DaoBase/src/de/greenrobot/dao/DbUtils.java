@@ -1,4 +1,4 @@
-package de.greenrobot.orm;
+package de.greenrobot.dao;
 
 import android.database.sqlite.SQLiteDatabase;
 

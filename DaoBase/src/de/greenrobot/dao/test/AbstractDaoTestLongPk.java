@@ -1,6 +1,7 @@
-package de.greenrobot.orm.test;
+package de.greenrobot.dao.test;
 
-import de.greenrobot.orm.AbstractDao;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.test.AbstractDaoTestSinglePk;
 
 /**
  * Base class for DAOs having a long/Long as a PK, which is quite common.

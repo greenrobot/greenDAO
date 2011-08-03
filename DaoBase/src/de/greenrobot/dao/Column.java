@@ -1,4 +1,4 @@
-package de.greenrobot.orm;
+package de.greenrobot.dao;
 
 public class Column {
     public final String name;

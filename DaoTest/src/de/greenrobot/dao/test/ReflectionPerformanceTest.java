@@ -3,7 +3,6 @@ package de.greenrobot.dao.test;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import junit.framework.TestCase;
 import android.util.Log;
 
 public class ReflectionPerformanceTest

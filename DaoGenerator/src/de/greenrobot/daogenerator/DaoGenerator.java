@@ -13,9 +13,15 @@ import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
+/**
+ * Once you have your model created, use this class to generate entities and DAOs.
+ *    
+ * @author Markus
+ */
 public class DaoGenerator {
 
-    public void createDaos(String outDir, Schema schema) throws Exception {
+    /** Generates all entities and DAOs for the given schema. */
+    public void generateAll(String outDir, Schema schema) throws Exception {
         long start = System.currentTimeMillis();
         File outDirFile = new File(outDir);
         outDirFile.mkdirs();

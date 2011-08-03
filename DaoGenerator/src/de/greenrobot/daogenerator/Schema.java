@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/** The "root" model class to which you can add entities to. */
 public class Schema {
     private final int version;
     private final String defaultJavaPackage;

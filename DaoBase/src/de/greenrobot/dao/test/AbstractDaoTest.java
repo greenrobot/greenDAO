@@ -1,4 +1,4 @@
-package de.greenrobot.orm.test;
+package de.greenrobot.dao.test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -8,9 +8,9 @@ import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.ApplicationTestCase;
-import de.greenrobot.orm.AbstractDao;
-import de.greenrobot.orm.Column;
-import de.greenrobot.orm.UnitTestDaoAccess;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.Column;
+import de.greenrobot.dao.UnitTestDaoAccess;
 
 /**
  * Base class for DAO related testing. Prepares an in-memory DB and DAO.

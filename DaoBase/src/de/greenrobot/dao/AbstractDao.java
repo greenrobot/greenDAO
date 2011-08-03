@@ -1,4 +1,4 @@
-package de.greenrobot.orm;
+package de.greenrobot.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;

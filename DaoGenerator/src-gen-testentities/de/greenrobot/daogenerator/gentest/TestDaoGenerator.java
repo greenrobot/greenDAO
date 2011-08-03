@@ -44,7 +44,7 @@ public class TestDaoGenerator {
         notNull.addStringProperty("simpleString").notNull();
         notNull.addByteArrayProperty("simpleByteArray").notNull();
 
-        new DaoGenerator().createDaos(outDir, schema);
+        new DaoGenerator().generateAll(outDir, schema);
     }
 
 }

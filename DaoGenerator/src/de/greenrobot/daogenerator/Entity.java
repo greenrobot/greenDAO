@@ -7,6 +7,7 @@ import java.util.Set;
 
 import de.greenrobot.daogenerator.Property.ColumnBuilder;
 
+/** Model class for an entity: a Java data object mapped to a data base table. */
 public class Entity {
     private final Schema schema;
     private final String className;

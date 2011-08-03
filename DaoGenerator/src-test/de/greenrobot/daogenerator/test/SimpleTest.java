@@ -30,7 +30,7 @@ public class SimpleTest {
         daoFile.delete();
         assertFalse(daoFile.exists());
         
-        new DaoGenerator().createDaos("test-out", schema);
+        new DaoGenerator().generateAll("test-out", schema);
         
         assertEquals("PRIMARY KEY ASC", idColumn.getConstraints());
         assertTrue(daoFile.toString(), daoFile.exists());

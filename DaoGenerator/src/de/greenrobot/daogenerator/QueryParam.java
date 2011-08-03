@@ -1,5 +1,6 @@
 package de.greenrobot.daogenerator;
 
+/** NOT IMPLEMENTED YET. Check back later. */
 public class QueryParam {
     private Property column;
     private String operator;
