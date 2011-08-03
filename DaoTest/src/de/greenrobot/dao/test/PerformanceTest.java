@@ -28,7 +28,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         }
         System.gc();
 
-        runOneByOneTests(list, entityCount/10);
+        // runOneByOneTests(list, entityCount/10);
 
         start = System.currentTimeMillis();
         dao.deleteAll();

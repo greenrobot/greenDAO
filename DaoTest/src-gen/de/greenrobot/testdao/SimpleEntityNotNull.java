@@ -17,7 +17,27 @@ public class SimpleEntityNotNull {
     private double simpleDouble; 
     private String simpleString; 
     private byte[] simpleByteArray; 
-    
+
+    public SimpleEntityNotNull() {
+    }
+
+    public SimpleEntityNotNull(long id) {
+        this.id = id;
+    }
+
+    public SimpleEntityNotNull(long id, boolean simpleBoolean, byte simpleByte, short simpleShort, int simpleInt, long simpleLong, float simpleFloat, double simpleDouble, String simpleString, byte[] simpleByteArray) {
+        this.id = id;
+        this.simpleBoolean = simpleBoolean;
+        this.simpleByte = simpleByte;
+        this.simpleShort = simpleShort;
+        this.simpleInt = simpleInt;
+        this.simpleLong = simpleLong;
+        this.simpleFloat = simpleFloat;
+        this.simpleDouble = simpleDouble;
+        this.simpleString = simpleString;
+        this.simpleByteArray = simpleByteArray;
+    }
+
     public long getId() {
         return id;
     } 

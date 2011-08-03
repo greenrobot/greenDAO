@@ -21,6 +21,7 @@ public class Entity {
     private Property pkProperty;
     private String pkType;
     private boolean protobuf;
+    private boolean constructors;
 
     public Entity(Schema schema, String className) {
         this.schema = schema;
@@ -29,6 +30,7 @@ public class Entity {
         propertiesPk = new ArrayList<Property>();
         propertiesNonPk = new ArrayList<Property>();
         propertyNames = new HashSet<String>();
+        constructors = true;
     }
 
     public ColumnBuilder addBooleanProperty(String propertyName) {
@@ -150,6 +152,14 @@ public class Entity {
         return pkType;
     }
 
+    public boolean isConstructors() {
+        return constructors;
+    }
+
+    public void setConstructors(boolean constructors) {
+        this.constructors = constructors;
+    }
+
     void init2ndPass() {
         if (classNameDao == null) {
             classNameDao = className + "Dao";
@@ -180,9 +190,9 @@ public class Entity {
 
         if (propertiesPk.size() == 1) {
             pkProperty = propertiesPk.get(0);
-            pkType= schema.mapToJavaTypeNullable(pkProperty.getPropertyType());
+            pkType = schema.mapToJavaTypeNullable(pkProperty.getPropertyType());
         } else {
-            pkType="Void";
+            pkType = "Void";
         }
     }
 

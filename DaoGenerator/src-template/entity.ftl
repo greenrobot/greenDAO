@@ -12,7 +12,28 @@ public class ${entity.className} {
 <#list entity.properties as property>
     private ${property.javaType} ${property.propertyName}; 
 </#list>
-    
+
+<#if entity.constructors>
+    public ${entity.className}() {
+    }
+<#if entity.propertiesPk?has_content && entity.propertiesPk?size != entity.properties?size>
+
+    public ${entity.className}(<#list entity.propertiesPk as
+property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
+<#list entity.propertiesPk as property>
+        this.${property.propertyName} = ${property.propertyName};
+</#list>
+    }
+</#if>
+
+    public ${entity.className}(<#list entity.properties as
+property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
+<#list entity.properties as property>
+        this.${property.propertyName} = ${property.propertyName};
+</#list>
+    }
+</#if>
+
 <#list entity.properties as property>
     public ${property.javaType} get${property.propertyName?cap_first}() {
         return ${property.propertyName};

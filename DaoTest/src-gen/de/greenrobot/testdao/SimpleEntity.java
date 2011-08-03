@@ -17,7 +17,27 @@ public class SimpleEntity {
     private Double simpleDouble; 
     private String simpleString; 
     private byte[] simpleByteArray; 
-    
+
+    public SimpleEntity() {
+    }
+
+    public SimpleEntity(Long id) {
+        this.id = id;
+    }
+
+    public SimpleEntity(Long id, Boolean simpleBoolean, Byte simpleByte, Short simpleShort, Integer simpleInt, Long simpleLong, Float simpleFloat, Double simpleDouble, String simpleString, byte[] simpleByteArray) {
+        this.id = id;
+        this.simpleBoolean = simpleBoolean;
+        this.simpleByte = simpleByte;
+        this.simpleShort = simpleShort;
+        this.simpleInt = simpleInt;
+        this.simpleLong = simpleLong;
+        this.simpleFloat = simpleFloat;
+        this.simpleDouble = simpleDouble;
+        this.simpleString = simpleString;
+        this.simpleByteArray = simpleByteArray;
+    }
+
     public Long getId() {
         return id;
     } 

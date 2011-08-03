@@ -83,8 +83,20 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
         builder.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(${property_index}));
 </#list>        
         return builder.build();
-<#else><#--
-############################## readFrom non-protobuff ############################## 
+<#elseif entity.constructors>
+<#--
+############################## readFrom non-protobuff, constructor ############################## 
+-->
+        return new ${entity.className}( //
+<#list entity.properties as property>
+            <#if !property.notNull>cursor.isNull(${property_index}) ? null : </#if><#if
+            property.propertyType == "Byte">(byte) </#if>cursor.get${toCursorType[property.propertyType]}(${property_index})<#if
+            property.propertyType == "Boolean"> != 0</#if><#if property_has_next>,</#if> // ${property.propertyName}
+</#list>        
+        );
+<#else>
+<#--
+############################## readFrom non-protobuff, setters ############################## 
 -->
         ${entity.className} entity = new ${entity.className}();
 <#list entity.properties as property>

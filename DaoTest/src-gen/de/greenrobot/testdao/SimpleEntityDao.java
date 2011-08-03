@@ -116,38 +116,18 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
     /** @inheritdoc */
     @Override
     public SimpleEntity readFrom(Cursor cursor) {
-        SimpleEntity entity = new SimpleEntity();
-        if (!cursor.isNull(0)) {
-            entity.setId(cursor.getLong(0));
-        }
-        if (!cursor.isNull(1)) {
-            entity.setSimpleBoolean(cursor.getShort(1) != 0);
-        }
-        if (!cursor.isNull(2)) {
-            entity.setSimpleByte((byte) cursor.getShort(2));
-        }
-        if (!cursor.isNull(3)) {
-            entity.setSimpleShort(cursor.getShort(3));
-        }
-        if (!cursor.isNull(4)) {
-            entity.setSimpleInt(cursor.getInt(4));
-        }
-        if (!cursor.isNull(5)) {
-            entity.setSimpleLong(cursor.getLong(5));
-        }
-        if (!cursor.isNull(6)) {
-            entity.setSimpleFloat(cursor.getFloat(6));
-        }
-        if (!cursor.isNull(7)) {
-            entity.setSimpleDouble(cursor.getDouble(7));
-        }
-        if (!cursor.isNull(8)) {
-            entity.setSimpleString(cursor.getString(8));
-        }
-        if (!cursor.isNull(9)) {
-            entity.setSimpleByteArray(cursor.getBlob(9));
-        }
-        return entity;
+        return new SimpleEntity( //
+            cursor.isNull(0) ? null : cursor.getLong(0), // id
+            cursor.isNull(1) ? null : cursor.getShort(1) != 0, // simpleBoolean
+            cursor.isNull(2) ? null : (byte) cursor.getShort(2), // simpleByte
+            cursor.isNull(3) ? null : cursor.getShort(3), // simpleShort
+            cursor.isNull(4) ? null : cursor.getInt(4), // simpleInt
+            cursor.isNull(5) ? null : cursor.getLong(5), // simpleLong
+            cursor.isNull(6) ? null : cursor.getFloat(6), // simpleFloat
+            cursor.isNull(7) ? null : cursor.getDouble(7), // simpleDouble
+            cursor.isNull(8) ? null : cursor.getString(8), // simpleString
+            cursor.isNull(9) ? null : cursor.getBlob(9) // simpleByteArray
+        );
     }
     
     @Override

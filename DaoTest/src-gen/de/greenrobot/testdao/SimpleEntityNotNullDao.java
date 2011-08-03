@@ -86,18 +86,18 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
     /** @inheritdoc */
     @Override
     public SimpleEntityNotNull readFrom(Cursor cursor) {
-        SimpleEntityNotNull entity = new SimpleEntityNotNull();
-        entity.setId(cursor.getLong(0));
-        entity.setSimpleBoolean(cursor.getShort(1) != 0);
-        entity.setSimpleByte((byte) cursor.getShort(2));
-        entity.setSimpleShort(cursor.getShort(3));
-        entity.setSimpleInt(cursor.getInt(4));
-        entity.setSimpleLong(cursor.getLong(5));
-        entity.setSimpleFloat(cursor.getFloat(6));
-        entity.setSimpleDouble(cursor.getDouble(7));
-        entity.setSimpleString(cursor.getString(8));
-        entity.setSimpleByteArray(cursor.getBlob(9));
-        return entity;
+        return new SimpleEntityNotNull( //
+            cursor.getLong(0), // id
+            cursor.getShort(1) != 0, // simpleBoolean
+            (byte) cursor.getShort(2), // simpleByte
+            cursor.getShort(3), // simpleShort
+            cursor.getInt(4), // simpleInt
+            cursor.getLong(5), // simpleLong
+            cursor.getFloat(6), // simpleFloat
+            cursor.getDouble(7), // simpleDouble
+            cursor.getString(8), // simpleString
+            cursor.getBlob(9) // simpleByteArray
+        );
     }
     
     @Override
