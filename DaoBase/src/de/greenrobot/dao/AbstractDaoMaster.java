@@ -9,6 +9,11 @@ import java.util.Map.Entry;
 
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * Incomplete. Check back later.
+ *  
+ * @author Markus
+ */
 public class AbstractDaoMaster {
     private static final Map<Class<?>, Class<? extends AbstractDao<?, ?>>> entityToDaoClass = new HashMap<Class<?>, Class<? extends AbstractDao<?, ?>>>();
 

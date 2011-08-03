@@ -1,6 +1,6 @@
 package de.greenrobot.dao;
 
-
+/** Reserved for unit tests that want to access some non-public methods. Don't use for anything else. */
 public class UnitTestDaoAccess<T, K> {
     private AbstractDao<T, K> dao;
 

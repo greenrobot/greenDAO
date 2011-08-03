@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="DaoGenerator" default="jar">
+<project name="DaoGenerator" default="build-all">
 
-	<target name="jar" description="Depends on Eclipse to have everthing compiled into bin/">
+	<target name="build-all" depends="build-jar, build-javadoc"></target>
+	
+	<target name="build-jar" description="Depends on Eclipse to have everthing compiled into bin/">
 		<mkdir dir="release" />
-		<jar jarfile="release/greenDAO-generator.jar" basedir="bin">
-		</jar>
+		<jar jarfile="release/greenDAO-generator.jar" basedir="bin"/>
 	</target>
 
-	<target name="javadoc" description="Depends on Eclipse to have everthing compiled into bin/">
+	<target name="build-javadoc" description="Creates javadoc for classes">
+	    <delete dir="release/docs/api" />
 		<mkdir dir="release/docs/api" />
-		<javadoc packagenames="de.greenrobot.*" sourcepath="src" defaultexcludes="yes" 
-			destdir="release/docs/api" author="false" version="false" use="true"
-			windowtitle="greenDAO generator API">
-			<doctitle><![CDATA[<h1>Test</h1>]]></doctitle>
+		<javadoc destdir="release/docs/api" author="false" version="false" use="true" windowtitle="greenDAO generator API">
+		    <packageset dir="src" defaultexcludes="yes">
+	              <include name="de/greenrobot/daogenerator/**"/>
+		    </packageset>
+			<doctitle><![CDATA[<h1>greenDAO generator API</h1>]]></doctitle>
 		    <bottom><![CDATA[<i>Copyright &#169; 2011 greenrobot.de. All Rights Reserved.</i>]]></bottom>
 		</javadoc>
+        <jar jarfile="release/greenDAO-generator-javadoc.jar" basedir="release/docs/api"/>
 	</target>
 
 </project>

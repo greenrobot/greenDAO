@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 /**
- * Base class for all DAOs. Implements some operations.
+ * Base class for all DAOs: Implements enity operations like insert, load, delete, and query.
  * 
  * @author Markus
  * 
