@@ -24,6 +24,8 @@ public class DaoGenerator {
     public void generateAll(String outDir, Schema schema) throws Exception {
         long start = System.currentTimeMillis();
         
+        System.out.println("greenDAO Generator (preview)");
+        
         File outDirFile = new File(outDir);
         if (!outDirFile.exists()) {
             throw new IOException(outDir + " does not exist. This check is to prevent accidential file generation into a wrong path.");

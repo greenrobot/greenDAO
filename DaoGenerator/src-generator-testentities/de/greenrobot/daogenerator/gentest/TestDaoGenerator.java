@@ -1,23 +1,17 @@
 package de.greenrobot.daogenerator.gentest;
 
-import java.io.File;
-import java.io.IOException;
-
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Schema;
 
+/**
+ * Generates test entities for test project DaoTest.
+ *  
+ * @author Markus
+ */
 public class TestDaoGenerator {
 
-    /**
-     * @param args
-     * @throws Exception
-     */
     public static void main(String[] args) throws Exception {
-        String outDir = "../DaoTest/src-gen";
-        if (!new File(outDir).exists()) {
-            throw new IOException(outDir + " does not exist. Project DaoTest must be available.");
-        }
         Schema schema = new Schema(1, "de.greenrobot.testdao");
         
         Entity simple = schema.addEntity("SimpleEntity");
@@ -53,7 +47,7 @@ public class TestDaoGenerator {
         testEntity.addStringProperty("indexedString").index();
         testEntity.addStringProperty("indexedStringAscUnique").indexAsc(null, true);
 
-        new DaoGenerator().generateAll(outDir, schema);
+        new DaoGenerator().generateAll("../DaoTest/src-gen", schema);
     }
 
 }
