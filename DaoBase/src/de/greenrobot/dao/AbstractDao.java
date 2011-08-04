@@ -339,12 +339,14 @@ public abstract class AbstractDao<T, K> {
         db.execSQL("DELETE FROM " + getTablename());
     }
 
+    /** Deletes the given entity from the database. Currently, only single value PK entities are supported. */
     public void delete(T entity) {
         assertSinglePk();
         // TODO support multi-value PK
         deleteByKey(getPrimaryKeyValue(entity));
     }
 
+    /** Deletes an entity with the given PK from the database. Currently, only single value PK entities are supported. */
     public void deleteByKey(K key) {
         assertSinglePk();
         SQLiteStatement stmt = getDeleteStatement();
@@ -356,6 +358,28 @@ public abstract class AbstractDao<T, K> {
                 stmt.bindString(1, key.toString());
             }
             stmt.execute();
+        }
+    }
+
+    /** Resets all locally changed properties of the entity by reloading the values from the database. */
+    public void reset(T entity) {
+        assertSinglePk();
+        // TODO support multi-value PK
+        K key = getPrimaryKeyValue(entity);
+        String sql = getSelectByKey();
+        String[] keyArray = new String[] { key.toString() };
+        Cursor cursor = db.rawQuery(sql, keyArray);
+        try {
+            boolean available = cursor.moveToFirst();
+            if (!available) {
+                throw new DaoException("Entity does not exist in the database anymore: " + entity.getClass()
+                        + " with key " + key);
+            } else if (!cursor.isLast()) {
+                throw new DaoException("Expected unique result, but count was " + cursor.getCount());
+            }
+            readFrom(cursor, entity);
+        } finally {
+            cursor.close();
         }
     }
 
@@ -414,8 +438,11 @@ public abstract class AbstractDao<T, K> {
         return DatabaseUtils.queryNumEntries(db, getTablename());
     }
 
-    /** Reads the values from the current position of the given cursor and returns a new ImageTO object. */
+    /** Reads the values from the current position of the given cursor and returns a new entity. */
     abstract public T readFrom(Cursor cursor);
+
+    /** Reads the values from the current position of the given cursor into an existing entity. */
+    abstract public void readFrom(Cursor cursor, T entity);
 
     /** Binds the entity's values to the statement. Make sure to synchronize the statement outside of the method. */
     abstract protected void bindValues(SQLiteStatement stmt, T entity);

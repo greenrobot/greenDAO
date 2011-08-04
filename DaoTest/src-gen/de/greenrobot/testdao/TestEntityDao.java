@@ -113,6 +113,18 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         );
     }
     
+    /** @inheritdoc */
+    @Override
+    public void readFrom(Cursor cursor, TestEntity entity) {
+        entity.setId(cursor.isNull(0) ? null : cursor.getLong(0));
+        entity.setSimpleInt(cursor.getInt(1));
+        entity.setSimpleInteger(cursor.isNull(2) ? null : cursor.getInt(2));
+        entity.setSimpleStringNotNull(cursor.getString(3));
+        entity.setSimpleString(cursor.isNull(4) ? null : cursor.getString(4));
+        entity.setIndexedString(cursor.isNull(5) ? null : cursor.getString(5));
+        entity.setIndexedStringAscUnique(cursor.isNull(6) ? null : cursor.getString(6));
+     }
+    
     @Override
     protected void updateKeyAfterInsert(TestEntity entity, long rowId) {
         entity.setId(rowId);

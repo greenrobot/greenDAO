@@ -117,18 +117,24 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 ############################## readFrom non-protobuff, setters ############################## 
 -->
         ${entity.className} entity = new ${entity.className}();
-<#list entity.properties as property>
-<#if !property.notNull>
-        if (!cursor.isNull(${property_index})) {
-    </#if>        entity.set${property.propertyName?cap_first}(<#if property.propertyType == "Byte">(byte) <#--
---></#if>cursor.get${toCursorType[property.propertyType]}(${property_index})<#if property.propertyType == "Boolean"> != 0</#if>);
-<#if !property.notNull>
-        }
-</#if>
-</#list>        
+        readFrom(cursor, entity);
         return entity;
 </#if>
     }
+    
+    /** @inheritdoc */
+    @Override
+    public void readFrom(Cursor cursor, ${entity.className} entity) {
+<#if entity.protobuf>
+        throw new UnsupportedOperationException("Protobuf objects cannot be modified");
+<#else> 
+<#list entity.properties as property>
+        entity.set${property.propertyName?cap_first}(<#if !property.notNull>cursor.isNull(${property_index}) ? null : </#if><#if
+         property.propertyType == "Byte">(byte) </#if>cursor.get${toCursorType[property.propertyType]}(${property_index})<#if
+         property.propertyType == "Boolean"> != 0</#if>);
+</#list>
+</#if>
+     }
     
     @Override
     protected void updateKeyAfterInsert(${entity.className} entity, long rowId) {

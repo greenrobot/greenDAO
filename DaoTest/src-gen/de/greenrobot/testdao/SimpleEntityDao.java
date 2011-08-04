@@ -140,6 +140,21 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
         );
     }
     
+    /** @inheritdoc */
+    @Override
+    public void readFrom(Cursor cursor, SimpleEntity entity) {
+        entity.setId(cursor.isNull(0) ? null : cursor.getLong(0));
+        entity.setSimpleBoolean(cursor.isNull(1) ? null : cursor.getShort(1) != 0);
+        entity.setSimpleByte(cursor.isNull(2) ? null : (byte) cursor.getShort(2));
+        entity.setSimpleShort(cursor.isNull(3) ? null : cursor.getShort(3));
+        entity.setSimpleInt(cursor.isNull(4) ? null : cursor.getInt(4));
+        entity.setSimpleLong(cursor.isNull(5) ? null : cursor.getLong(5));
+        entity.setSimpleFloat(cursor.isNull(6) ? null : cursor.getFloat(6));
+        entity.setSimpleDouble(cursor.isNull(7) ? null : cursor.getDouble(7));
+        entity.setSimpleString(cursor.isNull(8) ? null : cursor.getString(8));
+        entity.setSimpleByteArray(cursor.isNull(9) ? null : cursor.getBlob(9));
+     }
+    
     @Override
     protected void updateKeyAfterInsert(SimpleEntity entity, long rowId) {
         entity.setId(rowId);
