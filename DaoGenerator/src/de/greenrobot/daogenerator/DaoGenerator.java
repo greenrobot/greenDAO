@@ -23,8 +23,11 @@ public class DaoGenerator {
     /** Generates all entities and DAOs for the given schema. */
     public void generateAll(String outDir, Schema schema) throws Exception {
         long start = System.currentTimeMillis();
+        
         File outDirFile = new File(outDir);
-        outDirFile.mkdirs();
+        if (!outDirFile.exists()) {
+            throw new IOException(outDir + " does not exist. This check is to prevent accidential file generation into a wrong path.");
+        }
 
         Configuration config = new Configuration();
         config.setClassForTemplateLoading(this.getClass(), "/");
