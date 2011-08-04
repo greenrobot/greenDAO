@@ -31,7 +31,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "NOTE (" + //
                 "_id INTEGER PRIMARY KEY ," + // 0
                 "TEXT TEXT NOT NULL ," + // 1
-                "DATE TEXT NOT NULL );"; // 2
+                "DATE TEXT);"; // 2
         db.execSQL(sql);
     }
 
@@ -63,7 +63,11 @@ public class NoteDao extends AbstractDao<Note, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getText());
-        stmt.bindString(3, entity.getDate());
+ 
+        String date = entity.getDate();
+        if (date != null) {
+            stmt.bindString(3, date);
+        }
     }
 
     /** @inheritdoc */
@@ -72,7 +76,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
         return new Note( //
             cursor.isNull(0) ? null : cursor.getLong(0), // id
             cursor.getString(1), // text
-            cursor.getString(2) // date
+            cursor.isNull(2) ? null : cursor.getString(2) // date
         );
     }
     

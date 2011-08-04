@@ -17,7 +17,7 @@ public class ExampleDaoGenerator {
         Entity simple = schema.addEntity("Note");
         simple.addIdProperty();
         simple.addStringProperty("text").notNull();
-        simple.addStringProperty("date").notNull();
+        simple.addStringProperty("date");
 
         new DaoGenerator().generateAll("../DaoExample/src-gen", schema);
     }
