@@ -16,6 +16,18 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
 
     public static final String TABLENAME = "TEST_ENTITY";
 
+    public static class Properties {
+        public final static Column Id = new Column("_id", true);
+        public final static Column SimpleInt = new Column("SIMPLE_INT", false);
+        public final static Column SimpleInteger = new Column("SIMPLE_INTEGER", false);
+        public final static Column SimpleStringNotNull = new Column("SIMPLE_STRING_NOT_NULL", false);
+        public final static Column SimpleString = new Column("SIMPLE_STRING", false);
+        public final static Column IndexedString = new Column("INDEXED_STRING", false);
+        public final static Column IndexedStringAscUnique = new Column("INDEXED_STRING_ASC_UNIQUE", false);
+    };
+    
+
+
     public static Column[] COLUMN_MODEL = {
         new Column("_id", true),
         new Column("SIMPLE_INT", false),
@@ -26,12 +38,9 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         new Column("INDEXED_STRING_ASC_UNIQUE", false)
     };
     
-    private DaoMaster daoMaster;
-
     public TestEntityDao(SQLiteDatabase db) {
         super(db);
     }
-    
     
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {

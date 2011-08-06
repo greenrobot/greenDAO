@@ -2,6 +2,7 @@ package de.greenrobot.testdao;
 
 import de.greenrobot.dao.ActiveEntity;
 import de.greenrobot.testdao.DaoMaster;
+
 // THIS CODE IS GENERATED, DO NOT EDIT.
 /** 
  * Entity mapped to table RELATION_ENTITY (schema version 1).

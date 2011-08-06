@@ -16,6 +16,7 @@
 
 package de.greenrobot.dao;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,6 +55,16 @@ public abstract class AbstractDao<T, K> {
 
     public AbstractDao(SQLiteDatabase db) {
         this.db = db;
+        try {
+            Class<?> propertiesClass = Class.forName(getClass().getName() + "$Properties");
+            Field[] fields = propertiesClass.getDeclaredFields();
+            for (Field field : fields) {
+                Column property = (Column) field.get(null);
+                // TODO sort properties to ordinal
+            }
+        } catch (Exception e) {
+            throw new DaoException("Could not init DAO", e);
+        }
         Column[] columns = getColumnModel();
         allColumns = new String[columns.length];
 
@@ -157,7 +168,7 @@ public abstract class AbstractDao<T, K> {
     protected String getSelectAll() {
         if (selectAll == null) {
             StringBuilder builder = new StringBuilder("SELECT ");
-            apppendCommaSeparated(builder, "",allColumns);
+            apppendCommaSeparated(builder, "", allColumns);
             builder.append(" FROM ").append(getTablename()).append(' ');
             selectAll = builder.toString();
         }
@@ -169,7 +180,7 @@ public abstract class AbstractDao<T, K> {
         if (selectByKey == null) {
             StringBuilder builder = new StringBuilder(getSelectAll());
             builder.append("WHERE ");
-            apppendCommaSeparated(builder, "",pkColumns);
+            apppendCommaSeparated(builder, "", pkColumns);
             builder.append('=');
             apppendPlaceholders(builder, pkColumns.length);
             selectByKey = builder.toString();

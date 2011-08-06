@@ -16,6 +16,14 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
 
     public static final String TABLENAME = "RELATION_ENTITY";
 
+    public static class Properties {
+        public final static Column Id = new Column("_id", true);
+        public final static Column ParentId = new Column("PARENT_ID", false);
+        public final static Column TestId = new Column("TEST_ID", false);
+    };
+    
+
+
     public static Column[] COLUMN_MODEL = {
         new Column("_id", true),
         new Column("PARENT_ID", false),
@@ -24,15 +32,14 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     
     private DaoMaster daoMaster;
 
-    public RelationEntityDao(SQLiteDatabase db) {
-        super(db);
-    }
-    
     public RelationEntityDao(SQLiteDatabase db, DaoMaster daoMaster) {
         super(db);
         this.daoMaster = daoMaster;
     }
-    
+
+    public RelationEntityDao(SQLiteDatabase db) {
+        super(db);
+    }
     
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {

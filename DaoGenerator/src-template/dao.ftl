@@ -21,25 +21,33 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 
     public static final String TABLENAME = "${entity.tableName}";
 
+    public static class Properties {
+<#list entity.properties as property>
+        public final static Column ${property.propertyName?cap_first} = new Column("${property.columnName}", ${property.primaryKey?string});
+</#list>
+    };
+    
+
+
     public static Column[] COLUMN_MODEL = {
 <#list entity.properties as property>
         new Column("${property.columnName}", ${property.primaryKey?string})<#if property_has_next>,</#if>
 </#list>
     };
     
+<#if entity.active>
     private DaoMaster daoMaster;
 
-    public ${entity.classNameDao}(SQLiteDatabase db) {
-        super(db);
-    }
-    
-<#if entity.active>
     public ${entity.classNameDao}(SQLiteDatabase db, DaoMaster daoMaster) {
         super(db);
         this.daoMaster = daoMaster;
     }
-    
+
+<#else>    
 </#if>
+    public ${entity.classNameDao}(SQLiteDatabase db) {
+        super(db);
+    }
     
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {

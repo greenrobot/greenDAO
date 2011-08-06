@@ -16,6 +16,21 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
 
     public static final String TABLENAME = "SIMPLE_ENTITY_NOT_NULL";
 
+    public static class Properties {
+        public final static Column Id = new Column("_id", true);
+        public final static Column SimpleBoolean = new Column("SIMPLE_BOOLEAN", false);
+        public final static Column SimpleByte = new Column("SIMPLE_BYTE", false);
+        public final static Column SimpleShort = new Column("SIMPLE_SHORT", false);
+        public final static Column SimpleInt = new Column("SIMPLE_INT", false);
+        public final static Column SimpleLong = new Column("SIMPLE_LONG", false);
+        public final static Column SimpleFloat = new Column("SIMPLE_FLOAT", false);
+        public final static Column SimpleDouble = new Column("SIMPLE_DOUBLE", false);
+        public final static Column SimpleString = new Column("SIMPLE_STRING", false);
+        public final static Column SimpleByteArray = new Column("SIMPLE_BYTE_ARRAY", false);
+    };
+    
+
+
     public static Column[] COLUMN_MODEL = {
         new Column("_id", true),
         new Column("SIMPLE_BOOLEAN", false),
@@ -29,12 +44,9 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
         new Column("SIMPLE_BYTE_ARRAY", false)
     };
     
-    private DaoMaster daoMaster;
-
     public SimpleEntityNotNullDao(SQLiteDatabase db) {
         super(db);
     }
-    
     
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {

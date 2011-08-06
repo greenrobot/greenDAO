@@ -1,12 +1,7 @@
 package ${schema.defaultJavaPackageDao};
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
-
-import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.AbstractDaoMaster;
-import de.greenrobot.dao.Column;
 
 <#list schema.entities as entity>
 import ${entity.javaPackageDao}.${entity.classNameDao};
