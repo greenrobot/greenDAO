@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 
 import android.util.Log;
 
-public class ReflectionPerformanceTest
+public class ReflectionPerformanceTest // extends TestCase
 {
 
     int intValue;

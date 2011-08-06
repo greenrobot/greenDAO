@@ -1,6 +1,5 @@
 package de.greenrobot.testdao;
 
-
 // THIS CODE IS GENERATED, DO NOT EDIT.
 /** 
  * Entity mapped to table SIMPLE_ENTITY (schema version 1).
@@ -17,6 +16,7 @@ public class SimpleEntity {
     private Double simpleDouble; 
     private String simpleString; 
     private byte[] simpleByteArray; 
+
 
     public SimpleEntity() {
     }
@@ -117,5 +117,6 @@ public class SimpleEntity {
     public void setSimpleByteArray(byte[] simpleByteArray) {
         this.simpleByteArray = simpleByteArray;
     } 
+
 
 }

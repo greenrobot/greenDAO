@@ -75,17 +75,17 @@ public class AbstractDaoMaster {
 
     public <T> long insert(T entity) {
         @SuppressWarnings("unchecked")
-        AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDaoFor(entity.getClass());
+        AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entity.getClass());
         return dao.insert(entity);
     }
 
     public <T, K> T load(Class<T> entityClass, K key) {
         @SuppressWarnings("unchecked")
-        AbstractDao<T, K> dao = (AbstractDao<T, K>) getDaoFor(entityClass);
+        AbstractDao<T, K> dao = (AbstractDao<T, K>) getDao(entityClass);
         return dao.load(key);
     }
 
-    protected AbstractDao<?, ?> getDaoFor(Class<? extends Object> entityClass) {
+    public AbstractDao<?, ?> getDao(Class<? extends Object> entityClass) {
         AbstractDao<?, ?> dao = entityToDao.get(entityClass);
         if (dao == null) {
             throw new RuntimeException("No DAO registered for " + entityClass);

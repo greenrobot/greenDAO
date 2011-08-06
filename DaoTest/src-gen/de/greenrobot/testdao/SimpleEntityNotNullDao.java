@@ -28,10 +28,13 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
         new Column("SIMPLE_STRING", false),
         new Column("SIMPLE_BYTE_ARRAY", false)
     };
+    
+    private DaoMaster daoMaster;
 
     public SimpleEntityNotNullDao(SQLiteDatabase db) {
         super(db);
     }
+    
     
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
@@ -86,7 +89,7 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
     /** @inheritdoc */
     @Override
     public SimpleEntityNotNull readFrom(Cursor cursor) {
-        return new SimpleEntityNotNull( //
+        SimpleEntityNotNull entity = new SimpleEntityNotNull( //
             cursor.getLong(0), // id
             cursor.getShort(1) != 0, // simpleBoolean
             (byte) cursor.getShort(2), // simpleByte
@@ -98,6 +101,7 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
             cursor.getString(8), // simpleString
             cursor.getBlob(9) // simpleByteArray
         );
+        return entity;
     }
     
     /** @inheritdoc */

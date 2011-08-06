@@ -26,10 +26,20 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
         new Column("${property.columnName}", ${property.primaryKey?string})<#if property_has_next>,</#if>
 </#list>
     };
+    
+    private DaoMaster daoMaster;
 
     public ${entity.classNameDao}(SQLiteDatabase db) {
         super(db);
     }
+    
+<#if entity.active>
+    public ${entity.classNameDao}(SQLiteDatabase db, DaoMaster daoMaster) {
+        super(db);
+        this.daoMaster = daoMaster;
+    }
+    
+</#if>
     
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
@@ -105,13 +115,17 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 <#--
 ############################## readFrom non-protobuff, constructor ############################## 
 -->
-        return new ${entity.className}( //
+        ${entity.className} entity = new ${entity.className}( //
 <#list entity.properties as property>
             <#if !property.notNull>cursor.isNull(${property_index}) ? null : </#if><#if
             property.propertyType == "Byte">(byte) </#if>cursor.get${toCursorType[property.propertyType]}(${property_index})<#if
             property.propertyType == "Boolean"> != 0</#if><#if property_has_next>,</#if> // ${property.propertyName}
 </#list>        
         );
+<#if entity.active>
+        entity.__setDaoMaster(daoMaster);
+</#if>
+        return entity;
 <#else>
 <#--
 ############################## readFrom non-protobuff, setters ############################## 

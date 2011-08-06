@@ -1,6 +1,5 @@
 package de.greenrobot.testdao;
 
-
 // THIS CODE IS GENERATED, DO NOT EDIT.
 /** 
  * Entity mapped to table TEST_ENTITY (schema version 1).
@@ -14,6 +13,7 @@ public class TestEntity {
     private String simpleString; 
     private String indexedString; 
     private String indexedStringAscUnique; 
+
 
     public TestEntity() {
     }
@@ -87,5 +87,6 @@ public class TestEntity {
     public void setIndexedStringAscUnique(String indexedStringAscUnique) {
         this.indexedStringAscUnique = indexedStringAscUnique;
     } 
+
 
 }

@@ -75,9 +75,10 @@ public abstract class AbstractDao<T, K> {
         pkColumns = pkColumnList.toArray(pkColumnsArray);
     }
 
-    protected void apppendCommaSeparated(StringBuilder builder, String[] values) {
+    protected void apppendCommaSeparated(StringBuilder builder, String valuePrefix, String[] values) {
         int length = values.length;
         for (int i = 0; i < length; i++) {
+            builder.append(valuePrefix);
             builder.append(values[i]);
             if (i < length - 1) {
                 builder.append(',');
@@ -114,7 +115,7 @@ public abstract class AbstractDao<T, K> {
     protected String createSqlForInsert(String insertInto) {
         StringBuilder builder = new StringBuilder(insertInto);
         builder.append(getTablename()).append(" (");
-        apppendCommaSeparated(builder, allColumns);
+        apppendCommaSeparated(builder, "", allColumns);
         builder.append(") VALUES (");
         apppendPlaceholders(builder, allColumns.length);
         builder.append(')');
@@ -156,18 +157,19 @@ public abstract class AbstractDao<T, K> {
     protected String getSelectAll() {
         if (selectAll == null) {
             StringBuilder builder = new StringBuilder("SELECT ");
-            apppendCommaSeparated(builder, allColumns);
+            apppendCommaSeparated(builder, "",allColumns);
             builder.append(" FROM ").append(getTablename()).append(' ');
             selectAll = builder.toString();
         }
         return selectAll;
     }
 
+    // TODO precompile
     protected String getSelectByKey() {
         if (selectByKey == null) {
             StringBuilder builder = new StringBuilder(getSelectAll());
             builder.append("WHERE ");
-            apppendCommaSeparated(builder, pkColumns);
+            apppendCommaSeparated(builder, "",pkColumns);
             builder.append('=');
             apppendPlaceholders(builder, pkColumns.length);
             selectByKey = builder.toString();

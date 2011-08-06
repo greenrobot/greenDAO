@@ -16,6 +16,7 @@ public class Entity {
     private final List<Property> propertiesNonPk;
     private final Set<String> propertyNames;
     private final List<Index> indexes;
+    private final List<ToOne> toOneRelations;
 
     private String tableName;
     private String classNameDao;
@@ -25,6 +26,8 @@ public class Entity {
     private String pkType;
     private boolean protobuf;
     private boolean constructors;
+    private boolean skipGeneration;
+    private boolean active;
 
     public Entity(Schema schema, String className) {
         this.schema = schema;
@@ -33,7 +36,8 @@ public class Entity {
         propertiesPk = new ArrayList<Property>();
         propertiesNonPk = new ArrayList<Property>();
         propertyNames = new HashSet<String>();
-        this.indexes = new ArrayList<Index>();
+        indexes = new ArrayList<Index>();
+        toOneRelations = new ArrayList<ToOne>();
         constructors = true;
     }
 
@@ -87,6 +91,15 @@ public class Entity {
         PropertyBuilder builder = addLongProperty("id");
         builder.columnName("_id").primaryKey();
         return builder;
+    }
+
+    public ToOne addToOne(Entity target, Property... fkProperties) {
+        if (fkProperties.length == 0) {
+            throw new IllegalArgumentException("fkProperties missing");
+        }
+        ToOne toOne = new ToOne(target, fkProperties);
+        toOneRelations.add(toOne);
+        return toOne;
     }
 
     /**
@@ -158,7 +171,7 @@ public class Entity {
     public Property getPkProperty() {
         return pkProperty;
     }
-    
+
     public List<Index> getIndexes() {
         return indexes;
     }
@@ -173,6 +186,26 @@ public class Entity {
 
     public void setConstructors(boolean constructors) {
         this.constructors = constructors;
+    }
+
+    public boolean isSkipGeneration() {
+        return skipGeneration;
+    }
+
+    /**
+     * Flag if the entity's code generation should be skipped. E.g. if you need to change the class after initial
+     * generation.
+     */
+    public void setSkipGeneration(boolean skipGeneration) {
+        this.skipGeneration = skipGeneration;
+    }
+
+    public List<ToOne> getToOneRelations() {
+        return toOneRelations;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     void init2ndPass() {
@@ -192,6 +225,13 @@ public class Entity {
             pkType = schema.mapToJavaTypeNullable(pkProperty.getPropertyType());
         } else {
             pkType = "Void";
+        }
+
+        active = !toOneRelations.isEmpty();
+        for (ToOne toOne : toOneRelations) {
+            if (toOne.getName() == null) {
+                toOne.setName(toOne.getEntity().getClassName());
+            }
         }
 
         initIndexNamesWithDefaults();

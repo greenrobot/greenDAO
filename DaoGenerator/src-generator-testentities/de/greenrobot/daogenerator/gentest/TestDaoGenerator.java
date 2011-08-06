@@ -2,18 +2,19 @@ package de.greenrobot.daogenerator.gentest;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
+import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
 
 /**
  * Generates test entities for test project DaoTest.
- *  
+ * 
  * @author Markus
  */
 public class TestDaoGenerator {
 
     public static void main(String[] args) throws Exception {
         Schema schema = new Schema(1, "de.greenrobot.testdao");
-        
+
         Entity simple = schema.addEntity("SimpleEntity");
         simple.addIdProperty();
         simple.addBooleanProperty("simpleBoolean");
@@ -46,6 +47,13 @@ public class TestDaoGenerator {
         testEntity.addStringProperty("simpleString");
         testEntity.addStringProperty("indexedString").index();
         testEntity.addStringProperty("indexedStringAscUnique").indexAsc(null, true);
+
+        Entity relationEntity = schema.addEntity("RelationEntity");
+        relationEntity.addIdProperty();
+        Property parentIdProperty = relationEntity.addLongProperty("parentId").getProperty();
+        relationEntity.addToOne(relationEntity, parentIdProperty);
+        Property testIdProperty = relationEntity.addLongProperty("testId").getProperty();
+        relationEntity.addToOne(testEntity, testIdProperty);
 
         new DaoGenerator().generateAll("../DaoTest/src-gen", schema);
     }

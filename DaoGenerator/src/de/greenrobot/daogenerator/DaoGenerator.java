@@ -36,6 +36,7 @@ public class DaoGenerator {
         config.setObjectWrapper(new DefaultObjectWrapper());
 
         Template templateDao = config.getTemplate("dao.ftl");
+        Template templateDaoMaster = config.getTemplate("dao-master.ftl");
         Template templateEntity = config.getTemplate("entity.ftl");
 
         schema.init2ndPass();
@@ -44,15 +45,18 @@ public class DaoGenerator {
 
         for (Entity entity : entities) {
             generate(templateDao, outDirFile, entity.getJavaPackageDao(), entity.getClassNameDao(), schema, entity);
-            if (!entity.isProtobuf()) {
+            if (!entity.isProtobuf() && !entity.isSkipGeneration()) {
                 generate(templateEntity, outDirFile, entity.getJavaPackage(), entity.getClassName(), schema, entity);
             }
         }
+        generate(templateDaoMaster, outDirFile, schema.getDefaultJavaPackageDao(), "DaoMaster", schema, null);
+        
+        
         long time = System.currentTimeMillis() - start;
         System.out.println("Processed " + entities.size() + " entities in " + time + "ms");
     }
 
-    private void generate(Template template, File outDirFile, String javaPackage, String javaClass, Schema schema,
+    private void generate(Template template, File outDirFile, String javaPackage, String javaFilename, Schema schema,
             Entity entity) throws TemplateException, IOException {
         String packageSubPath = javaPackage.replace('.', '/');
         File packagePath = new File(outDirFile, packageSubPath);
@@ -62,7 +66,7 @@ public class DaoGenerator {
         root.put("schema", schema);
         root.put("entity", entity);
 
-        File file = new File(packagePath, javaClass + ".java");
+        File file = new File(packagePath, javaFilename + ".java");
         Writer writer = new FileWriter(file);
         try {
             template.process(root, writer);

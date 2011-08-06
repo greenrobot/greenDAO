@@ -118,6 +118,9 @@ public class Schema {
     }
 
     void init2ndPass() {
+        if (defaultJavaPackageDao == null) {
+            defaultJavaPackageDao = defaultJavaPackage;
+        }
         for (Entity entity : entities) {
             entity.init2ndPass();
         }

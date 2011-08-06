@@ -25,10 +25,13 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         new Column("INDEXED_STRING", false),
         new Column("INDEXED_STRING_ASC_UNIQUE", false)
     };
+    
+    private DaoMaster daoMaster;
 
     public TestEntityDao(SQLiteDatabase db) {
         super(db);
     }
+    
     
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
@@ -102,7 +105,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
     /** @inheritdoc */
     @Override
     public TestEntity readFrom(Cursor cursor) {
-        return new TestEntity( //
+        TestEntity entity = new TestEntity( //
             cursor.isNull(0) ? null : cursor.getLong(0), // id
             cursor.getInt(1), // simpleInt
             cursor.isNull(2) ? null : cursor.getInt(2), // simpleInteger
@@ -111,6 +114,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
             cursor.isNull(5) ? null : cursor.getString(5), // indexedString
             cursor.isNull(6) ? null : cursor.getString(6) // indexedStringAscUnique
         );
+        return entity;
     }
     
     /** @inheritdoc */
