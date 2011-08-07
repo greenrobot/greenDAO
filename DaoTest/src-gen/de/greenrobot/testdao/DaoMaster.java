@@ -13,6 +13,15 @@ import de.greenrobot.testdao.RelationEntityDao;
  * Master of DAO (schema version 1): knows all DAOs.
 */
 public class DaoMaster extends AbstractDaoMaster {
+
+    /** Creates underlying database table using DAOs. */
+    public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
+        SimpleEntityDao.createTable(db, ifNotExists);
+        SimpleEntityNotNullDao.createTable(db, ifNotExists);
+        TestEntityDao.createTable(db, ifNotExists);
+        RelationEntityDao.createTable(db, ifNotExists);
+    }
+
     private final SimpleEntityDao simpleEntityDao;
     private final SimpleEntityNotNullDao simpleEntityNotNullDao;
     private final TestEntityDao testEntityDao;
@@ -20,25 +29,32 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(SQLiteDatabase db) {
         super(db);
+
         simpleEntityDao = new SimpleEntityDao(db);
         simpleEntityNotNullDao = new SimpleEntityNotNullDao(db);
         testEntityDao = new TestEntityDao(db);
         relationEntityDao = new RelationEntityDao(db, this);
+
+        registerDao(SimpleEntity.class, simpleEntityDao);
+        registerDao(SimpleEntityNotNull.class, simpleEntityNotNullDao);
+        registerDao(TestEntity.class, testEntityDao);
+        registerDao(RelationEntity.class, relationEntityDao);
     }
     
     public SimpleEntityDao getSimpleEntityDao() {
         return simpleEntityDao;
     }
+
     public SimpleEntityNotNullDao getSimpleEntityNotNullDao() {
         return simpleEntityNotNullDao;
     }
+
     public TestEntityDao getTestEntityDao() {
         return testEntityDao;
     }
+
     public RelationEntityDao getRelationEntityDao() {
         return relationEntityDao;
     }
-
-    
 
 }
