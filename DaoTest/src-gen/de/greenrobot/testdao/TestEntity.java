@@ -14,7 +14,6 @@ public class TestEntity {
     private String indexedString; 
     private String indexedStringAscUnique; 
 
-
     public TestEntity() {
     }
 

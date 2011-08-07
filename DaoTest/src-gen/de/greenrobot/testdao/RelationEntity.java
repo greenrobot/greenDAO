@@ -15,7 +15,12 @@ public class RelationEntity extends ActiveEntity {
 
     /** Used to resolve relations */
     private DaoMaster daoMaster;
-    
+
+    private RelationEntity relationEntity;
+    private boolean relationEntity__resolved;
+
+    private TestEntity testEntity;
+    private boolean testEntity__resolved;
 
     public RelationEntity() {
     }
@@ -59,16 +64,24 @@ public class RelationEntity extends ActiveEntity {
         this.testId = testId;
     } 
 
-    /** To-one relationship, which is resolved on first access. */ 
+    /** To-one relationship, resolved on first access. */ 
     public RelationEntity getRelationEntity() {
-        RelationEntityDao dao = daoMaster.getRelationEntityDao();
-        return dao.load(parentId);
+        if(!relationEntity__resolved) {
+            RelationEntityDao dao = daoMaster.getRelationEntityDao();
+             relationEntity = dao.load(parentId);
+             relationEntity__resolved = true;
+        }
+        return relationEntity;
     } 
 
-    /** To-one relationship, which is resolved on first access. */ 
+    /** To-one relationship, resolved on first access. */ 
     public TestEntity getTestEntity() {
-        TestEntityDao dao = daoMaster.getTestEntityDao();
-        return dao.load(testId);
+        if(!testEntity__resolved) {
+            TestEntityDao dao = daoMaster.getTestEntityDao();
+             testEntity = dao.load(testId);
+             testEntity__resolved = true;
+        }
+        return testEntity;
     } 
 
 

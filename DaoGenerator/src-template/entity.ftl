@@ -20,9 +20,13 @@ public class ${entity.className} <#if entity.active>extends ActiveEntity </#if>{
 <#if entity.active>
     /** Used to resolve relations */
     private DaoMaster daoMaster;
-    
-</#if>
 
+<#list entity.toOneRelations as toOne>
+    private ${toOne.entity.className} ${toOne.name};
+    private boolean ${toOne.name}__resolved;
+
+</#list>    
+</#if>
 <#if entity.constructors>
     public ${entity.className}() {
     }
@@ -62,16 +66,20 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 
 </#list>
 <#list entity.toOneRelations as toOne>
-    /** To-one relationship, which is resolved on first access. */ 
+    /** To-one relationship, resolved on first access. */ 
     public ${toOne.entity.className} get${toOne.name?cap_first}() {
-        ${toOne.entity.classNameDao} dao = daoMaster.get${toOne.entity.classNameDao?cap_first}();
-        return dao.load(<#list toOne.fkProperties as fk>${fk.propertyName}<#if fk_has_next>, </#if></#list>);
+        if(!${toOne.name}__resolved) {
+            ${toOne.entity.classNameDao} dao = daoMaster.get${toOne.entity.classNameDao?cap_first}();
+             ${toOne.name} = dao.load(<#list toOne.fkProperties as fk>${fk.propertyName}<#if fk_has_next>, </#if></#list>);
+             ${toOne.name}__resolved = true;
+        }
+        return ${toOne.name};
+    } 
+
+</#list>
 <#--        
         return dao.query(", ${entity.tableName} T2 WHERE T.=T2. AND T.=?", <#list
             toOne.fkProperties as fk>${fk.propertyName}<#if fk_has_next>, </#if></#list>);
 -->
-    } 
-
-</#list>
 
 }

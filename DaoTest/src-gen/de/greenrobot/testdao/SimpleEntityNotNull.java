@@ -17,7 +17,6 @@ public class SimpleEntityNotNull {
     private String simpleString; 
     private byte[] simpleByteArray; 
 
-
     public SimpleEntityNotNull() {
     }
 

@@ -230,7 +230,9 @@ public class Entity {
         active = !toOneRelations.isEmpty();
         for (ToOne toOne : toOneRelations) {
             if (toOne.getName() == null) {
-                toOne.setName(toOne.getEntity().getClassName());
+                char[] nameCharArray = toOne.getEntity().getClassName().toCharArray();
+                nameCharArray[0] = Character.toLowerCase(nameCharArray[0]);
+                toOne.setName(new String(nameCharArray));
             }
         }
 

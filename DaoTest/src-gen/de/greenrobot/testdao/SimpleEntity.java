@@ -17,7 +17,6 @@ public class SimpleEntity {
     private String simpleString; 
     private byte[] simpleByteArray; 
 
-
     public SimpleEntity() {
     }
 
