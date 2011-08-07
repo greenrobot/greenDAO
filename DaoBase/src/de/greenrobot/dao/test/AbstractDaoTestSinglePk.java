@@ -24,8 +24,7 @@ import java.util.Set;
 import android.database.SQLException;
 import android.util.Log;
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Column;
-import de.greenrobot.dao.test.AbstractDaoTest;
+import de.greenrobot.dao.Property;
 
 /**
  * Default tests for single-PK entities.
@@ -42,7 +41,7 @@ import de.greenrobot.dao.test.AbstractDaoTest;
 public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K> extends AbstractDaoTest<D, T, K> {
 
     protected Set<K> usedPks;
-    private Column pkColumn;
+    private Property pkColumn;
 
     public AbstractDaoTestSinglePk(Class<D> daoClass) {
         super(daoClass);
@@ -52,8 +51,8 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
     @Override
     protected void setUp() {
         super.setUp();
-        Column[] columns = daoAccess.getColumnModel();
-        for (Column column : columns) {
+        Property[] columns = daoAccess.getProperties();
+        for (Property column : columns) {
             if (column.primaryKey) {
                 if (pkColumn != null) {
                     throw new RuntimeException("Test does not work with multiple PK columns");

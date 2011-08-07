@@ -25,7 +25,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.ApplicationTestCase;
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Column;
+import de.greenrobot.dao.Property;
 import de.greenrobot.dao.UnitTestDaoAccess;
 
 /**
@@ -47,7 +47,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     protected Random random;
     protected final Class<D> daoClass;
     protected UnitTestDaoAccess<T, K> daoAccess;
-    protected Column pkColumn;
+    protected Property pkColumn;
     private final boolean inMemory;
 
     public AbstractDaoTest(Class<D> daoClass) {

@@ -16,13 +16,17 @@
 
 package de.greenrobot.dao;
 
-public class Column {
+public class Property {
+    public final int oridinal;
     public final String name;
     public final boolean primaryKey;
+    public final String columnName;
 
-    public Column(String name, boolean primaryKey) {
+    public Property(int oridinal, String name, boolean primaryKey, String columnName) {
+        this.oridinal = oridinal;
         this.name = name;
         this.primaryKey = primaryKey;
+        this.columnName = columnName;
     }
 
 }

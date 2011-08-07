@@ -28,8 +28,8 @@ public class UnitTestDaoAccess<T, K> {
         return dao.getPrimaryKeyValue(entity);
     }
 
-    public Column[] getColumnModel() {
-        return dao.getColumnModel();
+    public Property[] getProperties() {
+        return dao.getProperties();
     }
 
     public boolean isEntityUpdateable() {

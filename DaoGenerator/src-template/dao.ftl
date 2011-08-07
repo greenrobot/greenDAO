@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Column;
+import de.greenrobot.dao.Property;
 
 import ${entity.javaPackage}.${entity.className};
 <#if entity.protobuf>
@@ -23,18 +23,10 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 
     public static class Properties {
 <#list entity.properties as property>
-        public final static Column ${property.propertyName?cap_first} = new Column("${property.columnName}", ${property.primaryKey?string});
+        public final static Property ${property.propertyName?cap_first} = new Property(${property_index}, "${property.propertyName}", ${property.primaryKey?string}, "${property.columnName}");
 </#list>
     };
-    
 
-
-    public static Column[] COLUMN_MODEL = {
-<#list entity.properties as property>
-        new Column("${property.columnName}", ${property.primaryKey?string})<#if property_has_next>,</#if>
-</#list>
-    };
-    
 <#if entity.active>
     private DaoMaster daoMaster;
 
@@ -76,12 +68,6 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
     @Override
     public String getTablename() {
         return TABLENAME;
-    }
-
-    /** @inheritdoc */
-    @Override
-    protected Column[] getColumnModel() {
-        return COLUMN_MODEL;
     }
 
     /** @inheritdoc */

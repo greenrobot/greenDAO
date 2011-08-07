@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Column;
+import de.greenrobot.dao.Property;
 
 import de.greenrobot.testdao.SimpleEntityNotNull;
 
@@ -17,33 +17,18 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
     public static final String TABLENAME = "SIMPLE_ENTITY_NOT_NULL";
 
     public static class Properties {
-        public final static Column Id = new Column("_id", true);
-        public final static Column SimpleBoolean = new Column("SIMPLE_BOOLEAN", false);
-        public final static Column SimpleByte = new Column("SIMPLE_BYTE", false);
-        public final static Column SimpleShort = new Column("SIMPLE_SHORT", false);
-        public final static Column SimpleInt = new Column("SIMPLE_INT", false);
-        public final static Column SimpleLong = new Column("SIMPLE_LONG", false);
-        public final static Column SimpleFloat = new Column("SIMPLE_FLOAT", false);
-        public final static Column SimpleDouble = new Column("SIMPLE_DOUBLE", false);
-        public final static Column SimpleString = new Column("SIMPLE_STRING", false);
-        public final static Column SimpleByteArray = new Column("SIMPLE_BYTE_ARRAY", false);
+        public final static Property Id = new Property(0, "id", true, "_id");
+        public final static Property SimpleBoolean = new Property(1, "simpleBoolean", false, "SIMPLE_BOOLEAN");
+        public final static Property SimpleByte = new Property(2, "simpleByte", false, "SIMPLE_BYTE");
+        public final static Property SimpleShort = new Property(3, "simpleShort", false, "SIMPLE_SHORT");
+        public final static Property SimpleInt = new Property(4, "simpleInt", false, "SIMPLE_INT");
+        public final static Property SimpleLong = new Property(5, "simpleLong", false, "SIMPLE_LONG");
+        public final static Property SimpleFloat = new Property(6, "simpleFloat", false, "SIMPLE_FLOAT");
+        public final static Property SimpleDouble = new Property(7, "simpleDouble", false, "SIMPLE_DOUBLE");
+        public final static Property SimpleString = new Property(8, "simpleString", false, "SIMPLE_STRING");
+        public final static Property SimpleByteArray = new Property(9, "simpleByteArray", false, "SIMPLE_BYTE_ARRAY");
     };
-    
 
-
-    public static Column[] COLUMN_MODEL = {
-        new Column("_id", true),
-        new Column("SIMPLE_BOOLEAN", false),
-        new Column("SIMPLE_BYTE", false),
-        new Column("SIMPLE_SHORT", false),
-        new Column("SIMPLE_INT", false),
-        new Column("SIMPLE_LONG", false),
-        new Column("SIMPLE_FLOAT", false),
-        new Column("SIMPLE_DOUBLE", false),
-        new Column("SIMPLE_STRING", false),
-        new Column("SIMPLE_BYTE_ARRAY", false)
-    };
-    
     public SimpleEntityNotNullDao(SQLiteDatabase db) {
         super(db);
     }
@@ -74,12 +59,6 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
     @Override
     public String getTablename() {
         return TABLENAME;
-    }
-
-    /** @inheritdoc */
-    @Override
-    protected Column[] getColumnModel() {
-        return COLUMN_MODEL;
     }
 
     /** @inheritdoc */

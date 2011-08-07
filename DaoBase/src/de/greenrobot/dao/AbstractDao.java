@@ -49,6 +49,7 @@ public abstract class AbstractDao<T, K> {
     private volatile String selectByKey;
     private volatile String selectByRowId;
 
+    private final Property[] properties;
     private final String[] allColumns;
     private final String[] pkColumns;
     private final String[] nonPkColumns;
@@ -58,23 +59,26 @@ public abstract class AbstractDao<T, K> {
         try {
             Class<?> propertiesClass = Class.forName(getClass().getName() + "$Properties");
             Field[] fields = propertiesClass.getDeclaredFields();
+            properties = new Property[fields.length];
             for (Field field : fields) {
-                Column property = (Column) field.get(null);
-                // TODO sort properties to ordinal
+                Property property = (Property) field.get(null);
+                if (properties[property.oridinal] != null) {
+                    throw new DaoException("Duplicate property ordinals");
+                }
+                properties[property.oridinal] = property;
             }
         } catch (Exception e) {
             throw new DaoException("Could not init DAO", e);
         }
-        Column[] columns = getColumnModel();
-        allColumns = new String[columns.length];
+        allColumns = new String[properties.length];
 
         List<String> pkColumnList = new ArrayList<String>();
         List<String> nonPkColumnList = new ArrayList<String>();
-        for (int i = 0; i < columns.length; i++) {
-            Column column = columns[i];
-            String name = column.name;
+        for (int i = 0; i < properties.length; i++) {
+            Property property = properties[i];
+            String name = property.columnName;
             allColumns[i] = name;
-            if (column.primaryKey) {
+            if (property.primaryKey) {
                 pkColumnList.add(name);
             } else {
                 nonPkColumnList.add(name);
@@ -186,6 +190,10 @@ public abstract class AbstractDao<T, K> {
             selectByKey = builder.toString();
         }
         return selectByKey;
+    }
+    
+    protected Property[] getProperties() {
+        return properties;
     }
 
     public String[] getAllColumns() {
@@ -461,8 +469,6 @@ public abstract class AbstractDao<T, K> {
     abstract protected void bindValues(SQLiteStatement stmt, T entity);
 
     abstract public String getTablename();
-
-    abstract protected Column[] getColumnModel();
 
     abstract protected void updateKeyAfterInsert(T entity, long rowId);
 

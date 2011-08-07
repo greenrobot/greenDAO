@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Column;
+import de.greenrobot.dao.Property;
 
 import de.greenrobot.testdao.TestEntity;
 
@@ -17,27 +17,15 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
     public static final String TABLENAME = "TEST_ENTITY";
 
     public static class Properties {
-        public final static Column Id = new Column("_id", true);
-        public final static Column SimpleInt = new Column("SIMPLE_INT", false);
-        public final static Column SimpleInteger = new Column("SIMPLE_INTEGER", false);
-        public final static Column SimpleStringNotNull = new Column("SIMPLE_STRING_NOT_NULL", false);
-        public final static Column SimpleString = new Column("SIMPLE_STRING", false);
-        public final static Column IndexedString = new Column("INDEXED_STRING", false);
-        public final static Column IndexedStringAscUnique = new Column("INDEXED_STRING_ASC_UNIQUE", false);
+        public final static Property Id = new Property(0, "id", true, "_id");
+        public final static Property SimpleInt = new Property(1, "simpleInt", false, "SIMPLE_INT");
+        public final static Property SimpleInteger = new Property(2, "simpleInteger", false, "SIMPLE_INTEGER");
+        public final static Property SimpleStringNotNull = new Property(3, "simpleStringNotNull", false, "SIMPLE_STRING_NOT_NULL");
+        public final static Property SimpleString = new Property(4, "simpleString", false, "SIMPLE_STRING");
+        public final static Property IndexedString = new Property(5, "indexedString", false, "INDEXED_STRING");
+        public final static Property IndexedStringAscUnique = new Property(6, "indexedStringAscUnique", false, "INDEXED_STRING_ASC_UNIQUE");
     };
-    
 
-
-    public static Column[] COLUMN_MODEL = {
-        new Column("_id", true),
-        new Column("SIMPLE_INT", false),
-        new Column("SIMPLE_INTEGER", false),
-        new Column("SIMPLE_STRING_NOT_NULL", false),
-        new Column("SIMPLE_STRING", false),
-        new Column("INDEXED_STRING", false),
-        new Column("INDEXED_STRING_ASC_UNIQUE", false)
-    };
-    
     public TestEntityDao(SQLiteDatabase db) {
         super(db);
     }
@@ -70,12 +58,6 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
     @Override
     public String getTablename() {
         return TABLENAME;
-    }
-
-    /** @inheritdoc */
-    @Override
-    protected Column[] getColumnModel() {
-        return COLUMN_MODEL;
     }
 
     /** @inheritdoc */

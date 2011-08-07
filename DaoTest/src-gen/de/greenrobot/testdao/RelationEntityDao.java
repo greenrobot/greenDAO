@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Column;
+import de.greenrobot.dao.Property;
 
 import de.greenrobot.testdao.RelationEntity;
 
@@ -17,19 +17,11 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     public static final String TABLENAME = "RELATION_ENTITY";
 
     public static class Properties {
-        public final static Column Id = new Column("_id", true);
-        public final static Column ParentId = new Column("PARENT_ID", false);
-        public final static Column TestId = new Column("TEST_ID", false);
+        public final static Property Id = new Property(0, "id", true, "_id");
+        public final static Property ParentId = new Property(1, "parentId", false, "PARENT_ID");
+        public final static Property TestId = new Property(2, "testId", false, "TEST_ID");
     };
-    
 
-
-    public static Column[] COLUMN_MODEL = {
-        new Column("_id", true),
-        new Column("PARENT_ID", false),
-        new Column("TEST_ID", false)
-    };
-    
     private DaoMaster daoMaster;
 
     public RelationEntityDao(SQLiteDatabase db, DaoMaster daoMaster) {
@@ -60,12 +52,6 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     @Override
     public String getTablename() {
         return TABLENAME;
-    }
-
-    /** @inheritdoc */
-    @Override
-    protected Column[] getColumnModel() {
-        return COLUMN_MODEL;
     }
 
     /** @inheritdoc */
