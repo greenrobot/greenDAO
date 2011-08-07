@@ -1,13 +1,12 @@
 package de.greenrobot.testdao;
 
-import de.greenrobot.dao.ActiveEntity;
 import de.greenrobot.testdao.DaoMaster;
 
 // THIS CODE IS GENERATED, DO NOT EDIT.
 /** 
  * Entity mapped to table RELATION_ENTITY (schema version 1).
 */
-public class RelationEntity extends ActiveEntity {
+public class RelationEntity {
 
     private Long id; 
     private Long parentId; 

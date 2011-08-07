@@ -3,7 +3,6 @@
 package ${entity.javaPackage};
 
 <#if entity.active>
-import de.greenrobot.dao.ActiveEntity;
 import ${schema.defaultJavaPackageDao}.DaoMaster;
 
 </#if>
@@ -11,7 +10,7 @@ import ${schema.defaultJavaPackageDao}.DaoMaster;
 /** 
  * Entity mapped to table ${entity.tableName} (schema version ${schema.version}).
 */
-public class ${entity.className} <#if entity.active>extends ActiveEntity </#if>{
+public class ${entity.className} <#if entity.active && false>extends ActiveEntity </#if>{
 
 <#list entity.properties as property>
     private ${property.javaType} ${property.propertyName}; 

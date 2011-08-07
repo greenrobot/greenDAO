@@ -191,7 +191,7 @@ public abstract class AbstractDao<T, K> {
         }
         return selectByKey;
     }
-    
+
     protected Property[] getProperties() {
         return properties;
     }
@@ -208,8 +208,17 @@ public abstract class AbstractDao<T, K> {
         return nonPkColumns;
     }
 
+    /**
+     * Loads and entity for the given PK.
+     * 
+     * @param key a PK value or null
+     * @return The entity or null, if no entity matched the PK value
+     */
     public T load(K key) {
         assertSinglePk();
+        if (key == null) {
+            return null;
+        }
         String sql = getSelectByKey();
         String[] keyArray = new String[] { key.toString() };
         Cursor cursor = db.rawQuery(sql, keyArray);
