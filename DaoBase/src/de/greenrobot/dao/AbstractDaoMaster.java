@@ -29,11 +29,16 @@ import android.database.sqlite.SQLiteDatabase;
 public class AbstractDaoMaster {
     private final SQLiteDatabase db;
     private final Map<Class<?>, AbstractDao<?, ?>> entityToDao;
+    private final int schemaVersion;
 
-    public AbstractDaoMaster(SQLiteDatabase db) {
+    public AbstractDaoMaster(SQLiteDatabase db, int schemaVersion) {
         this.db = db;
+        this.schemaVersion = schemaVersion;
         entityToDao = new HashMap<Class<?>, AbstractDao<?, ?>>();
-
+    }
+    
+    public int getSchemaVersion() {
+        return schemaVersion;
     }
 
     public <T> long insert(T entity) {
