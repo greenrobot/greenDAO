@@ -1,10 +1,5 @@
 package de.greenrobot.dao.test;
 
-import de.greenrobot.testdao.DaoMaster;
-import de.greenrobot.testdao.RelationEntity;
-import de.greenrobot.testdao.RelationEntityDao;
-import de.greenrobot.testdao.TestEntity;
-import de.greenrobot.testdao.TestEntityDao;
 
 public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao, RelationEntity> {
 

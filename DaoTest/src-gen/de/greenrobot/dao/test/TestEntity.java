@@ -1,4 +1,4 @@
-package de.greenrobot.testdao;
+package de.greenrobot.dao.test;
 
 // THIS CODE IS GENERATED, DO NOT EDIT.
 /** 

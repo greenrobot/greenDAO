@@ -1,6 +1,5 @@
 package de.greenrobot.dao.test;
 
-import de.greenrobot.testdao.SimpleEntityNotNull;
 
 public class SimpleEntityNotNullHelper {
     protected static SimpleEntityNotNull createEntity(Long key) {

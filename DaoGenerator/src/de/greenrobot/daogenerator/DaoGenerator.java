@@ -15,20 +15,27 @@ import freemarker.template.TemplateException;
 
 /**
  * Once you have your model created, use this class to generate entities and DAOs.
- *    
+ * 
  * @author Markus
  */
 public class DaoGenerator {
 
     /** Generates all entities and DAOs for the given schema. */
     public void generateAll(String outDir, Schema schema) throws Exception {
+        generateAll(outDir, null, schema);
+    }
+
+    /** Generates all entities and DAOs for the given schema. */
+    public void generateAll(String outDir, String outDirTest, Schema schema) throws Exception {
         long start = System.currentTimeMillis();
-        
+
         System.out.println("greenDAO Generator (preview)");
-        
-        File outDirFile = new File(outDir);
-        if (!outDirFile.exists()) {
-            throw new IOException(outDir + " does not exist. This check is to prevent accidential file generation into a wrong path.");
+
+        File outDirFile = toFileForceExists(outDir);
+
+        File outDirTestFile = null;
+        if (outDirTest != null) {
+            outDirTestFile = toFileForceExists(outDirTest);
         }
 
         Configuration config = new Configuration();
@@ -38,6 +45,7 @@ public class DaoGenerator {
         Template templateDao = config.getTemplate("dao.ftl");
         Template templateDaoMaster = config.getTemplate("dao-master.ftl");
         Template templateEntity = config.getTemplate("entity.ftl");
+        Template templateDaoUnitTest = config.getTemplate("dao-unit-test.ftl");
 
         schema.init2ndPass();
 
@@ -48,25 +56,38 @@ public class DaoGenerator {
             if (!entity.isProtobuf() && !entity.isSkipGeneration()) {
                 generate(templateEntity, outDirFile, entity.getJavaPackage(), entity.getClassName(), schema, entity);
             }
+            if (outDirTestFile != null) {
+                String javaPackageTest = entity.getJavaPackageTest();
+                String classNameTest = entity.getClassNameTest();
+                if (!toJavaFilename(outDirTestFile, javaPackageTest, classNameTest).exists()) {
+                    generate(templateDaoUnitTest, outDirTestFile, javaPackageTest, classNameTest, schema, entity);
+                }
+            }
         }
         generate(templateDaoMaster, outDirFile, schema.getDefaultJavaPackageDao(), "DaoMaster", schema, null);
-        
-        
+
         long time = System.currentTimeMillis() - start;
         System.out.println("Processed " + entities.size() + " entities in " + time + "ms");
     }
 
-    private void generate(Template template, File outDirFile, String javaPackage, String javaFilename, Schema schema,
+    protected File toFileForceExists(String filename) throws IOException {
+        File file = new File(filename);
+        if (!file.exists()) {
+            throw new IOException(filename
+                    + " does not exist. This check is to prevent accidential file generation into a wrong path.");
+        }
+        return file;
+    }
+
+    private void generate(Template template, File outDirFile, String javaPackage, String javaClassName, Schema schema,
             Entity entity) throws TemplateException, IOException {
-        String packageSubPath = javaPackage.replace('.', '/');
-        File packagePath = new File(outDirFile, packageSubPath);
-        packagePath.mkdirs();
+        File file = toJavaFilename(outDirFile, javaPackage, javaClassName);
+        file.getParentFile().mkdirs();
 
         Map<String, Object> root = new HashMap<String, Object>();
         root.put("schema", schema);
         root.put("entity", entity);
 
-        File file = new File(packagePath, javaFilename + ".java");
         Writer writer = new FileWriter(file);
         try {
             template.process(root, writer);
@@ -75,6 +96,13 @@ public class DaoGenerator {
         } finally {
             writer.close();
         }
+    }
+
+    protected File toJavaFilename(File outDirFile, String javaPackage, String javaClassName) {
+        String packageSubPath = javaPackage.replace('.', '/');
+        File packagePath = new File(outDirFile, packageSubPath);
+        File file = new File(packagePath, javaClassName + ".java");
+        return file;
     }
 
 }

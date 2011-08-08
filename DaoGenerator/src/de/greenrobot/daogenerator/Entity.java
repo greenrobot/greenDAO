@@ -20,13 +20,16 @@ public class Entity {
 
     private String tableName;
     private String classNameDao;
+    private String classNameTest;
     private String javaPackage;
     private String javaPackageDao;
+    private String javaPackageTest;
     private Property pkProperty;
     private String pkType;
     private boolean protobuf;
     private boolean constructors;
     private boolean skipGeneration;
+    private boolean skipGenerationTest;
     private boolean active;
 
     public Entity(Schema schema, String className) {
@@ -75,6 +78,10 @@ public class Entity {
 
     public PropertyBuilder addStringProperty(String propertyName) {
         return addProperty(PropertyType.String, propertyName);
+    }
+
+    public PropertyBuilder addDateProperty(String propertyName) {
+        return addProperty(PropertyType.Date, propertyName);
     }
 
     public PropertyBuilder addProperty(PropertyType propertyType, String propertyName) {
@@ -159,6 +166,22 @@ public class Entity {
     public void setClassNameDao(String classNameDao) {
         this.classNameDao = classNameDao;
     }
+    
+    public String getClassNameTest() {
+        return classNameTest;
+    }
+
+    public void setClassNameTest(String classNameTest) {
+        this.classNameTest = classNameTest;
+    }
+
+    public String getJavaPackageTest() {
+        return javaPackageTest;
+    }
+
+    public void setJavaPackageTest(String javaPackageTest) {
+        this.javaPackageTest = javaPackageTest;
+    }
 
     public List<Property> getPropertiesPk() {
         return propertiesPk;
@@ -198,6 +221,14 @@ public class Entity {
      */
     public void setSkipGeneration(boolean skipGeneration) {
         this.skipGeneration = skipGeneration;
+    }
+    
+    public boolean isSkipGenerationTest() {
+        return skipGenerationTest;
+    }
+
+    public void setSkipGenerationTest(boolean skipGenerationTest) {
+        this.skipGenerationTest = skipGenerationTest;
     }
 
     public List<ToOne> getToOneRelations() {
@@ -240,12 +271,17 @@ public class Entity {
     }
 
     protected void initNamesWithDefaults() {
-        if (classNameDao == null) {
-            classNameDao = className + "Dao";
-        }
         if (tableName == null) {
             tableName = DaoUtil.dbName(className);
         }
+        
+        if (classNameDao == null) {
+            classNameDao = className + "Dao";
+        }
+        if (classNameTest == null) {
+            classNameTest = className + "Test";
+        }
+        
         if (javaPackage == null) {
             javaPackage = schema.getDefaultJavaPackage();
         }
@@ -254,6 +290,12 @@ public class Entity {
             javaPackageDao = schema.getDefaultJavaPackageDao();
             if (javaPackageDao == null) {
                 javaPackageDao = javaPackage;
+            }
+        }
+        if (javaPackageTest == null) {
+            javaPackageTest = schema.getDefaultJavaPackageTest();
+            if (javaPackageTest == null) {
+                javaPackageTest = javaPackage;
             }
         }
     }

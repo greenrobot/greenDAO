@@ -13,7 +13,7 @@ import de.greenrobot.daogenerator.Schema;
 public class TestDaoGenerator {
 
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(1, "de.greenrobot.testdao");
+        Schema schema = new Schema(1, "de.greenrobot.dao.test");
 
         Entity simple = schema.addEntity("SimpleEntity");
         simple.addIdProperty();
@@ -54,8 +54,13 @@ public class TestDaoGenerator {
         relationEntity.addToOne(relationEntity, parentIdProperty);
         Property testIdProperty = relationEntity.addLongProperty("testId").getProperty();
         relationEntity.addToOne(testEntity, testIdProperty);
+        
+        Entity dateEntity = schema.addEntity("DateEntity");
+        dateEntity.addIdProperty();
+        dateEntity.addDateProperty("date");
+        dateEntity.addDateProperty("dateNotNull").notNull();
 
-        new DaoGenerator().generateAll("../DaoTest/src-gen", schema);
+        new DaoGenerator().generateAll("../DaoTest/src-gen", "../DaoTest/src", schema);
     }
 
 }

@@ -10,6 +10,7 @@ public class Schema {
     private final int version;
     private final String defaultJavaPackage;
     private String defaultJavaPackageDao;
+    private String defaultJavaPackageTest;
     private final List<Entity> entities;
     private Map<PropertyType, String> propertyToDbType;
     private Map<PropertyType, String> propertyToJavaTypeNotNull;
@@ -33,6 +34,7 @@ public class Schema {
         propertyToDbType.put(PropertyType.Double, "REAL");
         propertyToDbType.put(PropertyType.String, "TEXT");
         propertyToDbType.put(PropertyType.ByteArray, "BLOB");
+        propertyToDbType.put(PropertyType.Date, "INTEGER");
 
         propertyToJavaTypeNotNull = new HashMap<PropertyType, String>();
         propertyToJavaTypeNotNull.put(PropertyType.Boolean, "boolean");
@@ -44,6 +46,7 @@ public class Schema {
         propertyToJavaTypeNotNull.put(PropertyType.Double, "double");
         propertyToJavaTypeNotNull.put(PropertyType.String, "String");
         propertyToJavaTypeNotNull.put(PropertyType.ByteArray, "byte[]");
+        propertyToJavaTypeNotNull.put(PropertyType.Date, "java.util.Date");
 
         propertyToJavaTypeNullable = new HashMap<PropertyType, String>();
         propertyToJavaTypeNullable.put(PropertyType.Boolean, "Boolean");
@@ -55,6 +58,7 @@ public class Schema {
         propertyToJavaTypeNullable.put(PropertyType.Double, "Double");
         propertyToJavaTypeNullable.put(PropertyType.String, "String");
         propertyToJavaTypeNullable.put(PropertyType.ByteArray, "byte[]");
+        propertyToJavaTypeNullable.put(PropertyType.Date, "java.util.Date");
     }
 
     /**
@@ -112,6 +116,14 @@ public class Schema {
     public void setDefaultJavaPackageDao(String defaultJavaPackageDao) {
         this.defaultJavaPackageDao = defaultJavaPackageDao;
     }
+    
+    public String getDefaultJavaPackageTest() {
+        return defaultJavaPackageTest;
+    }
+
+    public void setDefaultJavaPackageTest(String defaultJavaPackageTest) {
+        this.defaultJavaPackageTest = defaultJavaPackageTest;
+    }
 
     public List<Entity> getEntities() {
         return entities;
@@ -120,6 +132,9 @@ public class Schema {
     void init2ndPass() {
         if (defaultJavaPackageDao == null) {
             defaultJavaPackageDao = defaultJavaPackage;
+        }
+        if (defaultJavaPackageTest == null) {
+            defaultJavaPackageTest = defaultJavaPackageDao;
         }
         for (Entity entity : entities) {
             entity.init2ndPass();

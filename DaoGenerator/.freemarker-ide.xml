@@ -11,6 +11,10 @@
 			<value key="entity" object-class="de.greenrobot.daogenerator.Entity"/>
 			<value key="schema" object-class="de.greenrobot.daogenerator.Schema"/>
 		</resource>
+		<resource path="src-template/dao-unit-test.ftl">
+			<value key="schema" object-class="de.greenrobot.daogenerator.Schema"/>
+			<value key="entity" object-class="de.greenrobot.daogenerator.Entity"/>
+		</resource>
 		<resource path="template/dao.ftl">
 			<value key="table" object-class="de.greenrobot.daogenerator.Entity"/>
 		</resource>

@@ -2,9 +2,6 @@ package de.greenrobot.dao.test;
 
 import java.util.Arrays;
 
-import de.greenrobot.testdao.SimpleEntity;
-import de.greenrobot.testdao.SimpleEntityDao;
-
 public class SimpleEntityTest extends AbstractDaoTestLongPk<SimpleEntityDao, SimpleEntity> {
 
     public SimpleEntityTest() {

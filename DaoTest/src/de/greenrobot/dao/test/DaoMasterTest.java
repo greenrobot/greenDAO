@@ -1,7 +1,5 @@
 package de.greenrobot.dao.test;
 
-import de.greenrobot.testdao.DaoMaster;
-import de.greenrobot.testdao.SimpleEntity;
 
 public class DaoMasterTest extends AbstractDaoMasterTest<DaoMaster> {
 

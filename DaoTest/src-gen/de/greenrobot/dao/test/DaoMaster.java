@@ -1,4 +1,4 @@
-package de.greenrobot.testdao;
+package de.greenrobot.dao.test;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,10 +7,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import de.greenrobot.dao.AbstractDaoMaster;
 
-import de.greenrobot.testdao.SimpleEntityDao;
-import de.greenrobot.testdao.SimpleEntityNotNullDao;
-import de.greenrobot.testdao.TestEntityDao;
-import de.greenrobot.testdao.RelationEntityDao;
+import de.greenrobot.dao.test.SimpleEntityDao;
+import de.greenrobot.dao.test.SimpleEntityNotNullDao;
+import de.greenrobot.dao.test.TestEntityDao;
+import de.greenrobot.dao.test.RelationEntityDao;
+import de.greenrobot.dao.test.DateEntityDao;
 
 // THIS CODE IS GENERATED, DO NOT EDIT.
 /** 
@@ -25,6 +26,7 @@ public class DaoMaster extends AbstractDaoMaster {
         SimpleEntityNotNullDao.createTable(db, ifNotExists);
         TestEntityDao.createTable(db, ifNotExists);
         RelationEntityDao.createTable(db, ifNotExists);
+        DateEntityDao.createTable(db, ifNotExists);
     }
     
     /** Drops underlying database table using DAOs. */
@@ -33,6 +35,7 @@ public class DaoMaster extends AbstractDaoMaster {
         SimpleEntityNotNullDao.dropTable(db, ifExists);
         TestEntityDao.dropTable(db, ifExists);
         RelationEntityDao.dropTable(db, ifExists);
+        DateEntityDao.dropTable(db, ifExists);
     }
     
     public static abstract class OpenHelper extends SQLiteOpenHelper {
@@ -67,6 +70,7 @@ public class DaoMaster extends AbstractDaoMaster {
     private final SimpleEntityNotNullDao simpleEntityNotNullDao;
     private final TestEntityDao testEntityDao;
     private final RelationEntityDao relationEntityDao;
+    private final DateEntityDao dateEntityDao;
 
     public DaoMaster(SQLiteDatabase db) {
         super(db, SCHEMA_VERSION);
@@ -75,11 +79,13 @@ public class DaoMaster extends AbstractDaoMaster {
         simpleEntityNotNullDao = new SimpleEntityNotNullDao(db);
         testEntityDao = new TestEntityDao(db);
         relationEntityDao = new RelationEntityDao(db, this);
+        dateEntityDao = new DateEntityDao(db);
 
         registerDao(SimpleEntity.class, simpleEntityDao);
         registerDao(SimpleEntityNotNull.class, simpleEntityNotNullDao);
         registerDao(TestEntity.class, testEntityDao);
         registerDao(RelationEntity.class, relationEntityDao);
+        registerDao(DateEntity.class, dateEntityDao);
     }
     
     public SimpleEntityDao getSimpleEntityDao() {
@@ -96,6 +102,10 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public RelationEntityDao getRelationEntityDao() {
         return relationEntityDao;
+    }
+
+    public DateEntityDao getDateEntityDao() {
+        return dateEntityDao;
     }
 
 }

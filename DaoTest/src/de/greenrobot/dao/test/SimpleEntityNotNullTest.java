@@ -2,9 +2,6 @@ package de.greenrobot.dao.test;
 
 import java.util.Arrays;
 
-import de.greenrobot.testdao.SimpleEntityNotNull;
-import de.greenrobot.testdao.SimpleEntityNotNullDao;
-
 public class SimpleEntityNotNullTest extends AbstractDaoTestLongPk<SimpleEntityNotNullDao, SimpleEntityNotNull> {
 
     public SimpleEntityNotNullTest() {
