@@ -18,12 +18,13 @@ package de.greenrobot.dao;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import android.database.sqlite.SQLiteDatabase;
 
 /**
  * Incomplete. Check back later.
- *  
+ * 
  * @author Markus
  */
 public class AbstractDaoMaster {
@@ -36,7 +37,7 @@ public class AbstractDaoMaster {
         this.schemaVersion = schemaVersion;
         entityToDao = new HashMap<Class<?>, AbstractDao<?, ?>>();
     }
-    
+
     public int getSchemaVersion() {
         return schemaVersion;
     }
@@ -60,9 +61,37 @@ public class AbstractDaoMaster {
         }
         return dao;
     }
-    
+
     protected void registerDao(Class<?> entityClass, AbstractDao<?, ?> dao) {
         entityToDao.put(entityClass, dao);
+    }
+
+    /**
+     * Run the given Runnable inside a database transaction. If you except a result, consider callInTx.
+     */
+    public void runInTx(Runnable runnable) {
+        db.beginTransaction();
+        try {
+            runnable.run();
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    /**
+     * Calls the given Callable inside a database transaction and returns the result of the Callable. If you don't
+     * except a result, consider runInTx.
+     */
+    public <V> V callInTx(Callable<V> callable) throws Exception {
+        db.beginTransaction();
+        try {
+            V result = callable.call();
+            db.setTransactionSuccessful();
+            return result;
+        } finally {
+            db.endTransaction();
+        }
     }
 
 }
