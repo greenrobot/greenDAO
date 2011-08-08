@@ -21,4 +21,47 @@
         <jar jarfile="release/greenDAO-generator-javadoc.jar" basedir="release/docs/api"/>
 	</target>
 
+    <target name="refresh-example-jars" description="">
+        <ant antfile="../DaoBase/mybuild.xml" dir="../DaoBase/"/>
+        <antcall target="build-all"></antcall>
+        <copy file="../DaoBase/release/greenDAO.jar" todir="../DaoExample/lib" ></copy>
+        <copy file="../DaoBase/release/greenDAO-javadoc.jar" todir="../DaoExample/lib" ></copy>
+        <copy file="release/greenDAO-generator.jar" todir="../DaoExampleGenerator/lib" ></copy>
+        <copy file="release/greenDAO-generator-javadoc.jar" todir="../DaoExampleGenerator/lib" ></copy>
+
+    </target>
+
+
+	
+	<target name="build-example-build" description="">
+        <mkdir dir="release/example" />
+        <ant antfile="../DaoBase/mybuild.xml" dir="../DaoBase/"/>
+    	<antcall target="build-all"></antcall>
+    </target>
+
+
+    <target name="build-example-copy" description="">
+    	<delete dir="release/example"/>
+    	<fileset dir="src_dir"/>
+        <copy  todir="release/example/javadoc/greenDAO" >
+            <fileset dir="../DaoBase/release/docs/api/"/>
+        </copy>
+        <copy  todir="release/example/javadoc/greenDAO-generator" >
+            <fileset dir="release/docs/api/"/>
+        </copy>
+        <copy  todir="release/example/DaoExample" >
+            <fileset dir="../DaoExample"/>
+        </copy>
+        <copy  todir="release/example/DaoExampleGenerator" >
+            <fileset dir="../DaoExampleGenerator"/>
+        </copy>
+        <copy file="../DaoBase/release/greenDAO.jar" todir="release/example/" ></copy>
+        <copy file="../DaoBase/release/greenDAO-javadoc.jar" todir="release/example/" ></copy>
+        <copy file="release/greenDAO-generator.jar" todir="release/example/" ></copy>
+        <copy file="release/greenDAO-generator-javadoc.jar" todir="release/example/" ></copy>
+    	<zip destfile="release/greenDAO.zip" basedir="release/example/"></zip>
+    </target>
+
+
+
 </project>

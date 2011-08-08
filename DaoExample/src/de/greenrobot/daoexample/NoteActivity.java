@@ -2,6 +2,8 @@ package de.greenrobot.daoexample;
 
 import java.util.Date;
 
+import de.greenrobot.daoexample.DaoMaster.DevOpenHelper;
+
 import android.app.ListActivity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,6 +26,7 @@ public class NoteActivity extends ListActivity {
     private Cursor cursor;
     private NoteDao noteDao;
     private EditText editText;
+    private DaoMaster daoMaster;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,9 +34,11 @@ public class NoteActivity extends ListActivity {
 
         setContentView(R.layout.main);
 
-        MyDbHelper helper = new MyDbHelper(this);
+//        MyDbHelper helper = new MyDbHelper(this);
+        DevOpenHelper helper = new  DaoMaster.DevOpenHelper(this, "notes-db", null);
         db = helper.getWritableDatabase();
-        noteDao = new NoteDao(db);
+        daoMaster = new DaoMaster(db);
+        noteDao =daoMaster.getNoteDao();
         cursor = db.query("NOTE", noteDao.getAllColumns(), null, null, null, null, "TEXT ASC");
 
         String[] from = { "TEXT", "DATE" };

@@ -1,6 +1,5 @@
 package de.greenrobot.daoexample;
 
-
 // THIS CODE IS GENERATED, DO NOT EDIT.
 /** 
  * Entity mapped to table NOTE (schema version 1).
@@ -47,5 +46,6 @@ public class Note {
     public void setDate(String date) {
         this.date = date;
     } 
+
 
 }

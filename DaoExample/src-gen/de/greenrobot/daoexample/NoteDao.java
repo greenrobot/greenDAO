@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Column;
+import de.greenrobot.dao.Property;
 
 import de.greenrobot.daoexample.Note;
 
@@ -16,10 +16,10 @@ public class NoteDao extends AbstractDao<Note, Long> {
 
     public static final String TABLENAME = "NOTE";
 
-    public static Column[] COLUMN_MODEL = {
-        new Column("_id", true),
-        new Column("TEXT", false),
-        new Column("DATE", false)
+    public static class Properties {
+        public final static Property Id = new Property(0, "id", true, "_id");
+        public final static Property Text = new Property(1, "text", false, "TEXT");
+        public final static Property Date = new Property(2, "date", false, "DATE");
     };
 
     public NoteDao(SQLiteDatabase db) {
@@ -49,12 +49,6 @@ public class NoteDao extends AbstractDao<Note, Long> {
 
     /** @inheritdoc */
     @Override
-    protected Column[] getColumnModel() {
-        return COLUMN_MODEL;
-    }
-
-    /** @inheritdoc */
-    @Override
     protected void bindValues(SQLiteStatement stmt, Note entity) {
         stmt.clearBindings();
  
@@ -73,12 +67,21 @@ public class NoteDao extends AbstractDao<Note, Long> {
     /** @inheritdoc */
     @Override
     public Note readFrom(Cursor cursor) {
-        return new Note( //
+        Note entity = new Note( //
             cursor.isNull(0) ? null : cursor.getLong(0), // id
             cursor.getString(1), // text
             cursor.isNull(2) ? null : cursor.getString(2) // date
         );
+        return entity;
     }
+    
+    /** @inheritdoc */
+    @Override
+    public void readFrom(Cursor cursor, Note entity) {
+        entity.setId(cursor.isNull(0) ? null : cursor.getLong(0));
+        entity.setText(cursor.getString(1));
+        entity.setDate(cursor.isNull(2) ? null : cursor.getString(2));
+     }
     
     @Override
     protected void updateKeyAfterInsert(Note entity, long rowId) {
