@@ -73,6 +73,12 @@ public class RelationEntity {
         return relationEntity;
     } 
 
+    public void setRelationEntity(RelationEntity relationEntity) {
+        this.relationEntity = relationEntity;
+        parentId = relationEntity == null ? null : relationEntity.getId();
+        relationEntity__resolved = true;
+    } 
+
     /** To-one relationship, resolved on first access. */ 
     public TestEntity getTestEntity() {
         if(!testEntity__resolved) {
@@ -81,6 +87,12 @@ public class RelationEntity {
              testEntity__resolved = true;
         }
         return testEntity;
+    } 
+
+    public void setTestEntity(TestEntity testEntity) {
+        this.testEntity = testEntity;
+        testId = testEntity == null ? null : testEntity.getId();
+        testEntity__resolved = true;
     } 
 
 

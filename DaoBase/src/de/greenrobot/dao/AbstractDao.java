@@ -93,11 +93,20 @@ public abstract class AbstractDao<T, K> {
         pkColumns = pkColumnList.toArray(pkColumnsArray);
     }
 
-    protected void apppendCommaSeparated(StringBuilder builder, String valuePrefix, String[] values) {
+    protected void appendCommaSeparated(StringBuilder builder, String valuePrefix, String[] values) {
         int length = values.length;
         for (int i = 0; i < length; i++) {
-            builder.append(valuePrefix);
-            builder.append(values[i]);
+            builder.append(valuePrefix).append(values[i]);
+            if (i < length - 1) {
+                builder.append(',');
+            }
+        }
+    }
+
+    protected void appendCommaSeparatedEqPlaceholder(StringBuilder builder, String valuePrefix, String[] values) {
+        int length = values.length;
+        for (int i = 0; i < length; i++) {
+            builder.append(valuePrefix).append(values[i]).append("=?");
             if (i < length - 1) {
                 builder.append(',');
             }
@@ -133,7 +142,7 @@ public abstract class AbstractDao<T, K> {
     protected String createSqlForInsert(String insertInto) {
         StringBuilder builder = new StringBuilder(insertInto);
         builder.append(tablename).append(" (");
-        apppendCommaSeparated(builder, "", allColumns);
+        appendCommaSeparated(builder, "", allColumns);
         builder.append(") VALUES (");
         apppendPlaceholders(builder, allColumns.length);
         builder.append(')');
@@ -175,7 +184,7 @@ public abstract class AbstractDao<T, K> {
     protected String getSelectAll() {
         if (selectAll == null) {
             StringBuilder builder = new StringBuilder("SELECT ");
-            apppendCommaSeparated(builder, "", allColumns);
+            appendCommaSeparated(builder, "", allColumns);
             builder.append(" FROM ").append(tablename).append(' ');
             selectAll = builder.toString();
         }
@@ -187,9 +196,7 @@ public abstract class AbstractDao<T, K> {
         if (selectByKey == null) {
             StringBuilder builder = new StringBuilder(getSelectAll());
             builder.append("WHERE ");
-            apppendCommaSeparated(builder, "", pkColumns);
-            builder.append('=');
-            apppendPlaceholders(builder, pkColumns.length);
+            appendCommaSeparatedEqPlaceholder(builder, "", pkColumns);
             selectByKey = builder.toString();
         }
         return selectByKey;

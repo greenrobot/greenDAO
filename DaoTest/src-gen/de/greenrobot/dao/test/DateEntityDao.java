@@ -97,5 +97,5 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
     protected boolean isEntityUpdateable() {
         return true;
     }
-
+    
 }

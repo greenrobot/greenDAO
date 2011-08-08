@@ -176,5 +176,59 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
     protected boolean isEntityUpdateable() {
         return ${(!entity.protobuf)?string};
     }
+    
+<#if entity.toOneRelations?has_content>    
+    private String selectDeep;
 
+    protected String getSelectDeep() {
+        if (selectDeep == null) {
+            StringBuilder builder = new StringBuilder("SELECT ");
+            appendCommaSeparated(builder, "T.", getAllColumns());
+            builder.append(',');
+<#list entity.toOneRelations as toOne>
+            appendCommaSeparated(builder, "T${toOne_index}.", daoMaster.get${toOne.entity.classNameDao}().getAllColumns());
+<#if toOne_has_next>
+            builder.append(',');
+</#if>
+</#list>
+            builder.append(" FROM ${entity.tableName} T");
+<#list entity.toOneRelations as toOne>
+            builder.append(" LEFT JOIN ${toOne.entity.tableName} T${toOne_index}<#--
+--> ON T.${toOne.fkProperties[0].columnName}=T${toOne_index}.${toOne.entity.pkProperty.columnName}");
+</#list>
+            builder.append(" WHERE ");
+            appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
+
+            selectDeep = builder.toString();
+        }
+        return selectDeep;
+    }
+
+    public RelationEntity loadDeep(Long key) {
+        assertSinglePk();
+        if (key == null) {
+            return null;
+        }
+
+        String sql = getSelectDeep();
+        String[] keyArray = new String[] { key.toString() };
+        Cursor cursor = db.rawQuery(sql, keyArray);
+
+        boolean available = cursor.moveToFirst();
+        if (!available) {
+            return null;
+        } else if (!cursor.isLast()) {
+            throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+        }
+        RelationEntity entity = readFrom(cursor, 0);
+        int offset = getAllColumns().length;
+<#list entity.toOneRelations as toOne>
+        entity.set${toOne.name?cap_first}(daoMaster.get${toOne.entity.classNameDao}().readFrom(cursor, offset));
+<#if toOne_has_next>
+        offset += daoMaster.get${toOne.entity.classNameDao}().getAllColumns().length;
+</#if>
+</#list>
+        return entity;
+    }
+</#if>
 }

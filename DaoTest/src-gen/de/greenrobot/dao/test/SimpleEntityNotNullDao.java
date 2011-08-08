@@ -124,5 +124,5 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
     protected boolean isEntityUpdateable() {
         return true;
     }
-
+    
 }

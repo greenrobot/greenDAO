@@ -164,5 +164,5 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
     protected boolean isEntityUpdateable() {
         return true;
     }
-
+    
 }

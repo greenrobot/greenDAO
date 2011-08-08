@@ -109,5 +109,49 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     protected boolean isEntityUpdateable() {
         return true;
     }
+    
+    private String selectDeep;
 
+    protected String getSelectDeep() {
+        if (selectDeep == null) {
+            StringBuilder builder = new StringBuilder("SELECT ");
+            appendCommaSeparated(builder, "T.", getAllColumns());
+            builder.append(',');
+            appendCommaSeparated(builder, "T0.", daoMaster.getRelationEntityDao().getAllColumns());
+            builder.append(',');
+            appendCommaSeparated(builder, "T1.", daoMaster.getTestEntityDao().getAllColumns());
+            builder.append(" FROM RELATION_ENTITY T");
+            builder.append(" LEFT JOIN RELATION_ENTITY T0 ON T.PARENT_ID=T0._id");
+            builder.append(" LEFT JOIN TEST_ENTITY T1 ON T.TEST_ID=T1._id");
+            builder.append(" WHERE ");
+            appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
+
+            selectDeep = builder.toString();
+        }
+        return selectDeep;
+    }
+
+    public RelationEntity loadDeep(Long key) {
+        assertSinglePk();
+        if (key == null) {
+            return null;
+        }
+
+        String sql = getSelectDeep();
+        String[] keyArray = new String[] { key.toString() };
+        Cursor cursor = db.rawQuery(sql, keyArray);
+
+        boolean available = cursor.moveToFirst();
+        if (!available) {
+            return null;
+        } else if (!cursor.isLast()) {
+            throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+        }
+        RelationEntity entity = readFrom(cursor, 0);
+        int offset = getAllColumns().length;
+        entity.setRelationEntity(daoMaster.getRelationEntityDao().readFrom(cursor, offset));
+        offset += daoMaster.getRelationEntityDao().getAllColumns().length;
+        entity.setTestEntity(daoMaster.getTestEntityDao().readFrom(cursor, offset));
+        return entity;
+    }
 }

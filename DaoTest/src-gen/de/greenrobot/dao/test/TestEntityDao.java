@@ -134,5 +134,5 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
     protected boolean isEntityUpdateable() {
         return true;
     }
-
+    
 }

@@ -75,6 +75,17 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
         return ${toOne.name};
     } 
 
+    public void set${toOne.name?cap_first}(${toOne.entity.className} ${toOne.name}) {
+<#if toOne.fkProperties[0].notNull>
+        if(${toOne.name} == null) {
+            throw new DaoException("To-one property '${toOne.fkProperties[0].propertyName}' has not-null constraint; cannot set to-one to null"); 
+        }
+</#if>
+        this.${toOne.name} = ${toOne.name};
+        ${toOne.fkProperties[0].propertyName} = <#if !toOne.fkProperties[0].notNull>${toOne.name} == null ? null : </#if>${toOne.name}.get${toOne.entity.pkProperty.propertyName?cap_first}();
+        ${toOne.name}__resolved = true;
+    } 
+
 </#list>
 <#--        
         return dao.query(", ${entity.tableName} T2 WHERE T.=T2. AND T.=?", <#list
