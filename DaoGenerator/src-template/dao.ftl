@@ -2,6 +2,10 @@
 <#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob", "Date": "Long"  }>
 package ${entity.javaPackageDao};
 
+<#if entity.toOneRelations?has_content>
+import java.util.List;
+import java.util.ArrayList;
+</#if>
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -177,7 +181,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
         return ${(!entity.protobuf)?string};
     }
     
-<#if entity.toOneRelations?has_content>    
+<#if entity.toOneRelations?has_content>
     private String selectDeep;
 
     protected String getSelectDeep() {
@@ -196,31 +200,14 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
             builder.append(" LEFT JOIN ${toOne.entity.tableName} T${toOne_index}<#--
 --> ON T.${toOne.fkProperties[0].columnName}=T${toOne_index}.${toOne.entity.pkProperty.columnName}");
 </#list>
-            builder.append(" WHERE ");
-            appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
-
+            builder.append(' ');
             selectDeep = builder.toString();
         }
         return selectDeep;
     }
-
-    public RelationEntity loadDeep(Long key) {
-        assertSinglePk();
-        if (key == null) {
-            return null;
-        }
-
-        String sql = getSelectDeep();
-        String[] keyArray = new String[] { key.toString() };
-        Cursor cursor = db.rawQuery(sql, keyArray);
-
-        boolean available = cursor.moveToFirst();
-        if (!available) {
-            return null;
-        } else if (!cursor.isLast()) {
-            throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
-        }
-        RelationEntity entity = readFrom(cursor, 0);
+    
+    protected ${entity.className} readDeepFrom(Cursor cursor) {
+        ${entity.className} entity = readFrom(cursor, 0);
         int offset = getAllColumns().length;
 <#list entity.toOneRelations as toOne>
         entity.set${toOne.name?cap_first}(daoMaster.get${toOne.entity.classNameDao}().readFrom(cursor, offset));
@@ -228,7 +215,61 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
         offset += daoMaster.get${toOne.entity.classNameDao}().getAllColumns().length;
 </#if>
 </#list>
-        return entity;
+        return entity;    
     }
+
+    public ${entity.className} loadDeep(Long key) {
+        assertSinglePk();
+        if (key == null) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder(getSelectDeep());
+        builder.append("WHERE ");
+        appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
+        String sql = builder.toString();
+        
+        String[] keyArray = new String[] { key.toString() };
+        Cursor cursor = db.rawQuery(sql, keyArray);
+        
+        try {
+            boolean available = cursor.moveToFirst();
+            if (!available) {
+                return null;
+            } else if (!cursor.isLast()) {
+                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+            }
+            return readDeepFrom(cursor);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
+    public List<${entity.className}> readDeepAllFrom(Cursor cursor) {
+        List<${entity.className}> list = new ArrayList<${entity.className}>();
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(readDeepFrom(cursor));
+            } while (cursor.moveToNext());
+        }
+        return list;
+    }
+    
+    protected List<${entity.className}> readDeepAllAndCloseCursor(Cursor cursor) {
+        try {
+            return readDeepAllFrom(cursor);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+
+    /** A raw-style query where you can pass any WHERE clause and arguments. */
+    public List<${entity.className}> queryDeep(String where, String... selectionArg) {
+        Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
+        return readDeepAllAndCloseCursor(cursor);
+    }
+ 
 </#if>
 }

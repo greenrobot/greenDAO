@@ -11,6 +11,7 @@ public class RelationEntity {
     private Long id; 
     private Long parentId; 
     private Long testId; 
+    private String simpleString; 
 
     /** Used to resolve relations */
     private DaoMaster daoMaster;
@@ -28,10 +29,11 @@ public class RelationEntity {
         this.id = id;
     }
 
-    public RelationEntity(Long id, Long parentId, Long testId) {
+    public RelationEntity(Long id, Long parentId, Long testId, String simpleString) {
         this.id = id;
         this.parentId = parentId;
         this.testId = testId;
+        this.simpleString = simpleString;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -61,6 +63,14 @@ public class RelationEntity {
 
     public void setTestId(Long testId) {
         this.testId = testId;
+    } 
+
+    public String getSimpleString() {
+        return simpleString;
+    } 
+
+    public void setSimpleString(String simpleString) {
+        this.simpleString = simpleString;
     } 
 
     /** To-one relationship, resolved on first access. */ 

@@ -1,5 +1,7 @@
 package de.greenrobot.dao.test;
 
+import java.util.List;
+import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -20,6 +22,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         public final static Property Id = new Property(0, "id", true, "_id");
         public final static Property ParentId = new Property(1, "parentId", false, "PARENT_ID");
         public final static Property TestId = new Property(2, "testId", false, "TEST_ID");
+        public final static Property SimpleString = new Property(3, "simpleString", false, "SIMPLE_STRING");
     };
 
     private DaoMaster daoMaster;
@@ -38,7 +41,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "RELATION_ENTITY (" + //
                 "_id INTEGER PRIMARY KEY ," + // 0
                 "PARENT_ID INTEGER," + // 1
-                "TEST_ID INTEGER);"; // 2
+                "TEST_ID INTEGER," + // 2
+                "SIMPLE_STRING TEXT);"; // 3
         db.execSQL(sql);
     }
 
@@ -67,6 +71,11 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         if (testId != null) {
             stmt.bindLong(3, testId);
         }
+ 
+        String simpleString = entity.getSimpleString();
+        if (simpleString != null) {
+            stmt.bindString(4, simpleString);
+        }
     }
 
     /** @inheritdoc */
@@ -75,7 +84,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         RelationEntity entity = new RelationEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // parentId
-            cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2) // testId
+            cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2), // testId
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // simpleString
         );
         entity.__setDaoMaster(daoMaster);
         return entity;
@@ -87,6 +97,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setParentId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
         entity.setTestId(cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2));
+        entity.setSimpleString(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
      }
     
     @Override
@@ -123,12 +134,19 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
             builder.append(" FROM RELATION_ENTITY T");
             builder.append(" LEFT JOIN RELATION_ENTITY T0 ON T.PARENT_ID=T0._id");
             builder.append(" LEFT JOIN TEST_ENTITY T1 ON T.TEST_ID=T1._id");
-            builder.append(" WHERE ");
-            appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
-
+            builder.append(' ');
             selectDeep = builder.toString();
         }
         return selectDeep;
+    }
+    
+    protected RelationEntity readDeepFrom(Cursor cursor) {
+        RelationEntity entity = readFrom(cursor, 0);
+        int offset = getAllColumns().length;
+        entity.setRelationEntity(daoMaster.getRelationEntityDao().readFrom(cursor, offset));
+        offset += daoMaster.getRelationEntityDao().getAllColumns().length;
+        entity.setTestEntity(daoMaster.getTestEntityDao().readFrom(cursor, offset));
+        return entity;    
     }
 
     public RelationEntity loadDeep(Long key) {
@@ -137,21 +155,51 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
             return null;
         }
 
-        String sql = getSelectDeep();
+        StringBuilder builder = new StringBuilder(getSelectDeep());
+        builder.append("WHERE ");
+        appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
+        String sql = builder.toString();
+        
         String[] keyArray = new String[] { key.toString() };
         Cursor cursor = db.rawQuery(sql, keyArray);
-
-        boolean available = cursor.moveToFirst();
-        if (!available) {
-            return null;
-        } else if (!cursor.isLast()) {
-            throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+        
+        try {
+            boolean available = cursor.moveToFirst();
+            if (!available) {
+                return null;
+            } else if (!cursor.isLast()) {
+                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+            }
+            return readDeepFrom(cursor);
+        } finally {
+            cursor.close();
         }
-        RelationEntity entity = readFrom(cursor, 0);
-        int offset = getAllColumns().length;
-        entity.setRelationEntity(daoMaster.getRelationEntityDao().readFrom(cursor, offset));
-        offset += daoMaster.getRelationEntityDao().getAllColumns().length;
-        entity.setTestEntity(daoMaster.getTestEntityDao().readFrom(cursor, offset));
-        return entity;
     }
+    
+    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
+    public List<RelationEntity> readDeepAllFrom(Cursor cursor) {
+        List<RelationEntity> list = new ArrayList<RelationEntity>();
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(readDeepFrom(cursor));
+            } while (cursor.moveToNext());
+        }
+        return list;
+    }
+    
+    protected List<RelationEntity> readDeepAllAndCloseCursor(Cursor cursor) {
+        try {
+            return readDeepAllFrom(cursor);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+
+    /** A raw-style query where you can pass any WHERE clause and arguments. */
+    public List<RelationEntity> queryDeep(String where, String... selectionArg) {
+        Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
+        return readDeepAllAndCloseCursor(cursor);
+    }
+ 
 }

@@ -1,5 +1,7 @@
 package de.greenrobot.dao.test;
 
+import java.util.List;
+
 
 public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao, RelationEntity> {
 
@@ -15,24 +17,9 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     }
 
     public void testToOne() {
-        DaoMaster daoMaster = new DaoMaster(db);
-        dao = daoMaster.getRelationEntityDao();
-
-        TestEntityDao.createTable(db, false);
-        TestEntity testEntity = new TestEntity(42l);
-        testEntity.setSimpleStringNotNull("mytest");
-        daoMaster.getTestEntityDao().insert(testEntity);
-
-        RelationEntity entity = createEntity(1l);
-        entity.setTestId(42l);
-        dao.insert(entity);
-
-        entity = dao.load(1l);
-        TestEntity testEntity2 = entity.getTestEntity();
-        assertNotNull(testEntity2);
-        assertEquals(42l, (long) testEntity2.getId());
-        assertEquals("mytest", testEntity2.getSimpleStringNotNull());
-        assertSame(testEntity2, entity.getTestEntity());
+        insertEntityWithRelations(1l);
+        RelationEntity entity = dao.load(1l);
+        assertTestEntity(entity);
     }
 
     public void testToOneSelf() {
@@ -55,6 +42,20 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     }
     
     public void testToOneLoadDeep() {
+        insertEntityWithRelations(1l);
+        RelationEntity entity = dao.loadDeep(1l);
+        assertTestEntity(entity);
+    }
+
+    public void testQueryDeep() {
+        insertEntityWithRelations(1l);
+        String columnName = RelationEntityDao.Properties.SimpleString.columnName;
+        List<RelationEntity> entityList = dao.queryDeep("WHERE T."+columnName+"=?", "findMe");
+        assertEquals(1, entityList.size());
+        assertTestEntity(entityList.get(0));
+    }
+
+    protected void insertEntityWithRelations(long id) {
         DaoMaster daoMaster = new DaoMaster(db);
         dao = daoMaster.getRelationEntityDao();
 
@@ -63,17 +64,18 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
         testEntity.setSimpleStringNotNull("mytest");
         daoMaster.getTestEntityDao().insert(testEntity);
 
-        RelationEntity entity = createEntity(1l);
+        RelationEntity entity = createEntity(id);
         entity.setTestId(42l);
+        entity.setSimpleString("findMe");
         dao.insert(entity);
+    }
 
-        entity = dao.loadDeep(1l);
+    protected void assertTestEntity(RelationEntity entity) {
         TestEntity testEntity2 = entity.getTestEntity();
         assertNotNull(testEntity2);
         assertEquals(42l, (long) testEntity2.getId());
         assertEquals("mytest", testEntity2.getSimpleStringNotNull());
         assertSame(testEntity2, entity.getTestEntity());
     }
-
-
+    
 }
