@@ -51,7 +51,7 @@ public class TestDaoGenerator {
         Entity relationEntity = schema.addEntity("RelationEntity");
         relationEntity.addIdProperty();
         Property parentIdProperty = relationEntity.addLongProperty("parentId").getProperty();
-        relationEntity.addToOne(relationEntity, parentIdProperty);
+        relationEntity.addToOne(relationEntity, parentIdProperty).setName("parent");
         Property testIdProperty = relationEntity.addLongProperty("testId").getProperty();
         relationEntity.addToOne(testEntity, testIdProperty);
         relationEntity.addStringProperty("simpleString");

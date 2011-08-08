@@ -16,8 +16,8 @@ public class RelationEntity {
     /** Used to resolve relations */
     private DaoMaster daoMaster;
 
-    private RelationEntity relationEntity;
-    private boolean relationEntity__resolved;
+    private RelationEntity parent;
+    private boolean parent__resolved;
 
     private TestEntity testEntity;
     private boolean testEntity__resolved;
@@ -74,19 +74,19 @@ public class RelationEntity {
     } 
 
     /** To-one relationship, resolved on first access. */ 
-    public RelationEntity getRelationEntity() {
-        if(!relationEntity__resolved) {
+    public RelationEntity getParent() {
+        if(!parent__resolved) {
             RelationEntityDao dao = daoMaster.getRelationEntityDao();
-             relationEntity = dao.load(parentId);
-             relationEntity__resolved = true;
+             parent = dao.load(parentId);
+             parent__resolved = true;
         }
-        return relationEntity;
+        return parent;
     } 
 
-    public void setRelationEntity(RelationEntity relationEntity) {
-        this.relationEntity = relationEntity;
-        parentId = relationEntity == null ? null : relationEntity.getId();
-        relationEntity__resolved = true;
+    public void setParent(RelationEntity parent) {
+        this.parent = parent;
+        parentId = parent == null ? null : parent.getId();
+        parent__resolved = true;
     } 
 
     /** To-one relationship, resolved on first access. */ 

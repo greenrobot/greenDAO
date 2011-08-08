@@ -143,7 +143,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     protected RelationEntity readDeepFrom(Cursor cursor) {
         RelationEntity entity = readFrom(cursor, 0);
         int offset = getAllColumns().length;
-        entity.setRelationEntity(daoMaster.getRelationEntityDao().readFrom(cursor, offset));
+        entity.setParent(daoMaster.getRelationEntityDao().readFrom(cursor, offset));
         offset += daoMaster.getRelationEntityDao().getAllColumns().length;
         entity.setTestEntity(daoMaster.getTestEntityDao().readFrom(cursor, offset));
         return entity;    
