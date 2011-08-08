@@ -50,12 +50,6 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public String getTablename() {
-        return TABLENAME;
-    }
-
-    /** @inheritdoc */
-    @Override
     protected void bindValues(SQLiteStatement stmt, RelationEntity entity) {
         stmt.clearBindings();
  
@@ -77,11 +71,11 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public RelationEntity readFrom(Cursor cursor) {
+    public RelationEntity readFrom(Cursor cursor, int offset) {
         RelationEntity entity = new RelationEntity( //
-            cursor.isNull(0) ? null : cursor.getLong(0), // id
-            cursor.isNull(1) ? null : cursor.getLong(1), // parentId
-            cursor.isNull(2) ? null : cursor.getLong(2) // testId
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // parentId
+            cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2) // testId
         );
         entity.__setDaoMaster(daoMaster);
         return entity;
@@ -89,10 +83,10 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, RelationEntity entity) {
-        entity.setId(cursor.isNull(0) ? null : cursor.getLong(0));
-        entity.setParentId(cursor.isNull(1) ? null : cursor.getLong(1));
-        entity.setTestId(cursor.isNull(2) ? null : cursor.getLong(2));
+    public void readFrom(Cursor cursor, RelationEntity entity, int offset) {
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setParentId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
+        entity.setTestId(cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2));
      }
     
     @Override

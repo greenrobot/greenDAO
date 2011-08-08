@@ -57,12 +57,6 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
 
     /** @inheritdoc */
     @Override
-    public String getTablename() {
-        return TABLENAME;
-    }
-
-    /** @inheritdoc */
-    @Override
     protected void bindValues(SQLiteStatement stmt, SimpleEntityNotNull entity) {
         stmt.clearBindings();
         stmt.bindLong(1, entity.getId());
@@ -79,35 +73,35 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
 
     /** @inheritdoc */
     @Override
-    public SimpleEntityNotNull readFrom(Cursor cursor) {
+    public SimpleEntityNotNull readFrom(Cursor cursor, int offset) {
         SimpleEntityNotNull entity = new SimpleEntityNotNull( //
-            cursor.getLong(0), // id
-            cursor.getShort(1) != 0, // simpleBoolean
-            (byte) cursor.getShort(2), // simpleByte
-            cursor.getShort(3), // simpleShort
-            cursor.getInt(4), // simpleInt
-            cursor.getLong(5), // simpleLong
-            cursor.getFloat(6), // simpleFloat
-            cursor.getDouble(7), // simpleDouble
-            cursor.getString(8), // simpleString
-            cursor.getBlob(9) // simpleByteArray
+            cursor.getLong(offset + 0), // id
+            cursor.getShort(offset + 1) != 0, // simpleBoolean
+            (byte) cursor.getShort(offset + 2), // simpleByte
+            cursor.getShort(offset + 3), // simpleShort
+            cursor.getInt(offset + 4), // simpleInt
+            cursor.getLong(offset + 5), // simpleLong
+            cursor.getFloat(offset + 6), // simpleFloat
+            cursor.getDouble(offset + 7), // simpleDouble
+            cursor.getString(offset + 8), // simpleString
+            cursor.getBlob(offset + 9) // simpleByteArray
         );
         return entity;
     }
     
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, SimpleEntityNotNull entity) {
-        entity.setId(cursor.getLong(0));
-        entity.setSimpleBoolean(cursor.getShort(1) != 0);
-        entity.setSimpleByte((byte) cursor.getShort(2));
-        entity.setSimpleShort(cursor.getShort(3));
-        entity.setSimpleInt(cursor.getInt(4));
-        entity.setSimpleLong(cursor.getLong(5));
-        entity.setSimpleFloat(cursor.getFloat(6));
-        entity.setSimpleDouble(cursor.getDouble(7));
-        entity.setSimpleString(cursor.getString(8));
-        entity.setSimpleByteArray(cursor.getBlob(9));
+    public void readFrom(Cursor cursor, SimpleEntityNotNull entity, int offset) {
+        entity.setId(cursor.getLong(offset + 0));
+        entity.setSimpleBoolean(cursor.getShort(offset + 1) != 0);
+        entity.setSimpleByte((byte) cursor.getShort(offset + 2));
+        entity.setSimpleShort(cursor.getShort(offset + 3));
+        entity.setSimpleInt(cursor.getInt(offset + 4));
+        entity.setSimpleLong(cursor.getLong(offset + 5));
+        entity.setSimpleFloat(cursor.getFloat(offset + 6));
+        entity.setSimpleDouble(cursor.getDouble(offset + 7));
+        entity.setSimpleString(cursor.getString(offset + 8));
+        entity.setSimpleByteArray(cursor.getBlob(offset + 9));
      }
     
     @Override

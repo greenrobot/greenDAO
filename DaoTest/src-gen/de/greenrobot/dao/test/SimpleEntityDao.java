@@ -57,12 +57,6 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public String getTablename() {
-        return TABLENAME;
-    }
-
-    /** @inheritdoc */
-    @Override
     protected void bindValues(SQLiteStatement stmt, SimpleEntity entity) {
         stmt.clearBindings();
  
@@ -119,35 +113,35 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public SimpleEntity readFrom(Cursor cursor) {
+    public SimpleEntity readFrom(Cursor cursor, int offset) {
         SimpleEntity entity = new SimpleEntity( //
-            cursor.isNull(0) ? null : cursor.getLong(0), // id
-            cursor.isNull(1) ? null : cursor.getShort(1) != 0, // simpleBoolean
-            cursor.isNull(2) ? null : (byte) cursor.getShort(2), // simpleByte
-            cursor.isNull(3) ? null : cursor.getShort(3), // simpleShort
-            cursor.isNull(4) ? null : cursor.getInt(4), // simpleInt
-            cursor.isNull(5) ? null : cursor.getLong(5), // simpleLong
-            cursor.isNull(6) ? null : cursor.getFloat(6), // simpleFloat
-            cursor.isNull(7) ? null : cursor.getDouble(7), // simpleDouble
-            cursor.isNull(8) ? null : cursor.getString(8), // simpleString
-            cursor.isNull(9) ? null : cursor.getBlob(9) // simpleByteArray
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 1) ? null : cursor.getShort(offset + 1) != 0, // simpleBoolean
+            cursor.isNull(offset + 2) ? null : (byte) cursor.getShort(offset + 2), // simpleByte
+            cursor.isNull(offset + 3) ? null : cursor.getShort(offset + 3), // simpleShort
+            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // simpleInt
+            cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5), // simpleLong
+            cursor.isNull(offset + 6) ? null : cursor.getFloat(offset + 6), // simpleFloat
+            cursor.isNull(offset + 7) ? null : cursor.getDouble(offset + 7), // simpleDouble
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // simpleString
+            cursor.isNull(offset + 9) ? null : cursor.getBlob(offset + 9) // simpleByteArray
         );
         return entity;
     }
     
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, SimpleEntity entity) {
-        entity.setId(cursor.isNull(0) ? null : cursor.getLong(0));
-        entity.setSimpleBoolean(cursor.isNull(1) ? null : cursor.getShort(1) != 0);
-        entity.setSimpleByte(cursor.isNull(2) ? null : (byte) cursor.getShort(2));
-        entity.setSimpleShort(cursor.isNull(3) ? null : cursor.getShort(3));
-        entity.setSimpleInt(cursor.isNull(4) ? null : cursor.getInt(4));
-        entity.setSimpleLong(cursor.isNull(5) ? null : cursor.getLong(5));
-        entity.setSimpleFloat(cursor.isNull(6) ? null : cursor.getFloat(6));
-        entity.setSimpleDouble(cursor.isNull(7) ? null : cursor.getDouble(7));
-        entity.setSimpleString(cursor.isNull(8) ? null : cursor.getString(8));
-        entity.setSimpleByteArray(cursor.isNull(9) ? null : cursor.getBlob(9));
+    public void readFrom(Cursor cursor, SimpleEntity entity, int offset) {
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setSimpleBoolean(cursor.isNull(offset + 1) ? null : cursor.getShort(offset + 1) != 0);
+        entity.setSimpleByte(cursor.isNull(offset + 2) ? null : (byte) cursor.getShort(offset + 2));
+        entity.setSimpleShort(cursor.isNull(offset + 3) ? null : cursor.getShort(offset + 3));
+        entity.setSimpleInt(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
+        entity.setSimpleLong(cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5));
+        entity.setSimpleFloat(cursor.isNull(offset + 6) ? null : cursor.getFloat(offset + 6));
+        entity.setSimpleDouble(cursor.isNull(offset + 7) ? null : cursor.getDouble(offset + 7));
+        entity.setSimpleString(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setSimpleByteArray(cursor.isNull(offset + 9) ? null : cursor.getBlob(offset + 9));
      }
     
     @Override

@@ -43,12 +43,6 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public String getTablename() {
-        return TABLENAME;
-    }
-
-    /** @inheritdoc */
-    @Override
     protected void bindValues(SQLiteStatement stmt, DateEntity entity) {
         stmt.clearBindings();
  
@@ -66,21 +60,21 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public DateEntity readFrom(Cursor cursor) {
+    public DateEntity readFrom(Cursor cursor, int offset) {
         DateEntity entity = new DateEntity( //
-            cursor.isNull(0) ? null : cursor.getLong(0), // id
-            cursor.isNull(1) ? null : new java.util.Date(cursor.getLong(1)), // date
-            new java.util.Date(cursor.getLong(2)) // dateNotNull
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)), // date
+            new java.util.Date(cursor.getLong(offset + 2)) // dateNotNull
         );
         return entity;
     }
     
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, DateEntity entity) {
-        entity.setId(cursor.isNull(0) ? null : cursor.getLong(0));
-        entity.setDate(cursor.isNull(1) ? null : new java.util.Date(cursor.getLong(1)));
-        entity.setDateNotNull(new java.util.Date(cursor.getLong(2)));
+    public void readFrom(Cursor cursor, DateEntity entity, int offset) {
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setDate(cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)));
+        entity.setDateNotNull(new java.util.Date(cursor.getLong(offset + 2)));
      }
     
     @Override

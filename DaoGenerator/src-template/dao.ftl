@@ -66,12 +66,6 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 
     /** @inheritdoc */
     @Override
-    public String getTablename() {
-        return TABLENAME;
-    }
-
-    /** @inheritdoc */
-    @Override
     protected void bindValues(SQLiteStatement stmt, ${entity.className} entity) {
         stmt.clearBindings();
 <#list entity.properties as property>
@@ -95,13 +89,13 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 
     /** @inheritdoc */
     @Override
-    public ${entity.className} readFrom(Cursor cursor) {
+    public ${entity.className} readFrom(Cursor cursor, int offset) {
 <#if entity.protobuf>
         Builder builder = ${entity.className}.newBuilder();
 <#list entity.properties as property>
 <#if !property.notNull>
-        if (!cursor.isNull(${property_index})) {
-    </#if>        builder.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(${property_index}));
+        if (!cursor.isNull(offset + ${property_index})) {
+    </#if>        builder.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(offset + ${property_index}));
 <#if !property.notNull>
         }
 </#if>        
@@ -113,9 +107,9 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 -->
         ${entity.className} entity = new ${entity.className}( //
 <#list entity.properties as property>
-            <#if !property.notNull>cursor.isNull(${property_index}) ? null : </#if><#if
+            <#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#if
             property.propertyType == "Byte">(byte) </#if><#if
-            property.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[property.propertyType]}(${property_index})<#if
+            property.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})<#if
             property.propertyType == "Boolean"> != 0</#if><#if
             property.propertyType == "Date">)</#if><#if property_has_next>,</#if> // ${property.propertyName}
 </#list>        
@@ -129,21 +123,21 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 ############################## readFrom non-protobuff, setters ############################## 
 -->
         ${entity.className} entity = new ${entity.className}();
-        readFrom(cursor, entity);
+        readFrom(cursor, entity, offset);
         return entity;
 </#if>
     }
     
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, ${entity.className} entity) {
+    public void readFrom(Cursor cursor, ${entity.className} entity, int offset) {
 <#if entity.protobuf>
         throw new UnsupportedOperationException("Protobuf objects cannot be modified");
 <#else> 
 <#list entity.properties as property>
-        entity.set${property.propertyName?cap_first}(<#if !property.notNull>cursor.isNull(${property_index}) ? null : </#if><#if
+        entity.set${property.propertyName?cap_first}(<#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#if
             property.propertyType == "Byte">(byte) </#if><#if
-            property.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[property.propertyType]}(${property_index})<#if
+            property.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})<#if
             property.propertyType == "Boolean"> != 0</#if><#if
             property.propertyType == "Date">)</#if>);
 </#list>

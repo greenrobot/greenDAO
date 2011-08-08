@@ -56,12 +56,6 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public String getTablename() {
-        return TABLENAME;
-    }
-
-    /** @inheritdoc */
-    @Override
     protected void bindValues(SQLiteStatement stmt, TestEntity entity) {
         stmt.clearBindings();
  
@@ -95,29 +89,29 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public TestEntity readFrom(Cursor cursor) {
+    public TestEntity readFrom(Cursor cursor, int offset) {
         TestEntity entity = new TestEntity( //
-            cursor.isNull(0) ? null : cursor.getLong(0), // id
-            cursor.getInt(1), // simpleInt
-            cursor.isNull(2) ? null : cursor.getInt(2), // simpleInteger
-            cursor.getString(3), // simpleStringNotNull
-            cursor.isNull(4) ? null : cursor.getString(4), // simpleString
-            cursor.isNull(5) ? null : cursor.getString(5), // indexedString
-            cursor.isNull(6) ? null : cursor.getString(6) // indexedStringAscUnique
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.getInt(offset + 1), // simpleInt
+            cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // simpleInteger
+            cursor.getString(offset + 3), // simpleStringNotNull
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // simpleString
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // indexedString
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // indexedStringAscUnique
         );
         return entity;
     }
     
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, TestEntity entity) {
-        entity.setId(cursor.isNull(0) ? null : cursor.getLong(0));
-        entity.setSimpleInt(cursor.getInt(1));
-        entity.setSimpleInteger(cursor.isNull(2) ? null : cursor.getInt(2));
-        entity.setSimpleStringNotNull(cursor.getString(3));
-        entity.setSimpleString(cursor.isNull(4) ? null : cursor.getString(4));
-        entity.setIndexedString(cursor.isNull(5) ? null : cursor.getString(5));
-        entity.setIndexedStringAscUnique(cursor.isNull(6) ? null : cursor.getString(6));
+    public void readFrom(Cursor cursor, TestEntity entity, int offset) {
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setSimpleInt(cursor.getInt(offset + 1));
+        entity.setSimpleInteger(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
+        entity.setSimpleStringNotNull(cursor.getString(offset + 3));
+        entity.setSimpleString(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setIndexedString(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setIndexedStringAscUnique(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
      }
     
     @Override

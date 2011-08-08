@@ -30,6 +30,7 @@ public class DaoGenerator {
         long start = System.currentTimeMillis();
 
         System.out.println("greenDAO Generator (preview)");
+        System.out.println("Copyright 2011 Markus Junginger, greenrobot.de. Licensed under GPL V3.");
 
         File outDirFile = toFileForceExists(outDir);
 
@@ -59,8 +60,11 @@ public class DaoGenerator {
             if (outDirTestFile != null) {
                 String javaPackageTest = entity.getJavaPackageTest();
                 String classNameTest = entity.getClassNameTest();
-                if (!toJavaFilename(outDirTestFile, javaPackageTest, classNameTest).exists()) {
+                File javaFilename = toJavaFilename(outDirTestFile, javaPackageTest, classNameTest);
+                if (!javaFilename.exists()) {
                     generate(templateDaoUnitTest, outDirTestFile, javaPackageTest, classNameTest, schema, entity);
+                } else {
+                    System.out.println("Skipped " + javaFilename.getCanonicalPath());
                 }
             }
         }
@@ -92,7 +96,7 @@ public class DaoGenerator {
         try {
             template.process(root, writer);
             writer.flush();
-            System.out.println("Written " + file.getAbsolutePath());
+            System.out.println("Written " + file.getCanonicalPath());
         } finally {
             writer.close();
         }

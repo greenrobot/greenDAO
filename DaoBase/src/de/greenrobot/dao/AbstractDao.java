@@ -40,6 +40,8 @@ import android.database.sqlite.SQLiteStatement;
 public abstract class AbstractDao<T, K> {
     protected final SQLiteDatabase db;
 
+    protected final String tablename;
+
     protected SQLiteStatement insertStatement;
     protected SQLiteStatement insertOrReplaceStatement;
     protected SQLiteStatement updateStatement;
@@ -57,6 +59,7 @@ public abstract class AbstractDao<T, K> {
     public AbstractDao(SQLiteDatabase db) {
         this.db = db;
         try {
+            tablename = (String) getClass().getField("TABLENAME").get(null);
             Class<?> propertiesClass = Class.forName(getClass().getName() + "$Properties");
             Field[] fields = propertiesClass.getDeclaredFields();
             properties = new Property[fields.length];
@@ -129,7 +132,7 @@ public abstract class AbstractDao<T, K> {
 
     protected String createSqlForInsert(String insertInto) {
         StringBuilder builder = new StringBuilder(insertInto);
-        builder.append(getTablename()).append(" (");
+        builder.append(tablename).append(" (");
         apppendCommaSeparated(builder, "", allColumns);
         builder.append(") VALUES (");
         apppendPlaceholders(builder, allColumns.length);
@@ -140,7 +143,7 @@ public abstract class AbstractDao<T, K> {
     protected SQLiteStatement getDeleteStatement() {
         if (deleteStatement == null) {
             StringBuilder builder = new StringBuilder("DELETE FROM ");
-            builder.append(getTablename()).append(" WHERE ");
+            builder.append(tablename).append(" WHERE ");
             appendColumnsEqualPlaceholders(builder, getPkColumns());
             deleteStatement = db.compileStatement(builder.toString());
         }
@@ -150,7 +153,7 @@ public abstract class AbstractDao<T, K> {
     protected SQLiteStatement getUpdateStatement() {
         if (updateStatement == null) {
             StringBuilder builder = new StringBuilder("UPDATE ");
-            builder.append(getTablename()).append(" SET ");
+            builder.append(tablename).append(" SET ");
             appendColumnsEqualPlaceholders(builder, getAllColumns()); // TODO Use getNonPkColumns() only (performance)
             builder.append(" WHERE ");
             appendColumnsEqualPlaceholders(builder, getPkColumns());
@@ -173,7 +176,7 @@ public abstract class AbstractDao<T, K> {
         if (selectAll == null) {
             StringBuilder builder = new StringBuilder("SELECT ");
             apppendCommaSeparated(builder, "", allColumns);
-            builder.append(" FROM ").append(getTablename()).append(' ');
+            builder.append(" FROM ").append(tablename).append(' ');
             selectAll = builder.toString();
         }
         return selectAll;
@@ -208,10 +211,15 @@ public abstract class AbstractDao<T, K> {
         return nonPkColumns;
     }
 
+    public String getTablename() {
+        return tablename;
+    }
+
     /**
      * Loads and entity for the given PK.
      * 
-     * @param key a PK value or null
+     * @param key
+     *            a PK value or null
      * @return The entity or null, if no entity matched the PK value
      */
     public T load(K key) {
@@ -242,7 +250,7 @@ public abstract class AbstractDao<T, K> {
             } else if (!cursor.isLast()) {
                 throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
             }
-            return readFrom(cursor);
+            return readFrom(cursor, 0);
         } finally {
             cursor.close();
         }
@@ -347,7 +355,7 @@ public abstract class AbstractDao<T, K> {
         List<T> list = new ArrayList<T>();
         if (cursor.moveToFirst()) {
             do {
-                list.add(readFrom(cursor));
+                list.add(readFrom(cursor, 0));
             } while (cursor.moveToNext());
         }
         return list;
@@ -361,12 +369,12 @@ public abstract class AbstractDao<T, K> {
 
     /** Performs a standard Android-style query for entities. */
     public List<T> query(String selection, String[] selectionArgs, String groupBy, String having, String orderby) {
-        Cursor cursor = db.query(getTablename(), getAllColumns(), selection, selectionArgs, groupBy, having, orderby);
+        Cursor cursor = db.query(tablename, getAllColumns(), selection, selectionArgs, groupBy, having, orderby);
         return readAllAndCloseCursor(cursor);
     }
 
     public void deleteAll() {
-        db.execSQL("DELETE FROM " + getTablename());
+        db.execSQL("DELETE FROM " + tablename);
     }
 
     /** Deletes the given entity from the database. Currently, only single value PK entities are supported. */
@@ -407,7 +415,7 @@ public abstract class AbstractDao<T, K> {
             } else if (!cursor.isLast()) {
                 throw new DaoException("Expected unique result, but count was " + cursor.getCount());
             }
-            readFrom(cursor, entity);
+            readFrom(cursor, entity, 0);
         } finally {
             cursor.close();
         }
@@ -460,24 +468,22 @@ public abstract class AbstractDao<T, K> {
 
     protected void assertSinglePk() {
         if (pkColumns.length != 1) {
-            throw new SQLException(this + " (" + getTablename() + ") does not have a single-column primary key");
+            throw new SQLException(this + " (" + tablename + ") does not have a single-column primary key");
         }
     }
 
     public long count() {
-        return DatabaseUtils.queryNumEntries(db, getTablename());
+        return DatabaseUtils.queryNumEntries(db, tablename);
     }
 
     /** Reads the values from the current position of the given cursor and returns a new entity. */
-    abstract public T readFrom(Cursor cursor);
+    abstract public T readFrom(Cursor cursor, int offset);
 
     /** Reads the values from the current position of the given cursor into an existing entity. */
-    abstract public void readFrom(Cursor cursor, T entity);
+    abstract public void readFrom(Cursor cursor, T entity, int offset);
 
     /** Binds the entity's values to the statement. Make sure to synchronize the statement outside of the method. */
     abstract protected void bindValues(SQLiteStatement stmt, T entity);
-
-    abstract public String getTablename();
 
     abstract protected void updateKeyAfterInsert(T entity, long rowId);
 
