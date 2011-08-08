@@ -28,21 +28,12 @@
         <copy file="../DaoBase/release/greenDAO-javadoc.jar" todir="../DaoExample/lib" ></copy>
         <copy file="release/greenDAO-generator.jar" todir="../DaoExampleGenerator/lib" ></copy>
         <copy file="release/greenDAO-generator-javadoc.jar" todir="../DaoExampleGenerator/lib" ></copy>
-
     </target>
-
-
 	
-	<target name="build-example-build" description="">
-        <mkdir dir="release/example" />
-        <ant antfile="../DaoBase/mybuild.xml" dir="../DaoBase/"/>
-    	<antcall target="build-all"></antcall>
-    </target>
-
-
-    <target name="build-example-copy" description="">
+	<target name="build-example" description="">
     	<delete dir="release/example"/>
-    	<fileset dir="src_dir"/>
+        <antcall target="refresh-example-jars" />
+
         <copy  todir="release/example/javadoc/greenDAO" >
             <fileset dir="../DaoBase/release/docs/api/"/>
         </copy>
