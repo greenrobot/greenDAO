@@ -43,12 +43,6 @@ public class NoteDao extends AbstractDao<Note, Long> {
 
     /** @inheritdoc */
     @Override
-    public String getTablename() {
-        return TABLENAME;
-    }
-
-    /** @inheritdoc */
-    @Override
     protected void bindValues(SQLiteStatement stmt, Note entity) {
         stmt.clearBindings();
  
@@ -66,21 +60,21 @@ public class NoteDao extends AbstractDao<Note, Long> {
 
     /** @inheritdoc */
     @Override
-    public Note readFrom(Cursor cursor) {
+    public Note readFrom(Cursor cursor, int offset) {
         Note entity = new Note( //
-            cursor.isNull(0) ? null : cursor.getLong(0), // id
-            cursor.getString(1), // text
-            cursor.isNull(2) ? null : cursor.getString(2) // date
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.getString(offset + 1), // text
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // date
         );
         return entity;
     }
     
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, Note entity) {
-        entity.setId(cursor.isNull(0) ? null : cursor.getLong(0));
-        entity.setText(cursor.getString(1));
-        entity.setDate(cursor.isNull(2) ? null : cursor.getString(2));
+    public void readFrom(Cursor cursor, Note entity, int offset) {
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setText(cursor.getString(offset + 1));
+        entity.setDate(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
     
     @Override
@@ -103,5 +97,5 @@ public class NoteDao extends AbstractDao<Note, Long> {
     protected boolean isEntityUpdateable() {
         return true;
     }
-
+    
 }
