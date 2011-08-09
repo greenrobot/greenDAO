@@ -77,6 +77,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
     }
 
     public void testInsertInTx() {
+        dao.deleteAll();
         List<T> list = new ArrayList<T>();
         for (int i = 0; i < 20; i++) {
             list.add(createEntityWithRandomPk());
@@ -106,6 +107,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
     }
 
     public void testCount() {
+        dao.deleteAll();
         assertEquals(0, dao.count());
         dao.insert(createEntityWithRandomPk());
         assertEquals(1, dao.count());
@@ -151,6 +153,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
     }
 
     public void testLoadAll() {
+        dao.deleteAll();
         List<T> list = new ArrayList<T>();
         for (int i = 0; i < 15; i++) {
             T entity = createEntity(nextPk());
@@ -174,6 +177,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
     }
 
     public void testUpdate() {
+        dao.deleteAll();
         T entity = createEntityWithRandomPk();
         dao.insert(entity);
         dao.update(entity);

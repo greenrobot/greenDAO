@@ -59,12 +59,16 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
             Constructor<D> constructor = daoClass.getConstructor(SQLiteDatabase.class);
             dao = constructor.newInstance(db);
 
-            Method createTableMethod = daoClass.getMethod("createTable", SQLiteDatabase.class, boolean.class);
-            createTableMethod.invoke(null, db, false);
+            setUpTableForDao();
         } catch (Exception e) {
             throw new RuntimeException("Could not prepare DAO Test", e);
         }
         daoAccess = new UnitTestDaoAccess<T, K>(dao);
+    }
+
+    protected void setUpTableForDao() throws Exception {
+        Method createTableMethod = daoClass.getMethod("createTable", SQLiteDatabase.class, boolean.class);
+        createTableMethod.invoke(null, db, false);
     }
 
 }

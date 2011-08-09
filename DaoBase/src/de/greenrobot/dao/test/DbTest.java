@@ -48,6 +48,11 @@ public abstract class DbTest extends ApplicationTestCase<Application> {
     @Override
     protected void setUp() {
         createApplication();
+        setUpDb();
+    }
+
+    /** Override if you create your own DB */
+    protected void setUpDb() {
         if (inMemory) {
             db = SQLiteDatabase.create(null);
         } else {
