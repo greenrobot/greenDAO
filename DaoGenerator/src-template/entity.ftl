@@ -4,6 +4,7 @@ package ${entity.javaPackage};
 
 <#if entity.active>
 import ${schema.defaultJavaPackageDao}.DaoMaster;
+import de.greenrobot.dao.DaoException;
 
 </#if>
 // THIS CODE IS GENERATED, DO NOT EDIT.

@@ -1,6 +1,7 @@
 package de.greenrobot.dao.test;
 
 import de.greenrobot.dao.test.DaoMaster;
+import de.greenrobot.dao.DaoException;
 
 // THIS CODE IS GENERATED, DO NOT EDIT.
 /** 

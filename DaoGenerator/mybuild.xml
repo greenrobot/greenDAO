@@ -34,10 +34,10 @@
     	<delete dir="release/example"/>
         <antcall target="refresh-example-jars" />
 
-        <copy  todir="release/example/javadoc/greenDAO" >
+        <copy  todir="release/example/javadoc/greendao" >
             <fileset dir="../DaoBase/release/docs/api/"/>
         </copy>
-        <copy  todir="release/example/javadoc/greenDAO-generator" >
+        <copy  todir="release/example/javadoc/greendao-generator" >
             <fileset dir="release/docs/api/"/>
         </copy>
         <copy  todir="release/example/DaoExample" >

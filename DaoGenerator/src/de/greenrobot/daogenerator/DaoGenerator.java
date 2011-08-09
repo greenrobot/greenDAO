@@ -84,21 +84,27 @@ public class DaoGenerator {
     }
 
     private void generate(Template template, File outDirFile, String javaPackage, String javaClassName, Schema schema,
-            Entity entity) throws TemplateException, IOException {
-        File file = toJavaFilename(outDirFile, javaPackage, javaClassName);
-        file.getParentFile().mkdirs();
-
-        Map<String, Object> root = new HashMap<String, Object>();
-        root.put("schema", schema);
-        root.put("entity", entity);
-
-        Writer writer = new FileWriter(file);
+            Entity entity) throws Exception {
         try {
-            template.process(root, writer);
-            writer.flush();
-            System.out.println("Written " + file.getCanonicalPath());
-        } finally {
-            writer.close();
+            File file = toJavaFilename(outDirFile, javaPackage, javaClassName);
+            file.getParentFile().mkdirs();
+
+            Map<String, Object> root = new HashMap<String, Object>();
+            root.put("schema", schema);
+            root.put("entity", entity);
+
+            Writer writer = new FileWriter(file);
+            try {
+                template.process(root, writer);
+                writer.flush();
+                System.out.println("Written " + file.getCanonicalPath());
+            } finally {
+                writer.close();
+            }
+        } catch (Exception ex) {
+            System.err.println("Error while generating " + javaPackage + "." + javaClassName + " ("
+                    + outDirFile.getCanonicalPath() + ")");
+            throw ex;
         }
     }
 
