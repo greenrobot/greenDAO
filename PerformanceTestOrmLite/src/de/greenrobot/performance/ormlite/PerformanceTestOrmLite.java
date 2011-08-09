@@ -18,6 +18,7 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
     private Dao<SimpleEntityNotNull, Long> dao;
     private boolean inMemory;
     private DbHelper dbHelper;
+    private AndroidConnectionSource connectionSource;
 
     public PerformanceTestOrmLite() {
         super(Application.class);
@@ -39,7 +40,7 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
             getApplication().deleteDatabase(name);
         }
         dbHelper = new DbHelper(getApplication(), name);
-        AndroidConnectionSource connectionSource = new AndroidConnectionSource(dbHelper);
+        connectionSource = new AndroidConnectionSource(dbHelper);
         try {
             dao = DaoManager.createDao(connectionSource, SimpleEntityNotNull.class);
         } catch (SQLException e) {
@@ -130,5 +131,21 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         }
         time = System.currentTimeMillis() - start;
         Log.d("DAO", "ORMLite: Updated (one-by-one) " + count + " entities in " + time + "ms");
+    }
+
+    public void testSemantics() {
+        try {
+            Dao<MinimalEntity, Long> minimalDao = DaoManager.createDao(connectionSource, MinimalEntity.class);
+            MinimalEntity data = new MinimalEntity();
+            minimalDao.create(data);
+            assertNull(data.getId()); // ORMLite does not update PK after insert
+            MinimalEntity data2 = minimalDao.queryForAll().get(0);
+            MinimalEntity data3 = minimalDao.queryForId(data2.getId());
+            assertNotSame(data, data2);
+            assertNotSame(data2, data3); // ORMLite does not provide object equality
+            assertEquals(data2.getId(), data3.getId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

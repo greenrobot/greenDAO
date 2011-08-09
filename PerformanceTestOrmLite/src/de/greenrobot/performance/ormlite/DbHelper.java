@@ -24,12 +24,15 @@ public class DbHelper extends SQLiteOpenHelper {
                 "SIMPLE_STRING TEXT NOT NULL ," + // 8
                 "SIMPLE_BYTE_ARRAY BLOB NOT NULL )"; // 9
         db.execSQL(sql);
+        
+        String sql2 = "CREATE TABLE MINIMAL_ENTITY (_id INTEGER PRIMARY KEY)";
+        db.execSQL(sql2);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String sql = "DROP TABLE SIMPLE_ENTITY_NOT_NULL";
-        db.execSQL(sql);
+        db.execSQL("DROP TABLE IF EXISTS SIMPLE_ENTITY_NOT_NULL");
+        db.execSQL("DROP TABLE IF EXISTS MINIMAL_ENTITY");
         onCreate(db);
     }
 
