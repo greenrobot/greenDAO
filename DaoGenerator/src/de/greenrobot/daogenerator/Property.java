@@ -99,6 +99,8 @@ public class Property {
 
     /** Initialized in 2nd pass */
     private String constraints;
+    
+    private int ordinal;
 
     private String javaType;
 
@@ -143,6 +145,14 @@ public class Property {
 
     public String getJavaType() {
         return javaType;
+    }
+    
+    public int getOrdinal() {
+        return ordinal;
+    }
+
+    public void setOrdinal(int ordinal) {
+        this.ordinal = ordinal;
     }
 
     void init2ndPass(Schema schema, Entity table) {

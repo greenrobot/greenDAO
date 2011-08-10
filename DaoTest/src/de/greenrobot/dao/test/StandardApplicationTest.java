@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-package de.greenrobot.dao;
+package de.greenrobot.dao.test;
 
-public class Property {
-    public final int oridinal;
-    public final Class<?> type;
-    public final String name;
-    public final boolean primaryKey;
-    public final String columnName;
+import android.app.Application;
+import android.test.ApplicationTestCase;
 
-    public Property(int oridinal, Class<?> type, String name, boolean primaryKey, String columnName) {
-        this.oridinal = oridinal;
-        this.type = type;
-        this.name = name;
-        this.primaryKey = primaryKey;
-        this.columnName = columnName;
+/**
+ * Base class for testing with a standard Application class.
+ * 
+ * @author Markus
+ * 
+ */
+public abstract class StandardApplicationTest extends ApplicationTestCase<Application> {
+
+    public StandardApplicationTest() {
+        super(Application.class);
+    }
+
+    @Override
+    protected void setUp() {
+        createApplication();
     }
 
 }

@@ -28,14 +28,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 /**
- * Base class for all DAOs: Implements enity operations like insert, load, delete, and query.
+ * Base class for all DAOs: Implements entity operations like insert, load, delete, and query.
  * 
  * @author Markus
  * 
  * @param <T>
  *            Entity type
  * @param <K>
- *            Primary key type; use Void if entity does not have one
+ *            Primary key (PK) type; use Void if entity does not have exactly one PK
  */
 public abstract class AbstractDao<T, K> {
     protected final SQLiteDatabase db;
@@ -56,8 +56,18 @@ public abstract class AbstractDao<T, K> {
     private final String[] pkColumns;
     private final String[] nonPkColumns;
 
+    private final IdentityScope<K, T> identityScope;
+
+    /** Single property PK or null if there's no PK or a multi property PK. */
+    protected final Property pkProperty;
+
     public AbstractDao(SQLiteDatabase db) {
+        this(db, null);
+    }
+
+    public AbstractDao(SQLiteDatabase db, IdentityScope<K, T> identityScope) {
         this.db = db;
+        this.identityScope = identityScope;
         try {
             tablename = (String) getClass().getField("TABLENAME").get(null);
             Class<?> propertiesClass = Class.forName(getClass().getName() + "$Properties");
@@ -77,12 +87,14 @@ public abstract class AbstractDao<T, K> {
 
         List<String> pkColumnList = new ArrayList<String>();
         List<String> nonPkColumnList = new ArrayList<String>();
+        Property lastPkProperty = null;
         for (int i = 0; i < properties.length; i++) {
             Property property = properties[i];
             String name = property.columnName;
             allColumns[i] = name;
             if (property.primaryKey) {
                 pkColumnList.add(name);
+                lastPkProperty = property;
             } else {
                 nonPkColumnList.add(name);
             }
@@ -91,6 +103,8 @@ public abstract class AbstractDao<T, K> {
         nonPkColumns = nonPkColumnList.toArray(nonPkColumnsArray);
         String[] pkColumnsArray = new String[pkColumnList.size()];
         pkColumns = pkColumnList.toArray(pkColumnsArray);
+
+        pkProperty = pkColumns.length == 1 ? lastPkProperty : null;
     }
 
     protected void appendCommaSeparated(StringBuilder builder, String valuePrefix, String[] values) {
@@ -234,6 +248,12 @@ public abstract class AbstractDao<T, K> {
         if (key == null) {
             return null;
         }
+        if (identityScope != null) {
+            T entity = identityScope.get(key);
+            if (entity != null) {
+                return entity;
+            }
+        }
         String sql = getSelectByKey();
         String[] keyArray = new String[] { key.toString() };
         Cursor cursor = db.rawQuery(sql, keyArray);
@@ -257,7 +277,7 @@ public abstract class AbstractDao<T, K> {
             } else if (!cursor.isLast()) {
                 throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
             }
-            return readFrom(cursor, 0);
+            return readAndTrack(cursor);
         } finally {
             cursor.close();
         }
@@ -297,7 +317,8 @@ public abstract class AbstractDao<T, K> {
     }
 
     /**
-     * Inserts the given entities in the database using a transaction.
+     * Inserts the given entities in the database using a transaction. The given entities will become tracked if the PK
+     * is set.
      * 
      * @param entities
      *            The entities to insert.
@@ -313,7 +334,7 @@ public abstract class AbstractDao<T, K> {
                     bindValues(stmt, entity);
                     if (setPrimaryKey) {
                         long rowId = stmt.executeInsert();
-                        updateKeyAfterInsert(entity, rowId);
+                        updateKeyAfterInsertAndTrack(entity, rowId);
                     } else {
                         stmt.execute();
                     }
@@ -331,7 +352,7 @@ public abstract class AbstractDao<T, K> {
         synchronized (stmt) {
             bindValues(stmt, entity);
             long rowId = stmt.executeInsert();
-            updateKeyAfterInsert(entity, rowId);
+            updateKeyAfterInsertAndTrack(entity, rowId);
             return rowId;
         }
     }
@@ -353,19 +374,35 @@ public abstract class AbstractDao<T, K> {
             bindValues(stmt, entity);
             rowId = stmt.executeInsert();
         }
-        updateKeyAfterInsert(entity, rowId);
+        updateKeyAfterInsertAndTrack(entity, rowId);
         return rowId;
     }
 
-    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
+    protected void updateKeyAfterInsertAndTrack(T entity, long rowId) {
+        K key = updateKeyAfterInsert(entity, rowId);
+        if (key != null && identityScope != null) {
+            identityScope.put(key, entity);
+        }
+    }
+
+    /** Reads all available rows from the given cursor and returns a list of entities. */
     public List<T> readAllFrom(Cursor cursor) {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<T>(cursor.getCount());
         if (cursor.moveToFirst()) {
             do {
-                list.add(readFrom(cursor, 0));
+                list.add(readAndTrack(cursor));
             } while (cursor.moveToNext());
         }
         return list;
+    }
+
+    protected T readAndTrack(Cursor cursor) {
+        T entity = readFrom(cursor, 0);
+        K key = getPrimaryKeyValue(entity);
+        if (key != null && identityScope != null) {
+            identityScope.put(key, entity);
+        }
+        return entity;
     }
 
     /** A raw-style query where you can pass any WHERE clause and arguments. */
@@ -385,10 +422,14 @@ public abstract class AbstractDao<T, K> {
     }
 
     /** Deletes the given entity from the database. Currently, only single value PK entities are supported. */
+    // TODO support multi-value PK: should sub classes overwrite this method?
     public void delete(T entity) {
         assertSinglePk();
-        // TODO support multi-value PK
-        deleteByKey(getPrimaryKeyValue(entity));
+        K key = getPrimaryKeyValue(entity);
+        deleteByKey(key);
+        if (identityScope != null) {
+            identityScope.remove(key);
+        }
     }
 
     /** Deletes an entity with the given PK from the database. Currently, only single value PK entities are supported. */
@@ -396,7 +437,6 @@ public abstract class AbstractDao<T, K> {
         assertSinglePk();
         SQLiteStatement stmt = getDeleteStatement();
         synchronized (stmt) {
-
             if (key instanceof Long) {
                 stmt.bindLong(1, (Long) key);
             } else {
@@ -423,6 +463,9 @@ public abstract class AbstractDao<T, K> {
                 throw new DaoException("Expected unique result, but count was " + cursor.getCount());
             }
             readFrom(cursor, entity, 0);
+            if (identityScope != null) {
+                identityScope.put(key, entity);
+            }
         } finally {
             cursor.close();
         }
@@ -436,10 +479,10 @@ public abstract class AbstractDao<T, K> {
         }
     }
 
+    // TODO support multi-value PK
     protected void updateInsideSynchronized(T entity, SQLiteStatement stmt) {
-        // TODO Do not bind PKs here (performance)
+        // To do? Check if it's worth not to bind PKs here (performance).
         bindValues(stmt, entity);
-        // TODO support multi-value PK
         K key = getPrimaryKeyValue(entity);
         int index = allColumns.length + 1;
         if (key instanceof Long) {
@@ -448,6 +491,9 @@ public abstract class AbstractDao<T, K> {
             stmt.bindString(index, key.toString());
         }
         stmt.execute();
+        if (identityScope != null) {
+            identityScope.put(key, entity);
+        }
     }
 
     /**
@@ -486,13 +532,16 @@ public abstract class AbstractDao<T, K> {
     /** Reads the values from the current position of the given cursor and returns a new entity. */
     abstract public T readFrom(Cursor cursor, int offset);
 
+    /** Reads the key from the current position of the given cursor, or returns null if there's no single-value key. */
+    abstract public K readPkFrom(Cursor cursor, int offset);
+
     /** Reads the values from the current position of the given cursor into an existing entity. */
     abstract public void readFrom(Cursor cursor, T entity, int offset);
 
     /** Binds the entity's values to the statement. Make sure to synchronize the statement outside of the method. */
     abstract protected void bindValues(SQLiteStatement stmt, T entity);
 
-    abstract protected void updateKeyAfterInsert(T entity, long rowId);
+    abstract protected K updateKeyAfterInsert(T entity, long rowId);
 
     /**
      * Returns the value of the primary key, if the entity has a single primary key, or, if not, null. Returns null if

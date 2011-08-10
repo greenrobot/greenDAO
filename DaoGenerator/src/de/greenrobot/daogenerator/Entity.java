@@ -242,7 +242,9 @@ public class Entity {
     void init2ndPass() {
         initNamesWithDefaults();
 
-        for (Property property : properties) {
+        for (int i=0; i<properties.size();i++) {
+            Property property = properties.get(i);
+            property.setOrdinal(i);
             property.init2ndPass(schema, this);
             if (property.isPrimaryKey()) {
                 propertiesPk.add(property);

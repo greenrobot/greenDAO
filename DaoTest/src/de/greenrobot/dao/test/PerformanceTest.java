@@ -82,6 +82,12 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         System.gc();
 
         start = System.currentTimeMillis();
+        list = dao.loadAll();
+        time = System.currentTimeMillis() - start;
+        Log.d("DAO", "Loaded 2nd time " + list.size() + " entities in " + time + "ms");
+        System.gc();
+
+        start = System.currentTimeMillis();
         dao.updateInTx(list);
         time = System.currentTimeMillis() - start;
         Log.d("DAO", "Updated (batch) " + list.size() + " entities in " + time + "ms");
