@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 
 import ${entity.javaPackage}.${entity.className};
@@ -43,6 +44,10 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 </#if>
     public ${entity.classNameDao}(SQLiteDatabase db) {
         super(db);
+    }
+    
+    public ${entity.classNameDao}(SQLiteDatabase db, IdentityScope<${entity.pkType}, ${entity.className}> identityScope) {
+        super(db, identityScope);
     }
     
     /** Creates the underlying database table. */

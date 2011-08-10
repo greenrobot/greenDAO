@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 
 import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.UnitTestDaoAccess;
 
@@ -42,6 +43,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     protected final Class<D> daoClass;
     protected UnitTestDaoAccess<T, K> daoAccess;
     protected Property pkColumn;
+    protected IdentityScope<K, T> identityScope;
 
     public AbstractDaoTest(Class<D> daoClass) {
         this(daoClass, true);
@@ -51,13 +53,17 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
         super(inMemory);
         this.daoClass = daoClass;
     }
+    
+    public void setIdentityScopeBeforeSetUp(IdentityScope<K, T> identityScope) {
+        this.identityScope = identityScope;
+    }
 
     @Override
     protected void setUp() {
         super.setUp();
         try {
-            Constructor<D> constructor = daoClass.getConstructor(SQLiteDatabase.class);
-            dao = constructor.newInstance(db);
+            Constructor<D> constructor = daoClass.getConstructor(SQLiteDatabase.class, IdentityScope.class);
+            dao = constructor.newInstance(db, identityScope);
 
             setUpTableForDao();
         } catch (Exception e) {

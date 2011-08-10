@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 
 import de.greenrobot.dao.test.RelationEntity;
@@ -34,6 +35,10 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
 
     public RelationEntityDao(SQLiteDatabase db) {
         super(db);
+    }
+    
+    public RelationEntityDao(SQLiteDatabase db, IdentityScope<Long, RelationEntity> identityScope) {
+        super(db, identityScope);
     }
     
     /** Creates the underlying database table. */

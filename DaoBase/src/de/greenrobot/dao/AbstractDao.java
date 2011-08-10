@@ -277,7 +277,7 @@ public abstract class AbstractDao<T, K> {
             } else if (!cursor.isLast()) {
                 throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
             }
-            return readAndTrack(cursor);
+            return readWithIdentityScope(cursor);
         } finally {
             cursor.close();
         }
@@ -390,19 +390,28 @@ public abstract class AbstractDao<T, K> {
         List<T> list = new ArrayList<T>(cursor.getCount());
         if (cursor.moveToFirst()) {
             do {
-                list.add(readAndTrack(cursor));
+                list.add(readWithIdentityScope(cursor));
             } while (cursor.moveToNext());
         }
         return list;
     }
 
-    protected T readAndTrack(Cursor cursor) {
-        T entity = readFrom(cursor, 0);
-        K key = getPrimaryKeyValue(entity);
-        if (key != null && identityScope != null) {
-            identityScope.put(key, entity);
+    protected T readWithIdentityScope(Cursor cursor) {
+        if (identityScope != null) {
+            K key = readPkFrom(cursor, 0);
+            T entity = identityScope.get(key);
+            if (entity != null) {
+                return entity;
+            } else {
+                entity = readFrom(cursor, 0);
+                if (key != null) {
+                    identityScope.put(key, entity);
+                }
+                return entity;
+            }
+        } else {
+            return readFrom(cursor, 0);
         }
-        return entity;
     }
 
     /** A raw-style query where you can pass any WHERE clause and arguments. */
@@ -443,6 +452,9 @@ public abstract class AbstractDao<T, K> {
                 stmt.bindString(1, key.toString());
             }
             stmt.execute();
+        }
+        if (identityScope != null) {
+            identityScope.remove(key);
         }
     }
 

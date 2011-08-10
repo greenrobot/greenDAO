@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 
 import de.greenrobot.dao.test.DateEntity;
@@ -24,6 +25,10 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
 
     public DateEntityDao(SQLiteDatabase db) {
         super(db);
+    }
+    
+    public DateEntityDao(SQLiteDatabase db, IdentityScope<Long, DateEntity> identityScope) {
+        super(db, identityScope);
     }
     
     /** Creates the underlying database table. */

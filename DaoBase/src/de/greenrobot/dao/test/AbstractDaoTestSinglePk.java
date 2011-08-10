@@ -72,7 +72,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         dao.insert(entity);
         T entity2 = dao.load(pk);
         assertNotNull(entity2);
-        assertNotSame(entity, entity2); // Unless we'll cache stuff one day
+        // assertNotSame(entity, entity2); // Unless we'll cache stuff one day --> we do now
         assertEquals(daoAccess.getPrimaryKeyValue(entity), daoAccess.getPrimaryKeyValue(entity2));
     }
 
