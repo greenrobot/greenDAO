@@ -98,6 +98,16 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
         assertTestEntity(entity);
     }
 
+    public void testToOneLoadDeepNull() {
+        RelationEntity entity = insertEntityWithRelations(42l);
+        entity.setParentId(null);
+        entity.setTestId(null);
+        dao.update(entity);
+        entity = dao.loadDeep(entity.getId());
+        assertNull(entity.getParent());
+        assertNull(entity.getTestEntity());
+    }
+
     public void testQueryDeep() {
         insertEntityWithRelations(42l);
         String columnName = RelationEntityDao.Properties.SimpleString.columnName;
@@ -136,7 +146,7 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
         assertEquals("mytest", testEntity.getSimpleStringNotNull());
         assertEquals("I'm a parent", entity.getParent().getSimpleString());
         assertEquals(entity.getParentId(), entity.getParent().getId());
-        assertSame(testEntity, entity.getTestEntity());
+        assertNotNull(entity.getTestNotNull());
     }
 
 }
