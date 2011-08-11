@@ -98,6 +98,26 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
         assertTestEntity(entity);
     }
 
+    public void testToOneNoMatch() {
+        RelationEntity entity = insertEntityWithRelations(42l);
+        assertNotNull(entity.getTestEntity());
+        entity.setTestId(23l);
+        entity.setTestIdNotNull(-78);
+        assertNull(entity.getTestEntity());
+        assertNull(entity.getTestNotNull());
+    }
+
+    public void testToOneNoMatchLoadDeep() {
+        RelationEntity entity = insertEntityWithRelations(42l);
+        assertNotNull(entity.getTestEntity());
+        entity.setTestId(23l);
+        entity.setTestIdNotNull(-78);
+        dao.update(entity);
+        entity = dao.loadDeep(entity.getId());
+        assertNull(entity.getTestEntity());
+        assertNull(entity.getTestNotNull());
+    }
+
     public void testToOneLoadDeepNull() {
         RelationEntity entity = insertEntityWithRelations(42l);
         entity.setParentId(null);

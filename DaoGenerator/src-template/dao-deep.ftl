@@ -26,11 +26,18 @@
     protected ${entity.className} readDeepFrom(Cursor cursor) {
         ${entity.className} entity = fetchEntity(cursor, 0);
         int offset = getAllColumns().length;
+
 <#list entity.toOneRelations as toOne>
-        entity.set${toOne.name?cap_first}(daoMaster.get${toOne.targetEntity.classNameDao}().fetchEntity(cursor, offset));
+        ${toOne.targetEntity.className} ${toOne.name} = daoMaster.get${toOne.targetEntity.classNameDao}().fetchEntity(cursor, offset);
+<#if toOne.fkProperties[0].notNull>         if(${toOne.name} != null) {
+    </#if>        entity.set${toOne.name?cap_first}(${toOne.name});
+<#if toOne.fkProperties[0].notNull>
+        }
+</#if>
 <#if toOne_has_next>
         offset += daoMaster.get${toOne.targetEntity.classNameDao}().getAllColumns().length;
 </#if>
+
 </#list>
         return entity;    
     }

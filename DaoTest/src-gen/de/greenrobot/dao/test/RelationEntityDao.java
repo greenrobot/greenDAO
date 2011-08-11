@@ -169,11 +169,20 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     protected RelationEntity readDeepFrom(Cursor cursor) {
         RelationEntity entity = fetchEntity(cursor, 0);
         int offset = getAllColumns().length;
-        entity.setParent(daoMaster.getRelationEntityDao().fetchEntity(cursor, offset));
+
+        RelationEntity parent = daoMaster.getRelationEntityDao().fetchEntity(cursor, offset);
+        entity.setParent(parent);
         offset += daoMaster.getRelationEntityDao().getAllColumns().length;
-        entity.setTestEntity(daoMaster.getTestEntityDao().fetchEntity(cursor, offset));
+
+        TestEntity testEntity = daoMaster.getTestEntityDao().fetchEntity(cursor, offset);
+        entity.setTestEntity(testEntity);
         offset += daoMaster.getTestEntityDao().getAllColumns().length;
-        entity.setTestNotNull(daoMaster.getTestEntityDao().fetchEntity(cursor, offset));
+
+        TestEntity testNotNull = daoMaster.getTestEntityDao().fetchEntity(cursor, offset);
+         if(testNotNull != null) {
+            entity.setTestNotNull(testNotNull);
+        }
+
         return entity;    
     }
 
