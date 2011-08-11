@@ -21,10 +21,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import android.database.Cursor;
 import android.database.SQLException;
 import android.util.Log;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.SqlUtils;
 
 /**
  * Default tests for single-PK entities.
@@ -182,6 +184,50 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         dao.insert(entity);
         dao.update(entity);
         assertEquals(1, dao.count());
+    }
+
+    public void testReadWithOffset() {
+        K pk = nextPk();
+        T entity = createEntity(pk);
+        dao.insert(entity);
+
+        Cursor cursor = queryAllWithDummyColumnsInFront(5, "42");
+        T entity2 = dao.readFrom(cursor, 5);
+        assertEquals(pk, daoAccess.getPrimaryKeyValue(entity2));
+    }
+
+    public void testLoadPkWithOffset() {
+        runLoadPkTest(10);
+    }
+
+    public void testLoadPk() {
+        runLoadPkTest(0);
+    }
+
+    protected void runLoadPkTest(int offset) {
+        K pk = nextPk();
+        T entity = createEntity(pk);
+        dao.insert(entity);
+
+        Cursor cursor = queryAllWithDummyColumnsInFront(offset, "42");
+        K pk2 = dao.readPkFrom(cursor, offset);
+        assertEquals(pk, pk2);
+    }
+
+    protected Cursor queryAllWithDummyColumnsInFront(int dummyCount, String valueForColumn) {
+        StringBuilder builder = new StringBuilder("SELECT ");
+        for (int i = 0; i < dummyCount; i++) {
+            builder.append(valueForColumn).append(",");
+        }
+        SqlUtils.appendCommaSeparated(builder, "", dao.getAllColumns());
+        builder.append(" FROM ").append(dao.getTablename()).append(' ');
+        String select = builder.toString();
+        Cursor cursor = db.rawQuery(select, null);
+        assertTrue(cursor.moveToFirst());
+        for (int i = 0; i < dummyCount; i++) {
+            assertEquals(valueForColumn, cursor.getString(i));
+        }
+        return cursor;
     }
 
     protected K nextPk() {

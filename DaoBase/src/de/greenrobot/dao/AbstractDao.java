@@ -46,7 +46,7 @@ public abstract class AbstractDao<T, K> {
     private final String[] pkColumns;
     private final String[] nonPkColumns;
 
-    private final IdentityScope<K, T> identityScope;
+    private IdentityScope<K, T> identityScope;
 
     /** Single property PK or null if there's no PK or a multi property PK. */
     private final Property pkProperty;
@@ -265,9 +265,7 @@ public abstract class AbstractDao<T, K> {
 
     protected void updateKeyAfterInsertAndTrack(T entity, long rowId) {
         K key = updateKeyAfterInsert(entity, rowId);
-        if (key != null && identityScope != null) {
-            identityScope.put(key, entity);
-        }
+        attachEntity(key, entity);
     }
 
     /** Reads all available rows from the given cursor and returns a list of entities. */
@@ -282,7 +280,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     /** Considers identity scope */
-    protected T fetchEntity(Cursor cursor, int offset) {
+    public T fetchEntity(Cursor cursor, int offset) {
         if (identityScope != null) {
             K key = readPkFrom(cursor, offset);
             T entity = identityScope.get(key);
@@ -290,13 +288,13 @@ public abstract class AbstractDao<T, K> {
                 return entity;
             } else {
                 entity = readFrom(cursor, offset);
-                if (key != null) {
-                    identityScope.put(key, entity);
-                }
+                attachEntity(key, entity);
                 return entity;
             }
         } else {
-            return readFrom(cursor, 0);
+            T entity=readFrom(cursor, offset);
+            attachEntity(null, entity);
+            return entity;
         }
     }
 
@@ -361,9 +359,7 @@ public abstract class AbstractDao<T, K> {
                 throw new DaoException("Expected unique result, but count was " + cursor.getCount());
             }
             readFrom(cursor, entity, 0);
-            if (identityScope != null) {
-                identityScope.put(key, entity);
-            }
+            attachEntity(key, entity);
         } finally {
             cursor.close();
         }
@@ -389,7 +385,17 @@ public abstract class AbstractDao<T, K> {
             stmt.bindString(index, key.toString());
         }
         stmt.execute();
-        if (identityScope != null) {
+        attachEntity(key, entity);
+    }
+
+    /** 
+     * Attaches the entity to the identity scope. Sub classes with relations additionally set the DaoMaster here.
+     * 
+     *  @param key Needed only for identity scope, pass null if there's none.
+     *  @param entity The entitiy to attach
+     * */
+    protected void attachEntity(K key, T entity) {
+        if (identityScope != null && key != null) {
             identityScope.put(key, entity);
         }
     }
@@ -425,6 +431,10 @@ public abstract class AbstractDao<T, K> {
 
     public long count() {
         return DatabaseUtils.queryNumEntries(db, tablename);
+    }
+
+    public void __temporarySetIdScope(IdentityScope<K, T> identityScope) {
+        this.identityScope = identityScope;
     }
 
     /** Reads the values from the current position of the given cursor and returns a new entity. */

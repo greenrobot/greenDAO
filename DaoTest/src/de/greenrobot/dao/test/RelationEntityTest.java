@@ -4,6 +4,8 @@ import java.util.List;
 
 public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao, RelationEntity> {
 
+    protected DaoMaster daoMaster;
+
     public RelationEntityTest() {
         super(RelationEntityDao.class);
     }
@@ -12,6 +14,8 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     protected void setUp() {
         super.setUp();
         TestEntityDao.createTable(db, false);
+        daoMaster = new DaoMaster(db);
+        dao = daoMaster.getRelationEntityDao();
     }
 
     @Override
@@ -28,9 +32,6 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     }
 
     public void testToOneSelf() {
-        DaoMaster daoMaster = new DaoMaster(db);
-        dao = daoMaster.getRelationEntityDao();
-
         RelationEntity entity = createEntity(1l);
         dao.insert(entity);
 
@@ -60,9 +61,6 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     }
 
     protected RelationEntity insertEntityWithRelations(Long testEntityId) {
-        DaoMaster daoMaster = new DaoMaster(db);
-        dao = daoMaster.getRelationEntityDao();
-
         TestEntity testEntity = daoMaster.getTestEntityDao().load(testEntityId);
         if (testEntity == null) {
             testEntity = new TestEntity(testEntityId);
@@ -84,13 +82,13 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     }
 
     protected void assertTestEntity(RelationEntity entity) {
-        TestEntity testEntity2 = entity.getTestEntity();
-        assertNotNull(testEntity2);
-        assertEquals(42l, (long) testEntity2.getId());
-        assertEquals("mytest", testEntity2.getSimpleStringNotNull());
+        TestEntity testEntity = entity.getTestEntity();
+        assertNotNull(testEntity);
+        assertEquals(42l, (long) testEntity.getId());
+        assertEquals("mytest", testEntity.getSimpleStringNotNull());
         assertEquals("I'm a parent", entity.getParent().getSimpleString());
         assertEquals(entity.getParentId(), entity.getParent().getId());
-        assertSame(testEntity2, entity.getTestEntity());
+        assertSame(testEntity, entity.getTestEntity());
     }
 
 }
