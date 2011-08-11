@@ -23,7 +23,6 @@ import java.util.List;
 
 import android.database.Cursor;
 import android.database.DatabaseUtils;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
@@ -40,7 +39,7 @@ import android.database.sqlite.SQLiteStatement;
 public abstract class AbstractDao<T, K> {
     protected final SQLiteDatabase db;
 
-    protected final String tablename;
+    private final String tablename;
 
     private final Property[] properties;
     private final String[] allColumns;
@@ -50,7 +49,7 @@ public abstract class AbstractDao<T, K> {
     private final IdentityScope<K, T> identityScope;
 
     /** Single property PK or null if there's no PK or a multi property PK. */
-    protected final Property pkProperty;
+    private final Property pkProperty;
 
     private TableStatements statements;
 
@@ -101,8 +100,16 @@ public abstract class AbstractDao<T, K> {
         statements = new TableStatements(db, tablename, allColumns, pkColumns);
     }
 
-    protected Property[] getProperties() {
+    public String getTablename() {
+        return tablename;
+    }
+
+    public Property[] getProperties() {
         return properties;
+    }
+
+    public Property getPkProperty() {
+        return pkProperty;
     }
 
     public String[] getAllColumns() {
@@ -115,10 +122,6 @@ public abstract class AbstractDao<T, K> {
 
     public String[] getNonPkColumns() {
         return nonPkColumns;
-    }
-
-    public String getTablename() {
-        return tablename;
     }
 
     /**
@@ -159,7 +162,7 @@ public abstract class AbstractDao<T, K> {
             } else if (!cursor.isLast()) {
                 throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
             }
-            return readWithIdentityScope(cursor);
+            return fetchEntity(cursor, 0);
         } finally {
             cursor.close();
         }
@@ -272,20 +275,21 @@ public abstract class AbstractDao<T, K> {
         List<T> list = new ArrayList<T>(cursor.getCount());
         if (cursor.moveToFirst()) {
             do {
-                list.add(readWithIdentityScope(cursor));
+                list.add(fetchEntity(cursor, 0));
             } while (cursor.moveToNext());
         }
         return list;
     }
 
-    protected T readWithIdentityScope(Cursor cursor) {
+    /** Considers identity scope */
+    protected T fetchEntity(Cursor cursor, int offset) {
         if (identityScope != null) {
-            K key = readPkFrom(cursor, 0);
+            K key = readPkFrom(cursor, offset);
             T entity = identityScope.get(key);
             if (entity != null) {
                 return entity;
             } else {
-                entity = readFrom(cursor, 0);
+                entity = readFrom(cursor, offset);
                 if (key != null) {
                     identityScope.put(key, entity);
                 }
@@ -415,7 +419,7 @@ public abstract class AbstractDao<T, K> {
 
     protected void assertSinglePk() {
         if (pkColumns.length != 1) {
-            throw new SQLException(this + " (" + tablename + ") does not have a single-column primary key");
+            throw new DaoException(this + " (" + tablename + ") does not have a single-column primary key");
         }
     }
 

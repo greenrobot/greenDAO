@@ -7,6 +7,12 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     public RelationEntityTest() {
         super(RelationEntityDao.class);
     }
+    
+    @Override
+    protected void setUp() {
+        super.setUp();
+        TestEntityDao.createTable(db, false);
+    }
 
     @Override
     protected RelationEntity createEntity(Long key) {
@@ -16,7 +22,7 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     }
 
     public void testToOne() {
-        RelationEntity entity = insertEntityWithRelations();
+        RelationEntity entity = insertEntityWithRelations(42l);
         entity = dao.load(entity.getId());
         assertTestEntity(entity);
     }
@@ -40,34 +46,36 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     }
 
     public void testToOneLoadDeep() {
-        RelationEntity entity = insertEntityWithRelations();
+        RelationEntity entity = insertEntityWithRelations(42l);
         entity = dao.loadDeep(entity.getId());
         assertTestEntity(entity);
     }
 
     public void testQueryDeep() {
-        insertEntityWithRelations();
+        insertEntityWithRelations(42l);
         String columnName = RelationEntityDao.Properties.SimpleString.columnName;
         List<RelationEntity> entityList = dao.queryDeep("WHERE T." + columnName + "=?", "findMe");
         assertEquals(1, entityList.size());
         assertTestEntity(entityList.get(0));
     }
 
-    protected RelationEntity insertEntityWithRelations() {
+    protected RelationEntity insertEntityWithRelations(Long testEntityId) {
         DaoMaster daoMaster = new DaoMaster(db);
         dao = daoMaster.getRelationEntityDao();
 
-        TestEntityDao.createTable(db, false);
-        TestEntity testEntity = new TestEntity(42l);
-        testEntity.setSimpleStringNotNull("mytest");
-        daoMaster.getTestEntityDao().insert(testEntity);
+        TestEntity testEntity = daoMaster.getTestEntityDao().load(testEntityId);
+        if (testEntity == null) {
+            testEntity = new TestEntity(testEntityId);
+            testEntity.setSimpleStringNotNull("mytest");
+            daoMaster.getTestEntityDao().insert(testEntity);
+        }
 
         RelationEntity parentEntity = createEntity(null);
         parentEntity.setSimpleString("I'm a parent");
         dao.insert(parentEntity);
 
         RelationEntity entity = createEntity(null);
-        entity.setTestId(42l);
+        entity.setTestId(testEntityId);
         entity.setParentId(parentEntity.getId());
         entity.setSimpleString("findMe");
         dao.insert(entity);
