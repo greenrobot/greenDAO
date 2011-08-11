@@ -100,11 +100,9 @@ public class Entity {
         return builder;
     }
 
-    public ToOne addToOne(Entity target, Property... fkProperties) {
-        if (fkProperties.length == 0) {
-            throw new IllegalArgumentException("fkProperties missing");
-        }
-        ToOne toOne = new ToOne(target, fkProperties);
+    public ToOne addToOne(Entity target, Property fkProperty) {
+        Property[] fkProperties = { fkProperty };
+        ToOne toOne = new ToOne(schema, this, target, fkProperties);
         toOneRelations.add(toOne);
         return toOne;
     }
@@ -166,7 +164,7 @@ public class Entity {
     public void setClassNameDao(String classNameDao) {
         this.classNameDao = classNameDao;
     }
-    
+
     public String getClassNameTest() {
         return classNameTest;
     }
@@ -222,7 +220,7 @@ public class Entity {
     public void setSkipGeneration(boolean skipGeneration) {
         this.skipGeneration = skipGeneration;
     }
-    
+
     public boolean isSkipGenerationTest() {
         return skipGenerationTest;
     }
@@ -242,7 +240,7 @@ public class Entity {
     void init2ndPass() {
         initNamesWithDefaults();
 
-        for (int i=0; i<properties.size();i++) {
+        for (int i = 0; i < properties.size(); i++) {
             Property property = properties.get(i);
             property.setOrdinal(i);
             property.init2ndPass(schema, this);
@@ -262,11 +260,7 @@ public class Entity {
 
         active = !toOneRelations.isEmpty();
         for (ToOne toOne : toOneRelations) {
-            if (toOne.getName() == null) {
-                char[] nameCharArray = toOne.getEntity().getClassName().toCharArray();
-                nameCharArray[0] = Character.toLowerCase(nameCharArray[0]);
-                toOne.setName(new String(nameCharArray));
-            }
+            toOne.init2ndPass();
         }
 
         initIndexNamesWithDefaults();
@@ -276,14 +270,14 @@ public class Entity {
         if (tableName == null) {
             tableName = DaoUtil.dbName(className);
         }
-        
+
         if (classNameDao == null) {
             classNameDao = className + "Dao";
         }
         if (classNameTest == null) {
             classNameTest = className + "Test";
         }
-        
+
         if (javaPackage == null) {
             javaPackage = schema.getDefaultJavaPackage();
         }

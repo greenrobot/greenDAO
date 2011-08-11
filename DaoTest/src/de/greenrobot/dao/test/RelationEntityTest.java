@@ -9,7 +9,7 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     public RelationEntityTest() {
         super(RelationEntityDao.class);
     }
-    
+
     @Override
     protected void setUp() {
         super.setUp();
@@ -46,6 +46,52 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
         assertEquals(entity.getId(), parent.getId());
     }
 
+    public void testToOneClearKey() {
+        RelationEntity entity = insertEntityWithRelations(42l);
+        assertNotNull(entity.getParent());
+        entity.setParentId(null);
+        assertNull(entity.getParent());
+    }
+
+    public void testToOneClearEntity() {
+        RelationEntity entity = insertEntityWithRelations(42l);
+        assertNotNull(entity.getParentId());
+        entity.setParent(null);
+        assertNull(entity.getParentId());
+    }
+
+    public void testToOneUpdateKey() {
+        RelationEntity entity = insertEntityWithRelations(42l);
+        TestEntity testEntity = entity.getTestEntity();
+        RelationEntity entity2 = insertEntityWithRelations(43l);
+        TestEntity testEntity2 = entity2.getTestEntity();
+
+        entity.setTestId(testEntity2.getId());
+        assertEquals(testEntity2.getId(), entity.getTestEntity().getId());
+
+        entity.setTestId(null);
+        assertNull(entity.getTestEntity());
+
+        entity.setTestId(testEntity.getId());
+        assertEquals(testEntity.getId(), entity.getTestEntity().getId());
+    }
+
+    public void testToOneUpdateEntity() {
+        RelationEntity entity = insertEntityWithRelations(42l);
+        TestEntity testEntity = entity.getTestEntity();
+        RelationEntity entity2 = insertEntityWithRelations(43l);
+        TestEntity testEntity2 = entity2.getTestEntity();
+
+        entity.setTestEntity(testEntity2);
+        assertEquals(testEntity2.getId(), entity.getTestId());
+
+        entity.setTestEntity(null);
+        assertNull(entity.getTestId());
+
+        entity.setTestEntity(testEntity);
+        assertEquals(testEntity.getId(), entity.getTestId());
+    }
+
     public void testToOneLoadDeep() {
         RelationEntity entity = insertEntityWithRelations(42l);
         entity = dao.loadDeep(entity.getId());
@@ -70,12 +116,14 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
 
         RelationEntity parentEntity = createEntity(null);
         parentEntity.setSimpleString("I'm a parent");
+        parentEntity.setTestNotNull(testEntity);
         dao.insert(parentEntity);
 
         RelationEntity entity = createEntity(null);
         entity.setTestId(testEntityId);
         entity.setParentId(parentEntity.getId());
         entity.setSimpleString("findMe");
+        entity.setTestNotNull(testEntity);
         dao.insert(entity);
 
         return entity;

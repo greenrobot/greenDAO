@@ -24,7 +24,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property ParentId = new Property(1, Long.class, "parentId", false, "PARENT_ID");
         public final static Property TestId = new Property(2, Long.class, "testId", false, "TEST_ID");
-        public final static Property SimpleString = new Property(3, String.class, "simpleString", false, "SIMPLE_STRING");
+        public final static Property TestIdNotNull = new Property(3, long.class, "testIdNotNull", false, "TEST_ID_NOT_NULL");
+        public final static Property SimpleString = new Property(4, String.class, "simpleString", false, "SIMPLE_STRING");
     };
 
     private DaoMaster daoMaster;
@@ -48,7 +49,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
                 "_id INTEGER PRIMARY KEY ," + // 0
                 "PARENT_ID INTEGER," + // 1
                 "TEST_ID INTEGER," + // 2
-                "SIMPLE_STRING TEXT);"; // 3
+                "TEST_ID_NOT_NULL INTEGER NOT NULL ," + // 3
+                "SIMPLE_STRING TEXT);"; // 4
         db.execSQL(sql);
     }
 
@@ -77,10 +79,11 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         if (testId != null) {
             stmt.bindLong(3, testId);
         }
+        stmt.bindLong(4, entity.getTestIdNotNull());
  
         String simpleString = entity.getSimpleString();
         if (simpleString != null) {
-            stmt.bindString(4, simpleString);
+            stmt.bindString(5, simpleString);
         }
     }
 
@@ -103,7 +106,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // parentId
             cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2), // testId
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // simpleString
+            cursor.getLong(offset + 3), // testIdNotNull
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // simpleString
         );
         return entity;
     }
@@ -114,7 +118,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setParentId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
         entity.setTestId(cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2));
-        entity.setSimpleString(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setTestIdNotNull(cursor.getLong(offset + 3));
+        entity.setSimpleString(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
      }
     
     @Override
@@ -149,9 +154,12 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
             SqlUtils.appendCommaSeparated(builder, "T0.", daoMaster.getRelationEntityDao().getAllColumns());
             builder.append(',');
             SqlUtils.appendCommaSeparated(builder, "T1.", daoMaster.getTestEntityDao().getAllColumns());
+            builder.append(',');
+            SqlUtils.appendCommaSeparated(builder, "T2.", daoMaster.getTestEntityDao().getAllColumns());
             builder.append(" FROM RELATION_ENTITY T");
             builder.append(" LEFT JOIN RELATION_ENTITY T0 ON T.PARENT_ID=T0._id");
             builder.append(" LEFT JOIN TEST_ENTITY T1 ON T.TEST_ID=T1._id");
+            builder.append(" LEFT JOIN TEST_ENTITY T2 ON T.TEST_ID_NOT_NULL=T2._id");
             builder.append(' ');
             selectDeep = builder.toString();
         }
@@ -164,6 +172,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         entity.setParent(daoMaster.getRelationEntityDao().fetchEntity(cursor, offset));
         offset += daoMaster.getRelationEntityDao().getAllColumns().length;
         entity.setTestEntity(daoMaster.getTestEntityDao().fetchEntity(cursor, offset));
+        offset += daoMaster.getTestEntityDao().getAllColumns().length;
+        entity.setTestNotNull(daoMaster.getTestEntityDao().fetchEntity(cursor, offset));
         return entity;    
     }
 

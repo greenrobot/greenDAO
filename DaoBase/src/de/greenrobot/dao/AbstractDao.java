@@ -283,6 +283,10 @@ public abstract class AbstractDao<T, K> {
     public T fetchEntity(Cursor cursor, int offset) {
         if (identityScope != null) {
             K key = readPkFrom(cursor, offset);
+            if (offset != 0 && key == null) {
+                // Occurs with deep loads (left outer joins)
+                return null;
+            }
             T entity = identityScope.get(key);
             if (entity != null) {
                 return entity;
@@ -292,7 +296,15 @@ public abstract class AbstractDao<T, K> {
                 return entity;
             }
         } else {
-            T entity=readFrom(cursor, offset);
+            // Check offset, assume a value !=0 indicating a potential outer join, so check PK 
+            if (offset != 0) {
+                K key = readPkFrom(cursor, offset);
+                if (key == null) {
+                    // Occurs with deep loads (left outer joins)
+                    return null;
+                }
+            }
+            T entity = readFrom(cursor, offset);
             attachEntity(null, entity);
             return entity;
         }
@@ -388,11 +400,13 @@ public abstract class AbstractDao<T, K> {
         attachEntity(key, entity);
     }
 
-    /** 
+    /**
      * Attaches the entity to the identity scope. Sub classes with relations additionally set the DaoMaster here.
      * 
-     *  @param key Needed only for identity scope, pass null if there's none.
-     *  @param entity The entitiy to attach
+     * @param key
+     *            Needed only for identity scope, pass null if there's none.
+     * @param entity
+     *            The entitiy to attach
      * */
     protected void attachEntity(K key, T entity) {
         if (identityScope != null && key != null) {

@@ -7,15 +7,15 @@
             SqlUtils.appendCommaSeparated(builder, "T.", getAllColumns());
             builder.append(',');
 <#list entity.toOneRelations as toOne>
-            SqlUtils.appendCommaSeparated(builder, "T${toOne_index}.", daoMaster.get${toOne.entity.classNameDao}().getAllColumns());
+            SqlUtils.appendCommaSeparated(builder, "T${toOne_index}.", daoMaster.get${toOne.targetEntity.classNameDao}().getAllColumns());
 <#if toOne_has_next>
             builder.append(',');
 </#if>
 </#list>
             builder.append(" FROM ${entity.tableName} T");
 <#list entity.toOneRelations as toOne>
-            builder.append(" LEFT JOIN ${toOne.entity.tableName} T${toOne_index}<#--
---> ON T.${toOne.fkProperties[0].columnName}=T${toOne_index}.${toOne.entity.pkProperty.columnName}");
+            builder.append(" LEFT JOIN ${toOne.targetEntity.tableName} T${toOne_index}<#--
+--> ON T.${toOne.fkProperties[0].columnName}=T${toOne_index}.${toOne.targetEntity.pkProperty.columnName}");
 </#list>
             builder.append(' ');
             selectDeep = builder.toString();
@@ -27,9 +27,9 @@
         ${entity.className} entity = fetchEntity(cursor, 0);
         int offset = getAllColumns().length;
 <#list entity.toOneRelations as toOne>
-        entity.set${toOne.name?cap_first}(daoMaster.get${toOne.entity.classNameDao}().fetchEntity(cursor, offset));
+        entity.set${toOne.name?cap_first}(daoMaster.get${toOne.targetEntity.classNameDao}().fetchEntity(cursor, offset));
 <#if toOne_has_next>
-        offset += daoMaster.get${toOne.entity.classNameDao}().getAllColumns().length;
+        offset += daoMaster.get${toOne.targetEntity.classNameDao}().getAllColumns().length;
 </#if>
 </#list>
         return entity;    
