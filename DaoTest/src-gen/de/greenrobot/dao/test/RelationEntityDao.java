@@ -84,6 +84,12 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         }
     }
 
+    @Override
+    protected void attachEntity(Long key, RelationEntity entity) {
+        super.attachEntity(key, entity);
+        entity.__setDaoMaster(daoMaster);
+    }
+
     /** @inheritdoc */
     @Override
     public Long readPkFrom(Cursor cursor, int offset) {
@@ -99,7 +105,6 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2), // testId
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // simpleString
         );
-        entity.__setDaoMaster(daoMaster);
         return entity;
     }
      
@@ -154,11 +159,11 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     }
     
     protected RelationEntity readDeepFrom(Cursor cursor) {
-        RelationEntity entity = readFrom(cursor, 0);
+        RelationEntity entity = fetchEntity(cursor, 0);
         int offset = getAllColumns().length;
-        entity.setParent(daoMaster.getRelationEntityDao().readFrom(cursor, offset));
+        entity.setParent(daoMaster.getRelationEntityDao().fetchEntity(cursor, offset));
         offset += daoMaster.getRelationEntityDao().getAllColumns().length;
-        entity.setTestEntity(daoMaster.getTestEntityDao().readFrom(cursor, offset));
+        entity.setTestEntity(daoMaster.getTestEntityDao().fetchEntity(cursor, offset));
         return entity;    
     }
 

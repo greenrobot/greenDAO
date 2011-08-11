@@ -99,6 +99,14 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 </#list>
     }
 
+<#if entity.active>
+    @Override
+    protected void attachEntity(Long key, RelationEntity entity) {
+        super.attachEntity(key, entity);
+        entity.__setDaoMaster(daoMaster);
+    }
+
+</#if>
     /** @inheritdoc */
     @Override
     public ${entity.pkType} readPkFrom(Cursor cursor, int offset) {
@@ -140,9 +148,6 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
             property.propertyType == "Date">)</#if><#if property_has_next>,</#if> // ${property.propertyName}
 </#list>        
         );
-<#if entity.active>
-        entity.__setDaoMaster(daoMaster);
-</#if>
         return entity;
 <#else>
 <#--
@@ -232,10 +237,10 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
     }
     
     protected ${entity.className} readDeepFrom(Cursor cursor) {
-        ${entity.className} entity = readFrom(cursor, 0);
+        ${entity.className} entity = fetchEntity(cursor, 0);
         int offset = getAllColumns().length;
 <#list entity.toOneRelations as toOne>
-        entity.set${toOne.name?cap_first}(daoMaster.get${toOne.entity.classNameDao}().readFrom(cursor, offset));
+        entity.set${toOne.name?cap_first}(daoMaster.get${toOne.entity.classNameDao}().fetchEntity(cursor, offset));
 <#if toOne_has_next>
         offset += daoMaster.get${toOne.entity.classNameDao}().getAllColumns().length;
 </#if>
