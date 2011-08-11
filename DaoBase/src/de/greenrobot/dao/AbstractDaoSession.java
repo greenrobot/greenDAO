@@ -12,12 +12,22 @@ public class AbstractDaoSession {
 
     public AbstractDaoSession(SQLiteDatabase db) {
         this.db = db;
-        this.entityToDao = new HashMap<Class<?>, AbstractDao<?,?>>();
+        this.entityToDao = new HashMap<Class<?>, AbstractDao<?, ?>>();
     }
-    
-    
-    protected<T> void registerDao(Class<T> entityClass, AbstractDao<T, ?> dao) {
+
+    protected <T> void registerDao(Class<T> entityClass, AbstractDao<T, ?> dao) {
         entityToDao.put(entityClass, dao);
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected IdentityScope createIdentityScope(IdentityScopeType type) {
+        if (type == IdentityScopeType.None) {
+            return null;
+        } else if (type == IdentityScopeType.Session) {
+            return new IdentityScope();
+        } else {
+            throw new IllegalArgumentException("Unsupported type: " + type);
+        }
     }
 
     public <T> long insert(T entity) {

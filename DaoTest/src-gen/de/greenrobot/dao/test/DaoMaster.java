@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import de.greenrobot.dao.AbstractDaoMaster;
+import de.greenrobot.dao.IdentityScopeType;
 
 import de.greenrobot.dao.test.SimpleEntityDao;
 import de.greenrobot.dao.test.SimpleEntityNotNullDao;
@@ -71,7 +72,11 @@ public class DaoMaster extends AbstractDaoMaster {
     }
     
     public DaoSession newSession() {
-        return new DaoSession(db);
+        return new DaoSession(db, IdentityScopeType.Session);
+    }
+    
+    public DaoSession newSession(IdentityScopeType type) {
+        return new DaoSession(db, type);
     }
     
 }

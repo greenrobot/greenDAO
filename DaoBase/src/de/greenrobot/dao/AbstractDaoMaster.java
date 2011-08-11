@@ -38,4 +38,5 @@ public abstract class AbstractDaoMaster {
 
     public abstract AbstractDaoSession newSession();
 
+    public abstract AbstractDaoSession newSession(IdentityScopeType type);
 }

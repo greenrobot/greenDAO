@@ -1,11 +1,9 @@
 package de.greenrobot.dao.test;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
 import de.greenrobot.dao.AbstractDaoSession;
+import de.greenrobot.dao.IdentityScopeType;
 
 import de.greenrobot.dao.test.SimpleEntityDao;
 import de.greenrobot.dao.test.SimpleEntityNotNullDao;
@@ -25,14 +23,15 @@ public class DaoSession extends AbstractDaoSession {
     private final RelationEntityDao relationEntityDao;
     private final DateEntityDao dateEntityDao;
 
-    public DaoSession(SQLiteDatabase db) {
+    @SuppressWarnings("unchecked")
+    public DaoSession(SQLiteDatabase db, IdentityScopeType type) {
         super(db);
 
-        simpleEntityDao = new SimpleEntityDao(db, null);
-        simpleEntityNotNullDao = new SimpleEntityNotNullDao(db, null);
-        testEntityDao = new TestEntityDao(db, null);
-        relationEntityDao = new RelationEntityDao(db, this, null);
-        dateEntityDao = new DateEntityDao(db, null);
+        simpleEntityDao = new SimpleEntityDao(db, createIdentityScope(type));
+        simpleEntityNotNullDao = new SimpleEntityNotNullDao(db, createIdentityScope(type));
+        testEntityDao = new TestEntityDao(db, createIdentityScope(type));
+        relationEntityDao = new RelationEntityDao(db, this, createIdentityScope(type));
+        dateEntityDao = new DateEntityDao(db, createIdentityScope(type));
 
         registerDao(SimpleEntity.class, simpleEntityDao);
         registerDao(SimpleEntityNotNull.class, simpleEntityNotNullDao);
