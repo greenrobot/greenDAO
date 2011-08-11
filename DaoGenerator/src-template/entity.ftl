@@ -23,7 +23,7 @@ public class ${entity.className} <#if entity.active && false>extends ActiveEntit
 
 <#list entity.toOneRelations as toOne>
     private ${toOne.entity.className} ${toOne.name};
-    private boolean ${toOne.name}__resolved;
+    private ${toOne.fkProperties[0].javaType} ${toOne.name}__resolvedKey;
 
 </#list>    
 </#if>
@@ -68,10 +68,10 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 <#list entity.toOneRelations as toOne>
     /** To-one relationship, resolved on first access. */ 
     public ${toOne.entity.className} get${toOne.name?cap_first}() {
-        if(!${toOne.name}__resolved) {
+        if(${toOne.name}__resolvedKey == null || !${toOne.name}__resolvedKey.equals(${toOne.fkProperties[0].propertyName})) {
             ${toOne.entity.classNameDao} dao = daoMaster.get${toOne.entity.classNameDao?cap_first}();
-             ${toOne.name} = dao.load(<#list toOne.fkProperties as fk>${fk.propertyName}<#if fk_has_next>, </#if></#list>);
-             ${toOne.name}__resolved = true;
+             ${toOne.name} = dao.load(${toOne.fkProperties[0].propertyName});
+             ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
         }
         return ${toOne.name};
     } 
@@ -84,7 +84,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 </#if>
         this.${toOne.name} = ${toOne.name};
         ${toOne.fkProperties[0].propertyName} = <#if !toOne.fkProperties[0].notNull>${toOne.name} == null ? null : </#if>${toOne.name}.get${toOne.entity.pkProperty.propertyName?cap_first}();
-        ${toOne.name}__resolved = true;
+        ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
     } 
 
 </#list>

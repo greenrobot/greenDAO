@@ -18,10 +18,10 @@ public class RelationEntity {
     private DaoMaster daoMaster;
 
     private RelationEntity parent;
-    private boolean parent__resolved;
+    private Long parent__resolvedKey;
 
     private TestEntity testEntity;
-    private boolean testEntity__resolved;
+    private Long testEntity__resolvedKey;
 
     public RelationEntity() {
     }
@@ -76,10 +76,10 @@ public class RelationEntity {
 
     /** To-one relationship, resolved on first access. */ 
     public RelationEntity getParent() {
-        if(!parent__resolved) {
+        if(parent__resolvedKey == null || !parent__resolvedKey.equals(parentId)) {
             RelationEntityDao dao = daoMaster.getRelationEntityDao();
              parent = dao.load(parentId);
-             parent__resolved = true;
+             parent__resolvedKey = parentId;
         }
         return parent;
     } 
@@ -87,15 +87,15 @@ public class RelationEntity {
     public void setParent(RelationEntity parent) {
         this.parent = parent;
         parentId = parent == null ? null : parent.getId();
-        parent__resolved = true;
+        parent__resolvedKey = parentId;
     } 
 
     /** To-one relationship, resolved on first access. */ 
     public TestEntity getTestEntity() {
-        if(!testEntity__resolved) {
+        if(testEntity__resolvedKey == null || !testEntity__resolvedKey.equals(testId)) {
             TestEntityDao dao = daoMaster.getTestEntityDao();
              testEntity = dao.load(testId);
-             testEntity__resolved = true;
+             testEntity__resolvedKey = testId;
         }
         return testEntity;
     } 
@@ -103,7 +103,7 @@ public class RelationEntity {
     public void setTestEntity(TestEntity testEntity) {
         this.testEntity = testEntity;
         testId = testEntity == null ? null : testEntity.getId();
-        testEntity__resolved = true;
+        testEntity__resolvedKey = testId;
     } 
 
 
