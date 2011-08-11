@@ -1,18 +1,18 @@
 package de.greenrobot.dao.test;
 
 
-public class DaoMasterTest extends AbstractDaoMasterTest<DaoMaster> {
+public class DaoSessionTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
 
-    public DaoMasterTest() {
+    public DaoSessionTest() {
         super(DaoMaster.class);
     }
 
     public void testInsertAndLoad() {
         SimpleEntity entity = new SimpleEntity();
-        daoMaster.insert(entity);
+        daoSession.insert(entity);
         Long id = entity.getId();
         assertNotNull(id);
-        SimpleEntity entity2 = daoMaster.load(SimpleEntity.class, id);
+        SimpleEntity entity2 = daoSession.load(SimpleEntity.class, id);
         assertNotNull(entity2);
         assertNotSame(entity, entity2); // Unless we'll cache stuff one day
     }

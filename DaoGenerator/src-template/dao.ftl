@@ -36,11 +36,11 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     };
 
 <#if entity.active>
-    private DaoMaster daoMaster;
+    private DaoSession daoSession;
 
-    public ${entity.classNameDao}(SQLiteDatabase db, DaoMaster daoMaster) {
-        super(db);
-        this.daoMaster = daoMaster;
+    public ${entity.classNameDao}(SQLiteDatabase db, DaoSession daoSession, IdentityScope<${entity.pkType}, ${entity.className}> identityScope) {
+        super(db, identityScope);
+        this.daoSession = daoSession;
     }
 
 <#else>    
@@ -103,7 +103,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
     @Override
     protected void attachEntity(Long key, RelationEntity entity) {
         super.attachEntity(key, entity);
-        entity.__setDaoMaster(daoMaster);
+        entity.__setDaoSession(daoSession);
     }
 
 </#if>

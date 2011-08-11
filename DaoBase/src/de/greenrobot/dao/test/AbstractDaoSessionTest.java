@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 
 import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDaoMaster;
+import de.greenrobot.dao.AbstractDaoSession;
 
 /**
  * Base class for DAO (master) related testing.
@@ -30,20 +31,22 @@ import de.greenrobot.dao.AbstractDaoMaster;
  * @param <T>
  *            Type of a concrete DAO master
  */
-public abstract class AbstractDaoMasterTest<T extends AbstractDaoMaster> extends DbTest {
+public abstract class AbstractDaoSessionTest<T extends AbstractDaoMaster, S extends AbstractDaoSession> extends DbTest {
 
     private final Class<T> daoMasterClass;
     protected T daoMaster;
+    protected S daoSession;
 
-    public AbstractDaoMasterTest(Class<T> daoMasterClass) {
+    public AbstractDaoSessionTest(Class<T> daoMasterClass) {
         this(daoMasterClass, true);
     }
 
-    public AbstractDaoMasterTest(Class<T> daoMasterClass, boolean inMemory) {
+    public AbstractDaoSessionTest(Class<T> daoMasterClass, boolean inMemory) {
         super(inMemory);
         this.daoMasterClass = daoMasterClass;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void setUp() {
         super.setUp();
@@ -56,6 +59,7 @@ public abstract class AbstractDaoMasterTest<T extends AbstractDaoMaster> extends
         } catch (Exception e) {
             throw new RuntimeException("Could not prepare DAO master Test", e);
         }
+        daoSession = (S) daoMaster.newSession();
     }
 
 }

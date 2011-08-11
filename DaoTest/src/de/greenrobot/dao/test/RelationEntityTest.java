@@ -5,6 +5,7 @@ import java.util.List;
 public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao, RelationEntity> {
 
     protected DaoMaster daoMaster;
+    protected DaoSession daoSession;
 
     public RelationEntityTest() {
         super(RelationEntityDao.class);
@@ -15,7 +16,8 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
         super.setUp();
         TestEntityDao.createTable(db, false);
         daoMaster = new DaoMaster(db);
-        dao = daoMaster.getRelationEntityDao();
+        daoSession = daoMaster.newSession();
+        dao = daoSession.getRelationEntityDao();
     }
 
     @Override
@@ -137,11 +139,11 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     }
 
     protected RelationEntity insertEntityWithRelations(Long testEntityId) {
-        TestEntity testEntity = daoMaster.getTestEntityDao().load(testEntityId);
+        TestEntity testEntity = daoSession.getTestEntityDao().load(testEntityId);
         if (testEntity == null) {
             testEntity = new TestEntity(testEntityId);
             testEntity.setSimpleStringNotNull("mytest");
-            daoMaster.getTestEntityDao().insert(testEntity);
+            daoSession.getTestEntityDao().insert(testEntity);
         }
 
         RelationEntity parentEntity = createEntity(null);

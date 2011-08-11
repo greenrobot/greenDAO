@@ -3,7 +3,7 @@
 package ${entity.javaPackage};
 
 <#if entity.active>
-import ${schema.defaultJavaPackageDao}.DaoMaster;
+import ${schema.defaultJavaPackageDao}.DaoSession;
 import de.greenrobot.dao.DaoException;
 
 </#if>
@@ -19,7 +19,7 @@ public class ${entity.className} <#if entity.active && false>extends ActiveEntit
 
 <#if entity.active>
     /** Used to resolve relations */
-    private DaoMaster daoMaster;
+    private DaoSession daoSession;
 
 <#list entity.toOneRelations as toOne>
     private ${toOne.targetEntity.className} ${toOne.name};
@@ -50,8 +50,8 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 
 <#if entity.active>
     /** called by internal mechanisms, do not call yourself. */
-    public void __setDaoMaster(DaoMaster daoMaster) {
-        this.daoMaster = daoMaster;
+    public void __setDaoSession(DaoSession daoSession) {
+        this.daoSession = daoSession;
     }
 
 </#if>
@@ -71,10 +71,10 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
         if (${toOne.name}__resolvedKey == null || <#--
         --><#if toOne.resolvedKeyUseEquals[0]>!${toOne.name}__resolvedKey.equals(${toOne.fkProperties[0].propertyName})<#--
         --><#else>${toOne.name}__resolvedKey != ${toOne.fkProperties[0].propertyName}</#if>) {
-            if (daoMaster == null) {
+            if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            ${toOne.targetEntity.classNameDao} dao = daoMaster.get${toOne.targetEntity.classNameDao?cap_first}();
+            ${toOne.targetEntity.classNameDao} dao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
             ${toOne.name} = dao.load(${toOne.fkProperties[0].propertyName});
             ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
         }

@@ -7,7 +7,7 @@
             SqlUtils.appendCommaSeparated(builder, "T.", getAllColumns());
             builder.append(',');
 <#list entity.toOneRelations as toOne>
-            SqlUtils.appendCommaSeparated(builder, "T${toOne_index}.", daoMaster.get${toOne.targetEntity.classNameDao}().getAllColumns());
+            SqlUtils.appendCommaSeparated(builder, "T${toOne_index}.", daoSession.get${toOne.targetEntity.classNameDao}().getAllColumns());
 <#if toOne_has_next>
             builder.append(',');
 </#if>
@@ -28,14 +28,14 @@
         int offset = getAllColumns().length;
 
 <#list entity.toOneRelations as toOne>
-        ${toOne.targetEntity.className} ${toOne.name} = daoMaster.get${toOne.targetEntity.classNameDao}().fetchEntity(cursor, offset);
+        ${toOne.targetEntity.className} ${toOne.name} = daoSession.get${toOne.targetEntity.classNameDao}().fetchEntity(cursor, offset);
 <#if toOne.fkProperties[0].notNull>         if(${toOne.name} != null) {
     </#if>        entity.set${toOne.name?cap_first}(${toOne.name});
 <#if toOne.fkProperties[0].notNull>
         }
 </#if>
 <#if toOne_has_next>
-        offset += daoMaster.get${toOne.targetEntity.classNameDao}().getAllColumns().length;
+        offset += daoSession.get${toOne.targetEntity.classNameDao}().getAllColumns().length;
 </#if>
 
 </#list>

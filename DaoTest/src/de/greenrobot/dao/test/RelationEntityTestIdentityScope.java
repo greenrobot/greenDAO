@@ -14,7 +14,7 @@ public class RelationEntityTestIdentityScope extends RelationEntityTest {
     protected void setUp() {
         super.setUp();
         dao.__temporarySetIdScope(new IdentityScope<Long, RelationEntity>());
-        daoMaster.getTestEntityDao().__temporarySetIdScope(new IdentityScope<Long, TestEntity>());
+        daoSession.getTestEntityDao().__temporarySetIdScope(new IdentityScope<Long, TestEntity>());
     }
 
     public void testToOneLoadDeepIdentityScope() {

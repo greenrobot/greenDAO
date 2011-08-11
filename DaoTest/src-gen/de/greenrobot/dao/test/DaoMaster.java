@@ -66,46 +66,12 @@ public class DaoMaster extends AbstractDaoMaster {
         
     }
 
-    private final SimpleEntityDao simpleEntityDao;
-    private final SimpleEntityNotNullDao simpleEntityNotNullDao;
-    private final TestEntityDao testEntityDao;
-    private final RelationEntityDao relationEntityDao;
-    private final DateEntityDao dateEntityDao;
-
     public DaoMaster(SQLiteDatabase db) {
         super(db, SCHEMA_VERSION);
-
-        simpleEntityDao = new SimpleEntityDao(db);
-        simpleEntityNotNullDao = new SimpleEntityNotNullDao(db);
-        testEntityDao = new TestEntityDao(db);
-        relationEntityDao = new RelationEntityDao(db, this);
-        dateEntityDao = new DateEntityDao(db);
-
-        registerDao(SimpleEntity.class, simpleEntityDao);
-        registerDao(SimpleEntityNotNull.class, simpleEntityNotNullDao);
-        registerDao(TestEntity.class, testEntityDao);
-        registerDao(RelationEntity.class, relationEntityDao);
-        registerDao(DateEntity.class, dateEntityDao);
     }
     
-    public SimpleEntityDao getSimpleEntityDao() {
-        return simpleEntityDao;
+    public DaoSession newSession() {
+        return new DaoSession(db);
     }
-
-    public SimpleEntityNotNullDao getSimpleEntityNotNullDao() {
-        return simpleEntityNotNullDao;
-    }
-
-    public TestEntityDao getTestEntityDao() {
-        return testEntityDao;
-    }
-
-    public RelationEntityDao getRelationEntityDao() {
-        return relationEntityDao;
-    }
-
-    public DateEntityDao getDateEntityDao() {
-        return dateEntityDao;
-    }
-
+    
 }

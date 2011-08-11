@@ -11,7 +11,6 @@ import java.util.Map;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 /**
  * Once you have your model created, use this class to generate entities and DAOs.
@@ -45,6 +44,7 @@ public class DaoGenerator {
 
         Template templateDao = config.getTemplate("dao.ftl");
         Template templateDaoMaster = config.getTemplate("dao-master.ftl");
+        Template templateDaoSession = config.getTemplate("dao-session.ftl");
         Template templateEntity = config.getTemplate("entity.ftl");
         Template templateDaoUnitTest = config.getTemplate("dao-unit-test.ftl");
 
@@ -69,6 +69,7 @@ public class DaoGenerator {
             }
         }
         generate(templateDaoMaster, outDirFile, schema.getDefaultJavaPackageDao(), "DaoMaster", schema, null);
+        generate(templateDaoSession, outDirFile, schema.getDefaultJavaPackageDao(), "DaoSession", schema, null);
 
         long time = System.currentTimeMillis() - start;
         System.out.println("Processed " + entities.size() + " entities in " + time + "ms");

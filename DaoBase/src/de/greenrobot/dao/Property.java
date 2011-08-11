@@ -16,6 +16,11 @@
 
 package de.greenrobot.dao;
 
+/**
+ * Meta data describing a property mapped to a database column.
+ * 
+ * @author Markus
+ */
 public class Property {
     public final int oridinal;
     public final Class<?> type;

@@ -28,11 +28,11 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         public final static Property SimpleString = new Property(4, String.class, "simpleString", false, "SIMPLE_STRING");
     };
 
-    private DaoMaster daoMaster;
+    private DaoSession daoSession;
 
-    public RelationEntityDao(SQLiteDatabase db, DaoMaster daoMaster) {
-        super(db);
-        this.daoMaster = daoMaster;
+    public RelationEntityDao(SQLiteDatabase db, DaoSession daoSession, IdentityScope<Long, RelationEntity> identityScope) {
+        super(db, identityScope);
+        this.daoSession = daoSession;
     }
 
     public RelationEntityDao(SQLiteDatabase db) {
@@ -90,7 +90,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     @Override
     protected void attachEntity(Long key, RelationEntity entity) {
         super.attachEntity(key, entity);
-        entity.__setDaoMaster(daoMaster);
+        entity.__setDaoSession(daoSession);
     }
 
     /** @inheritdoc */
@@ -151,11 +151,11 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
             StringBuilder builder = new StringBuilder("SELECT ");
             SqlUtils.appendCommaSeparated(builder, "T.", getAllColumns());
             builder.append(',');
-            SqlUtils.appendCommaSeparated(builder, "T0.", daoMaster.getRelationEntityDao().getAllColumns());
+            SqlUtils.appendCommaSeparated(builder, "T0.", daoSession.getRelationEntityDao().getAllColumns());
             builder.append(',');
-            SqlUtils.appendCommaSeparated(builder, "T1.", daoMaster.getTestEntityDao().getAllColumns());
+            SqlUtils.appendCommaSeparated(builder, "T1.", daoSession.getTestEntityDao().getAllColumns());
             builder.append(',');
-            SqlUtils.appendCommaSeparated(builder, "T2.", daoMaster.getTestEntityDao().getAllColumns());
+            SqlUtils.appendCommaSeparated(builder, "T2.", daoSession.getTestEntityDao().getAllColumns());
             builder.append(" FROM RELATION_ENTITY T");
             builder.append(" LEFT JOIN RELATION_ENTITY T0 ON T.PARENT_ID=T0._id");
             builder.append(" LEFT JOIN TEST_ENTITY T1 ON T.TEST_ID=T1._id");
@@ -170,15 +170,15 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         RelationEntity entity = fetchEntity(cursor, 0);
         int offset = getAllColumns().length;
 
-        RelationEntity parent = daoMaster.getRelationEntityDao().fetchEntity(cursor, offset);
+        RelationEntity parent = daoSession.getRelationEntityDao().fetchEntity(cursor, offset);
         entity.setParent(parent);
-        offset += daoMaster.getRelationEntityDao().getAllColumns().length;
+        offset += daoSession.getRelationEntityDao().getAllColumns().length;
 
-        TestEntity testEntity = daoMaster.getTestEntityDao().fetchEntity(cursor, offset);
+        TestEntity testEntity = daoSession.getTestEntityDao().fetchEntity(cursor, offset);
         entity.setTestEntity(testEntity);
-        offset += daoMaster.getTestEntityDao().getAllColumns().length;
+        offset += daoSession.getTestEntityDao().getAllColumns().length;
 
-        TestEntity testNotNull = daoMaster.getTestEntityDao().fetchEntity(cursor, offset);
+        TestEntity testNotNull = daoSession.getTestEntityDao().fetchEntity(cursor, offset);
          if(testNotNull != null) {
             entity.setTestNotNull(testNotNull);
         }

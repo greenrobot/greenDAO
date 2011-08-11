@@ -60,26 +60,12 @@ public class DaoMaster extends AbstractDaoMaster {
         
     }
 
-<#list schema.entities as entity>
-    private final ${entity.classNameDao} ${entity.classNameDao?uncap_first};
-</#list>        
-
     public DaoMaster(SQLiteDatabase db) {
         super(db, SCHEMA_VERSION);
-
-<#list schema.entities as entity>
-        ${entity.classNameDao?uncap_first} = new ${entity.classNameDao}(db<#if entity.active>, this</#if>);
-</#list>        
-
-<#list schema.entities as entity>
-        registerDao(${entity.className}.class, ${entity.classNameDao?uncap_first});
-</#list>        
     }
     
-<#list schema.entities as entity>
-    public ${entity.classNameDao} get${entity.classNameDao?cap_first}() {
-        return ${entity.classNameDao?uncap_first};
+    public DaoSession newSession() {
+        return new DaoSession(db);
     }
-
-</#list>        
+    
 }
