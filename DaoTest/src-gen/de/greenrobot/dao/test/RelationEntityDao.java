@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.SqlUtils;
 
 import de.greenrobot.dao.test.RelationEntity;
 
@@ -138,11 +139,11 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     protected String getSelectDeep() {
         if (selectDeep == null) {
             StringBuilder builder = new StringBuilder("SELECT ");
-            appendCommaSeparated(builder, "T.", getAllColumns());
+            SqlUtils.appendCommaSeparated(builder, "T.", getAllColumns());
             builder.append(',');
-            appendCommaSeparated(builder, "T0.", daoMaster.getRelationEntityDao().getAllColumns());
+            SqlUtils.appendCommaSeparated(builder, "T0.", daoMaster.getRelationEntityDao().getAllColumns());
             builder.append(',');
-            appendCommaSeparated(builder, "T1.", daoMaster.getTestEntityDao().getAllColumns());
+            SqlUtils.appendCommaSeparated(builder, "T1.", daoMaster.getTestEntityDao().getAllColumns());
             builder.append(" FROM RELATION_ENTITY T");
             builder.append(" LEFT JOIN RELATION_ENTITY T0 ON T.PARENT_ID=T0._id");
             builder.append(" LEFT JOIN TEST_ENTITY T1 ON T.TEST_ID=T1._id");
@@ -169,7 +170,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
 
         StringBuilder builder = new StringBuilder(getSelectDeep());
         builder.append("WHERE ");
-        appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
+        SqlUtils.appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
         String sql = builder.toString();
         
         String[] keyArray = new String[] { key.toString() };

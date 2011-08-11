@@ -12,6 +12,9 @@ import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
+<#if entity.toOneRelations?has_content>
+import de.greenrobot.dao.SqlUtils;
+</#if>
 
 import ${entity.javaPackage}.${entity.className};
 <#if entity.protobuf>
@@ -209,10 +212,10 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
     protected String getSelectDeep() {
         if (selectDeep == null) {
             StringBuilder builder = new StringBuilder("SELECT ");
-            appendCommaSeparated(builder, "T.", getAllColumns());
+            SqlUtils.appendCommaSeparated(builder, "T.", getAllColumns());
             builder.append(',');
 <#list entity.toOneRelations as toOne>
-            appendCommaSeparated(builder, "T${toOne_index}.", daoMaster.get${toOne.entity.classNameDao}().getAllColumns());
+            SqlUtils.appendCommaSeparated(builder, "T${toOne_index}.", daoMaster.get${toOne.entity.classNameDao}().getAllColumns());
 <#if toOne_has_next>
             builder.append(',');
 </#if>
@@ -248,7 +251,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 
         StringBuilder builder = new StringBuilder(getSelectDeep());
         builder.append("WHERE ");
-        appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
+        SqlUtils.appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
         String sql = builder.toString();
         
         String[] keyArray = new String[] { key.toString() };

@@ -42,15 +42,6 @@ public abstract class AbstractDao<T, K> {
 
     protected final String tablename;
 
-    protected SQLiteStatement insertStatement;
-    protected SQLiteStatement insertOrReplaceStatement;
-    protected SQLiteStatement updateStatement;
-    protected SQLiteStatement deleteStatement;
-
-    private volatile String selectAll;
-    private volatile String selectByKey;
-    private volatile String selectByRowId;
-
     private final Property[] properties;
     private final String[] allColumns;
     private final String[] pkColumns;
@@ -60,6 +51,8 @@ public abstract class AbstractDao<T, K> {
 
     /** Single property PK or null if there's no PK or a multi property PK. */
     protected final Property pkProperty;
+
+    private TableStatements statements;
 
     public AbstractDao(SQLiteDatabase db) {
         this(db, null);
@@ -105,115 +98,7 @@ public abstract class AbstractDao<T, K> {
         pkColumns = pkColumnList.toArray(pkColumnsArray);
 
         pkProperty = pkColumns.length == 1 ? lastPkProperty : null;
-    }
-
-    protected void appendCommaSeparated(StringBuilder builder, String valuePrefix, String[] values) {
-        int length = values.length;
-        for (int i = 0; i < length; i++) {
-            builder.append(valuePrefix).append(values[i]);
-            if (i < length - 1) {
-                builder.append(',');
-            }
-        }
-    }
-
-    protected void appendCommaSeparatedEqPlaceholder(StringBuilder builder, String valuePrefix, String[] values) {
-        int length = values.length;
-        for (int i = 0; i < length; i++) {
-            builder.append(valuePrefix).append(values[i]).append("=?");
-            if (i < length - 1) {
-                builder.append(',');
-            }
-        }
-    }
-
-    protected void apppendPlaceholders(StringBuilder builder, int count) {
-        for (int i = 0; i < count; i++) {
-            if (i < count - 1) {
-                builder.append("?,");
-            } else {
-                builder.append('?');
-            }
-        }
-    }
-
-    protected SQLiteStatement getInsertStatement() {
-        if (insertStatement == null) {
-            String sql = createSqlForInsert("INSERT INTO ");
-            insertStatement = db.compileStatement(sql);
-        }
-        return insertStatement;
-    }
-
-    protected SQLiteStatement getInsertOrReplaceStatement() {
-        if (insertOrReplaceStatement == null) {
-            String sql = createSqlForInsert("INSERT OR REPLACE INTO ");
-            insertOrReplaceStatement = db.compileStatement(sql);
-        }
-        return insertOrReplaceStatement;
-    }
-
-    protected String createSqlForInsert(String insertInto) {
-        StringBuilder builder = new StringBuilder(insertInto);
-        builder.append(tablename).append(" (");
-        appendCommaSeparated(builder, "", allColumns);
-        builder.append(") VALUES (");
-        apppendPlaceholders(builder, allColumns.length);
-        builder.append(')');
-        return builder.toString();
-    }
-
-    protected SQLiteStatement getDeleteStatement() {
-        if (deleteStatement == null) {
-            StringBuilder builder = new StringBuilder("DELETE FROM ");
-            builder.append(tablename).append(" WHERE ");
-            appendColumnsEqualPlaceholders(builder, getPkColumns());
-            deleteStatement = db.compileStatement(builder.toString());
-        }
-        return deleteStatement;
-    }
-
-    protected SQLiteStatement getUpdateStatement() {
-        if (updateStatement == null) {
-            StringBuilder builder = new StringBuilder("UPDATE ");
-            builder.append(tablename).append(" SET ");
-            appendColumnsEqualPlaceholders(builder, getAllColumns()); // TODO Use getNonPkColumns() only (performance)
-            builder.append(" WHERE ");
-            appendColumnsEqualPlaceholders(builder, getPkColumns());
-            updateStatement = db.compileStatement(builder.toString());
-        }
-        return updateStatement;
-    }
-
-    protected void appendColumnsEqualPlaceholders(StringBuilder builder, String[] pks) {
-        for (int i = 0; i < pks.length; i++) {
-            builder.append(pks[i]).append("=?");
-            if (i < pks.length - 1) {
-                builder.append(',');
-            }
-        }
-    }
-
-    /** ends with an space to simplify appending to this string. */
-    protected String getSelectAll() {
-        if (selectAll == null) {
-            StringBuilder builder = new StringBuilder("SELECT ");
-            appendCommaSeparated(builder, "", allColumns);
-            builder.append(" FROM ").append(tablename).append(' ');
-            selectAll = builder.toString();
-        }
-        return selectAll;
-    }
-
-    // TODO precompile
-    protected String getSelectByKey() {
-        if (selectByKey == null) {
-            StringBuilder builder = new StringBuilder(getSelectAll());
-            builder.append("WHERE ");
-            appendCommaSeparatedEqPlaceholder(builder, "", pkColumns);
-            selectByKey = builder.toString();
-        }
-        return selectByKey;
+        statements = new TableStatements(db, tablename, allColumns, pkColumns);
     }
 
     protected Property[] getProperties() {
@@ -254,18 +139,15 @@ public abstract class AbstractDao<T, K> {
                 return entity;
             }
         }
-        String sql = getSelectByKey();
+        String sql = statements.getSelectByKey();
         String[] keyArray = new String[] { key.toString() };
         Cursor cursor = db.rawQuery(sql, keyArray);
         return readUniqueAndCloseCursor(cursor);
     }
 
     public T loadByRowId(long rowId) {
-        if (selectByRowId == null) {
-            selectByRowId = getSelectAll() + "WHERE ROWID=?";
-        }
         String[] idArray = new String[] { Long.toString(rowId) };
-        Cursor cursor = db.rawQuery(selectByRowId, idArray);
+        Cursor cursor = db.rawQuery(statements.getSelectByRowId(), idArray);
         return readUniqueAndCloseCursor(cursor);
     }
 
@@ -284,7 +166,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     public List<T> loadAll() {
-        Cursor cursor = db.rawQuery(getSelectAll(), null);
+        Cursor cursor = db.rawQuery(statements.getSelectAll(), null);
         return readAllAndCloseCursor(cursor);
     }
 
@@ -326,7 +208,7 @@ public abstract class AbstractDao<T, K> {
      *            if true, the PKs of the given will be set after the insert; pass false to improve performance.
      */
     public void insertInTx(Iterable<T> entities, boolean setPrimaryKey) {
-        SQLiteStatement stmt = getInsertStatement();
+        SQLiteStatement stmt = statements.getInsertStatement();
         synchronized (stmt) {
             db.beginTransaction();
             try {
@@ -348,7 +230,7 @@ public abstract class AbstractDao<T, K> {
 
     /** Insert an entity into the table associated with a concrete DAO. */
     public long insert(T entity) {
-        SQLiteStatement stmt = getInsertStatement();
+        SQLiteStatement stmt = statements.getInsertStatement();
         synchronized (stmt) {
             bindValues(stmt, entity);
             long rowId = stmt.executeInsert();
@@ -359,7 +241,7 @@ public abstract class AbstractDao<T, K> {
 
     /** Insert an entity into the table associated with a concrete DAO. */
     public void insertWithoutSettingPk(T entity) {
-        SQLiteStatement stmt = getInsertStatement();
+        SQLiteStatement stmt = statements.getInsertStatement();
         synchronized (stmt) {
             bindValues(stmt, entity);
             stmt.execute();
@@ -368,7 +250,7 @@ public abstract class AbstractDao<T, K> {
 
     /** Insert an entity into the table associated with a concrete DAO. */
     public long insertOrReplace(T entity) {
-        SQLiteStatement stmt = getInsertOrReplaceStatement();
+        SQLiteStatement stmt = statements.getInsertOrReplaceStatement();
         long rowId;
         synchronized (stmt) {
             bindValues(stmt, entity);
@@ -416,7 +298,7 @@ public abstract class AbstractDao<T, K> {
 
     /** A raw-style query where you can pass any WHERE clause and arguments. */
     public List<T> query(String where, String... selectionArg) {
-        Cursor cursor = db.rawQuery(getSelectAll() + where, selectionArg);
+        Cursor cursor = db.rawQuery(statements.getSelectAll() + where, selectionArg);
         return readAllAndCloseCursor(cursor);
     }
 
@@ -444,7 +326,7 @@ public abstract class AbstractDao<T, K> {
     /** Deletes an entity with the given PK from the database. Currently, only single value PK entities are supported. */
     public void deleteByKey(K key) {
         assertSinglePk();
-        SQLiteStatement stmt = getDeleteStatement();
+        SQLiteStatement stmt = statements.getDeleteStatement();
         synchronized (stmt) {
             if (key instanceof Long) {
                 stmt.bindLong(1, (Long) key);
@@ -463,7 +345,7 @@ public abstract class AbstractDao<T, K> {
         assertSinglePk();
         // TODO support multi-value PK
         K key = getPrimaryKeyValue(entity);
-        String sql = getSelectByKey();
+        String sql = statements.getSelectByKey();
         String[] keyArray = new String[] { key.toString() };
         Cursor cursor = db.rawQuery(sql, keyArray);
         try {
@@ -485,7 +367,7 @@ public abstract class AbstractDao<T, K> {
 
     public void update(T entity) {
         assertSinglePk();
-        SQLiteStatement stmt = getUpdateStatement();
+        SQLiteStatement stmt = statements.getUpdateStatement();
         synchronized (stmt) {
             updateInsideSynchronized(entity, stmt);
         }
@@ -517,7 +399,7 @@ public abstract class AbstractDao<T, K> {
      *            if true, the PKs of the given will be set after the insert; pass false to improve performance.
      */
     public void updateInTx(Iterable<T> entities) {
-        SQLiteStatement stmt = getUpdateStatement();
+        SQLiteStatement stmt = statements.getUpdateStatement();
         synchronized (stmt) {
             db.beginTransaction();
             try {
