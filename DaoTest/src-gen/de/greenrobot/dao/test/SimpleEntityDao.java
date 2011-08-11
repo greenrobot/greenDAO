@@ -3,7 +3,9 @@ package de.greenrobot.dao.test;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 
@@ -30,12 +32,8 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
         public final static Property SimpleByteArray = new Property(9, byte[].class, "simpleByteArray", false, "SIMPLE_BYTE_ARRAY");
     };
 
-    public SimpleEntityDao(SQLiteDatabase db) {
-        super(db);
-    }
-    
-    public SimpleEntityDao(SQLiteDatabase db, IdentityScope<Long, SimpleEntity> identityScope) {
-        super(db, identityScope);
+    public SimpleEntityDao(DaoConfig config) {
+        super(config);
     }
     
     /** Creates the underlying database table. */

@@ -3,7 +3,9 @@ package de.greenrobot.dao.test;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 
@@ -23,12 +25,8 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
         public final static Property DateNotNull = new Property(2, java.util.Date.class, "dateNotNull", false, "DATE_NOT_NULL");
     };
 
-    public DateEntityDao(SQLiteDatabase db) {
-        super(db);
-    }
-    
-    public DateEntityDao(SQLiteDatabase db, IdentityScope<Long, DateEntity> identityScope) {
-        super(db, identityScope);
+    public DateEntityDao(DaoConfig config) {
+        super(config);
     }
     
     /** Creates the underlying database table. */

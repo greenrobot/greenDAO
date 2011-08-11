@@ -58,19 +58,21 @@ public class DaoMaster extends AbstractDaoMaster {
             dropAllTables(db, true);
             onCreate(db);
         }
-        
     }
 
     public DaoMaster(SQLiteDatabase db) {
         super(db, SCHEMA_VERSION);
+<#list schema.entities as entity>
+        registerDaoClass(${entity.classNameDao}.class);
+</#list>
     }
     
     public DaoSession newSession() {
-        return new DaoSession(db, IdentityScopeType.Session);
+        return new DaoSession(db, IdentityScopeType.Session, daoConfigMap);
     }
     
     public DaoSession newSession(IdentityScopeType type) {
-        return new DaoSession(db, type);
+        return new DaoSession(db, type, daoConfigMap);
     }
     
 }

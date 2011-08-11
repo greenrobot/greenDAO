@@ -16,6 +16,9 @@
 
 package de.greenrobot.dao;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.database.sqlite.SQLiteDatabase;
 
 /**
@@ -25,11 +28,20 @@ import android.database.sqlite.SQLiteDatabase;
  */
 public abstract class AbstractDaoMaster {
     protected final SQLiteDatabase db;
-    private final int schemaVersion;
+    protected final int schemaVersion;
+    protected final Map<Class<? extends AbstractDao<?, ?>>, DaoConfig> daoConfigMap;
+
 
     public AbstractDaoMaster(SQLiteDatabase db, int schemaVersion) {
         this.db = db;
         this.schemaVersion = schemaVersion;
+        
+        daoConfigMap = new HashMap<Class<? extends AbstractDao<?, ?>> , DaoConfig>();
+    }
+
+    protected void registerDaoClass(Class<? extends AbstractDao<?, ?>> daoClass) {
+        DaoConfig daoConfig = new DaoConfig(db, daoClass);
+        daoConfigMap.put(daoClass, daoConfig);
     }
 
     public int getSchemaVersion() {

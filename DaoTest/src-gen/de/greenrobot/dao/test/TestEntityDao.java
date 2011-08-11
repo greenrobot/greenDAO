@@ -3,7 +3,9 @@ package de.greenrobot.dao.test;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 
@@ -27,12 +29,8 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         public final static Property IndexedStringAscUnique = new Property(6, String.class, "indexedStringAscUnique", false, "INDEXED_STRING_ASC_UNIQUE");
     };
 
-    public TestEntityDao(SQLiteDatabase db) {
-        super(db);
-    }
-    
-    public TestEntityDao(SQLiteDatabase db, IdentityScope<Long, TestEntity> identityScope) {
-        super(db, identityScope);
+    public TestEntityDao(DaoConfig config) {
+        super(config);
     }
     
     /** Creates the underlying database table. */

@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 <#if entity.toOneRelations?has_content>
@@ -38,19 +40,15 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 <#if entity.active>
     private DaoSession daoSession;
 
-    public ${entity.classNameDao}(SQLiteDatabase db, DaoSession daoSession, IdentityScope<${entity.pkType}, ${entity.className}> identityScope) {
-        super(db, identityScope);
+    public ${entity.classNameDao}(DaoConfig config, DaoSession daoSession) {
+        super(config);
         this.daoSession = daoSession;
     }
 
 <#else>    
 </#if>
-    public ${entity.classNameDao}(SQLiteDatabase db) {
-        super(db);
-    }
-    
-    public ${entity.classNameDao}(SQLiteDatabase db, IdentityScope<${entity.pkType}, ${entity.className}> identityScope) {
-        super(db, identityScope);
+    public ${entity.classNameDao}(DaoConfig config) {
+        super(config);
     }
     
     /** Creates the underlying database table. */

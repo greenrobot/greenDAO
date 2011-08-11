@@ -16,7 +16,6 @@
 
 package de.greenrobot.dao;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,90 +37,40 @@ import android.database.sqlite.SQLiteStatement;
  */
 public abstract class AbstractDao<T, K> {
     protected final SQLiteDatabase db;
-
-    private final String tablename;
-
-    private final Property[] properties;
-    private final String[] allColumns;
-    private final String[] pkColumns;
-    private final String[] nonPkColumns;
-
+    private final DaoConfig config;
     private IdentityScope<K, T> identityScope;
-
-    /** Single property PK or null if there's no PK or a multi property PK. */
-    private final Property pkProperty;
-
     private TableStatements statements;
 
-    public AbstractDao(SQLiteDatabase db) {
-        this(db, null);
-    }
-
-    public AbstractDao(SQLiteDatabase db, IdentityScope<K, T> identityScope) {
-        this.db = db;
-        this.identityScope = identityScope;
-        try {
-            tablename = (String) getClass().getField("TABLENAME").get(null);
-            Class<?> propertiesClass = Class.forName(getClass().getName() + "$Properties");
-            Field[] fields = propertiesClass.getDeclaredFields();
-            properties = new Property[fields.length];
-            for (Field field : fields) {
-                Property property = (Property) field.get(null);
-                if (properties[property.oridinal] != null) {
-                    throw new DaoException("Duplicate property ordinals");
-                }
-                properties[property.oridinal] = property;
-            }
-        } catch (Exception e) {
-            throw new DaoException("Could not init DAO", e);
-        }
-        allColumns = new String[properties.length];
-
-        List<String> pkColumnList = new ArrayList<String>();
-        List<String> nonPkColumnList = new ArrayList<String>();
-        Property lastPkProperty = null;
-        for (int i = 0; i < properties.length; i++) {
-            Property property = properties[i];
-            String name = property.columnName;
-            allColumns[i] = name;
-            if (property.primaryKey) {
-                pkColumnList.add(name);
-                lastPkProperty = property;
-            } else {
-                nonPkColumnList.add(name);
-            }
-        }
-        String[] nonPkColumnsArray = new String[nonPkColumnList.size()];
-        nonPkColumns = nonPkColumnList.toArray(nonPkColumnsArray);
-        String[] pkColumnsArray = new String[pkColumnList.size()];
-        pkColumns = pkColumnList.toArray(pkColumnsArray);
-
-        pkProperty = pkColumns.length == 1 ? lastPkProperty : null;
-        statements = new TableStatements(db, tablename, allColumns, pkColumns);
+    @SuppressWarnings("unchecked")
+    public AbstractDao(DaoConfig config) {
+        this.config = config;
+        db = config.db;
+        identityScope = (IdentityScope<K, T>) config.getIdentityScope();
+        statements = config.statements;
     }
 
     public String getTablename() {
-        return tablename;
+        return config .tablename;
     }
 
     public Property[] getProperties() {
-        return properties;
+        return config.properties;
     }
 
     public Property getPkProperty() {
-        return pkProperty;
+        return config.pkProperty;
     }
 
     public String[] getAllColumns() {
-        return allColumns;
+        return config.allColumns;
     }
 
     public String[] getPkColumns() {
-        return pkColumns;
+        return config.pkColumns;
     }
 
     public String[] getNonPkColumns() {
-        return nonPkColumns;
+        return config.nonPkColumns;
     }
 
     /**
@@ -318,16 +267,15 @@ public abstract class AbstractDao<T, K> {
 
     /** Performs a standard Android-style query for entities. */
     public List<T> query(String selection, String[] selectionArgs, String groupBy, String having, String orderby) {
-        Cursor cursor = db.query(tablename, getAllColumns(), selection, selectionArgs, groupBy, having, orderby);
+        Cursor cursor = db.query(config.tablename, getAllColumns(), selection, selectionArgs, groupBy, having, orderby);
         return readAllAndCloseCursor(cursor);
     }
 
     public void deleteAll() {
-        db.execSQL("DELETE FROM " + tablename);
+        db.execSQL("DELETE FROM " + config.tablename);
     }
 
     /** Deletes the given entity from the database. Currently, only single value PK entities are supported. */
-    // TODO support multi-value PK: should sub classes overwrite this method?
     public void delete(T entity) {
         assertSinglePk();
         K key = getPrimaryKeyValue(entity);
@@ -357,7 +305,6 @@ public abstract class AbstractDao<T, K> {
     /** Resets all locally changed properties of the entity by reloading the values from the database. */
     public void reset(T entity) {
         assertSinglePk();
-        // TODO support multi-value PK
         K key = getPrimaryKeyValue(entity);
         String sql = statements.getSelectByKey();
         String[] keyArray = new String[] { key.toString() };
@@ -385,12 +332,11 @@ public abstract class AbstractDao<T, K> {
         }
     }
 
-    // TODO support multi-value PK
     protected void updateInsideSynchronized(T entity, SQLiteStatement stmt) {
         // To do? Check if it's worth not to bind PKs here (performance).
         bindValues(stmt, entity);
         K key = getPrimaryKeyValue(entity);
-        int index = allColumns.length + 1;
+        int index = config.allColumns.length + 1;
         if (key instanceof Long) {
             stmt.bindLong(index, (Long) key);
         } else {
@@ -438,13 +384,13 @@ public abstract class AbstractDao<T, K> {
     }
 
     protected void assertSinglePk() {
-        if (pkColumns.length != 1) {
-            throw new DaoException(this + " (" + tablename + ") does not have a single-column primary key");
+        if (config.pkColumns.length != 1) {
+            throw new DaoException(this + " (" + config.tablename + ") does not have a single-column primary key");
         }
     }
 
     public long count() {
-        return DatabaseUtils.queryNumEntries(db, tablename);
+        return DatabaseUtils.queryNumEntries(db, config.tablename);
     }
 
     public void __temporarySetIdScope(IdentityScope<K, T> identityScope) {
