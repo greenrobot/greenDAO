@@ -46,7 +46,7 @@ public class DaoSession extends AbstractDaoSession {
 </#list>        
     }
     
-    public void reset() {
+    public void clear() {
 <#list schema.entities as entity>
         ${entity.classNameDao?uncap_first}Config.getIdentityScope().clear();
 </#list>    

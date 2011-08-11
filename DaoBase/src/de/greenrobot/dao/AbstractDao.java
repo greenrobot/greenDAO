@@ -303,7 +303,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     /** Resets all locally changed properties of the entity by reloading the values from the database. */
-    public void reset(T entity) {
+    public void refresh(T entity) {
         assertSinglePk();
         K key = getPrimaryKeyValue(entity);
         String sql = statements.getSelectByKey();

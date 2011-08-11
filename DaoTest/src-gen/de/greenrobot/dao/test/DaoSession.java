@@ -61,7 +61,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(DateEntity.class, dateEntityDao);
     }
     
-    public void reset() {
+    public void clear() {
         simpleEntityDaoConfig.getIdentityScope().clear();
         simpleEntityNotNullDaoConfig.getIdentityScope().clear();
         testEntityDaoConfig.getIdentityScope().clear();

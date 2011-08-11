@@ -35,7 +35,7 @@ public class DaoSessionTest extends AbstractDaoSessionTest<DaoMaster, DaoSession
     public void testSessionReset() {
         SimpleEntity entity = new SimpleEntity();
         daoSession.insert(entity);
-        daoSession.reset();
+        daoSession.clear();
         SimpleEntity entity2 = daoSession.load(SimpleEntity.class, entity.getId());
         assertNotSame(entity, entity2);
     }
