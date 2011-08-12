@@ -44,7 +44,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     protected final Class<D> daoClass;
     protected UnitTestDaoAccess<T, K> daoAccess;
     protected Property pkColumn;
-    protected IdentityScope<K, T> identityScope;
+    protected IdentityScope<K, T> identityScopeForDao;
 
     public AbstractDaoTest(Class<D> daoClass) {
         this(daoClass, true);
@@ -56,14 +56,14 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     }
     
     public void setIdentityScopeBeforeSetUp(IdentityScope<K, T> identityScope) {
-        this.identityScope = identityScope;
+        this.identityScopeForDao = identityScope;
     }
 
     @Override
     protected void setUp() {
         super.setUp();
         DaoConfig daoConfig = new DaoConfig(db, daoClass);
-        daoConfig.setIdentityScope(identityScope);
+        daoConfig.setIdentityScope(identityScopeForDao);
         try {
             Constructor<D> constructor = daoClass.getConstructor(DaoConfig.class);
             dao = constructor.newInstance(daoConfig);

@@ -50,7 +50,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     public String getTablename() {
-        return config .tablename;
+        return config.tablename;
     }
 
     public Property[] getProperties() {
@@ -120,6 +120,14 @@ public abstract class AbstractDao<T, K> {
     public List<T> loadAll() {
         Cursor cursor = db.rawQuery(statements.getSelectAll(), null);
         return readAllAndCloseCursor(cursor);
+    }
+
+    public boolean detach(T entity) {
+        if (identityScope != null) {
+            return identityScope.detach(getPrimaryKeyValue(entity), entity);
+        } else {
+            return false;
+        }
     }
 
     protected List<T> readAllAndCloseCursor(Cursor cursor) {
@@ -245,7 +253,7 @@ public abstract class AbstractDao<T, K> {
                 return entity;
             }
         } else {
-            // Check offset, assume a value !=0 indicating a potential outer join, so check PK 
+            // Check offset, assume a value !=0 indicating a potential outer join, so check PK
             if (offset != 0) {
                 K key = readPkFrom(cursor, offset);
                 if (key == null) {
@@ -391,10 +399,6 @@ public abstract class AbstractDao<T, K> {
 
     public long count() {
         return DatabaseUtils.queryNumEntries(db, config.tablename);
-    }
-
-    public void __temporarySetIdScope(IdentityScope<K, T> identityScope) {
-        this.identityScope = identityScope;
     }
 
     /** Reads the values from the current position of the given cursor and returns a new entity. */

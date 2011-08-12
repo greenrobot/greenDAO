@@ -2,19 +2,17 @@ package de.greenrobot.dao.test;
 
 import java.util.List;
 
-import de.greenrobot.dao.IdentityScope;
+import de.greenrobot.dao.IdentityScopeType;
 
 /**
  * @author Markus
- * 
  */
 public class RelationEntityTestIdentityScope extends RelationEntityTest {
 
     @Override
     protected void setUp() {
+        identityScopeTypeForSession = IdentityScopeType.Session;
         super.setUp();
-        dao.__temporarySetIdScope(new IdentityScope<Long, RelationEntity>());
-        daoSession.getTestEntityDao().__temporarySetIdScope(new IdentityScope<Long, TestEntity>());
     }
 
     public void testToOneLoadDeepIdentityScope() {

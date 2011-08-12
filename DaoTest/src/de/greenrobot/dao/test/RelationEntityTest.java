@@ -2,13 +2,18 @@ package de.greenrobot.dao.test;
 
 import java.util.List;
 
+import de.greenrobot.dao.IdentityScopeType;
+
 public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao, RelationEntity> {
 
     protected DaoMaster daoMaster;
     protected DaoSession daoSession;
+    /** set before calling setUp of this class. */
+    protected IdentityScopeType identityScopeTypeForSession;
 
     public RelationEntityTest() {
         super(RelationEntityDao.class);
+        identityScopeTypeForSession = IdentityScopeType.None;
     }
 
     @Override
@@ -16,7 +21,7 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
         super.setUp();
         TestEntityDao.createTable(db, false);
         daoMaster = new DaoMaster(db);
-        daoSession = daoMaster.newSession();
+        daoSession = daoMaster.newSession(identityScopeTypeForSession);
         dao = daoSession.getRelationEntityDao();
     }
 

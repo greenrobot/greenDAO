@@ -23,7 +23,7 @@ public class TestEntityTest extends AbstractDaoTestLongPk<TestEntityDao, TestEnt
         dao.insert(entity);
         entity.setSimpleInteger(null);
         entity.setSimpleString("temp");
-        dao.reset(entity);
+        dao.refresh(entity);
         assertEquals(42, (int) entity.getSimpleInteger());
         assertNull(entity.getSimpleString());
     }
@@ -31,14 +31,14 @@ public class TestEntityTest extends AbstractDaoTestLongPk<TestEntityDao, TestEnt
     public void testRefreshIllegal() {
         TestEntity entity = createEntity(1l);
         try {
-            dao.reset(entity);
+            dao.refresh(entity);
             fail("Exception expected");
         } catch (DaoException expected) {
         }
         dao.insert(entity);
         dao.delete(entity);
         try {
-            dao.reset(entity);
+            dao.refresh(entity);
             fail("Exception expected");
         } catch (DaoException expected) {
         }

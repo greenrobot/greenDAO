@@ -44,7 +44,16 @@ public class IdentityScope<K, T> {
     public void put(K key, T entity) {
         identityScope.put(key, new WeakReference<T>(entity));
     }
-    
+
+    public boolean detach(K key, T entity) {
+        if (get(key) == entity && entity != null) {
+            remove(key);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void remove(K key) {
         identityScope.remove(key);
     }
@@ -52,5 +61,5 @@ public class IdentityScope<K, T> {
     public void clear() {
         identityScope.clear();
     }
-    
+
 }
