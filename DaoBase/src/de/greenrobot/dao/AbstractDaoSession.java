@@ -23,14 +23,14 @@ import java.util.concurrent.Callable;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
- * DaoSession gives you access to your DAOs, offers convenient persistence methods, and also serves as a session cache.
- * 
- * To access the DAOs, call the get{entity}Dao methods by the generated DaoSession sub class.
- * 
+ * DaoSession gives you access to your DAOs, offers convenient persistence methods, and also serves as a session cache.<br/>
+ * <br/>
+ * To access the DAOs, call the get{entity}Dao methods by the generated DaoSession sub class.<br/>
+ * <br/>
  * DaoSession offers many of the available persistence operations on entities as a convenience. Consider using DAOs
  * directly to access all available operations, especially if you call a lot of operations on a single entity type to
- * avoid the overhead imposed by DaoSession (the overhead is small, but it may add up).
- * 
+ * avoid the overhead imposed by DaoSession (the overhead is small, but it may add up).<br/>
+ * <br/>
  * By default, the DaoSession has a session cache (IdentityScopeType.Session). The session cache is not just a plain
  * data cache to improve performance, but also manages object identities. For example, if you load the same entity twice
  * in a query, you will get a single Java object instead of two when using a session cache. This is particular useful
@@ -63,54 +63,63 @@ public class AbstractDaoSession {
         }
     }
 
+    /** Convenient call for {@link AbstractDao#insert(Object)}. */
     public <T> long insert(T entity) {
         @SuppressWarnings("unchecked")
         AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entity.getClass());
         return dao.insert(entity);
     }
 
+    /** Convenient call for {@link AbstractDao#insertOrReplace(Object)}. */
     public <T> long insertOrReplace(T entity) {
         @SuppressWarnings("unchecked")
         AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entity.getClass());
         return dao.insertOrReplace(entity);
     }
 
+    /** Convenient call for {@link AbstractDao#refresh(Object)}. */
     public <T> void refresh(T entity) {
         @SuppressWarnings("unchecked")
         AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entity.getClass());
         dao.refresh(entity);
     }
 
+    /** Convenient call for {@link AbstractDao#update(Object)}. */
     public <T> void update(T entity) {
         @SuppressWarnings("unchecked")
         AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entity.getClass());
         dao.update(entity);
     }
 
+    /** Convenient call for {@link AbstractDao#delete(Object)}. */
     public <T> void delete(T entity) {
         @SuppressWarnings("unchecked")
         AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entity.getClass());
         dao.delete(entity);
     }
 
+    /** Convenient call for {@link AbstractDao#deleteAll()}. */
     public <T> void deleteAll(Class<T> entityClass) {
         @SuppressWarnings("unchecked")
         AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entityClass);
         dao.deleteAll();
     }
 
+    /** Convenient call for {@link AbstractDao#load(Object)}. */
     public <T, K> T load(Class<T> entityClass, K key) {
         @SuppressWarnings("unchecked")
         AbstractDao<T, K> dao = (AbstractDao<T, K>) getDao(entityClass);
         return dao.load(key);
     }
 
+    /** Convenient call for {@link AbstractDao#loadAll()}. */
     public <T, K> List<T> loadAll(Class<T> entityClass) {
         @SuppressWarnings("unchecked")
         AbstractDao<T, K> dao = (AbstractDao<T, K>) getDao(entityClass);
         return dao.loadAll();
     }
 
+    /** Convenient call for {@link AbstractDao#queryRaw(String, String...)}. */
     public <T, K> List<T> queryRaw(Class<T> entityClass, String where, String... selectionArgs) {
         @SuppressWarnings("unchecked")
         AbstractDao<T, K> dao = (AbstractDao<T, K>) getDao(entityClass);

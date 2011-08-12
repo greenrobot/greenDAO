@@ -22,7 +22,7 @@ import java.util.Map;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
- * Incomplete. Check back later.
+ * The master of dao will guide you: start dao sessions with the master. 
  * 
  * @author Markus
  */
