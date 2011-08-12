@@ -16,11 +16,29 @@
 package de.greenrobot.dao;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * DaoSession gives you access to your DAOs, offers convenient persistence methods, and also serves as a session cache.
+ * 
+ * To access the DAOs, call the get{entity}Dao methods by the generated DaoSession sub class.
+ * 
+ * DaoSession offers many of the available persistence operations on entities as a convenience. Consider using DAOs
+ * directly to access all available operations, especially if you call a lot of operations on a single entity type to
+ * avoid the overhead imposed by DaoSession (the overhead is small, but it may add up).
+ * 
+ * By default, the DaoSession has a session cache (IdentityScopeType.Session). The session cache is not just a plain
+ * data cache to improve performance, but also manages object identities. For example, if you load the same entity twice
+ * in a query, you will get a single Java object instead of two when using a session cache. This is particular useful
+ * for relations pointing to a common set of entities.
+ * 
+ * @author Markus
+ * 
+ */
 public class AbstractDaoSession {
     private final SQLiteDatabase db;
     private final Map<Class<?>, AbstractDao<?, ?>> entityToDao;
@@ -51,16 +69,58 @@ public class AbstractDaoSession {
         return dao.insert(entity);
     }
 
+    public <T> long insertOrReplace(T entity) {
+        @SuppressWarnings("unchecked")
+        AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entity.getClass());
+        return dao.insertOrReplace(entity);
+    }
+
+    public <T> void refresh(T entity) {
+        @SuppressWarnings("unchecked")
+        AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entity.getClass());
+        dao.refresh(entity);
+    }
+
+    public <T> void update(T entity) {
+        @SuppressWarnings("unchecked")
+        AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entity.getClass());
+        dao.update(entity);
+    }
+
+    public <T> void delete(T entity) {
+        @SuppressWarnings("unchecked")
+        AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entity.getClass());
+        dao.delete(entity);
+    }
+
+    public <T> void deleteAll(Class<T> entityClass) {
+        @SuppressWarnings("unchecked")
+        AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entityClass);
+        dao.deleteAll();
+    }
+
     public <T, K> T load(Class<T> entityClass, K key) {
         @SuppressWarnings("unchecked")
         AbstractDao<T, K> dao = (AbstractDao<T, K>) getDao(entityClass);
         return dao.load(key);
     }
 
+    public <T, K> List<T> loadAll(Class<T> entityClass) {
+        @SuppressWarnings("unchecked")
+        AbstractDao<T, K> dao = (AbstractDao<T, K>) getDao(entityClass);
+        return dao.loadAll();
+    }
+
+    public <T, K> List<T> queryRaw(Class<T> entityClass, String where, String... selectionArgs) {
+        @SuppressWarnings("unchecked")
+        AbstractDao<T, K> dao = (AbstractDao<T, K>) getDao(entityClass);
+        return dao.queryRaw(where, selectionArgs);
+    }
+
     public AbstractDao<?, ?> getDao(Class<? extends Object> entityClass) {
         AbstractDao<?, ?> dao = entityToDao.get(entityClass);
         if (dao == null) {
-            throw new RuntimeException("No DAO registered for " + entityClass);
+            throw new DaoException("No DAO registered for " + entityClass);
         }
         return dao;
     }

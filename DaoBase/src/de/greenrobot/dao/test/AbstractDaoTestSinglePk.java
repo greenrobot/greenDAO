@@ -173,7 +173,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         dao.insert(createEntityWithRandomPk());
 
         String where = "WHERE " + dao.getPkColumns()[0] + "=?";
-        List<T> list = dao.query(where, pkForQuery.toString());
+        List<T> list = dao.queryRaw(where, pkForQuery.toString());
         assertEquals(1, list.size());
         assertEquals(pkForQuery, daoAccess.getPrimaryKeyValue(list.get(0)));
     }

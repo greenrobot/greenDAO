@@ -268,7 +268,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     /** A raw-style query where you can pass any WHERE clause and arguments. */
-    public List<T> query(String where, String... selectionArg) {
+    public List<T> queryRaw(String where, String... selectionArg) {
         Cursor cursor = db.rawQuery(statements.getSelectAll() + where, selectionArg);
         return readAllAndCloseCursor(cursor);
     }
