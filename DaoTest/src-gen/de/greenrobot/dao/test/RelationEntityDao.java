@@ -32,15 +32,16 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
 
     private DaoSession daoSession;
 
-    public RelationEntityDao(DaoConfig config, DaoSession daoSession) {
-        super(config);
-        this.daoSession = daoSession;
-    }
 
     public RelationEntityDao(DaoConfig config) {
         super(config);
     }
     
+    public RelationEntityDao(DaoConfig config, DaoSession daoSession) {
+        super(config, daoSession);
+        this.daoSession = daoSession;
+    }
+
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "RELATION_ENTITY (" + //

@@ -32,10 +32,15 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
         public final static Property SimpleByteArray = new Property(9, byte[].class, "simpleByteArray", false, "SIMPLE_BYTE_ARRAY");
     };
 
+
     public SimpleEntityDao(DaoConfig config) {
         super(config);
     }
     
+    public SimpleEntityDao(DaoConfig config, DaoSession daoSession) {
+        super(config, daoSession);
+    }
+
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "SIMPLE_ENTITY (" + //

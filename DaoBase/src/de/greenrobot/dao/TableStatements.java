@@ -92,10 +92,7 @@ public class TableStatements {
     /** ends with an space to simplify appending to this string. */
     protected String getSelectAll() {
         if (selectAll == null) {
-            StringBuilder builder = new StringBuilder("SELECT ");
-            SqlUtils.appendCommaSeparated(builder, "", allColumns);
-            builder.append(" FROM ").append(tablename).append(' ');
-            selectAll = builder.toString();
+            selectAll = SqlUtils.createSqlSelect(tablename, null, allColumns);
         }
         return selectAll;
     }

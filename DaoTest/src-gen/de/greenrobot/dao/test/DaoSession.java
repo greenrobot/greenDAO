@@ -51,11 +51,11 @@ public class DaoSession extends AbstractDaoSession {
         dateEntityDaoConfig = daoConfigMap.get(DateEntityDao.class).clone();
         dateEntityDaoConfig.setIdentityScope(createIdentityScope(type));
 
-        simpleEntityDao = new SimpleEntityDao(simpleEntityDaoConfig);
-        simpleEntityNotNullDao = new SimpleEntityNotNullDao(simpleEntityNotNullDaoConfig);
-        testEntityDao = new TestEntityDao(testEntityDaoConfig);
+        simpleEntityDao = new SimpleEntityDao(simpleEntityDaoConfig, this);
+        simpleEntityNotNullDao = new SimpleEntityNotNullDao(simpleEntityNotNullDaoConfig, this);
+        testEntityDao = new TestEntityDao(testEntityDaoConfig, this);
         relationEntityDao = new RelationEntityDao(relationEntityDaoConfig, this);
-        dateEntityDao = new DateEntityDao(dateEntityDaoConfig);
+        dateEntityDao = new DateEntityDao(dateEntityDaoConfig, this);
 
         registerDao(SimpleEntity.class, simpleEntityDao);
         registerDao(SimpleEntityNotNull.class, simpleEntityNotNullDao);

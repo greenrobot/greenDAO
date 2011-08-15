@@ -47,13 +47,26 @@ public class SqlUtils {
         }
     }
 
-    public static String createSqlForInsert(String insertInto, String tablename, String[] columns) {
+    public static String createSqlInsert(String insertInto, String tablename, String[] columns) {
         StringBuilder builder = new StringBuilder(insertInto);
         builder.append(tablename).append(" (");
         appendCommaSeparated(builder, "", columns);
         builder.append(") VALUES (");
         apppendPlaceholders(builder, columns.length);
         builder.append(')');
+        return builder.toString();
+    }
+
+    /** Creates an select for given columns with a trailing space */
+    public static String createSqlSelect(String tablename, String tableAlias, String[] columns) {
+        StringBuilder builder = new StringBuilder("SELECT ");
+        boolean useAlias = tableAlias != null && tableAlias.length() > 0;
+        String valuePrefix = useAlias ? tableAlias + "." : "";
+        SqlUtils.appendCommaSeparated(builder, valuePrefix, columns);
+        builder.append(" FROM ").append(tablename).append(' ');
+        if (useAlias) {
+            builder.append(tableAlias).append(' ');
+        }
         return builder.toString();
     }
 

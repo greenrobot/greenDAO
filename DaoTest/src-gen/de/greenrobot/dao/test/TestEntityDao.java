@@ -29,10 +29,15 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         public final static Property IndexedStringAscUnique = new Property(6, String.class, "indexedStringAscUnique", false, "INDEXED_STRING_ASC_UNIQUE");
     };
 
+
     public TestEntityDao(DaoConfig config) {
         super(config);
     }
     
+    public TestEntityDao(DaoConfig config, DaoSession daoSession) {
+        super(config, daoSession);
+    }
+
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "TEST_ENTITY (" + //

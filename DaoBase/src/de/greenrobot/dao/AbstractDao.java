@@ -41,12 +41,27 @@ public abstract class AbstractDao<T, K> {
     private IdentityScope<K, T> identityScope;
     private TableStatements statements;
 
-    @SuppressWarnings("unchecked")
+    private final AbstractDaoSession session;
+
     public AbstractDao(DaoConfig config) {
+        this(config, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public AbstractDao(DaoConfig config, AbstractDaoSession daoSession) {
         this.config = config;
+        this.session = daoSession;
         db = config.db;
         identityScope = (IdentityScope<K, T>) config.getIdentityScope();
         statements = config.statements;
+    }
+    
+    public AbstractDaoSession getSession() {
+        return session;
+    }
+    
+    TableStatements getStatements() {
+        return config.statements;
     }
 
     public String getTablename() {

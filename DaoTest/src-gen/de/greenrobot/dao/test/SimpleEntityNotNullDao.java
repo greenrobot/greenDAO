@@ -32,10 +32,15 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
         public final static Property SimpleByteArray = new Property(9, byte[].class, "simpleByteArray", false, "SIMPLE_BYTE_ARRAY");
     };
 
+
     public SimpleEntityNotNullDao(DaoConfig config) {
         super(config);
     }
     
+    public SimpleEntityNotNullDao(DaoConfig config, DaoSession daoSession) {
+        super(config, daoSession);
+    }
+
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "SIMPLE_ENTITY_NOT_NULL (" + //

@@ -40,17 +40,19 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 <#if entity.active>
     private DaoSession daoSession;
 
-    public ${entity.classNameDao}(DaoConfig config, DaoSession daoSession) {
-        super(config);
-        this.daoSession = daoSession;
-    }
-
-<#else>    
 </#if>
+
     public ${entity.classNameDao}(DaoConfig config) {
         super(config);
     }
     
+    public ${entity.classNameDao}(DaoConfig config, DaoSession daoSession) {
+        super(config, daoSession);
+<#if entity.active>        
+        this.daoSession = daoSession;
+</#if>
+    }
+
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "${entity.tableName} (" + //

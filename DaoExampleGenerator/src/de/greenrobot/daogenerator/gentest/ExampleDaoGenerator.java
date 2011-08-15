@@ -16,11 +16,11 @@ public class ExampleDaoGenerator {
     public static void main(String[] args) throws Exception {
         Schema schema = new Schema(2, "de.greenrobot.daoexample");
 
-        Entity simple = schema.addEntity("Note");
-        simple.addIdProperty();
-        simple.addStringProperty("text").notNull();
-        simple.addStringProperty("comment");
-        simple.addDateProperty("date");
+        Entity note = schema.addEntity("Note");
+        note.addIdProperty();
+        note.addStringProperty("text").notNull();
+        note.addStringProperty("comment");
+        note.addDateProperty("date");
 
         new DaoGenerator().generateAll("../DaoExample/src-gen", schema);
     }

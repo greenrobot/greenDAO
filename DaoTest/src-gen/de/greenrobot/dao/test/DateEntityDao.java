@@ -25,10 +25,15 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
         public final static Property DateNotNull = new Property(2, java.util.Date.class, "dateNotNull", false, "DATE_NOT_NULL");
     };
 
+
     public DateEntityDao(DaoConfig config) {
         super(config);
     }
     
+    public DateEntityDao(DaoConfig config, DaoSession daoSession) {
+        super(config, daoSession);
+    }
+
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "DATE_ENTITY (" + //
