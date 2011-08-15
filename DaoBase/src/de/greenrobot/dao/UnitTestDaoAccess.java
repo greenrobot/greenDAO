@@ -16,6 +16,8 @@
 
 package de.greenrobot.dao;
 
+import android.database.Cursor;
+
 /** Reserved for unit tests that want to access some non-public methods. Don't use for anything else. */
 public class UnitTestDaoAccess<T, K> {
     private AbstractDao<T, K> dao;
@@ -24,8 +26,8 @@ public class UnitTestDaoAccess<T, K> {
         this.dao = dao;
     }
 
-    public K getPrimaryKeyValue(T entity) {
-        return dao.getPrimaryKeyValue(entity);
+    public K getKey(T entity) {
+        return dao.getKey(entity);
     }
 
     public Property[] getProperties() {
@@ -36,4 +38,12 @@ public class UnitTestDaoAccess<T, K> {
         return dao.isEntityUpdateable();
     }
 
+    public T readEntity(Cursor cursor, int offset) {
+        return dao.readEntity(cursor, offset);
+    }
+
+    public K readKey(Cursor cursor, int offset) {
+        return dao.readKey(cursor, offset);
+    }
+    
 }

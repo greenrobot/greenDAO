@@ -114,13 +114,13 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
 
     /** @inheritdoc */
     @Override
-    public Long readPkFrom(Cursor cursor, int offset) {
+    public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
-    public SpecialNamesEntity readFrom(Cursor cursor, int offset) {
+    public SpecialNamesEntity readEntity(Cursor cursor, int offset) {
         SpecialNamesEntity entity = new SpecialNamesEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // count
@@ -137,7 +137,7 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
      
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, SpecialNamesEntity entity, int offset) {
+    public void readEntity(Cursor cursor, SpecialNamesEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setCount(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setSelect(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
@@ -157,7 +157,7 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
     
     /** @inheritdoc */
     @Override
-    public Long getPrimaryKeyValue(SpecialNamesEntity entity) {
+    public Long getKey(SpecialNamesEntity entity) {
         if(entity != null) {
             return entity.getId();
         } else {

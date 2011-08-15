@@ -109,7 +109,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 </#if>
     /** @inheritdoc */
     @Override
-    public ${entity.pkType} readPkFrom(Cursor cursor, int offset) {
+    public ${entity.pkType} readKey(Cursor cursor, int offset) {
 <#if entity.pkProperty??>
         return <#if !entity.pkProperty.notNull>cursor.isNull(offset + ${entity.pkProperty.ordinal}) ? null : </#if><#if
             entity.pkProperty.propertyType == "Byte">(byte) </#if><#if
@@ -123,7 +123,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 
     /** @inheritdoc */
     @Override
-    public ${entity.className} readFrom(Cursor cursor, int offset) {
+    public ${entity.className} readEntity(Cursor cursor, int offset) {
 <#if entity.protobuf>
         Builder builder = ${entity.className}.newBuilder();
 <#list entity.properties as property>
@@ -137,7 +137,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
         return builder.build();
 <#elseif entity.constructors>
 <#--
-############################## readFrom non-protobuff, constructor ############################## 
+############################## readEntity non-protobuff, constructor ############################## 
 -->
         ${entity.className} entity = new ${entity.className}( //
 <#list entity.properties as property>
@@ -151,17 +151,17 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
         return entity;
 <#else>
 <#--
-############################## readFrom non-protobuff, setters ############################## 
+############################## readEntity non-protobuff, setters ############################## 
 -->
         ${entity.className} entity = new ${entity.className}();
-        readFrom(cursor, entity, offset);
+        readEntity(cursor, entity, offset);
         return entity;
 </#if>
     }
      
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, ${entity.className} entity, int offset) {
+    public void readEntity(Cursor cursor, ${entity.className} entity, int offset) {
 <#if entity.protobuf>
         throw new UnsupportedOperationException("Protobuf objects cannot be modified");
 <#else> 
@@ -193,7 +193,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
     
     /** @inheritdoc */
     @Override
-    public ${entity.pkType} getPrimaryKeyValue(${entity.className} entity) {
+    public ${entity.pkType} getKey(${entity.className} entity) {
 <#if entity.pkProperty??>
         if(entity != null) {
             return entity.get${entity.pkProperty.propertyName?cap_first}();

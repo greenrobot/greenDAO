@@ -75,7 +75,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         T entity2 = dao.load(pk);
         assertNotNull(entity2);
         // assertNotSame(entity, entity2); // Unless we'll cache stuff one day --> we do now
-        assertEquals(daoAccess.getPrimaryKeyValue(entity), daoAccess.getPrimaryKeyValue(entity2));
+        assertEquals(daoAccess.getKey(entity), daoAccess.getKey(entity2));
     }
 
     public void testInsertInTx() {
@@ -96,8 +96,8 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
             dao.insert(entity1);
             dao.insert(entity2);
 
-            K pk1 = daoAccess.getPrimaryKeyValue(entity1);
-            K pk2 = daoAccess.getPrimaryKeyValue(entity2);
+            K pk1 = daoAccess.getKey(entity1);
+            K pk2 = daoAccess.getKey(entity2);
 
             assertFalse(pk1.equals(pk2));
 
@@ -175,7 +175,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         String where = "WHERE " + dao.getPkColumns()[0] + "=?";
         List<T> list = dao.queryRaw(where, pkForQuery.toString());
         assertEquals(1, list.size());
-        assertEquals(pkForQuery, daoAccess.getPrimaryKeyValue(list.get(0)));
+        assertEquals(pkForQuery, daoAccess.getKey(list.get(0)));
     }
 
     public void testUpdate() {
@@ -192,8 +192,8 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         dao.insert(entity);
 
         Cursor cursor = queryAllWithDummyColumnsInFront(5, "42");
-        T entity2 = dao.readFrom(cursor, 5);
-        assertEquals(pk, daoAccess.getPrimaryKeyValue(entity2));
+        T entity2 = daoAccess.readEntity(cursor, 5);
+        assertEquals(pk, daoAccess.getKey(entity2));
     }
 
     public void testLoadPkWithOffset() {
@@ -210,7 +210,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         dao.insert(entity);
 
         Cursor cursor = queryAllWithDummyColumnsInFront(offset, "42");
-        K pk2 = dao.readPkFrom(cursor, offset);
+        K pk2 = daoAccess.readKey(cursor, offset);
         assertEquals(pk, pk2);
     }
 

@@ -121,13 +121,13 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public Long readPkFrom(Cursor cursor, int offset) {
+    public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
-    public SimpleEntity readFrom(Cursor cursor, int offset) {
+    public SimpleEntity readEntity(Cursor cursor, int offset) {
         SimpleEntity entity = new SimpleEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getShort(offset + 1) != 0, // simpleBoolean
@@ -145,7 +145,7 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
      
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, SimpleEntity entity, int offset) {
+    public void readEntity(Cursor cursor, SimpleEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setSimpleBoolean(cursor.isNull(offset + 1) ? null : cursor.getShort(offset + 1) != 0);
         entity.setSimpleByte(cursor.isNull(offset + 2) ? null : (byte) cursor.getShort(offset + 2));
@@ -166,7 +166,7 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
     
     /** @inheritdoc */
     @Override
-    public Long getPrimaryKeyValue(SimpleEntity entity) {
+    public Long getKey(SimpleEntity entity) {
         if(entity != null) {
             return entity.getId();
         } else {

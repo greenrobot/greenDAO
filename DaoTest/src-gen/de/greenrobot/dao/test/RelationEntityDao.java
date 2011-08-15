@@ -94,13 +94,13 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public Long readPkFrom(Cursor cursor, int offset) {
+    public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
-    public RelationEntity readFrom(Cursor cursor, int offset) {
+    public RelationEntity readEntity(Cursor cursor, int offset) {
         RelationEntity entity = new RelationEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // parentId
@@ -113,7 +113,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
      
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, RelationEntity entity, int offset) {
+    public void readEntity(Cursor cursor, RelationEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setParentId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
         entity.setTestId(cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2));
@@ -129,7 +129,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     
     /** @inheritdoc */
     @Override
-    public Long getPrimaryKeyValue(RelationEntity entity) {
+    public Long getKey(RelationEntity entity) {
         if(entity != null) {
             return entity.getId();
         } else {
@@ -166,18 +166,18 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     }
     
     protected RelationEntity readDeepFrom(Cursor cursor) {
-        RelationEntity entity = fetchEntity(cursor, 0);
+        RelationEntity entity = loadCurrent(cursor, 0);
         int offset = getAllColumns().length;
 
-        RelationEntity parent = daoSession.getRelationEntityDao().fetchEntity(cursor, offset);
+        RelationEntity parent = daoSession.getRelationEntityDao().loadCurrent(cursor, offset);
         entity.setParent(parent);
         offset += daoSession.getRelationEntityDao().getAllColumns().length;
 
-        TestEntity testEntity = daoSession.getTestEntityDao().fetchEntity(cursor, offset);
+        TestEntity testEntity = daoSession.getTestEntityDao().loadCurrent(cursor, offset);
         entity.setTestEntity(testEntity);
         offset += daoSession.getTestEntityDao().getAllColumns().length;
 
-        TestEntity testNotNull = daoSession.getTestEntityDao().fetchEntity(cursor, offset);
+        TestEntity testNotNull = daoSession.getTestEntityDao().loadCurrent(cursor, offset);
          if(testNotNull != null) {
             entity.setTestNotNull(testNotNull);
         }

@@ -97,13 +97,13 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public Long readPkFrom(Cursor cursor, int offset) {
+    public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
-    public TestEntity readFrom(Cursor cursor, int offset) {
+    public TestEntity readEntity(Cursor cursor, int offset) {
         TestEntity entity = new TestEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getInt(offset + 1), // simpleInt
@@ -118,7 +118,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
      
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, TestEntity entity, int offset) {
+    public void readEntity(Cursor cursor, TestEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setSimpleInt(cursor.getInt(offset + 1));
         entity.setSimpleInteger(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
@@ -136,7 +136,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
     
     /** @inheritdoc */
     @Override
-    public Long getPrimaryKeyValue(TestEntity entity) {
+    public Long getKey(TestEntity entity) {
         if(entity != null) {
             return entity.getId();
         } else {

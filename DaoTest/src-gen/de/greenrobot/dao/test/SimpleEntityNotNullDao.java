@@ -81,13 +81,13 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
 
     /** @inheritdoc */
     @Override
-    public Long readPkFrom(Cursor cursor, int offset) {
+    public Long readKey(Cursor cursor, int offset) {
         return cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
-    public SimpleEntityNotNull readFrom(Cursor cursor, int offset) {
+    public SimpleEntityNotNull readEntity(Cursor cursor, int offset) {
         SimpleEntityNotNull entity = new SimpleEntityNotNull( //
             cursor.getLong(offset + 0), // id
             cursor.getShort(offset + 1) != 0, // simpleBoolean
@@ -105,7 +105,7 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
      
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, SimpleEntityNotNull entity, int offset) {
+    public void readEntity(Cursor cursor, SimpleEntityNotNull entity, int offset) {
         entity.setId(cursor.getLong(offset + 0));
         entity.setSimpleBoolean(cursor.getShort(offset + 1) != 0);
         entity.setSimpleByte((byte) cursor.getShort(offset + 2));
@@ -126,7 +126,7 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
     
     /** @inheritdoc */
     @Override
-    public Long getPrimaryKeyValue(SimpleEntityNotNull entity) {
+    public Long getKey(SimpleEntityNotNull entity) {
         if(entity != null) {
             return entity.getId();
         } else {

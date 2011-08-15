@@ -24,11 +24,11 @@
     }
     
     protected ${entity.className} readDeepFrom(Cursor cursor) {
-        ${entity.className} entity = fetchEntity(cursor, 0);
+        ${entity.className} entity = loadCurrent(cursor, 0);
         int offset = getAllColumns().length;
 
 <#list entity.toOneRelations as toOne>
-        ${toOne.targetEntity.className} ${toOne.name} = daoSession.get${toOne.targetEntity.classNameDao}().fetchEntity(cursor, offset);
+        ${toOne.targetEntity.className} ${toOne.name} = daoSession.get${toOne.targetEntity.classNameDao}().loadCurrent(cursor, offset);
 <#if toOne.fkProperties[0].notNull>         if(${toOne.name} != null) {
     </#if>        entity.set${toOne.name?cap_first}(${toOne.name});
 <#if toOne.fkProperties[0].notNull>

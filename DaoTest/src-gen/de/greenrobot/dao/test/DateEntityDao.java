@@ -68,13 +68,13 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
 
     /** @inheritdoc */
     @Override
-    public Long readPkFrom(Cursor cursor, int offset) {
+    public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
-    public DateEntity readFrom(Cursor cursor, int offset) {
+    public DateEntity readEntity(Cursor cursor, int offset) {
         DateEntity entity = new DateEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)), // date
@@ -85,7 +85,7 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
      
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, DateEntity entity, int offset) {
+    public void readEntity(Cursor cursor, DateEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setDate(cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)));
         entity.setDateNotNull(new java.util.Date(cursor.getLong(offset + 2)));
@@ -99,7 +99,7 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
     
     /** @inheritdoc */
     @Override
-    public Long getPrimaryKeyValue(DateEntity entity) {
+    public Long getKey(DateEntity entity) {
         if(entity != null) {
             return entity.getId();
         } else {

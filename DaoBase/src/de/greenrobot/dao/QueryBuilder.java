@@ -1,5 +1,6 @@
 package de.greenrobot.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class QueryBuilder<T> {
@@ -24,6 +25,7 @@ public class QueryBuilder<T> {
     public QueryBuilder(AbstractDao<T, ?> dao, String tablePrefix) {
         this.dao = dao;
         this.tablePrefix = tablePrefix;
+        values = new ArrayList<Object>();
     }
 
     private void checkWhereBuilder() {
