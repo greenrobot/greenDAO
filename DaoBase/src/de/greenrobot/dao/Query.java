@@ -83,10 +83,10 @@ public class Query<T> {
 
     /**
      * Executes the query and returns the result as a list iterator; make sure to close it to close the underlying
-     * cursor.
+     * cursor. The cursor is closed once the iterator is fully iterated through.
      */
     public CloseableListIterator<T> listIterator() {
-        return listLazyUncached().listIterator();
+        return listLazyUncached().listIteratorAutoClose();
     }
 
     /**

@@ -28,12 +28,13 @@ import java.util.concurrent.locks.ReentrantLock;
 import android.database.Cursor;
 
 /**
- * A thread-safe, unmodifiable list that reads entities once they are accessed. Make sure to close the list once you are
- * done with it. The lazy list can be ached or not. Cached lazy lists store the entities in memory to avoid loading
- * entities more than once. Some features of the list are limited to cached lists (e.g. features that require the entire
- * list). Cached lists close the cursor automatically once you queried all entities. However, to avoid leaked cursors,
- * you should not rely on this behavior: if an exception occurs before the entire list is read, you should close the
- * lazy list (and thus the underlying cursor) on your own to be on the safe side.
+ * A thread-safe, unmodifiable list that reads entities once they are accessed from an underlying database cursor. Make
+ * sure to close the list once you are done with it. The lazy list can be cached or not. Cached lazy lists store the
+ * entities in memory to avoid loading entities more than once. Some features of the list are limited to cached lists
+ * (e.g. features that require the entire list). Cached lists close the cursor automatically once you queried all
+ * entities. However, to avoid leaked cursors, you should not rely on this behavior: if an exception occurs before the
+ * entire list is read, you should close the lazy list (and thus the underlying cursor) on your own to be on the safe
+ * side.
  * 
  * @author Markus
  * 
@@ -44,9 +45,11 @@ public class LazyList<E> implements List<E>, Closeable {
     protected class LazyIterator implements CloseableListIterator<E> {
         private int index;
         private E previous;
+        private final boolean closeWhenDone;
 
-        public LazyIterator(int startLocation) {
+        public LazyIterator(int startLocation, boolean closeWhenDone) {
             index = startLocation;
+            this.closeWhenDone = closeWhenDone;
         }
 
         @Override
@@ -95,6 +98,9 @@ public class LazyList<E> implements List<E>, Closeable {
             E entity = get(index);
             previous = entity;
             index++;
+            if (index == size && closeWhenDone) {
+                close();
+            }
             return entity;
         }
 
@@ -104,7 +110,7 @@ public class LazyList<E> implements List<E>, Closeable {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             LazyList.this.close();
         }
 
@@ -263,7 +269,7 @@ public class LazyList<E> implements List<E>, Closeable {
 
     @Override
     public Iterator<E> iterator() {
-        return new LazyIterator(0);
+        return new LazyIterator(0, false);
     }
 
     @Override
@@ -274,12 +280,17 @@ public class LazyList<E> implements List<E>, Closeable {
 
     @Override
     public CloseableListIterator<E> listIterator() {
-        return new LazyIterator(0);
+        return new LazyIterator(0, false);
+    }
+
+    /** Closes this list's cursor once the iterator is fully iterated through. */
+    public CloseableListIterator<E> listIteratorAutoClose() {
+        return new LazyIterator(0, true);
     }
 
     @Override
     public ListIterator<E> listIterator(int location) {
-        return new LazyIterator(location);
+        return new LazyIterator(location, false);
     }
 
     @Override

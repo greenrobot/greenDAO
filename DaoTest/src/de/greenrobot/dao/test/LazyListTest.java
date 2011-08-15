@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
+import de.greenrobot.dao.CloseableListIterator;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.LazyList;
 import de.greenrobot.dao.test.TestEntityDao.Properties;
@@ -183,4 +184,15 @@ public class LazyListTest extends AbstractDaoTest<TestEntityDao, TestEntity, Lon
         listLazy.close();
     }
 
+    public void testAutoClose() {
+        insert(10);
+        LazyList<TestEntity> lazyList = dao.queryBuilder().build().listLazyUncached();
+        CloseableListIterator<TestEntity> iterator = lazyList.listIteratorAutoClose();
+        while (iterator.hasNext()) {
+            assertFalse(lazyList.isClosed());
+            iterator.next();
+        }
+        assertTrue(lazyList.isClosed());
+    }
+    
 }
