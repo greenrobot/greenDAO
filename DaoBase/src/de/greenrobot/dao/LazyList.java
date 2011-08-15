@@ -1,6 +1,22 @@
+/*
+ * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.greenrobot.dao;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,7 +28,12 @@ import java.util.concurrent.locks.ReentrantLock;
 import android.database.Cursor;
 
 /**
- * A thread-safe, unmodifiable list
+ * A thread-safe, unmodifiable list that reads entities once they are accessed. Make sure to close the list once you are
+ * done with it. The lazy list can be ached or not. Cached lazy lists store the entities in memory to avoid loading
+ * entities more than once. Some features of the list are limited to cached lists (e.g. features that require the entire
+ * list). Cached lists close the cursor automatically once you queried all entities. However, to avoid leaked cursors,
+ * you should not rely on this behavior: if an exception occurs before the entire list is read, you should close the
+ * lazy list (and thus the underlying cursor) on your own to be on the safe side.
  * 
  * @author Markus
  * 
@@ -20,8 +41,9 @@ import android.database.Cursor;
  *            Entity type.
  */
 public class LazyList<E> implements List<E>, Closeable {
-    protected class LazyIterator implements ListIterator<E> {
+    protected class LazyIterator implements CloseableListIterator<E> {
         private int index;
+        private E previous;
 
         public LazyIterator(int startLocation) {
             index = startLocation;
@@ -44,10 +66,10 @@ public class LazyList<E> implements List<E>, Closeable {
 
         @Override
         public E previous() {
-            if (index <= 0) {
+            if (previous == null) {
                 throw new NoSuchElementException();
             }
-            return get(index - 1);
+            return previous;
         }
 
         @Override
@@ -71,6 +93,7 @@ public class LazyList<E> implements List<E>, Closeable {
                 throw new NoSuchElementException();
             }
             E entity = get(index);
+            previous = entity;
             index++;
             return entity;
         }
@@ -78,6 +101,11 @@ public class LazyList<E> implements List<E>, Closeable {
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void close() throws IOException {
+            LazyList.this.close();
         }
 
     }
@@ -89,13 +117,17 @@ public class LazyList<E> implements List<E>, Closeable {
     private final ReentrantLock lock;
     private volatile int loadedCount;
 
-    LazyList(AbstractDao<E, ?> dao, Cursor cursor) {
+    LazyList(AbstractDao<E, ?> dao, Cursor cursor, boolean cacheEntities) {
         this.dao = dao;
         this.cursor = cursor;
         size = cursor.getCount();
-        entities = new ArrayList<E>(size);
-        for (int i = 0; i < size; i++) {
-            entities.add(null);
+        if (cacheEntities) {
+            entities = new ArrayList<E>(size);
+            for (int i = 0; i < size; i++) {
+                entities.add(null);
+            }
+        } else {
+            entities = null;
         }
         if (size == 0) {
             cursor.close();
@@ -104,17 +136,28 @@ public class LazyList<E> implements List<E>, Closeable {
         lock = new ReentrantLock();
     }
 
-    /** Loads the remaining entities (if any). */
+    /** Loads the remaining entities (if any) that were not loaded before. Applies to cached lazy lists only. */
     public void loadRemaining() {
+        checkCached();
         int size = entities.size();
         for (int i = 0; i < size; i++) {
             get(i);
         }
     }
 
+    protected void checkCached() {
+        if (entities == null) {
+            throw new DaoException("This operation only works with cached lazy lists");
+        }
+    }
+
     /** Like get but does not load the entity if it was not loaded before. */
     public E peak(int location) {
-        return entities.get(location);
+        if (entities != null) {
+            return entities.get(location);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -174,26 +217,35 @@ public class LazyList<E> implements List<E>, Closeable {
 
     @Override
     public E get(int location) {
-        E entity = entities.get(location);
-        if (entity == null) {
-            lock.lock();
-            try {
-                entity = entities.get(location);
-                if (entity == null) {
-                    cursor.moveToPosition(location);
-                    entity = dao.loadCurrent(cursor, 0);
+        if (entities != null) {
+            E entity = entities.get(location);
+            if (entity == null) {
+                lock.lock();
+                try {
+                    entity = entities.get(location);
                     if (entity == null) {
-                        throw new DaoException("Loading of entity failed (null) at position " + location);
+                        entity = loadEntity(location);
+                        entities.set(location, entity);
+                        loadedCount++;
+                        if (loadedCount == size) {
+                            cursor.close();
+                        }
                     }
-                    entities.set(location, entity);
-                    loadedCount++;
-                    if (loadedCount == size) {
-                        cursor.close();
-                    }
+                } finally {
+                    lock.unlock();
                 }
-            } finally {
-                lock.unlock();
             }
+            return entity;
+        } else {
+            return loadEntity(location);
+        }
+    }
+
+    protected E loadEntity(int location) {
+        cursor.moveToPosition(location);
+        E entity = dao.loadCurrent(cursor, 0);
+        if (entity == null) {
+            throw new DaoException("Loading of entity failed (null) at position " + location);
         }
         return entity;
     }
@@ -221,7 +273,7 @@ public class LazyList<E> implements List<E>, Closeable {
     }
 
     @Override
-    public ListIterator<E> listIterator() {
+    public CloseableListIterator<E> listIterator() {
         return new LazyIterator(0);
     }
 
@@ -262,6 +314,7 @@ public class LazyList<E> implements List<E>, Closeable {
 
     @Override
     public List<E> subList(int start, int end) {
+        checkCached();
         for (int i = start; i < end; i++) {
             entities.get(i);
         }
