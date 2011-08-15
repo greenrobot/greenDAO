@@ -2,16 +2,14 @@ package de.greenrobot.dao.test;
 
 import java.util.List;
 
-import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.test.TestEntityDao.Properties;
 
-public class SimpleQueryBuilderTest extends AbstractDaoTestLongPk<TestEntityDao, TestEntity> {
+public class SimpleQueryBuilderTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> {
 
     public SimpleQueryBuilderTest() {
         super(TestEntityDao.class);
     }
 
-    @Override
     protected TestEntity createEntity(Long key) {
         TestEntity entity = new TestEntity();
         entity.setId(key);

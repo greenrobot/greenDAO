@@ -167,9 +167,11 @@ public class QueryBuilder<T> {
             select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
         }
         StringBuilder builder = new StringBuilder(select);
-        builder.append(" WHERE ").append(whereBuilder);
+        if (whereBuilder != null && whereBuilder.length() > 0) {
+            builder.append(" WHERE ").append(whereBuilder);
+        }
         if (orderBuilder != null && orderBuilder.length() > 0) {
-            builder.append("ORDER BY ").append(orderBuilder);
+            builder.append(" ORDER BY ").append(orderBuilder);
         }
         return new Query<T>(dao, builder.toString(), values);
     }

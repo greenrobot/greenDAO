@@ -34,8 +34,9 @@ public class Query<T> {
         return dao.loadAllAndCloseCursor(cursor);
     }
 
-    public List<T> listLazy() {
-        return null;
+    public LazyList<T> listLazy() {
+        Cursor cursor = dao.db.rawQuery(sql, parameters);
+        return new LazyList<T>(dao, cursor);
     }
 
     public T unique() {
