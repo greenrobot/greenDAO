@@ -39,11 +39,14 @@ public class LazyList<E> implements List<E>, Closeable {
 
         @Override
         public int nextIndex() {
-            return index + 1;
+            return index;
         }
 
         @Override
         public E previous() {
+            if (index <= 0) {
+                throw new NoSuchElementException();
+            }
             return get(index - 1);
         }
 

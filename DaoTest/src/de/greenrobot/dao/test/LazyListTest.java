@@ -1,6 +1,7 @@
 package de.greenrobot.dao.test;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import de.greenrobot.dao.LazyList;
@@ -60,6 +61,45 @@ public class LazyListTest extends AbstractDaoTest<TestEntityDao, TestEntity, Lon
         assertTrue(listLazy.isClosed());
     }
 
+    public void testIterator() {
+        ArrayList<TestEntity> list = insert(100);
+
+        LazyList<TestEntity> listLazy = dao.queryBuilder().orderAsc(Properties.SimpleInteger).build().listLazy();
+        ListIterator<TestEntity> iterator = listLazy.listIterator();
+        try {
+            iterator.previous();
+            fail("previous should throw here");
+        } catch (NoSuchElementException expected) {
+            // OK
+        }
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            assertTrue(iterator.hasNext());
+            assertEquals(i > 0, iterator.hasPrevious());
+            assertEquals(i, iterator.nextIndex());
+            assertEquals(i - 1, iterator.previousIndex());
+
+            if (i > 0) {
+                TestEntity entityPrevious = list.get(i - 1);
+                assertEquals(entityPrevious.getId(), iterator.previous().getId());
+            }
+
+            TestEntity entity = list.get(i);
+            assertNull(listLazy.peak(i));
+            TestEntity lazyEntity = iterator.next();
+            assertNotNull(listLazy.peak(i));
+            assertEquals(entity.getId(), lazyEntity.getId());
+        }
+        assertFalse(iterator.hasNext());
+        assertTrue(listLazy.isClosed());
+        try {
+            iterator.next();
+            fail("next should throw here");
+        } catch (NoSuchElementException expected) {
+            // OK
+        }
+    }
+
     public void testEmpty() {
         insert(1);
 
@@ -74,4 +114,19 @@ public class LazyListTest extends AbstractDaoTest<TestEntityDao, TestEntity, Lon
         }
 
     }
+
+    public void testClose() {
+        insert(1);
+
+        LazyList<TestEntity> listLazy = dao.queryBuilder().build().listLazy();
+        assertFalse(listLazy.isEmpty());
+        assertFalse(listLazy.isClosed());
+        listLazy.get(0);
+        assertTrue(listLazy.isClosed());
+
+        // Closing again should not harm
+        listLazy.close();
+        listLazy.close();
+    }
+
 }
