@@ -17,27 +17,39 @@ package de.greenrobot.dao;
 
 public class SqlUtils {
 
-    public static void appendCommaSeparated(StringBuilder builder, String valuePrefix, String[] values) {
-        int length = values.length;
+    public static StringBuilder appendColumn(StringBuilder builder, String column) {
+        builder.append('\'').append(column).append('\'');
+        return builder;
+    }
+
+    public static StringBuilder appendColumn(StringBuilder builder, String tableAlias, String column) {
+        builder.append(tableAlias).append(".'").append(column).append('\'');
+        return builder;
+    }
+
+    public static StringBuilder appendColumns(StringBuilder builder, String tableAlias, String[] columns) {
+        int length = columns.length;
         for (int i = 0; i < length; i++) {
-            builder.append(valuePrefix).append(values[i]);
+            appendColumn(builder, tableAlias, columns[i]);
             if (i < length - 1) {
                 builder.append(',');
             }
         }
+        return builder;
     }
 
-    public static void appendCommaSeparatedEqPlaceholder(StringBuilder builder, String valuePrefix, String[] values) {
-        int length = values.length;
+    public static StringBuilder appendColumns(StringBuilder builder, String[] columns) {
+        int length = columns.length;
         for (int i = 0; i < length; i++) {
-            builder.append(valuePrefix).append(values[i]).append("=?");
+            builder.append('\'').append(columns[i]).append('\'');
             if (i < length - 1) {
                 builder.append(',');
             }
         }
+        return builder;
     }
 
-    public static void apppendPlaceholders(StringBuilder builder, int count) {
+    public static StringBuilder appendPlaceholders(StringBuilder builder, int count) {
         for (int i = 0; i < count; i++) {
             if (i < count - 1) {
                 builder.append("?,");
@@ -45,14 +57,36 @@ public class SqlUtils {
                 builder.append('?');
             }
         }
+        return builder;
+    }
+
+    public static StringBuilder appendColumnsEqualPlaceholders(StringBuilder builder, String[] columns) {
+        for (int i = 0; i < columns.length; i++) {
+            appendColumn(builder, columns[i]).append("=?");
+            if (i < columns.length - 1) {
+                builder.append(',');
+            }
+        }
+        return builder;
+    }
+
+    public static StringBuilder appendColumnsEqValue(StringBuilder builder, String tableAlias,
+            String[] columns) {
+        for (int i = 0; i < columns.length; i++) {
+            appendColumn(builder, tableAlias, columns[i]).append("=?");
+            if (i < columns.length - 1) {
+                builder.append(',');
+            }
+        }
+        return builder;
     }
 
     public static String createSqlInsert(String insertInto, String tablename, String[] columns) {
         StringBuilder builder = new StringBuilder(insertInto);
         builder.append(tablename).append(" (");
-        appendCommaSeparated(builder, "", columns);
+        appendColumns(builder, columns);
         builder.append(") VALUES (");
-        apppendPlaceholders(builder, columns.length);
+        appendPlaceholders(builder, columns.length);
         builder.append(')');
         return builder.toString();
     }
@@ -60,23 +94,32 @@ public class SqlUtils {
     /** Creates an select for given columns with a trailing space */
     public static String createSqlSelect(String tablename, String tableAlias, String[] columns) {
         StringBuilder builder = new StringBuilder("SELECT ");
-        boolean useAlias = tableAlias != null && tableAlias.length() > 0;
-        String valuePrefix = useAlias ? tableAlias + "." : "";
-        SqlUtils.appendCommaSeparated(builder, valuePrefix, columns);
-        builder.append(" FROM ").append(tablename).append(' ');
-        if (useAlias) {
-            builder.append(tableAlias).append(' ');
+        if (tableAlias == null || tableAlias.length() < 0) {
+            throw new DaoException("Table alias required");
+        }
+
+        SqlUtils.appendColumns(builder, tableAlias, columns).append(" FROM ");
+        builder.append(tablename).append(' ').append(tableAlias).append(' ');
+        return builder.toString();
+    }
+
+    public static String createSqlDelete(String tablename, String[] columns) {
+        StringBuilder builder = new StringBuilder("DELETE FROM ");
+        builder.append(tablename);
+        if (columns != null && columns.length > 0) {
+            builder.append(" WHERE ");
+            SqlUtils.appendColumnsEqValue(builder, tablename, columns);
         }
         return builder.toString();
     }
 
-    public static void appendColumnsEqualPlaceholders(StringBuilder builder, String[] pks) {
-        for (int i = 0; i < pks.length; i++) {
-            builder.append(pks[i]).append("=?");
-            if (i < pks.length - 1) {
-                builder.append(',');
-            }
-        }
+    public static String createSqlUpdate(String tablename, String[] updateColumns, String[] whereColumns) {
+        StringBuilder builder = new StringBuilder("UPDATE ");
+        builder.append(tablename).append(" SET ");
+        appendColumnsEqualPlaceholders(builder, updateColumns);
+        builder.append(" WHERE ");
+        appendColumnsEqValue(builder, tablename, whereColumns);
+        return builder.toString();
     }
 
 }

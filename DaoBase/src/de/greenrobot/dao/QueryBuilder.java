@@ -75,7 +75,7 @@ public class QueryBuilder<T> {
     public QueryBuilder<T> in(Property property, Object... inValues) {
         checkWhereBuilder();
         append(whereBuilder, property).append(" IN (");
-        SqlUtils.apppendPlaceholders(whereBuilder, inValues.length);
+        SqlUtils.appendPlaceholders(whereBuilder, inValues.length);
         whereBuilder.append(')');
         for (Object value : inValues) {
             this.values.add(value);

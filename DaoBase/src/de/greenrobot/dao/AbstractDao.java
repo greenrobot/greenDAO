@@ -55,11 +55,11 @@ public abstract class AbstractDao<T, K> {
         identityScope = (IdentityScope<K, T>) config.getIdentityScope();
         statements = config.statements;
     }
-    
+
     public AbstractDaoSession getSession() {
         return session;
     }
-    
+
     TableStatements getStatements() {
         return config.statements;
     }
@@ -295,7 +295,10 @@ public abstract class AbstractDao<T, K> {
     }
 
     public void deleteAll() {
-        db.execSQL("DELETE FROM " + config.tablename);
+        // String sql = SqlUtils.createSqlDelete(config.tablename, null);
+        // db.execSQL(sql);
+
+        db.execSQL("DELETE FROM '" + config.tablename + "'");
     }
 
     /** Deletes the given entity from the database. Currently, only single value PK entities are supported. */
@@ -413,7 +416,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     public long count() {
-        return DatabaseUtils.queryNumEntries(db, config.tablename);
+        return DatabaseUtils.queryNumEntries(db, '\'' + config.tablename + '\'');
     }
 
     /** Reads the values from the current position of the given cursor and returns a new entity. */

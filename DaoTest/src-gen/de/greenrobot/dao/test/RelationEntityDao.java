@@ -44,18 +44,18 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "RELATION_ENTITY (" + //
-                "_id INTEGER PRIMARY KEY ," + // 0
-                "PARENT_ID INTEGER," + // 1
-                "TEST_ID INTEGER," + // 2
-                "TEST_ID_NOT_NULL INTEGER NOT NULL ," + // 3
-                "SIMPLE_STRING TEXT);"; // 4
+        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'RELATION_ENTITY' (" + //
+                "'_id' INTEGER PRIMARY KEY ," + // 0
+                "'PARENT_ID' INTEGER," + // 1
+                "'TEST_ID' INTEGER," + // 2
+                "'TEST_ID_NOT_NULL' INTEGER NOT NULL ," + // 3
+                "'SIMPLE_STRING' TEXT);"; // 4
         db.execSQL(sql);
     }
 
     /** Drops the underlying database table. */
     public static void dropTable(SQLiteDatabase db, boolean ifExists) {
-        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "RELATION_ENTITY";
+        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "'RELATION_ENTITY'";
         db.execSQL(sql);
     }
 
@@ -148,13 +148,13 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     protected String getSelectDeep() {
         if (selectDeep == null) {
             StringBuilder builder = new StringBuilder("SELECT ");
-            SqlUtils.appendCommaSeparated(builder, "T.", getAllColumns());
+            SqlUtils.appendColumns(builder, "T", getAllColumns());
             builder.append(',');
-            SqlUtils.appendCommaSeparated(builder, "T0.", daoSession.getRelationEntityDao().getAllColumns());
+            SqlUtils.appendColumns(builder, "T0", daoSession.getRelationEntityDao().getAllColumns());
             builder.append(',');
-            SqlUtils.appendCommaSeparated(builder, "T1.", daoSession.getTestEntityDao().getAllColumns());
+            SqlUtils.appendColumns(builder, "T1", daoSession.getTestEntityDao().getAllColumns());
             builder.append(',');
-            SqlUtils.appendCommaSeparated(builder, "T2.", daoSession.getTestEntityDao().getAllColumns());
+            SqlUtils.appendColumns(builder, "T2", daoSession.getTestEntityDao().getAllColumns());
             builder.append(" FROM RELATION_ENTITY T");
             builder.append(" LEFT JOIN RELATION_ENTITY T0 ON T.PARENT_ID=T0._id");
             builder.append(" LEFT JOIN TEST_ENTITY T1 ON T.TEST_ID=T1._id");
@@ -193,7 +193,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
 
         StringBuilder builder = new StringBuilder(getSelectDeep());
         builder.append("WHERE ");
-        SqlUtils.appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
+        SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
         String sql = builder.toString();
         
         String[] keyArray = new String[] { key.toString() };

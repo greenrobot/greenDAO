@@ -55,9 +55,9 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "${entity.tableName} (" + //
+        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'${entity.tableName}' (" + //
 <#list entity.properties as property>
-                "${property.columnName} ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>);";</#if> // ${property_index}
+                "'${property.columnName}' ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>);";</#if> // ${property_index}
 </#list>
 <#if entity.indexes?has_content >
         // Add Indexes
@@ -72,7 +72,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 
     /** Drops the underlying database table. */
     public static void dropTable(SQLiteDatabase db, boolean ifExists) {
-        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "${entity.tableName}";
+        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "'${entity.tableName}'";
         db.execSQL(sql);
     }
 

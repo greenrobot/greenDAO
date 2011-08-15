@@ -40,14 +40,14 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "TEST_ENTITY (" + //
-                "_id INTEGER PRIMARY KEY ," + // 0
-                "SIMPLE_INT INTEGER NOT NULL ," + // 1
-                "SIMPLE_INTEGER INTEGER," + // 2
-                "SIMPLE_STRING_NOT_NULL TEXT NOT NULL ," + // 3
-                "SIMPLE_STRING TEXT," + // 4
-                "INDEXED_STRING TEXT," + // 5
-                "INDEXED_STRING_ASC_UNIQUE TEXT);"; // 6
+        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'TEST_ENTITY' (" + //
+                "'_id' INTEGER PRIMARY KEY ," + // 0
+                "'SIMPLE_INT' INTEGER NOT NULL ," + // 1
+                "'SIMPLE_INTEGER' INTEGER," + // 2
+                "'SIMPLE_STRING_NOT_NULL' TEXT NOT NULL ," + // 3
+                "'SIMPLE_STRING' TEXT," + // 4
+                "'INDEXED_STRING' TEXT," + // 5
+                "'INDEXED_STRING_ASC_UNIQUE' TEXT);"; // 6
         // Add Indexes
         sql += "CREATE INDEX IDX_TEST_ENTITY_INDEXED_STRING ON TEST_ENTITY" +
                 " (INDEXED_STRING);";
@@ -58,7 +58,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
 
     /** Drops the underlying database table. */
     public static void dropTable(SQLiteDatabase db, boolean ifExists) {
-        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "TEST_ENTITY";
+        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "'TEST_ENTITY'";
         db.execSQL(sql);
     }
 

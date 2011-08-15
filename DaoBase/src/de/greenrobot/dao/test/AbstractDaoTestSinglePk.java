@@ -219,8 +219,8 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         for (int i = 0; i < dummyCount; i++) {
             builder.append(valueForColumn).append(",");
         }
-        SqlUtils.appendCommaSeparated(builder, "", dao.getAllColumns());
-        builder.append(" FROM ").append(dao.getTablename()).append(' ');
+        SqlUtils.appendColumns(builder, "T", dao.getAllColumns()).append(" FROM ");
+        builder.append(dao.getTablename()).append(" T");
         String select = builder.toString();
         Cursor cursor = db.rawQuery(select, null);
         assertTrue(cursor.moveToFirst());

@@ -4,10 +4,10 @@
     protected String getSelectDeep() {
         if (selectDeep == null) {
             StringBuilder builder = new StringBuilder("SELECT ");
-            SqlUtils.appendCommaSeparated(builder, "T.", getAllColumns());
+            SqlUtils.appendColumns(builder, "T", getAllColumns());
             builder.append(',');
 <#list entity.toOneRelations as toOne>
-            SqlUtils.appendCommaSeparated(builder, "T${toOne_index}.", daoSession.get${toOne.targetEntity.classNameDao}().getAllColumns());
+            SqlUtils.appendColumns(builder, "T${toOne_index}", daoSession.get${toOne.targetEntity.classNameDao}().getAllColumns());
 <#if toOne_has_next>
             builder.append(',');
 </#if>
@@ -50,7 +50,7 @@
 
         StringBuilder builder = new StringBuilder(getSelectDeep());
         builder.append("WHERE ");
-        SqlUtils.appendCommaSeparatedEqPlaceholder(builder, "T.", getPkColumns());
+        SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
         String sql = builder.toString();
         
         String[] keyArray = new String[] { key.toString() };

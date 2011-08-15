@@ -42,7 +42,7 @@ public class TableStatements {
 
     protected SQLiteStatement getInsertStatement() {
         if (insertStatement == null) {
-            String sql = createSqlForInsert("INSERT INTO ");
+            String sql = SqlUtils.createSqlInsert("INSERT INTO ", tablename, allColumns);
             insertStatement = db.compileStatement(sql);
         }
         return insertStatement;
@@ -50,41 +50,24 @@ public class TableStatements {
 
     protected SQLiteStatement getInsertOrReplaceStatement() {
         if (insertOrReplaceStatement == null) {
-            String sql = createSqlForInsert("INSERT OR REPLACE INTO ");
+            String sql = SqlUtils.createSqlInsert("INSERT OR REPLACE INTO ", tablename, allColumns);
             insertOrReplaceStatement = db.compileStatement(sql);
         }
         return insertOrReplaceStatement;
     }
 
-    protected String createSqlForInsert(String insertInto) {
-        StringBuilder builder = new StringBuilder(insertInto);
-        builder.append(tablename).append(" (");
-        SqlUtils.appendCommaSeparated(builder, "", allColumns);
-        builder.append(") VALUES (");
-        SqlUtils.apppendPlaceholders(builder, allColumns.length);
-        builder.append(')');
-        return builder.toString();
-    }
-
     protected SQLiteStatement getDeleteStatement() {
         if (deleteStatement == null) {
-            StringBuilder builder = new StringBuilder("DELETE FROM ");
-            builder.append(tablename).append(" WHERE ");
-            SqlUtils.appendColumnsEqualPlaceholders(builder, pkColumns);
-            deleteStatement = db.compileStatement(builder.toString());
+            String sql = SqlUtils.createSqlDelete(tablename, pkColumns);
+            deleteStatement = db.compileStatement(sql);
         }
         return deleteStatement;
     }
 
     protected SQLiteStatement getUpdateStatement() {
         if (updateStatement == null) {
-            StringBuilder builder = new StringBuilder("UPDATE ");
-            builder.append(tablename).append(" SET ");
-            // TODO Use getNonPkColumns() only (performance)
-            SqlUtils.appendColumnsEqualPlaceholders(builder, allColumns);
-            builder.append(" WHERE ");
-            SqlUtils.appendColumnsEqualPlaceholders(builder, pkColumns);
-            updateStatement = db.compileStatement(builder.toString());
+            String sql = SqlUtils.createSqlUpdate(tablename, allColumns, pkColumns);
+            updateStatement = db.compileStatement(sql);
         }
         return updateStatement;
     }
@@ -92,7 +75,7 @@ public class TableStatements {
     /** ends with an space to simplify appending to this string. */
     protected String getSelectAll() {
         if (selectAll == null) {
-            selectAll = SqlUtils.createSqlSelect(tablename, null, allColumns);
+            selectAll = SqlUtils.createSqlSelect(tablename, "T", allColumns);
         }
         return selectAll;
     }
@@ -102,7 +85,7 @@ public class TableStatements {
         if (selectByKey == null) {
             StringBuilder builder = new StringBuilder(getSelectAll());
             builder.append("WHERE ");
-            SqlUtils.appendCommaSeparatedEqPlaceholder(builder, "", pkColumns);
+            SqlUtils.appendColumnsEqValue(builder, "T", pkColumns);
             selectByKey = builder.toString();
         }
         return selectByKey;

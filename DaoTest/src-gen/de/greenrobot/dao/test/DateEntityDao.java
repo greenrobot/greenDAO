@@ -36,16 +36,16 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "DATE_ENTITY (" + //
-                "_id INTEGER PRIMARY KEY ," + // 0
-                "DATE INTEGER," + // 1
-                "DATE_NOT_NULL INTEGER NOT NULL );"; // 2
+        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'DATE_ENTITY' (" + //
+                "'_id' INTEGER PRIMARY KEY ," + // 0
+                "'DATE' INTEGER," + // 1
+                "'DATE_NOT_NULL' INTEGER NOT NULL );"; // 2
         db.execSQL(sql);
     }
 
     /** Drops the underlying database table. */
     public static void dropTable(SQLiteDatabase db, boolean ifExists) {
-        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "DATE_ENTITY";
+        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "'DATE_ENTITY'";
         db.execSQL(sql);
     }
 
