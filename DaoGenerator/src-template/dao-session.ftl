@@ -10,6 +10,10 @@ import de.greenrobot.dao.AbstractDaoSession;
 import de.greenrobot.dao.IdentityScopeType;
 
 <#list schema.entities as entity>
+import ${entity.javaPackage}.${entity.className};
+</#list>
+
+<#list schema.entities as entity>
 import ${entity.javaPackageDao}.${entity.classNameDao};
 </#list>
 
