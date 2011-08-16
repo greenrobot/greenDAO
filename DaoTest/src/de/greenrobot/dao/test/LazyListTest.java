@@ -9,30 +9,7 @@ import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.LazyList;
 import de.greenrobot.dao.test.TestEntityDao.Properties;
 
-public class LazyListTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> {
-
-    public LazyListTest() {
-        super(TestEntityDao.class);
-    }
-
-    protected TestEntity createEntity(int simpleInteger, String simpleString) {
-        TestEntity entity = new TestEntity();
-        entity.setId(null);
-        entity.setSimpleStringNotNull("green");
-        entity.setSimpleInteger(simpleInteger);
-        entity.setSimpleString(simpleString);
-        return entity;
-    }
-
-    protected ArrayList<TestEntity> insert(int count) {
-        ArrayList<TestEntity> list = new ArrayList<TestEntity>();
-        for (int i = 0; i < count; i++) {
-            TestEntity entity = createEntity(100 + i, "String" + (i + 100));
-            list.add(entity);
-        }
-        dao.insertInTx(list);
-        return list;
-    }
+public class LazyListTest extends TestEntityTestBase {
 
     public void testSizeAndGetAndPeak() {
         ArrayList<TestEntity> list = insert(2);
@@ -65,14 +42,6 @@ public class LazyListTest extends AbstractDaoTest<TestEntityDao, TestEntity, Lon
         assertIds(list, listLazy);
         assertFalse(listLazy.isClosed());
         listLazy.close();
-    }
-
-    protected void assertIds(ArrayList<TestEntity> list, LazyList<TestEntity> listLazy) {
-        for (int i = 0; i < list.size(); i++) {
-            TestEntity entity = list.get(i);
-            TestEntity lazyEntity = listLazy.get(i);
-            assertEquals(entity.getId(), lazyEntity.getId());
-        }
     }
 
     public void testIterator() {
