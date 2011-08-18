@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.util.Log;
 import de.greenrobot.dao.AbstractDao;
@@ -191,7 +192,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         T entity = createEntity(pk);
         dao.insert(entity);
 
-        Cursor cursor = queryAllWithDummyColumnsInFront(5, "42");
+        Cursor cursor = queryWithDummyColumnsInFront(5, "42", pk);
         T entity2 = daoAccess.readEntity(cursor, 5);
         assertEquals(pk, daoAccess.getKey(entity2));
     }
@@ -209,23 +210,34 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         T entity = createEntity(pk);
         dao.insert(entity);
 
-        Cursor cursor = queryAllWithDummyColumnsInFront(offset, "42");
+        Cursor cursor = queryWithDummyColumnsInFront(offset, "42", pk);
         K pk2 = daoAccess.readKey(cursor, offset);
         assertEquals(pk, pk2);
     }
 
-    protected Cursor queryAllWithDummyColumnsInFront(int dummyCount, String valueForColumn) {
+    protected Cursor queryWithDummyColumnsInFront(int dummyCount, String valueForColumn, K pk) {
         StringBuilder builder = new StringBuilder("SELECT ");
         for (int i = 0; i < dummyCount; i++) {
             builder.append(valueForColumn).append(",");
         }
         SqlUtils.appendColumns(builder, "T", dao.getAllColumns()).append(" FROM ");
         builder.append(dao.getTablename()).append(" T");
+        if (pk != null) {
+            builder.append(" WHERE ");
+
+            assertEquals(1, dao.getPkColumns().length);
+            builder.append(dao.getPkColumns()[0]).append("=");
+            DatabaseUtils.appendValueToSql(builder, pk);
+        }
+
         String select = builder.toString();
         Cursor cursor = db.rawQuery(select, null);
         assertTrue(cursor.moveToFirst());
         for (int i = 0; i < dummyCount; i++) {
             assertEquals(valueForColumn, cursor.getString(i));
+        }
+        if (pk != null) {
+            assertEquals(1, cursor.getCount());
         }
         return cursor;
     }
