@@ -54,11 +54,6 @@ public class QueryBuilder<T> {
         }
     }
 
-    public QueryBuilder<T> or() {
-        whereConditions.add("OR");
-        return this;
-    }
-
     public QueryBuilder<T> eq(Property property, Object value) {
         appendWhere(property, "=?", value);
         return this;
@@ -213,28 +208,19 @@ public class QueryBuilder<T> {
         if (!whereConditions.isEmpty()) {
             builder.append(" WHERE ");
             ListIterator<String> iter = whereConditions.listIterator();
-            boolean lastWasOr = false;
             while (iter.hasNext()) {
                 if (iter.hasPrevious()) {
-                    if (lastWasOr) {
-                        builder.append(" OR ");
-                    } else {
-                        builder.append(" AND ");
-                    }
+                    builder.append(" AND ");
                 }
                 String condition = iter.next();
-                lastWasOr = condition.equalsIgnoreCase("OR");
-                if (!lastWasOr) {
-                    builder.append(condition);
-                }
+                builder.append(condition);
             }
         }
-
 
         if (orderBuilder != null && orderBuilder.length() > 0) {
             builder.append(" ORDER BY ").append(orderBuilder);
         }
-        
+
         System.out.println("><>>>" + builder);
 
         return new Query<T>(dao, builder.toString(), values);
