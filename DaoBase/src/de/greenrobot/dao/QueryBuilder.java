@@ -121,20 +121,28 @@ public class QueryBuilder<T> {
     }
 
     public QueryBuilder<T> or(QueryBuilder<T> qb1, QueryBuilder<T> qb2, QueryBuilder<T>... qbs) {
-        int len = 2 + qbs.length;
+        combineWhereConditions(2 + qbs.length, " OR ");
+        return this;
+    }
+
+    public QueryBuilder<T> and(QueryBuilder<T> qb1, QueryBuilder<T> qb2, QueryBuilder<T>... qbs) {
+        combineWhereConditions(2 + qbs.length, " AND ");
+        return this;
+    }
+
+    protected void combineWhereConditions(int conditionCount, String combineOp) {
         StringBuilder builder = new StringBuilder("(");
         int size = whereConditions.size();
-        int pos = size - len;
-        for (int i = 0; i < len; i++) {
+        int pos = size - conditionCount;
+        for (int i = 0; i < conditionCount; i++) {
             builder.append(whereConditions.get(pos));
-            if (i < len - 1) {
-                builder.append(" OR ");
+            if (i < conditionCount - 1) {
+                builder.append(combineOp);
             }
             whereConditions.remove(pos);
         }
         builder.append(')');
         whereConditions.add(builder.toString());
-        return this;
     }
 
     protected void appendWhere(Property property, String op, Object value) {
