@@ -69,10 +69,11 @@ public class LazyList<E> implements List<E>, Closeable {
 
         @Override
         public E previous() {
-            if (previous == null) {
-                throw new NoSuchElementException();
-            }
-            return previous;
+            throw new UnsupportedOperationException();
+//            if (previous == null) {
+//                throw new NoSuchElementException();
+//            }
+//            return previous;
         }
 
         @Override

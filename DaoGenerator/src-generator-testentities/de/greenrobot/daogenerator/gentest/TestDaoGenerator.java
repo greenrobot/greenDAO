@@ -46,7 +46,9 @@ public class TestDaoGenerator {
         createRelation();
         createDate();
         createSpecialNames();
+        createAbcdef();
     }
+
 
     public void generate() throws Exception {
         new DaoGenerator().generateAll("../DaoTest/src-gen", "../DaoTest/src", schema);
@@ -124,4 +126,20 @@ public class TestDaoGenerator {
         specialNamesEntity.addStringProperty("index");
     }
 
+
+    private void createAbcdef() {
+        Entity entity = schema.addEntity("AbcdefEntity");
+        entity.addIdProperty();
+        entity.addIntProperty("a");
+        entity.addIntProperty("b");
+        entity.addIntProperty("c");
+        entity.addIntProperty("d");
+        entity.addIntProperty("e");
+        entity.addIntProperty("f");
+        entity.addIntProperty("g");
+        entity.addIntProperty("h");
+        entity.addIntProperty("j");
+        entity.addIntProperty("i");
+        entity.addIntProperty("k");
+    }
 }

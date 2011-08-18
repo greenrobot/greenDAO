@@ -17,16 +17,18 @@ package de.greenrobot.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class QueryBuilder<T> {
 
-    private StringBuilder whereBuilder;
     private StringBuilder orderBuilder;
     private StringBuilder tableBuilder;
     private StringBuilder joinBuilder;
 
-    private List<Object> values;
-    private AbstractDao<T, ?> dao;
+    private final List<String> whereConditions;
+
+    private final List<Object> values;
+    private final AbstractDao<T, ?> dao;
     private final String tablePrefix;
 
     public QueryBuilder() {
@@ -41,14 +43,7 @@ public class QueryBuilder<T> {
         this.dao = dao;
         this.tablePrefix = tablePrefix;
         values = new ArrayList<Object>();
-    }
-
-    private void checkWhereBuilder() {
-        if (whereBuilder == null) {
-            whereBuilder = new StringBuilder();
-        } else if (whereBuilder.length() > 0) {
-            whereBuilder.append(" AND ");
-        }
+        whereConditions = new ArrayList<String>();
     }
 
     private void checkOrderBuilder() {
@@ -59,14 +54,18 @@ public class QueryBuilder<T> {
         }
     }
 
+    public QueryBuilder<T> or() {
+        whereConditions.add("OR");
+        return this;
+    }
+
     public QueryBuilder<T> eq(Property property, Object value) {
         appendWhere(property, "=?", value);
         return this;
     }
 
     public QueryBuilder<T> whereSql(String rawSqlWhere, Object... values) {
-        checkWhereBuilder();
-        whereBuilder.append(rawSqlWhere);
+        whereConditions.add(rawSqlWhere);
         for (Object value : values) {
             this.values.add(value);
         }
@@ -90,10 +89,11 @@ public class QueryBuilder<T> {
     }
 
     public QueryBuilder<T> in(Property property, Object... inValues) {
-        checkWhereBuilder();
-        append(whereBuilder, property).append(" IN (");
-        SqlUtils.appendPlaceholders(whereBuilder, inValues.length);
-        whereBuilder.append(')');
+        StringBuilder condition = append(new StringBuilder(), property).append(" IN (");
+        SqlUtils.appendPlaceholders(condition, inValues.length);
+        condition.append(')');
+        whereConditions.add(condition.toString());
+
         for (Object value : inValues) {
             this.values.add(value);
         }
@@ -120,10 +120,31 @@ public class QueryBuilder<T> {
         return this;
     }
 
+    public QueryBuilder<T> or(QueryBuilder<T> qb1, QueryBuilder<T> qb2, QueryBuilder<T>... qbs) {
+        int len = 2 + qbs.length;
+        StringBuilder builder = new StringBuilder("(");
+        int size = whereConditions.size();
+        int pos = size - len;
+        for (int i = 0; i < len; i++) {
+            builder.append(whereConditions.get(pos));
+            if (i < len - 1) {
+                builder.append(" OR ");
+            }
+            whereConditions.remove(pos);
+        }
+        builder.append(')');
+        whereConditions.add(builder.toString());
+        return this;
+    }
+
     protected void appendWhere(Property property, String op, Object value) {
-        checkWhereBuilder();
-        append(whereBuilder, property).append(op);
+        appendWhere(property, op);
         values.add(value);
+    }
+
+    protected void appendWhere(Property property, String op) {
+        StringBuilder condition = append(new StringBuilder(), property).append(op);
+        whereConditions.add(condition.toString());
     }
 
     public <J> QueryBuilder<J> join(Class<J> entityClass, Property toOneProperty) {
@@ -137,14 +158,12 @@ public class QueryBuilder<T> {
     }
 
     public QueryBuilder<T> isNull(Property property) {
-        checkWhereBuilder();
-        append(whereBuilder, property).append(" IS NULL");
+        appendWhere(property, " IS NULL");
         return this;
     }
 
     public QueryBuilder<T> isNotNull(Property property) {
-        checkWhereBuilder();
-        whereBuilder.append(property.columnName).append(" IS NOT NULL");
+        appendWhere(property, " IS NOT NULL");
         return this;
     }
 
@@ -182,12 +201,34 @@ public class QueryBuilder<T> {
             select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
         }
         StringBuilder builder = new StringBuilder(select);
-        if (whereBuilder != null && whereBuilder.length() > 0) {
-            builder.append(" WHERE ").append(whereBuilder);
+
+        if (!whereConditions.isEmpty()) {
+            builder.append(" WHERE ");
+            ListIterator<String> iter = whereConditions.listIterator();
+            boolean lastWasOr = false;
+            while (iter.hasNext()) {
+                if (iter.hasPrevious()) {
+                    if (lastWasOr) {
+                        builder.append(" OR ");
+                    } else {
+                        builder.append(" AND ");
+                    }
+                }
+                String condition = iter.next();
+                lastWasOr = condition.equalsIgnoreCase("OR");
+                if (!lastWasOr) {
+                    builder.append(condition);
+                }
+            }
         }
+
+
         if (orderBuilder != null && orderBuilder.length() > 0) {
             builder.append(" ORDER BY ").append(orderBuilder);
         }
+        
+        System.out.println("><>>>" + builder);
+
         return new Query<T>(dao, builder.toString(), values);
     }
 }
