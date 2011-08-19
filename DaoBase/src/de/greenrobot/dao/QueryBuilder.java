@@ -62,6 +62,7 @@ public class QueryBuilder<T> {
         }
     }
 
+    /** Adds the given conditions to the where clause using an logical AND. To create new conditions, use the properties given in the generated dao classes. */  
     public QueryBuilder<T> where(WhereCondition cond, WhereCondition... condMore) {
         whereConditions.add(cond);
         for (WhereCondition whereCondition : condMore) {
@@ -71,12 +72,7 @@ public class QueryBuilder<T> {
         return this;
     }
 
-    protected void checkCondition(WhereCondition whereCondition) {
-        if (whereCondition instanceof PropertyCondition) {
-            checkProperty(((PropertyCondition) whereCondition).property);
-        }
-    }
-
+    /** Adds the given conditions to the where clause using an logical OR. To create new conditions, use the properties given in the generated dao classes. */  
     public QueryBuilder<T> whereOr(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
         whereConditions.add(or(cond1, cond2, condMore));
         return this;
@@ -111,6 +107,12 @@ public class QueryBuilder<T> {
         checkCondition(condition);
         condition.appendTo(builder, tablePrefix);
         condition.appendValuesTo(values);
+    }
+    
+    protected void checkCondition(WhereCondition whereCondition) {
+        if (whereCondition instanceof PropertyCondition) {
+            checkProperty(((PropertyCondition) whereCondition).property);
+        }
     }
 
     public <J> QueryBuilder<J> join(Class<J> entityClass, Property toOneProperty) {

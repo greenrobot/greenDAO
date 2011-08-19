@@ -56,7 +56,7 @@ public class Property {
     }
 
     public WhereCondition in(Object... inValues) {
-        StringBuilder condition = new StringBuilder("IN (");
+        StringBuilder condition = new StringBuilder(" IN (");
         SqlUtils.appendPlaceholders(condition, inValues.length).append(')');
         return new PropertyCondition(this, condition.toString(), inValues);
     }

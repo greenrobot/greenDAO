@@ -38,6 +38,30 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         assertEquals(inserted.get(1).getId(), resultEntity.getId());
     }
 
+    public void testIn() {
+        ArrayList<TestEntity> inserted = insert(10);
+        String value1 = getSimpleString(2);
+        String value2 = getSimpleString(8);
+        String value3 = getSimpleString(9);
+
+        List<TestEntity> result = dao.queryBuilder().where(Properties.SimpleString.in(value1, value2, value3))
+                .orderAsc(Properties.SimpleString).build().list();
+        assertEquals(3, result.size());
+
+        TestEntity resultEntity1= result.get(0);
+        assertEquals(value1, resultEntity1.getSimpleString());
+        assertEquals(inserted.get(2).getId(), resultEntity1.getId());
+
+        TestEntity resultEntity2 = result.get(1);
+        assertEquals(value2, resultEntity2.getSimpleString());
+        assertEquals(inserted.get(8).getId(), resultEntity2.getId());
+
+        TestEntity resultEntity3 = result.get(2);
+        assertEquals(value3, resultEntity3.getSimpleString());
+        assertEquals(inserted.get(9).getId(), resultEntity3.getId());
+
+    }
+
     public void testEqStringAndInteger() {
         ArrayList<TestEntity> inserted = insert(3);
         String valueStr = getSimpleString(1);
