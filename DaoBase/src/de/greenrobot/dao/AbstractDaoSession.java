@@ -125,6 +125,13 @@ public class AbstractDaoSession {
         AbstractDao<T, K> dao = (AbstractDao<T, K>) getDao(entityClass);
         return dao.queryRaw(where, selectionArgs);
     }
+    
+    /** Convenient call for {@link AbstractDao#queryBuilder()}. */
+    public <T> QueryBuilder<T> queryBuilder(Class<T> entityClass) {
+        @SuppressWarnings("unchecked")
+        AbstractDao<T, ?> dao = (AbstractDao<T, ?>) getDao(entityClass);
+        return dao.queryBuilder();
+    }
 
     public AbstractDao<?, ?> getDao(Class<? extends Object> entityClass) {
         AbstractDao<?, ?> dao = entityToDao.get(entityClass);

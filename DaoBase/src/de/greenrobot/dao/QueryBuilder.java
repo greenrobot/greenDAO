@@ -22,9 +22,10 @@ import java.util.ListIterator;
 import de.greenrobot.dao.WhereCondition.PropertyCondition;
 
 /**
- * Builds custom entity queries using constraints and parameters and without SQL (QueryBuilder creates SQL for you).
- * Entity properties are referenced by Fields in the "Properties" inner class of the generated DAOs. This approach allows
- * compile time checks and prevents typo errors occuring at build time.<br/>
+ * Builds custom entity queries using constraints and parameters and without SQL (QueryBuilder creates SQL for you). To
+ * acquire an QueryBuilder, use {@link AbstractDao#queryBuilder()} or {@link AbstractDaoSession#queryBuilder(Class)}.
+ * Entity properties are referenced by Fields in the "Properties" inner class of the generated DAOs. This approach
+ * allows compile time checks and prevents typo errors occuring at build time.<br/>
  * <br/>
  * Example: Query for all users with the first name "Joe" ordered by their last name. (The class Properties is an inner
  * class of UserDao and should be imported before.)<br/>
@@ -55,15 +56,11 @@ public class QueryBuilder<T> {
     private final AbstractDao<T, ?> dao;
     private final String tablePrefix;
 
-    public QueryBuilder() {
-        this(null, "T");
-    }
-
-    public QueryBuilder(AbstractDao<T, ?> dao) {
+    protected QueryBuilder(AbstractDao<T, ?> dao) {
         this(dao, "T");
     }
 
-    public QueryBuilder(AbstractDao<T, ?> dao, String tablePrefix) {
+    protected QueryBuilder(AbstractDao<T, ?> dao, String tablePrefix) {
         this.dao = dao;
         this.tablePrefix = tablePrefix;
         values = new ArrayList<Object>();

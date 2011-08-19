@@ -26,23 +26,28 @@ public class NoteDao extends AbstractDao<Note, Long> {
         public final static Property Date = new Property(3, java.util.Date.class, "date", false, "DATE");
     };
 
+
     public NoteDao(DaoConfig config) {
         super(config);
     }
     
+    public NoteDao(DaoConfig config, DaoSession daoSession) {
+        super(config, daoSession);
+    }
+
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "NOTE (" + //
-                "_id INTEGER PRIMARY KEY ," + // 0
-                "TEXT TEXT NOT NULL ," + // 1
-                "COMMENT TEXT," + // 2
-                "DATE INTEGER);"; // 3
+        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'NOTE' (" + //
+                "'_id' INTEGER PRIMARY KEY ," + // 0
+                "'TEXT' TEXT NOT NULL ," + // 1
+                "'COMMENT' TEXT," + // 2
+                "'DATE' INTEGER);"; // 3
         db.execSQL(sql);
     }
 
     /** Drops the underlying database table. */
     public static void dropTable(SQLiteDatabase db, boolean ifExists) {
-        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "NOTE";
+        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "'NOTE'";
         db.execSQL(sql);
     }
 
@@ -70,13 +75,13 @@ public class NoteDao extends AbstractDao<Note, Long> {
 
     /** @inheritdoc */
     @Override
-    public Long readPkFrom(Cursor cursor, int offset) {
+    public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
-    public Note readFrom(Cursor cursor, int offset) {
+    public Note readEntity(Cursor cursor, int offset) {
         Note entity = new Note( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // text
@@ -88,7 +93,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
      
     /** @inheritdoc */
     @Override
-    public void readFrom(Cursor cursor, Note entity, int offset) {
+    public void readEntity(Cursor cursor, Note entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setText(cursor.getString(offset + 1));
         entity.setComment(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
@@ -103,7 +108,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
     
     /** @inheritdoc */
     @Override
-    public Long getPrimaryKeyValue(Note entity) {
+    public Long getKey(Note entity) {
         if(entity != null) {
             return entity.getId();
         } else {
