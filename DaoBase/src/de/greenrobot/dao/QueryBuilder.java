@@ -114,13 +114,15 @@ public class QueryBuilder<T> {
     }
 
     public <J> QueryBuilder<J> join(Class<J> entityClass, Property toOneProperty) {
-        return new QueryBuilder<J>();
+        throw new UnsupportedOperationException();
+        // return new QueryBuilder<J>();
     }
 
     public <J> QueryBuilder<J> joinToMany(Class<J> entityClass, Property toManyProperty) {
-        @SuppressWarnings("unchecked")
-        AbstractDao<J, ?> joinDao = (AbstractDao<J, ?>) dao.getSession().getDao(entityClass);
-        return new QueryBuilder<J>(joinDao, "TX");
+        throw new UnsupportedOperationException();
+        // @SuppressWarnings("unchecked")
+        // AbstractDao<J, ?> joinDao = (AbstractDao<J, ?>) dao.getSession().getDao(entityClass);
+        // return new QueryBuilder<J>(joinDao, "TX");
     }
 
     public QueryBuilder<T> orderAsc(Property... properties) {
@@ -181,7 +183,7 @@ public class QueryBuilder<T> {
 
         String sql = builder.toString();
         if (LOG_SQL) {
-            DaoLog.d( "Built SQL: " + sql);
+            DaoLog.d("Built SQL: " + sql);
         }
 
         if (LOG_VALUES) {

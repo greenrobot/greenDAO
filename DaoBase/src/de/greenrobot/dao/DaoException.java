@@ -16,7 +16,6 @@
 package de.greenrobot.dao;
 
 import android.database.SQLException;
-import android.util.Log;
 
 /**
  * Exception thrown when something goes wrong in the DAO/ORM layer.

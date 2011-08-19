@@ -23,7 +23,6 @@ import java.io.OutputStream;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 public class DbUtils {
 

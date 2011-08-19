@@ -78,6 +78,7 @@ public class LazyListTest extends TestEntityTestBase {
             if (i > 0) {
                 TestEntity entityPrevious = list.get(i - 1);
                 assertEquals(entityPrevious.getId(), iterator.previous().getId());
+                iterator.next();
             }
 
             TestEntity entity = list.get(i);

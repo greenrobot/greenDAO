@@ -16,7 +16,6 @@
 package de.greenrobot.dao;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -44,7 +43,6 @@ import android.database.Cursor;
 public class LazyList<E> implements List<E>, Closeable {
     protected class LazyIterator implements CloseableListIterator<E> {
         private int index;
-        private E previous;
         private final boolean closeWhenDone;
 
         public LazyIterator(int startLocation, boolean closeWhenDone) {
@@ -58,6 +56,7 @@ public class LazyList<E> implements List<E>, Closeable {
         }
 
         @Override
+        /** FIXME: before hasPrevious(), next() must be called. */
         public boolean hasPrevious() {
             return index > 0;
         }
@@ -68,12 +67,17 @@ public class LazyList<E> implements List<E>, Closeable {
         }
 
         @Override
+        /** FIXME: before previous(), next() must be called. */
         public E previous() {
-            throw new UnsupportedOperationException();
-//            if (previous == null) {
-//                throw new NoSuchElementException();
-//            }
-//            return previous;
+            if (index <= 0) {
+                throw new NoSuchElementException();
+            }
+            index--;
+            E entity = get(index);
+            // if (index == size && closeWhenDone) {
+            // close();
+            // }
+            return entity;
         }
 
         @Override
@@ -97,7 +101,6 @@ public class LazyList<E> implements List<E>, Closeable {
                 throw new NoSuchElementException();
             }
             E entity = get(index);
-            previous = entity;
             index++;
             if (index == size && closeWhenDone) {
                 close();

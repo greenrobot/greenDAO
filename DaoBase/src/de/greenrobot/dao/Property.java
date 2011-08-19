@@ -16,7 +16,6 @@
 
 package de.greenrobot.dao;
 
-import de.greenrobot.dao.WhereCondition;
 import de.greenrobot.dao.WhereCondition.PropertyCondition;
 
 /**
