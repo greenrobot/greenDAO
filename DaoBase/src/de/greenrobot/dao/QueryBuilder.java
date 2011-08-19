@@ -109,7 +109,7 @@ public class QueryBuilder<T> {
 
     protected void addCondition(StringBuilder builder, List<Object> values, WhereCondition condition) {
         checkCondition(condition);
-        condition.appendTo(builder, "T");
+        condition.appendTo(builder, tablePrefix);
         condition.appendValuesTo(values);
     }
 
@@ -135,7 +135,7 @@ public class QueryBuilder<T> {
 
     protected StringBuilder append(StringBuilder builder, Property property) {
         checkProperty(property);
-        builder.append("T.").append(property.columnName);
+        builder.append(tablePrefix).append('.').append(property.columnName);
         return builder;
     }
 
@@ -172,7 +172,7 @@ public class QueryBuilder<T> {
                     builder.append(" AND ");
                 }
                 WhereCondition condition = iter.next();
-                condition.appendTo(builder, "T");
+                condition.appendTo(builder, tablePrefix);
                 condition.appendValuesTo(values);
             }
         }
