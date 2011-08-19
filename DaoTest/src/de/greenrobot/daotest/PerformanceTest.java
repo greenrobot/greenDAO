@@ -1,10 +1,11 @@
 package de.greenrobot.daotest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import android.util.Log;
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.test.AbstractDaoTest;
 
 public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends AbstractDaoTest<D, T, K> {
@@ -19,51 +20,88 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
     }
 
     protected void runTests(int entityCount) {
+        DaoLog.d("####################");
+        DaoLog.d(getClass().getSimpleName() + ": " + entityCount + " entities on " + new Date());
+        DaoLog.d("####################");
+        clearIdentityScopeIfAny();
+
         long start, time;
 
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<T>(entityCount);
         for (int i = 0; i < entityCount; i++) {
             list.add(createEntity());
         }
         System.gc();
 
-        // runOneByOneTests(list, entityCount/10);
-
-        start = System.currentTimeMillis();
         dao.deleteAll();
-        time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Deleted all entities in " + time + "ms");
+        runOneByOneTests(list, entityCount, entityCount / 100);
+        dao.deleteAll();
         System.gc();
+        DaoLog.d("------------------------");
 
         runBatchTests(list);
 
         start = System.currentTimeMillis();
         dao.deleteAll();
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Deleted all entities in " + time + "ms");
+        DaoLog.d("Deleted all entities in " + time + "ms");
         System.gc();
     }
 
-    protected void runOneByOneTests(List<T> list, int entityCount) {
+    protected void runOneByOneTests(List<T> list, int loadCount, int modifyCount) {
         long start;
         long time;
+        dao.insertInTx(list);
+        List<K> keys = new ArrayList<K>(loadCount);
+        for (int i = 0; i < loadCount; i++) {
+            keys.add(daoAccess.getKey(list.get(i)));
+        }
+        clearIdentityScopeIfAny();
+        System.gc();
+
+        list = runLoadOneByOne(keys);
+        list = runLoadOneByOne(keys);
+
+        dao.deleteAll();
+        System.gc();
+
         start = System.currentTimeMillis();
-        for (int i = 0; i < entityCount ; i++) {
+        for (int i = 0; i < modifyCount; i++) {
             dao.insert(list.get(i));
         }
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Inserted (one-by-one) " + entityCount + " entities in " + time + "ms");
-        System.gc();
+        DaoLog.d("Inserted (one-by-one) " + modifyCount + " entities in " + time + "ms");
 
         start = System.currentTimeMillis();
-        for (int i = 0; i < entityCount / 10; i++) {
+        for (int i = 0; i < modifyCount; i++) {
             dao.update(list.get(i));
         }
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Updated (one-by-one) " + entityCount  + " entities in " + time + "ms");
+        DaoLog.d("Updated (one-by-one) " + modifyCount + " entities in " + time + "ms");
+        System.gc();
+
+        start = System.currentTimeMillis();
+        for (int i = 0; i < modifyCount; i++) {
+            dao.delete(list.get(i));
+        }
+        time = System.currentTimeMillis() - start;
+        DaoLog.d("Deleted (one-by-one) " + modifyCount + " entities in " + time + "ms");
         System.gc();
     }
-    
+
+    protected List<T> runLoadOneByOne(List<K> keys) {
+        List<T> list = new ArrayList<T>(keys.size());
+        long start;
+        long time;
+        start = System.currentTimeMillis();
+        for (K key : keys) {
+            list.add(dao.load(key));
+        }
+        time = System.currentTimeMillis() - start;
+        DaoLog.d("Load (one-by-one) " + keys.size() + " entities in " + time + "ms");
+        System.gc();
+        return list;
+    }
 
     protected void runBatchTests(List<T> list) {
         long start;
@@ -71,29 +109,29 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         start = System.currentTimeMillis();
         dao.insertInTx(list);
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Inserted (batch) " + list.size() + " entities in " + time + "ms");
+        DaoLog.d("Inserted (batch) " + list.size() + " entities in " + time + "ms");
 
         list = null;
         System.gc();
 
-        start = System.currentTimeMillis();
-        list = dao.loadAll();
-        time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Loaded " + list.size() + " entities in " + time + "ms");
-        System.gc();
-
-        start = System.currentTimeMillis();
-        list = dao.loadAll();
-        time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Loaded 2nd time " + list.size() + " entities in " + time + "ms");
-        System.gc();
+        clearIdentityScopeIfAny();
+        list = runLoadAll();
+        list = runLoadAll();
 
         start = System.currentTimeMillis();
         dao.updateInTx(list);
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Updated (batch) " + list.size() + " entities in " + time + "ms");
+        DaoLog.d("Updated (batch) " + list.size() + " entities in " + time + "ms");
     }
 
+    protected List<T> runLoadAll() {
+        long start = System.currentTimeMillis();
+        List<T> list = dao.loadAll();
+        long time = System.currentTimeMillis() - start;
+        DaoLog.d("Loaded " + list.size() + " entities in " + time + "ms");
+        System.gc();
+        return list;
+    }
 
     protected abstract T createEntity();
 }

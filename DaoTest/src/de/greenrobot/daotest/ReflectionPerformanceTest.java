@@ -3,7 +3,7 @@ package de.greenrobot.daotest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import android.util.Log;
+import de.greenrobot.dao.DaoLog;
 
 public class ReflectionPerformanceTest // extends TestCase
 {
@@ -43,7 +43,7 @@ public class ReflectionPerformanceTest // extends TestCase
             method.invoke(this, i);
         }
         long time2 = System.currentTimeMillis() - start2;
-        Log.d("Perf", "set int: normal=" + time + "ms, reflected=" + time2 + "ms, " + 1000 * count / time2
+        DaoLog.d("set int: normal=" + time + "ms, reflected=" + time2 + "ms, " + 1000 * count / time2
                 + " refelected ops/s, slower=" + ((float) time2) / time);
 
     }
@@ -64,10 +64,9 @@ public class ReflectionPerformanceTest // extends TestCase
             int x = (Integer) method.invoke(this);
         }
         long time2 = System.currentTimeMillis() - start2;
-        Log.d("Perf", "get int: normal=" + time + "ms, reflected=" + time2 + "ms, " + 1000 * count / time2
+        DaoLog.d("get int: normal=" + time + "ms, reflected=" + time2 + "ms, " + 1000 * count / time2
                 + " refelected ops/s, slower=" + ((float) time2) / time);
     }
-    
 
     public void testSetStringPerf() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
             IllegalAccessException, InvocationTargetException {
@@ -85,7 +84,7 @@ public class ReflectionPerformanceTest // extends TestCase
             method.invoke(this, "the quick brown fox");
         }
         long time2 = System.currentTimeMillis() - start2;
-        Log.d("Perf", "set String: normal=" + time + "ms, reflected=" + time2 + "ms, " + 1000 * count / time2
+        DaoLog.d("set String: normal=" + time + "ms, reflected=" + time2 + "ms, " + 1000 * count / time2
                 + " refelected ops/s, slower=" + ((float) time2) / time);
 
     }
@@ -106,7 +105,7 @@ public class ReflectionPerformanceTest // extends TestCase
             String x = (String) method.invoke(this);
         }
         long time2 = System.currentTimeMillis() - start2;
-        Log.d("Perf", "get String: normal=" + time + "ms, reflected=" + time2 + "ms, " + 1000 * count / time2
+        DaoLog.d("get String: normal=" + time + "ms, reflected=" + time2 + "ms, " + 1000 * count / time2
                 + " refelected ops/s, slower=" + ((float) time2) / time);
     }
 }

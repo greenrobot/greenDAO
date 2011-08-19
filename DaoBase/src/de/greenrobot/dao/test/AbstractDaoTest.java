@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
+import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.UnitTestDaoAccess;
@@ -54,7 +55,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
         super(inMemory);
         this.daoClass = daoClass;
     }
-    
+
     public void setIdentityScopeBeforeSetUp(IdentityScope<K, T> identityScope) {
         this.identityScopeForDao = identityScope;
     }
@@ -80,4 +81,12 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
         createTableMethod.invoke(null, db, false);
     }
 
+    protected void clearIdentityScopeIfAny() {
+        if (identityScopeForDao != null) {
+            identityScopeForDao.clear();
+            DaoLog.d("Identity scope cleared");
+        } else {
+            DaoLog.d("No identity scope to clear");
+        }
+    }
 }

@@ -303,6 +303,9 @@ public abstract class AbstractDao<T, K> {
         // db.execSQL(sql);
 
         db.execSQL("DELETE FROM '" + config.tablename + "'");
+        if (identityScope != null) {
+            identityScope.clear();
+        }
     }
 
     /** Deletes the given entity from the database. Currently, only single value PK entities are supported. */
