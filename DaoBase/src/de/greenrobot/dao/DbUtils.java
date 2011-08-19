@@ -36,7 +36,7 @@ public class DbUtils {
             String sql = new String(bytes, "UTF-8");
             String[] lines = sql.split(";(\\s)*[\n\r]");
             int count = executeSqlStatements(db, lines);
-            Log.i("DAO", "Executed " +count + " statements from SQL script '" + assetFilename + "'");
+            DaoLog.i("Executed " +count + " statements from SQL script '" + assetFilename + "'");
     }
 
     public static int executeSqlStatements(SQLiteDatabase db, String[] statements) {

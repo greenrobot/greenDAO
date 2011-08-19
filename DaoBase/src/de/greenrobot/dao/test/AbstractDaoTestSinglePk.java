@@ -24,8 +24,8 @@ import java.util.Set;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.SQLException;
-import android.util.Log;
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.SqlUtils;
 
@@ -105,7 +105,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
             assertNotNull(dao.load(pk1));
             assertNotNull(dao.load(pk2));
         } else {
-            Log.d("DAO", "Skipping testAssignPk for " + daoClass);
+            DaoLog.d("Skipping testAssignPk for " + daoClass);
         }
     }
 

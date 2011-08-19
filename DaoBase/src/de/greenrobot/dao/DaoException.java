@@ -48,8 +48,8 @@ public class DaoException extends SQLException {
         try {
             initCause(cause);
         } catch (Throwable e) {
-            Log.e("greenDAO", "Could not set initial cause", e);
-            Log.e("greenDAO", "Initial cause is:", cause);
+            DaoLog.e("Could not set initial cause", e);
+            DaoLog.e( "Initial cause is:", cause);
         }
     }
 

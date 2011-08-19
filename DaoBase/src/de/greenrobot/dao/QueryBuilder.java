@@ -19,13 +19,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import de.greenrobot.dao.WhereCondition.PropertyCondition;
+
 public class QueryBuilder<T> {
+
+    /** Set to true to debug the SQL. */
+    public static boolean LOG_SQL;
+
+    /** Set to see the given values. */
+    public static boolean LOG_VALUES;
 
     private StringBuilder orderBuilder;
     private StringBuilder tableBuilder;
     private StringBuilder joinBuilder;
 
-    private final List<String> whereConditions;
+    private final List<WhereCondition> whereConditions;
 
     private final List<Object> values;
     private final AbstractDao<T, ?> dao;
@@ -43,7 +51,7 @@ public class QueryBuilder<T> {
         this.dao = dao;
         this.tablePrefix = tablePrefix;
         values = new ArrayList<Object>();
-        whereConditions = new ArrayList<String>();
+        whereConditions = new ArrayList<WhereCondition>();
     }
 
     private void checkOrderBuilder() {
@@ -54,100 +62,55 @@ public class QueryBuilder<T> {
         }
     }
 
-    public QueryBuilder<T> eq(Property property, Object value) {
-        appendWhere(property, "=?", value);
-        return this;
-    }
-
-    public QueryBuilder<T> whereSql(String rawSqlWhere, Object... values) {
-        whereConditions.add(rawSqlWhere);
-        for (Object value : values) {
-            this.values.add(value);
+    public QueryBuilder<T> where(WhereCondition cond, WhereCondition... condMore) {
+        whereConditions.add(cond);
+        for (WhereCondition whereCondition : condMore) {
+            checkCondition(whereCondition);
+            whereConditions.add(whereCondition);
         }
         return this;
     }
 
-    public QueryBuilder<T> notEq(Property property, Object value) {
-        appendWhere(property, "<>?", value);
-        return this;
-    }
-
-    public QueryBuilder<T> like(Property property, String value) {
-        appendWhere(property, " LIKE ?", value);
-        return this;
-    }
-
-    public QueryBuilder<T> between(Property property, Object value1, Object value2) {
-        appendWhere(property, " BETWEEN ? AND ?", value1);
-        values.add(value2);
-        return this;
-    }
-
-    public QueryBuilder<T> in(Property property, Object... inValues) {
-        StringBuilder condition = append(new StringBuilder(), property).append(" IN (");
-        SqlUtils.appendPlaceholders(condition, inValues.length);
-        condition.append(')');
-        whereConditions.add(condition.toString());
-
-        for (Object value : inValues) {
-            this.values.add(value);
+    protected void checkCondition(WhereCondition whereCondition) {
+        if (whereCondition instanceof PropertyCondition) {
+            checkProperty(((PropertyCondition) whereCondition).property);
         }
+    }
+
+    public QueryBuilder<T> whereOr(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
+        whereConditions.add(or(cond1, cond2, condMore));
         return this;
     }
 
-    public QueryBuilder<T> gt(Property property, Object value) {
-        appendWhere(property, ">?", value);
-        return this;
+    public WhereCondition or(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
+        return combineWhereConditions(" OR ", cond1, cond2, condMore);
     }
 
-    public QueryBuilder<T> lt(Property property, Object value) {
-        appendWhere(property, "<?", value);
-        return this;
+    public WhereCondition and(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
+        return combineWhereConditions(" AND ", cond1, cond2, condMore);
     }
 
-    public QueryBuilder<T> ge(Property property, Object value) {
-        appendWhere(property, ">=?", value);
-        return this;
-    }
-
-    public QueryBuilder<T> le(Property property, Object value) {
-        appendWhere(property, "<=?", value);
-        return this;
-    }
-
-    public QueryBuilder<T> or(QueryBuilder<T> qb1, QueryBuilder<T> qb2, QueryBuilder<T>... qbs) {
-        combineWhereConditions(2 + qbs.length, " OR ");
-        return this;
-    }
-
-    public QueryBuilder<T> and(QueryBuilder<T> qb1, QueryBuilder<T> qb2, QueryBuilder<T>... qbs) {
-        combineWhereConditions(2 + qbs.length, " AND ");
-        return this;
-    }
-
-    protected void combineWhereConditions(int conditionCount, String combineOp) {
+    protected WhereCondition combineWhereConditions(String combineOp, WhereCondition cond1, WhereCondition cond2,
+            WhereCondition... condMore) {
         StringBuilder builder = new StringBuilder("(");
-        int size = whereConditions.size();
-        int pos = size - conditionCount;
-        for (int i = 0; i < conditionCount; i++) {
-            builder.append(whereConditions.get(pos));
-            if (i < conditionCount - 1) {
-                builder.append(combineOp);
-            }
-            whereConditions.remove(pos);
+        List<Object> combinedValues = new ArrayList<Object>();
+
+        addCondition(builder, combinedValues, cond1);
+        builder.append(combineOp);
+        addCondition(builder, combinedValues, cond2);
+
+        for (WhereCondition cond : condMore) {
+            builder.append(combineOp);
+            addCondition(builder, combinedValues, cond);
         }
         builder.append(')');
-        whereConditions.add(builder.toString());
+        return new WhereCondition.StringCondition(builder.toString(), combinedValues.toArray());
     }
 
-    protected void appendWhere(Property property, String op, Object value) {
-        appendWhere(property, op);
-        values.add(value);
-    }
-
-    protected void appendWhere(Property property, String op) {
-        StringBuilder condition = append(new StringBuilder(), property).append(op);
-        whereConditions.add(condition.toString());
+    protected void addCondition(StringBuilder builder, List<Object> values, WhereCondition condition) {
+        checkCondition(condition);
+        condition.appendTo(builder, "T");
+        condition.appendValuesTo(values);
     }
 
     public <J> QueryBuilder<J> join(Class<J> entityClass, Property toOneProperty) {
@@ -160,16 +123,6 @@ public class QueryBuilder<T> {
         return new QueryBuilder<J>(joinDao, "TX");
     }
 
-    public QueryBuilder<T> isNull(Property property) {
-        appendWhere(property, " IS NULL");
-        return this;
-    }
-
-    public QueryBuilder<T> isNotNull(Property property) {
-        appendWhere(property, " IS NOT NULL");
-        return this;
-    }
-
     public QueryBuilder<T> orderAsc(Property... properties) {
         checkOrderBuilder();
         for (Property property : properties) {
@@ -179,6 +132,12 @@ public class QueryBuilder<T> {
     }
 
     protected StringBuilder append(StringBuilder builder, Property property) {
+        checkProperty(property);
+        builder.append("T.").append(property.columnName);
+        return builder;
+    }
+
+    protected void checkProperty(Property property) {
         if (dao != null) {
             Property[] properties = dao.getProperties();
             boolean found = false;
@@ -192,8 +151,6 @@ public class QueryBuilder<T> {
                 throw new DaoException("Property '" + property.name + "' is not part of " + dao);
             }
         }
-        builder.append("T.").append(property.columnName);
-        return builder;
     }
 
     public Query<T> build() {
@@ -207,13 +164,14 @@ public class QueryBuilder<T> {
 
         if (!whereConditions.isEmpty()) {
             builder.append(" WHERE ");
-            ListIterator<String> iter = whereConditions.listIterator();
+            ListIterator<WhereCondition> iter = whereConditions.listIterator();
             while (iter.hasNext()) {
                 if (iter.hasPrevious()) {
                     builder.append(" AND ");
                 }
-                String condition = iter.next();
-                builder.append(condition);
+                WhereCondition condition = iter.next();
+                condition.appendTo(builder, "T");
+                condition.appendValuesTo(values);
             }
         }
 
@@ -221,8 +179,15 @@ public class QueryBuilder<T> {
             builder.append(" ORDER BY ").append(orderBuilder);
         }
 
-        System.out.println("><>>>" + builder);
+        String sql = builder.toString();
+        if (LOG_SQL) {
+            DaoLog.d( "Built SQL: " + sql);
+        }
 
-        return new Query<T>(dao, builder.toString(), values);
+        if (LOG_VALUES) {
+            DaoLog.d("Collected values: " + values);
+        }
+
+        return new Query<T>(dao, sql, values);
     }
 }

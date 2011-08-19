@@ -102,7 +102,7 @@ public class LazyListTest extends TestEntityTestBase {
     public void testEmpty() {
         insert(1);
 
-        LazyList<TestEntity> listLazy = dao.queryBuilder().eq(Properties.SimpleInteger, -1).build().listLazy();
+        LazyList<TestEntity> listLazy = dao.queryBuilder().where(Properties.SimpleInteger.eq(-1)).build().listLazy();
         assertTrue(listLazy.isEmpty());
         assertTrue(listLazy.isClosed());
         try {

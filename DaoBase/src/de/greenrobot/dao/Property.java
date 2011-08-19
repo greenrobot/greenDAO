@@ -16,6 +16,9 @@
 
 package de.greenrobot.dao;
 
+import de.greenrobot.dao.WhereCondition;
+import de.greenrobot.dao.WhereCondition.PropertyCondition;
+
 /**
  * Meta data describing a property mapped to a database column.
  * 
@@ -34,6 +37,53 @@ public class Property {
         this.name = name;
         this.primaryKey = primaryKey;
         this.columnName = columnName;
+    }
+
+    public WhereCondition eq(Object value) {
+        return new PropertyCondition(this, "=?", value);
+    }
+
+    public WhereCondition notEq(Object value) {
+        return new PropertyCondition(this, "<>?", value);
+    }
+
+    public WhereCondition like(String value) {
+        return new PropertyCondition(this, " LIKE ?", value);
+    }
+
+    public WhereCondition between(Object value1, Object value2) {
+        Object[] values = { value1, value2 };
+        return new PropertyCondition(this, " BETWEEN ? AND ?", values);
+    }
+
+    public WhereCondition in(Object... inValues) {
+        StringBuilder condition = new StringBuilder("IN (");
+        SqlUtils.appendPlaceholders(condition, inValues.length).append(')');
+        return new PropertyCondition(this, condition.toString(), inValues);
+    }
+
+    public WhereCondition gt(Object value) {
+        return new PropertyCondition(this, ">?", value);
+    }
+
+    public WhereCondition lt(Object value) {
+        return new PropertyCondition(this, "<?", value);
+    }
+
+    public WhereCondition ge(Object value) {
+        return new PropertyCondition(this, ">=?", value);
+    }
+
+    public WhereCondition le(Object value) {
+        return new PropertyCondition(this, "<=?", value);
+    }
+
+    public WhereCondition isNull() {
+        return new PropertyCondition(this, " IS NULL");
+    }
+
+    public WhereCondition isNotNull() {
+        return new PropertyCondition(this, " IS NOT NULL");
     }
 
 }
