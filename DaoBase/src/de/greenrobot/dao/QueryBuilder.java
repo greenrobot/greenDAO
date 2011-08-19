@@ -21,6 +21,22 @@ import java.util.ListIterator;
 
 import de.greenrobot.dao.WhereCondition.PropertyCondition;
 
+/**
+ * Builds custom entity queries using constraints and parameters and without SQL (QueryBuilder creates SQL for you).
+ * Entity properties are referenced by Fields in the "Properties" inner class of the generated DAOs. This approach allows
+ * compile time checks and prevents typo errors occuring at build time.<br/>
+ * <br/>
+ * Example: Query for all users with the first name "Joe" ordered by their last name. (The class Properties is an inner
+ * class of UserDao and should be imported before.)<br/>
+ * <code>
+ *  List<User> joes = dao.queryBuilder().where(Properties.FirstName.eq("Joe")).orderAsc(Properties.LastName).list();
+ *  </code>
+ * 
+ * @author Markus
+ * 
+ * @param <T>
+ *            Entity class to create an query for.
+ */
 public class QueryBuilder<T> {
 
     /** Set to true to debug the SQL. */
@@ -62,7 +78,10 @@ public class QueryBuilder<T> {
         }
     }
 
-    /** Adds the given conditions to the where clause using an logical AND. To create new conditions, use the properties given in the generated dao classes. */  
+    /**
+     * Adds the given conditions to the where clause using an logical AND. To create new conditions, use the properties
+     * given in the generated dao classes.
+     */
     public QueryBuilder<T> where(WhereCondition cond, WhereCondition... condMore) {
         whereConditions.add(cond);
         for (WhereCondition whereCondition : condMore) {
@@ -72,7 +91,10 @@ public class QueryBuilder<T> {
         return this;
     }
 
-    /** Adds the given conditions to the where clause using an logical OR. To create new conditions, use the properties given in the generated dao classes. */  
+    /**
+     * Adds the given conditions to the where clause using an logical OR. To create new conditions, use the properties
+     * given in the generated dao classes.
+     */
     public QueryBuilder<T> whereOr(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
         whereConditions.add(or(cond1, cond2, condMore));
         return this;
@@ -108,7 +130,7 @@ public class QueryBuilder<T> {
         condition.appendTo(builder, tablePrefix);
         condition.appendValuesTo(values);
     }
-    
+
     protected void checkCondition(WhereCondition whereCondition) {
         if (whereCondition instanceof PropertyCondition) {
             checkProperty(((PropertyCondition) whereCondition).property);
@@ -194,4 +216,59 @@ public class QueryBuilder<T> {
 
         return new Query<T>(dao, sql, values);
     }
+
+    /**
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#list() list()}; see {@link Query#list()} for
+     * details. To execute a query more than once, you should build the query and keep the {@link Query} object for
+     * efficiency reasons.
+     */
+    public List<T> list() {
+        return build().list();
+    }
+
+    /**
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#listLazy() listLazy()}; see
+     * {@link Query#listLazy()} for details. To execute a query more than once, you should build the query and keep the
+     * {@link Query} object for efficiency reasons.
+     */
+    public LazyList<T> listLazy() {
+        return build().listLazy();
+    }
+
+    /**
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#listLazyUncached() listLazyUncached()}; see
+     * {@link Query#listLazyUncached()} for details. To execute a query more than once, you should build the query and
+     * keep the {@link Query} object for efficiency reasons.
+     */
+    public LazyList<T> listLazyUncached() {
+        return build().listLazyUncached();
+    }
+
+    /**
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#listIterator() listIterator()}; see
+     * {@link Query#listIterator()} for details. To execute a query more than once, you should build the query and keep
+     * the {@link Query} object for efficiency reasons.
+     */
+    public CloseableListIterator<T> listIterator() {
+        return build().listIterator();
+    }
+
+    /**
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#unique() unique()}; see {@link Query#unique()}
+     * for details. To execute a query more than once, you should build the query and keep the {@link Query} object for
+     * efficiency reasons.
+     */
+    public T unique() {
+        return build().unique();
+    }
+
+    /**
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#uniqueOrThrow() uniqueOrThrow()}; see
+     * {@link Query#uniqueOrThrow()} for details. To execute a query more than once, you should build the query and keep
+     * the {@link Query} object for efficiency reasons.
+     */
+    public T uniqueOrThrow() {
+        return build().uniqueOrThrow();
+    }
+
 }

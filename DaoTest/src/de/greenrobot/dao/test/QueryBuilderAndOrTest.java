@@ -29,7 +29,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
     public void testSimpleQuery() {
         insert(3);
 
-        List<AbcdefEntity> result = dao.queryBuilder().where(Properties.A.eq(1)).orderAsc(Properties.A).build().list();
+        List<AbcdefEntity> result = dao.queryBuilder().where(Properties.A.eq(1)).orderAsc(Properties.A).list();
         assertEquals(1, result.size());
 
         AbcdefEntity resultEntity = result.get(0);
@@ -41,7 +41,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
 
         QueryBuilder<AbcdefEntity> qb = dao.queryBuilder();
         qb.whereOr(Properties.A.eq(1), Properties.A.eq(101));
-        List<AbcdefEntity> result = qb.orderAsc(Properties.A).build().list();
+        List<AbcdefEntity> result = qb.orderAsc(Properties.A).list();
         assertEquals(2, result.size());
 
         assertEquals(1, (int) result.get(0).getA());
@@ -53,7 +53,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
 
         QueryBuilder<AbcdefEntity> qb = dao.queryBuilder();
         qb.whereOr(Properties.A.eq(1), Properties.A.eq(101), Properties.B.eq(302));
-        List<AbcdefEntity> result = qb.orderAsc(Properties.A).build().list();
+        List<AbcdefEntity> result = qb.orderAsc(Properties.A).list();
         assertEquals(3, result.size());
 
         assertEquals(1, (int) result.get(0).getA());
@@ -67,7 +67,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
         QueryBuilder<AbcdefEntity> qb = dao.queryBuilder();
         qb.whereOr(Properties.A.eq(101), //
                 Properties.B.eq(302), Properties.C.eq(603));
-        List<AbcdefEntity> result = qb.orderAsc(Properties.A).build().list();
+        List<AbcdefEntity> result = qb.orderAsc(Properties.A).list();
         assertEquals(3, result.size());
 
         assertEquals(101, (int) result.get(0).getA());
@@ -82,7 +82,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
         qb.whereOr(Properties.A.eq(101), //
                 qb.or(Properties.B.eq(302), //
                         qb.or(Properties.C.eq(503), Properties.D.eq(804))));
-        List<AbcdefEntity> result = qb.orderAsc(Properties.A).build().list();
+        List<AbcdefEntity> result = qb.orderAsc(Properties.A).list();
         assertEquals(4, result.size());
 
         assertEquals(101, (int) result.get(0).getA());
@@ -96,7 +96,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
 
         QueryBuilder<AbcdefEntity> qb = dao.queryBuilder();
         qb.where(Properties.A.eq(201), Properties.B.eq(202));
-        List<AbcdefEntity> result = qb.orderAsc(Properties.A).build().list();
+        List<AbcdefEntity> result = qb.orderAsc(Properties.A).list();
         assertEquals(1, result.size());
 
         assertEquals(201, (int) result.get(0).getA());
@@ -108,7 +108,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
         QueryBuilder<AbcdefEntity> qb = dao.queryBuilder();
         qb.whereOr(Properties.A.eq(201), //
                 qb.and(Properties.B.gt(402), Properties.C.lt(703)));
-        List<AbcdefEntity> result = qb.orderAsc(Properties.A).build().list();
+        List<AbcdefEntity> result = qb.orderAsc(Properties.A).list();
         assertEquals(3, result.size());
 
         assertEquals(201, (int) result.get(0).getA());

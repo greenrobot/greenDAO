@@ -18,7 +18,7 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         ArrayList<TestEntity> inserted = insert(3);
         int value = getSimpleInteger(1);
 
-        List<TestEntity> result = dao.queryBuilder().where(Properties.SimpleInteger.eq(value)).build().list();
+        List<TestEntity> result = dao.queryBuilder().where(Properties.SimpleInteger.eq(value)).list();
         assertEquals(1, result.size());
 
         TestEntity resultEntity = result.get(0);
@@ -30,7 +30,7 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         ArrayList<TestEntity> inserted = insert(3);
         String value = getSimpleString(1);
 
-        List<TestEntity> result = dao.queryBuilder().where(Properties.SimpleString.eq(value)).build().list();
+        List<TestEntity> result = dao.queryBuilder().where(Properties.SimpleString.eq(value)).list();
         assertEquals(1, result.size());
 
         TestEntity resultEntity = result.get(0);
@@ -45,7 +45,7 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         String value3 = getSimpleString(9);
 
         List<TestEntity> result = dao.queryBuilder().where(Properties.SimpleString.in(value1, value2, value3))
-                .orderAsc(Properties.SimpleString).build().list();
+                .orderAsc(Properties.SimpleString).list();
         assertEquals(3, result.size());
 
         TestEntity resultEntity1= result.get(0);
@@ -68,7 +68,7 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         int valueInt = getSimpleInteger(1);
 
         List<TestEntity> result = dao.queryBuilder()
-                .where(Properties.SimpleString.eq(valueStr), Properties.SimpleInteger.eq(valueInt)).build().list();
+                .where(Properties.SimpleString.eq(valueStr), Properties.SimpleInteger.eq(valueInt)).list();
         assertEquals(1, result.size());
 
         TestEntity resultEntity = result.get(0);
@@ -79,7 +79,7 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         ArrayList<TestEntity> inserted = insert(3);
         String value = getSimpleString(1);
 
-        List<TestEntity> result = dao.queryBuilder().where(Properties.SimpleString.notEq(value)).build().list();
+        List<TestEntity> result = dao.queryBuilder().where(Properties.SimpleString.notEq(value)).list();
         assertEquals(2, result.size());
 
         TestEntity resultEntity1 = result.get(0);

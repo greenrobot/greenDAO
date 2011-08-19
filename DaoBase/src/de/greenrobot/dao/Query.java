@@ -20,6 +20,14 @@ import java.util.List;
 
 import android.database.Cursor;
 
+/**
+ * A repeatable query returning entities.
+ * 
+ * @author Markus
+ * 
+ * @param <T>
+ *            The enitity class the query will return results for.
+ */
 public class Query<T> {
     private AbstractDao<T, ?> dao;
     private final String sql;
@@ -41,9 +49,9 @@ public class Query<T> {
         }
     }
 
-    public void compile() {
-        // TODO implement compile
-    }
+    // public void compile() {
+    // // TODO implement compile
+    // }
 
     /**
      * Sets the parameter using the position in which it was added during building the query.
