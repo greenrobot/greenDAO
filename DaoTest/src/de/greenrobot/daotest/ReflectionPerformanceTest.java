@@ -1,4 +1,4 @@
-package de.greenrobot.dao.test;
+package de.greenrobot.daotest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

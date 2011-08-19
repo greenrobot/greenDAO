@@ -1,8 +1,15 @@
-package de.greenrobot.dao.test;
+package de.greenrobot.daotest;
 
 import java.util.List;
 
 import de.greenrobot.dao.IdentityScopeType;
+import de.greenrobot.dao.test.AbstractDaoTestLongPk;
+import de.greenrobot.dao.test.DaoMaster;
+import de.greenrobot.dao.test.DaoSession;
+import de.greenrobot.dao.test.RelationEntity;
+import de.greenrobot.dao.test.RelationEntityDao;
+import de.greenrobot.dao.test.TestEntity;
+import de.greenrobot.dao.test.TestEntityDao;
 
 public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao, RelationEntity> {
 

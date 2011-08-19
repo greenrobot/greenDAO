@@ -1,8 +1,10 @@
-package de.greenrobot.dao.test;
+package de.greenrobot.daotest;
 
 import java.util.List;
 
 import de.greenrobot.dao.IdentityScopeType;
+import de.greenrobot.dao.test.RelationEntity;
+import de.greenrobot.dao.test.RelationEntityDao;
 
 /**
  * @author Markus

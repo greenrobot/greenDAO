@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="de.greenrobot.dao.test"
+      package="de.greenrobot.daotest"
       android:versionCode="1"
       android:versionName="1.0">
     <uses-sdk android:minSdkVersion="4" />
-    <instrumentation android:targetPackage="de.greenrobot.dao.test" android:name="android.test.InstrumentationTestRunner" />
+    <instrumentation android:targetPackage="de.greenrobot.daotest" android:name="android.test.InstrumentationTestRunner" />
     <application>
         <uses-library android:name="android.test.runner" />
     </application>

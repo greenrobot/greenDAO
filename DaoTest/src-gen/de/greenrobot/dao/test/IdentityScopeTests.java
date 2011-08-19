@@ -2,6 +2,7 @@ package de.greenrobot.dao.test;
 
 import android.test.suitebuilder.TestSuiteBuilder;
 import de.greenrobot.dao.IdentityScope;
+import de.greenrobot.daotest.DateEntityTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 

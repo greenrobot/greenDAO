@@ -1,8 +1,11 @@
-package de.greenrobot.dao.test;
+package de.greenrobot.daotest;
 
 import java.util.ArrayList;
 
 import de.greenrobot.dao.LazyList;
+import de.greenrobot.dao.test.AbstractDaoTest;
+import de.greenrobot.dao.test.TestEntity;
+import de.greenrobot.dao.test.TestEntityDao;
 
 public abstract class TestEntityTestBase extends AbstractDaoTest<TestEntityDao, TestEntity, Long> {
 

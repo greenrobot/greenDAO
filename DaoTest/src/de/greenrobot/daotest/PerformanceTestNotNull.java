@@ -1,4 +1,7 @@
-package de.greenrobot.dao.test;
+package de.greenrobot.daotest;
+
+import de.greenrobot.dao.test.SimpleEntityNotNull;
+import de.greenrobot.dao.test.SimpleEntityNotNullDao;
 
 public class PerformanceTestNotNull extends PerformanceTest<SimpleEntityNotNullDao, SimpleEntityNotNull, Long> {
 

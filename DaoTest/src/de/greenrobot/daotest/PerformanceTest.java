@@ -1,10 +1,11 @@
-package de.greenrobot.dao.test;
+package de.greenrobot.daotest;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.util.Log;
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.test.AbstractDaoTest;
 
 public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends AbstractDaoTest<D, T, K> {
 

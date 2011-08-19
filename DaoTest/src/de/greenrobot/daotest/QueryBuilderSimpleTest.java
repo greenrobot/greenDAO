@@ -1,9 +1,10 @@
-package de.greenrobot.dao.test;
+package de.greenrobot.daotest;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.test.TestEntity;
 import de.greenrobot.dao.test.TestEntityDao.Properties;
 
 public class QueryBuilderSimpleTest extends TestEntityTestBase {

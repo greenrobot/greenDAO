@@ -1,6 +1,7 @@
-package de.greenrobot.dao.test;
+package de.greenrobot.daotest;
 
 import de.greenrobot.dao.IdentityScope;
+import de.greenrobot.dao.test.TestEntity;
 
 public class TestEntityTestIdentityScope extends TestEntityTest {
     @Override

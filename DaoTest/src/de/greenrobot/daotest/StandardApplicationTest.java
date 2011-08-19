@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.greenrobot.dao.test;
+package de.greenrobot.daotest;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
