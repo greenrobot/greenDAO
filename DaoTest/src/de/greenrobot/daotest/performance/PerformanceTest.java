@@ -1,14 +1,19 @@
-package de.greenrobot.daotest;
+package de.greenrobot.daotest.performance;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import android.os.Debug;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.test.AbstractDaoTest;
 
 public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends AbstractDaoTest<D, T, K> {
+    long start;
+    private String traceName;
+    boolean useTraceView = true;
 
     public PerformanceTest(Class<D> daoClass) {
         super(daoClass, false);
@@ -58,9 +63,14 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         }
         clearIdentityScopeIfAny();
         System.gc();
-
-        list = runLoadOneByOne(keys);
-        list = runLoadOneByOne(keys);
+        
+        // Debug.startMethodTracing("load-one-by-one-1");
+        // list = runLoadOneByOne(keys);
+        // Debug.stopMethodTracing();
+        //
+        // Debug.startMethodTracing("load-one-by-one-2");
+        // list = runLoadOneByOne(keys);
+        // Debug.stopMethodTracing();
 
         dao.deleteAll();
         System.gc();
@@ -115,8 +125,8 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         System.gc();
 
         clearIdentityScopeIfAny();
-        list = runLoadAll();
-        list = runLoadAll();
+        list = runLoadAll("load-all-1");
+        list = runLoadAll("load-all-2");
 
         start = System.currentTimeMillis();
         dao.updateInTx(list);
@@ -124,13 +134,33 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         DaoLog.d("Updated (batch) " + list.size() + " entities in " + time + "ms");
     }
 
-    protected List<T> runLoadAll() {
-        long start = System.currentTimeMillis();
+    protected List<T> runLoadAll(String traceName) {
+        startClock(traceName);
         List<T> list = dao.loadAll();
-        long time = System.currentTimeMillis() - start;
-        DaoLog.d("Loaded " + list.size() + " entities in " + time + "ms");
+        stopClock(list.size() + " entities");
         System.gc();
         return list;
+    }
+
+    protected void startClock(String traceName) {
+        this.traceName = traceName;
+        if (useTraceView) {
+            Debug.startMethodTracing(traceName);
+        }
+        start = System.currentTimeMillis();
+    }
+
+    protected void stopClock() {
+        stopClock(null);
+    }
+
+    protected void stopClock(String extraInfoOrNull) {
+        long time = System.currentTimeMillis() - start;
+        String extraLog = extraInfoOrNull != null ? " (" + extraInfoOrNull + ")" : "";
+        DaoLog.d(traceName + " completed in " + time + "ms" + extraLog);
+        if (useTraceView) {
+            Debug.stopMethodTracing();
+        }
     }
 
     protected abstract T createEntity();

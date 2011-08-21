@@ -1,10 +1,10 @@
-package de.greenrobot.daotest;
+package de.greenrobot.daotest.entity;
 
 import de.greenrobot.dao.test.SimpleEntityNotNull;
 
 
 public class SimpleEntityNotNullHelper {
-    protected static SimpleEntityNotNull createEntity(Long key) {
+    public static SimpleEntityNotNull createEntity(Long key) {
         if (key == null) {
             return null;
         }

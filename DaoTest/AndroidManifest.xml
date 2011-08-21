@@ -5,6 +5,7 @@
       android:versionName="1.0">
     <uses-sdk android:minSdkVersion="4" />
     <instrumentation android:targetPackage="de.greenrobot.daotest" android:name="android.test.InstrumentationTestRunner" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <application>
         <uses-library android:name="android.test.runner" />
     </application>

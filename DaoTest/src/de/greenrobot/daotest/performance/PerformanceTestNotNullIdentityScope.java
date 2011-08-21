@@ -1,4 +1,4 @@
-package de.greenrobot.daotest;
+package de.greenrobot.daotest.performance;
 
 import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.test.SimpleEntityNotNull;

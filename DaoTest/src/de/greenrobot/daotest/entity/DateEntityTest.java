@@ -1,4 +1,4 @@
-package de.greenrobot.daotest;
+package de.greenrobot.daotest.entity;
 
 import java.util.Date;
 
