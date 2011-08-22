@@ -34,9 +34,11 @@ public class DaoConfig {
     /** Single property PK or null if there's no PK or a multi property PK. */
     final Property pkProperty;
 
+    final boolean keyIsNumeric;
+
     final TableStatements statements;
 
-    private IdentityScope<?,?> identityScope;
+    private IIdentityScope<?, ?> identityScope;
 
     public DaoConfig(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>> daoClass) {
         this.db = db;
@@ -69,13 +71,22 @@ public class DaoConfig {
             pkProperty = pkColumns.length == 1 ? lastPkProperty : null;
             statements = new TableStatements(db, tablename, allColumns, pkColumns);
 
+            if (pkProperty != null) {
+                Class<?> type = pkProperty.type;
+                keyIsNumeric = type.equals(long.class) || type.equals(Long.class) || type.equals(int.class)
+                        || type.equals(Integer.class) || type.equals(short.class) || type.equals(Short.class)
+                        || type.equals(byte.class) || type.equals(Byte.class);
+            } else {
+                keyIsNumeric = false;
+            }
+
         } catch (Exception e) {
             throw new DaoException("Could not init DAOConfig", e);
         }
     }
 
-    private static Property[] reflectProperties(Class<? extends AbstractDao<?, ?>> daoClass) throws ClassNotFoundException,
-            IllegalArgumentException, IllegalAccessException {
+    private static Property[] reflectProperties(Class<? extends AbstractDao<?, ?>> daoClass)
+            throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException {
         Class<?> propertiesClass = Class.forName(daoClass.getName() + "$Properties");
         Field[] fields = propertiesClass.getDeclaredFields();
         Property[] properties = new Property[fields.length];
@@ -99,6 +110,7 @@ public class DaoConfig {
         nonPkColumns = source.nonPkColumns;
         pkProperty = source.pkProperty;
         statements = source.statements;
+        keyIsNumeric = source.keyIsNumeric;
     }
 
     /** Does not copy identity scope. */
@@ -107,12 +119,12 @@ public class DaoConfig {
         return new DaoConfig(this);
     }
 
-    public IdentityScope<?, ?> getIdentityScope() {
+    public IIdentityScope<?, ?> getIdentityScope() {
         return identityScope;
     }
 
-    public void setIdentityScope(IdentityScope<?, ?> identityScope) {
+    public void setIdentityScope(IIdentityScope<?, ?> identityScope) {
         this.identityScope = identityScope;
     }
-    
+
 }

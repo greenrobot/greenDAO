@@ -53,7 +53,7 @@ public class AbstractDaoSession {
     }
 
     @SuppressWarnings("rawtypes")
-    protected IdentityScope createIdentityScope(IdentityScopeType type) {
+    protected IIdentityScope createIdentityScope(IdentityScopeType type) {
         if (type == IdentityScopeType.None) {
             return null;
         } else if (type == IdentityScopeType.Session) {

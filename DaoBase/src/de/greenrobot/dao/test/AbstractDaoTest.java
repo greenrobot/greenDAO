@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.IIdentityScope;
 import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.UnitTestDaoAccess;
@@ -45,7 +46,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     protected final Class<D> daoClass;
     protected UnitTestDaoAccess<T, K> daoAccess;
     protected Property pkColumn;
-    protected IdentityScope<K, T> identityScopeForDao;
+    protected IIdentityScope<K, T> identityScopeForDao;
 
     public AbstractDaoTest(Class<D> daoClass) {
         this(daoClass, true);
@@ -56,7 +57,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
         this.daoClass = daoClass;
     }
 
-    public void setIdentityScopeBeforeSetUp(IdentityScope<K, T> identityScope) {
+    public void setIdentityScopeBeforeSetUp(IIdentityScope<K, T> identityScope) {
         this.identityScopeForDao = identityScope;
     }
 

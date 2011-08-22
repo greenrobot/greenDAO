@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.database.CrossProcessCursor;
 import android.database.Cursor;
+import android.database.CursorWindow;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -38,10 +40,11 @@ import android.database.sqlite.SQLiteStatement;
 public abstract class AbstractDao<T, K> {
     protected final SQLiteDatabase db;
     private final DaoConfig config;
-    private IdentityScope<K, T> identityScope;
+    private IIdentityScope<K, T> identityScope;
     private TableStatements statements;
 
     private final AbstractDaoSession session;
+    private final int pkOridinal;
 
     public AbstractDao(DaoConfig config) {
         this(config, null);
@@ -52,8 +55,9 @@ public abstract class AbstractDao<T, K> {
         this.config = config;
         this.session = daoSession;
         db = config.db;
-        identityScope = (IdentityScope<K, T>) config.getIdentityScope();
+        identityScope = (IIdentityScope<K, T>) config.getIdentityScope();
         statements = config.statements;
+        pkOridinal = config.pkProperty != null ? config.pkProperty.oridinal : -1;
     }
 
     public AbstractDaoSession getSession() {
@@ -246,11 +250,28 @@ public abstract class AbstractDao<T, K> {
 
     /** Reads all available rows from the given cursor and returns a list of entities. */
     protected List<T> loadAllFromCursor(Cursor cursor) {
-        List<T> list = new ArrayList<T>(cursor.getCount());
+        int count = cursor.getCount();
+        List<T> list = new ArrayList<T>(count);
+        if (cursor instanceof CrossProcessCursor) {
+            CursorWindow window = ((CrossProcessCursor) cursor).getWindow();
+            if (window.getNumRows() == count) {
+                cursor = new FastCursor(window);
+            }
+        }
+
         if (cursor.moveToFirst()) {
-            do {
-                list.add(loadCurrent(cursor, 0));
-            } while (cursor.moveToNext());
+            if (identityScope != null) {
+                identityScope.lock();
+            }
+            try {
+                do {
+                    list.add(loadCurrent(cursor, 0));
+                } while (cursor.moveToNext());
+            } finally {
+                if (identityScope != null) {
+                    identityScope.unlock();
+                }
+            }
         }
         return list;
     }
@@ -364,7 +385,7 @@ public abstract class AbstractDao<T, K> {
             updateInsideSynchronized(entity, stmt);
         }
     }
-    
+
     public QueryBuilder<T> queryBuilder() {
         return new QueryBuilder<T>(this);
     }
