@@ -52,17 +52,6 @@ public class AbstractDaoSession {
         entityToDao.put(entityClass, dao);
     }
 
-    @SuppressWarnings("rawtypes")
-    protected IIdentityScope createIdentityScope(IdentityScopeType type) {
-        if (type == IdentityScopeType.None) {
-            return null;
-        } else if (type == IdentityScopeType.Session) {
-            return new IdentityScope();
-        } else {
-            throw new IllegalArgumentException("Unsupported type: " + type);
-        }
-    }
-
     /** Convenient call for {@link AbstractDao#insert(Object)}. */
     public <T> long insert(T entity) {
         @SuppressWarnings("unchecked")

@@ -59,7 +59,7 @@ public class DaoSession extends AbstractDaoSession {
 
 <#list schema.entities as entity>
         ${entity.classNameDao?uncap_first}Config = daoConfigMap.get(${entity.classNameDao}.class).clone();
-        ${entity.classNameDao?uncap_first}Config.setIdentityScope(createIdentityScope(type));
+        ${entity.classNameDao?uncap_first}Config.initIdentityScope(type);
 </#list>        
 
 <#list schema.entities as entity>

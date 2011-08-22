@@ -1,8 +1,8 @@
 package de.greenrobot.daotest.entity;
 
 import de.greenrobot.dao.test.AbstractDaoTestLongPk;
-import de.greenrobot.dao.test.SpecialNamesEntity;
-import de.greenrobot.dao.test.SpecialNamesEntityDao;
+import de.greenrobot.daotest.SpecialNamesEntity;
+import de.greenrobot.daotest.SpecialNamesEntityDao;
 
 
 public class SpecialNamesEntityTest extends AbstractDaoTestLongPk<SpecialNamesEntityDao, SpecialNamesEntity> {

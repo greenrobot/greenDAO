@@ -38,7 +38,8 @@ public class TestDaoGenerator {
     private Entity testEntity;
 
     public TestDaoGenerator() {
-        schema = new Schema(1, "de.greenrobot.dao.test");
+        schema = new Schema(1, "de.greenrobot.daotest");
+        schema.setDefaultJavaPackageTest("de.greenrobot.daotest.entity");
 
         createSimple();
         createSimpleNotNull();

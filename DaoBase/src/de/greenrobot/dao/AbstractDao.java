@@ -40,7 +40,8 @@ import android.database.sqlite.SQLiteStatement;
 public abstract class AbstractDao<T, K> {
     protected final SQLiteDatabase db;
     private final DaoConfig config;
-    private IIdentityScope<K, T> identityScope;
+    private IdentityScope<K, T> identityScope;
+    private IdentityScopeLong<T> identityScopeLong;
     private TableStatements statements;
 
     private final AbstractDaoSession session;
@@ -55,7 +56,7 @@ public abstract class AbstractDao<T, K> {
         this.config = config;
         this.session = daoSession;
         db = config.db;
-        identityScope = (IIdentityScope<K, T>) config.getIdentityScope();
+        identityScope = (IdentityScope<K, T>) config.getIdentityScope();
         statements = config.statements;
         pkOridinal = config.pkProperty != null ? config.pkProperty.oridinal : -1;
     }
@@ -277,7 +278,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     /** Internal use only. Considers identity scope. */
-    public T loadCurrent(Cursor cursor, int offset) {
+    final protected T loadCurrent(Cursor cursor, int offset) {
         if (identityScope != null) {
             K key = readKey(cursor, offset);
             if (offset != 0 && key == null) {
@@ -305,6 +306,11 @@ public abstract class AbstractDao<T, K> {
             attachEntity(null, entity);
             return entity;
         }
+    }
+    
+    /** Internal use only. Considers identity scope. */
+    final protected <O> O loadCurrentOther(AbstractDao<O, ?> dao, Cursor cursor, int offset) {
+        return dao.loadCurrent(cursor, offset);
     }
 
     /** A raw-style query where you can pass any WHERE clause and arguments. */

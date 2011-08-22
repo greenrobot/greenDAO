@@ -7,8 +7,7 @@ import java.util.NoSuchElementException;
 import de.greenrobot.dao.CloseableListIterator;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.LazyList;
-import de.greenrobot.dao.test.TestEntity;
-import de.greenrobot.dao.test.TestEntityDao.Properties;
+import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
 
 public class LazyListTest extends TestEntityTestBase {

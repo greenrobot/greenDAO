@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import de.greenrobot.dao.LazyList;
 import de.greenrobot.dao.test.AbstractDaoTest;
-import de.greenrobot.dao.test.TestEntity;
-import de.greenrobot.dao.test.TestEntityDao;
+import de.greenrobot.daotest.TestEntity;
+import de.greenrobot.daotest.TestEntityDao;
 
 public abstract class TestEntityTestBase extends AbstractDaoTest<TestEntityDao, TestEntity, Long> {
 

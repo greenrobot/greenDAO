@@ -4,12 +4,12 @@ import java.util.List;
 
 import de.greenrobot.dao.IdentityScopeType;
 import de.greenrobot.dao.test.AbstractDaoTestLongPk;
-import de.greenrobot.dao.test.DaoMaster;
-import de.greenrobot.dao.test.DaoSession;
-import de.greenrobot.dao.test.RelationEntity;
-import de.greenrobot.dao.test.RelationEntityDao;
-import de.greenrobot.dao.test.TestEntity;
-import de.greenrobot.dao.test.TestEntityDao;
+import de.greenrobot.daotest.DaoMaster;
+import de.greenrobot.daotest.DaoSession;
+import de.greenrobot.daotest.RelationEntity;
+import de.greenrobot.daotest.RelationEntityDao;
+import de.greenrobot.daotest.TestEntity;
+import de.greenrobot.daotest.TestEntityDao;
 
 public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao, RelationEntity> {
 

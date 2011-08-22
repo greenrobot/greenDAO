@@ -1,12 +1,12 @@
 package de.greenrobot.daotest.entity;
 
-import de.greenrobot.dao.IdentityScope;
-import de.greenrobot.dao.test.TestEntity;
+import de.greenrobot.dao.IdentityScopeLong;
+import de.greenrobot.daotest.TestEntity;
 
 public class TestEntityTestIdentityScope extends TestEntityTest {
     @Override
     protected void setUp() {
-        setIdentityScopeBeforeSetUp(new IdentityScope<Long, TestEntity>());
+        setIdentityScopeBeforeSetUp(new IdentityScopeLong<TestEntity>());
         super.setUp();
     }
 

@@ -21,7 +21,7 @@ import java.util.List;
 
 import android.database.sqlite.SQLiteDatabase;
 
-public class DaoConfig {
+public final class DaoConfig {
 
     final SQLiteDatabase db;
     final String tablename;
@@ -38,7 +38,7 @@ public class DaoConfig {
 
     final TableStatements statements;
 
-    private IIdentityScope<?, ?> identityScope;
+    private IdentityScope<?, ?> identityScope;
 
     public DaoConfig(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>> daoClass) {
         this.db = db;
@@ -119,12 +119,23 @@ public class DaoConfig {
         return new DaoConfig(this);
     }
 
-    public IIdentityScope<?, ?> getIdentityScope() {
+    public IdentityScope<?, ?> getIdentityScope() {
         return identityScope;
     }
 
-    public void setIdentityScope(IIdentityScope<?, ?> identityScope) {
+    public void setIdentityScope(IdentityScope<?, ?> identityScope) {
         this.identityScope = identityScope;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void initIdentityScope(IdentityScopeType type) {
+        if (type == IdentityScopeType.None) {
+            identityScope = null;
+        } else if (type == IdentityScopeType.Session) {
+            identityScope = new IdentityScopeObject();
+        } else {
+            throw new IllegalArgumentException("Unsupported type: " + type);
+        }
     }
 
 }

@@ -1,13 +1,13 @@
 package de.greenrobot.daotest.performance;
 
-import de.greenrobot.dao.IdentityScope;
-import de.greenrobot.dao.test.SimpleEntityNotNull;
+import de.greenrobot.dao.IdentityScopeLong;
+import de.greenrobot.daotest.SimpleEntityNotNull;
 
 public class PerformanceTestNotNullIdentityScope extends PerformanceTestNotNull {
 
     @Override
     protected void setUp() {
-        IdentityScope<Long, SimpleEntityNotNull> identityScope = new IdentityScope<Long, SimpleEntityNotNull>();
+        IdentityScopeLong<SimpleEntityNotNull> identityScope = new IdentityScopeLong< SimpleEntityNotNull>();
         setIdentityScopeBeforeSetUp(identityScope);
         super.setUp();
     }

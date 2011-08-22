@@ -3,8 +3,8 @@ package de.greenrobot.daotest.entity;
 import java.util.Arrays;
 
 import de.greenrobot.dao.test.AbstractDaoTestLongPk;
-import de.greenrobot.dao.test.SimpleEntityNotNull;
-import de.greenrobot.dao.test.SimpleEntityNotNullDao;
+import de.greenrobot.daotest.SimpleEntityNotNull;
+import de.greenrobot.daotest.SimpleEntityNotNullDao;
 
 public class SimpleEntityNotNullTest extends AbstractDaoTestLongPk<SimpleEntityNotNullDao, SimpleEntityNotNull> {
 

@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.dao.QueryBuilder;
-import de.greenrobot.dao.test.AbcdefEntity;
-import de.greenrobot.dao.test.AbcdefEntityDao;
 import de.greenrobot.dao.test.AbstractDaoTest;
-import de.greenrobot.dao.test.AbcdefEntityDao.Properties;
+import de.greenrobot.daotest.AbcdefEntityDao.Properties;
 
 public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, AbcdefEntity, Long> {
 

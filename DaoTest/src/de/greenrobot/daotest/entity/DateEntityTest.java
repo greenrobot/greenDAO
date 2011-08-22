@@ -3,8 +3,8 @@ package de.greenrobot.daotest.entity;
 import java.util.Date;
 
 import de.greenrobot.dao.test.AbstractDaoTestLongPk;
-import de.greenrobot.dao.test.DateEntity;
-import de.greenrobot.dao.test.DateEntityDao;
+import de.greenrobot.daotest.DateEntity;
+import de.greenrobot.daotest.DateEntityDao;
 
 
 public class DateEntityTest extends AbstractDaoTestLongPk<DateEntityDao, DateEntity> {

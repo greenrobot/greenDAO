@@ -3,7 +3,6 @@ package de.greenrobot.daotest;
 import java.io.IOException;
 
 import android.database.Cursor;
-
 import de.greenrobot.dao.DbUtils;
 import de.greenrobot.dao.test.DbTest;
 

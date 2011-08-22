@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import android.os.Debug;
-
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.test.AbstractDaoTest;

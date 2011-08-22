@@ -1,16 +1,9 @@
 package de.greenrobot.daotest;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import junit.framework.TestCase;
-import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.LongHashMap;
-import de.greenrobot.daotest.performance.target.LongHashMapAmarena2DZechner;
-import de.greenrobot.daotest.performance.target.LongHashMapJDBM;
-import de.greenrobot.daotest.performance.target.LongSparseArray;
 
 public class LongHashMapTest extends TestCase {
 

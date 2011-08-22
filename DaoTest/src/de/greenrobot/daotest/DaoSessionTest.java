@@ -1,9 +1,6 @@
 package de.greenrobot.daotest;
 
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
-import de.greenrobot.dao.test.DaoMaster;
-import de.greenrobot.dao.test.DaoSession;
-import de.greenrobot.dao.test.SimpleEntity;
 
 public class DaoSessionTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
 

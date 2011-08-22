@@ -1,9 +1,8 @@
 package de.greenrobot.daotest.entity;
 
-import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.test.AbstractDaoTestLongPk;
-import de.greenrobot.dao.test.AbcdefEntity;
-import de.greenrobot.dao.test.AbcdefEntityDao;
+import de.greenrobot.daotest.AbcdefEntity;
+import de.greenrobot.daotest.AbcdefEntityDao;
 
 public class AbcdefEntityTest extends AbstractDaoTestLongPk<AbcdefEntityDao, AbcdefEntity> {
 

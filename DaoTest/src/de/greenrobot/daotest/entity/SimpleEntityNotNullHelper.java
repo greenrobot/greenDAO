@@ -1,6 +1,6 @@
 package de.greenrobot.daotest.entity;
 
-import de.greenrobot.dao.test.SimpleEntityNotNull;
+import de.greenrobot.daotest.SimpleEntityNotNull;
 
 
 public class SimpleEntityNotNullHelper {

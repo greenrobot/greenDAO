@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.dao.QueryBuilder;
-import de.greenrobot.dao.test.TestEntity;
-import de.greenrobot.dao.test.TestEntityDao.Properties;
+import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
 
 public class QueryBuilderSimpleTest extends TestEntityTestBase {
