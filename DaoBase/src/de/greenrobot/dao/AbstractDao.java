@@ -39,13 +39,13 @@ import android.database.sqlite.SQLiteStatement;
  */
 public abstract class AbstractDao<T, K> {
     protected final SQLiteDatabase db;
-    private final DaoConfig config;
-    private IdentityScope<K, T> identityScope;
-    private IdentityScopeLong<T> identityScopeLong;
-    private TableStatements statements;
+    protected final DaoConfig config;
+    protected IdentityScope<K, T> identityScope;
+    protected IdentityScopeLong<T> identityScopeLong;
+    protected TableStatements statements;
 
-    private final AbstractDaoSession session;
-    private final int pkOridinal;
+    protected final AbstractDaoSession session;
+    protected final int pkOridinal;
 
     public AbstractDao(DaoConfig config) {
         this(config, null);
@@ -57,6 +57,9 @@ public abstract class AbstractDao<T, K> {
         this.session = daoSession;
         db = config.db;
         identityScope = (IdentityScope<K, T>) config.getIdentityScope();
+        if (identityScope instanceof IdentityScopeLong) {
+            identityScopeLong = (IdentityScopeLong<T>) identityScope;
+        }
         statements = config.statements;
         pkOridinal = config.pkProperty != null ? config.pkProperty.oridinal : -1;
     }
@@ -138,7 +141,7 @@ public abstract class AbstractDao<T, K> {
         } else if (!cursor.isLast()) {
             throw new DaoException("Expected unique result, but count was " + cursor.getCount());
         }
-        return loadCurrent(cursor, 0);
+        return loadCurrent(cursor, 0, true);
     }
 
     public List<T> loadAll() {
@@ -196,13 +199,22 @@ public abstract class AbstractDao<T, K> {
         synchronized (stmt) {
             db.beginTransaction();
             try {
-                for (T entity : entities) {
-                    bindValues(stmt, entity);
-                    if (setPrimaryKey) {
-                        long rowId = stmt.executeInsert();
-                        updateKeyAfterInsertAndTrack(entity, rowId);
-                    } else {
-                        stmt.execute();
+                if (identityScope != null) {
+                    identityScope.lock();
+                }
+                try {
+                    for (T entity : entities) {
+                        bindValues(stmt, entity);
+                        if (setPrimaryKey) {
+                            long rowId = stmt.executeInsert();
+                            updateKeyAfterInsertAndAttach(entity, rowId, false);
+                        } else {
+                            stmt.execute();
+                        }
+                    }
+                } finally {
+                    if (identityScope != null) {
+                        identityScope.unlock();
                     }
                 }
                 db.setTransactionSuccessful();
@@ -218,7 +230,7 @@ public abstract class AbstractDao<T, K> {
         synchronized (stmt) {
             bindValues(stmt, entity);
             long rowId = stmt.executeInsert();
-            updateKeyAfterInsertAndTrack(entity, rowId);
+            updateKeyAfterInsertAndAttach(entity, rowId, true);
             return rowId;
         }
     }
@@ -240,13 +252,13 @@ public abstract class AbstractDao<T, K> {
             bindValues(stmt, entity);
             rowId = stmt.executeInsert();
         }
-        updateKeyAfterInsertAndTrack(entity, rowId);
+        updateKeyAfterInsertAndAttach(entity, rowId, true);
         return rowId;
     }
 
-    protected void updateKeyAfterInsertAndTrack(T entity, long rowId) {
+    protected void updateKeyAfterInsertAndAttach(T entity, long rowId, boolean lock) {
         K key = updateKeyAfterInsert(entity, rowId);
-        attachEntity(key, entity);
+        attachEntity(key, entity, lock);
     }
 
     /** Reads all available rows from the given cursor and returns a list of entities. */
@@ -257,16 +269,19 @@ public abstract class AbstractDao<T, K> {
             CursorWindow window = ((CrossProcessCursor) cursor).getWindow();
             if (window.getNumRows() == count) {
                 cursor = new FastCursor(window);
+            } else {
+                DaoLog.d("Window vs. result size: " + window.getNumRows() + "/" + count);
             }
         }
 
         if (cursor.moveToFirst()) {
             if (identityScope != null) {
                 identityScope.lock();
+                identityScope.reserveRoom(count);
             }
             try {
                 do {
-                    list.add(loadCurrent(cursor, 0));
+                    list.add(loadCurrent(cursor, 0, false));
                 } while (cursor.moveToNext());
             } finally {
                 if (identityScope != null) {
@@ -278,19 +293,41 @@ public abstract class AbstractDao<T, K> {
     }
 
     /** Internal use only. Considers identity scope. */
-    final protected T loadCurrent(Cursor cursor, int offset) {
-        if (identityScope != null) {
+    final protected T loadCurrent(Cursor cursor, int offset, boolean lock) {
+        if (identityScopeLong != null) {
+            if (offset != 0) {
+                // Occurs with deep loads (left outer joins)
+                if (cursor.isNull(pkOridinal + offset)) {
+                    return null;
+                }
+            }
+
+            long key = cursor.getLong(pkOridinal + offset);
+            T entity = lock ? identityScopeLong.get2(key) : identityScopeLong.get2NoLock(key);
+            if (entity != null) {
+                return entity;
+            } else {
+                entity = readEntity(cursor, offset);
+                if (lock) {
+                    identityScopeLong.put2(key, entity);
+                } else {
+                    identityScopeLong.put2NoLock(key, entity);
+                }
+                attachEntity(entity);
+                return entity;
+            }
+        } else if (identityScope != null) {
             K key = readKey(cursor, offset);
             if (offset != 0 && key == null) {
                 // Occurs with deep loads (left outer joins)
                 return null;
             }
-            T entity = identityScope.get(key);
+            T entity = lock ? identityScope.get(key) : identityScope.getNoLock(key);
             if (entity != null) {
                 return entity;
             } else {
                 entity = readEntity(cursor, offset);
-                attachEntity(key, entity);
+                attachEntity(key, entity, lock);
                 return entity;
             }
         } else {
@@ -303,14 +340,14 @@ public abstract class AbstractDao<T, K> {
                 }
             }
             T entity = readEntity(cursor, offset);
-            attachEntity(null, entity);
+            attachEntity(entity);
             return entity;
         }
     }
-    
+
     /** Internal use only. Considers identity scope. */
     final protected <O> O loadCurrentOther(AbstractDao<O, ?> dao, Cursor cursor, int offset) {
-        return dao.loadCurrent(cursor, offset);
+        return dao.loadCurrent(cursor, offset, /* TODO check this */true);
     }
 
     /** A raw-style query where you can pass any WHERE clause and arguments. */
@@ -378,7 +415,7 @@ public abstract class AbstractDao<T, K> {
                 throw new DaoException("Expected unique result, but count was " + cursor.getCount());
             }
             readEntity(cursor, entity, 0);
-            attachEntity(key, entity);
+            attachEntity(key, entity, true);
         } finally {
             cursor.close();
         }
@@ -388,7 +425,7 @@ public abstract class AbstractDao<T, K> {
         assertSinglePk();
         SQLiteStatement stmt = statements.getUpdateStatement();
         synchronized (stmt) {
-            updateInsideSynchronized(entity, stmt);
+            updateInsideSynchronized(entity, stmt, true);
         }
     }
 
@@ -396,32 +433,46 @@ public abstract class AbstractDao<T, K> {
         return new QueryBuilder<T>(this);
     }
 
-    protected void updateInsideSynchronized(T entity, SQLiteStatement stmt) {
+    protected void updateInsideSynchronized(T entity, SQLiteStatement stmt, boolean lock) {
         // To do? Check if it's worth not to bind PKs here (performance).
         bindValues(stmt, entity);
-        K key = getKey(entity);
         int index = config.allColumns.length + 1;
+        K key = getKey(entity);
         if (key instanceof Long) {
             stmt.bindLong(index, (Long) key);
         } else {
             stmt.bindString(index, key.toString());
         }
         stmt.execute();
-        attachEntity(key, entity);
+        attachEntity(key, entity, lock);
     }
 
     /**
-     * Attaches the entity to the identity scope. Sub classes with relations additionally set the DaoMaster here.
+     * Attaches the entity to the identity scope. Calls attachEntity(T entity).
      * 
      * @param key
      *            Needed only for identity scope, pass null if there's none.
      * @param entity
      *            The entitiy to attach
      * */
-    protected void attachEntity(K key, T entity) {
+    protected final void attachEntity(K key, T entity, boolean lock) {
         if (identityScope != null && key != null) {
-            identityScope.put(key, entity);
+            if (lock) {
+                identityScope.put(key, entity);
+            } else {
+                identityScope.putNoLock(key, entity);
+            }
         }
+        attachEntity(entity);
+    }
+
+    /**
+     * Sub classes with relations additionally set the DaoMaster here.
+     * 
+     * @param entity
+     *            The entitiy to attach
+     * */
+    protected void attachEntity(T entity) {
     }
 
     /**
@@ -437,8 +488,17 @@ public abstract class AbstractDao<T, K> {
         synchronized (stmt) {
             db.beginTransaction();
             try {
-                for (T entity : entities) {
-                    updateInsideSynchronized(entity, stmt);
+                if (identityScope != null) {
+                    identityScope.lock();
+                }
+                try {
+                    for (T entity : entities) {
+                        updateInsideSynchronized(entity, stmt, false);
+                    }
+                } finally {
+                    if (identityScope != null) {
+                        identityScope.unlock();
+                    }
                 }
                 db.setTransactionSuccessful();
             } finally {

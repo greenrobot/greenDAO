@@ -26,11 +26,11 @@ import java.util.concurrent.locks.ReentrantLock;
  * @param <T>
  */
 public class IdentityScopeLong<T> implements IdentityScope<Long, T> {
-    private final LongHashMap<WeakReference<T>> identityScope;
+    private final LongHashMap<WeakReference<T>> map;
     private final ReentrantLock lock;
 
     public IdentityScopeLong() {
-        identityScope = new LongHashMap<WeakReference<T>>();
+        map = new LongHashMap<WeakReference<T>>();
         lock = new ReentrantLock();
     }
 
@@ -39,10 +39,24 @@ public class IdentityScopeLong<T> implements IdentityScope<Long, T> {
         return get2(key);
     }
 
+    @Override
+    public T getNoLock(Long key) {
+        return get2NoLock(key);
+    }
+
     public T get2(long key) {
         lock.lock();
-        WeakReference<T> ref = identityScope.get(key);
+        WeakReference<T> ref = map.get(key);
         lock.unlock();
+        if (ref != null) {
+            return ref.get();
+        } else {
+            return null;
+        }
+    }
+
+    public T get2NoLock(long key) {
+        WeakReference<T> ref = map.get(key);
         if (ref != null) {
             return ref.get();
         } else {
@@ -55,10 +69,19 @@ public class IdentityScopeLong<T> implements IdentityScope<Long, T> {
         put2(key, entity);
     }
 
+    @Override
+    public void putNoLock(Long key, T entity) {
+        put2NoLock(key, entity);
+    }
+
     public void put2(long key, T entity) {
         lock.lock();
-        identityScope.put(key, new WeakReference<T>(entity));
+        map.put(key, new WeakReference<T>(entity));
         lock.unlock();
+    }
+
+    public void put2NoLock(long key, T entity) {
+        map.put(key, new WeakReference<T>(entity));
     }
 
     @Override
@@ -77,14 +100,14 @@ public class IdentityScopeLong<T> implements IdentityScope<Long, T> {
     @Override
     public void remove(Long key) {
         lock.lock();
-        identityScope.remove(key);
+        map.remove(key);
         lock.unlock();
     }
 
     @Override
     public void clear() {
         lock.lock();
-        identityScope.clear();
+        map.clear();
         lock.unlock();
     }
 
@@ -96,6 +119,11 @@ public class IdentityScopeLong<T> implements IdentityScope<Long, T> {
     @Override
     public void unlock() {
         lock.unlock();
+    }
+
+    @Override
+    public void reserveRoom(int count) {
+        map.reserveRoom(count);
     }
 
 }

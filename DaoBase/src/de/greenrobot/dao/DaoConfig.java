@@ -132,7 +132,11 @@ public final class DaoConfig {
         if (type == IdentityScopeType.None) {
             identityScope = null;
         } else if (type == IdentityScopeType.Session) {
-            identityScope = new IdentityScopeObject();
+            if(keyIsNumeric) {
+                identityScope = new IdentityScopeLong();
+            } else {
+                identityScope = new IdentityScopeObject();
+            }
         } else {
             throw new IllegalArgumentException("Unsupported type: " + type);
         }

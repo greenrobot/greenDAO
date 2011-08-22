@@ -42,8 +42,8 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
         return selectDeep;
     }
     
-    protected ${entity.className} readDeepFrom(Cursor cursor) {
-        ${entity.className} entity = loadCurrent(cursor, 0);
+    protected ${entity.className} loadCurrentDeep(Cursor cursor, boolean lock) {
+        ${entity.className} entity = loadCurrent(cursor, 0, lock);
         int offset = getAllColumns().length;
 
 <#list entity.toOneRelations as toOne>
@@ -82,26 +82,38 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
             } else if (!cursor.isLast()) {
                 throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
             }
-            return readDeepFrom(cursor);
+            return loadCurrentDeep(cursor, true);
         } finally {
             cursor.close();
         }
     }
     
     /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
-    public List<${entity.className}> readDeepAllFrom(Cursor cursor) {
-        List<${entity.className}> list = new ArrayList<${entity.className}>();
+    public List<${entity.className}> loadAllDeepFromCursor(Cursor cursor) {
+        int count = cursor.getCount();
+        List<${entity.className}> list = new ArrayList<${entity.className}>(count);
+        
         if (cursor.moveToFirst()) {
-            do {
-                list.add(readDeepFrom(cursor));
-            } while (cursor.moveToNext());
+            if (identityScope != null) {
+                identityScope.lock();
+                identityScope.reserveRoom(count);
+            }
+            try {
+                do {
+                    list.add(loadCurrentDeep(cursor, false));
+                } while (cursor.moveToNext());
+            } finally {
+                if (identityScope != null) {
+                    identityScope.unlock();
+                }
+            }
         }
         return list;
     }
     
-    protected List<${entity.className}> readDeepAllAndCloseCursor(Cursor cursor) {
+    protected List<${entity.className}> loadDeepAllAndCloseCursor(Cursor cursor) {
         try {
-            return readDeepAllFrom(cursor);
+            return loadAllDeepFromCursor(cursor);
         } finally {
             cursor.close();
         }
@@ -111,7 +123,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
     /** A raw-style query where you can pass any WHERE clause and arguments. */
     public List<${entity.className}> queryDeep(String where, String... selectionArg) {
         Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
-        return readDeepAllAndCloseCursor(cursor);
+        return loadDeepAllAndCloseCursor(cursor);
     }
  
 </#if>

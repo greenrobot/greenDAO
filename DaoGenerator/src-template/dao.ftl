@@ -120,8 +120,8 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 
 <#if entity.active>
     @Override
-    protected void attachEntity(Long key, ${entity.className} entity) {
-        super.attachEntity(key, entity);
+    protected void attachEntity(${entity.className} entity) {
+        super.attachEntity(entity);
         entity.__setDaoSession(daoSession);
     }
 

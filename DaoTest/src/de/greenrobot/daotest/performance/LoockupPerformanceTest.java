@@ -125,7 +125,7 @@ public class LoockupPerformanceTest extends TestCase {
 
     private void runLongHashMap(long[] keys) {
         LongHashMap<Object> map = new LongHashMap<Object>(keys.length);
-        map.prepareRoom(keys.length);
+        map.reserveRoom(keys.length);
 
         startClock("put-my-" + keys.length);
         for (long key : keys) {

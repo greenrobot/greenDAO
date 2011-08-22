@@ -87,8 +87,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     }
 
     @Override
-    protected void attachEntity(Long key, RelationEntity entity) {
-        super.attachEntity(key, entity);
+    protected void attachEntity(RelationEntity entity) {
+        super.attachEntity(entity);
         entity.__setDaoSession(daoSession);
     }
 
@@ -165,8 +165,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         return selectDeep;
     }
     
-    protected RelationEntity readDeepFrom(Cursor cursor) {
-        RelationEntity entity = loadCurrent(cursor, 0);
+    protected RelationEntity loadCurrentDeep(Cursor cursor, boolean lock) {
+        RelationEntity entity = loadCurrent(cursor, 0, lock);
         int offset = getAllColumns().length;
 
         RelationEntity parent = loadCurrentOther(daoSession.getRelationEntityDao(), cursor, offset);
@@ -206,26 +206,38 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
             } else if (!cursor.isLast()) {
                 throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
             }
-            return readDeepFrom(cursor);
+            return loadCurrentDeep(cursor, true);
         } finally {
             cursor.close();
         }
     }
     
     /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
-    public List<RelationEntity> readDeepAllFrom(Cursor cursor) {
-        List<RelationEntity> list = new ArrayList<RelationEntity>();
+    public List<RelationEntity> loadAllDeepFromCursor(Cursor cursor) {
+        int count = cursor.getCount();
+        List<RelationEntity> list = new ArrayList<RelationEntity>(count);
+        
         if (cursor.moveToFirst()) {
-            do {
-                list.add(readDeepFrom(cursor));
-            } while (cursor.moveToNext());
+            if (identityScope != null) {
+                identityScope.lock();
+                identityScope.reserveRoom(count);
+            }
+            try {
+                do {
+                    list.add(loadCurrentDeep(cursor, false));
+                } while (cursor.moveToNext());
+            } finally {
+                if (identityScope != null) {
+                    identityScope.unlock();
+                }
+            }
         }
         return list;
     }
     
-    protected List<RelationEntity> readDeepAllAndCloseCursor(Cursor cursor) {
+    protected List<RelationEntity> loadDeepAllAndCloseCursor(Cursor cursor) {
         try {
-            return readDeepAllFrom(cursor);
+            return loadAllDeepFromCursor(cursor);
         } finally {
             cursor.close();
         }
@@ -235,7 +247,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     /** A raw-style query where you can pass any WHERE clause and arguments. */
     public List<RelationEntity> queryDeep(String where, String... selectionArg) {
         Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
-        return readDeepAllAndCloseCursor(cursor);
+        return loadDeepAllAndCloseCursor(cursor);
     }
  
 }

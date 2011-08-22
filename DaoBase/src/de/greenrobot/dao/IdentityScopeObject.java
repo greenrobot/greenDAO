@@ -17,7 +17,6 @@ package de.greenrobot.dao;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -28,22 +27,18 @@ import java.util.concurrent.locks.ReentrantLock;
  * @param <T>
  */
 public class IdentityScopeObject<K, T> implements IdentityScope<K, T> {
-    private final Map<K, WeakReference<T>> identityScope;
+    private final HashMap<K, WeakReference<T>> map;
     private final ReentrantLock lock;
 
     public IdentityScopeObject() {
-        // identityScope = new ConcurrentHashMap<K, WeakReference<T>>();
-        identityScope = new HashMap<K, WeakReference<T>>();
+        map = new HashMap<K, WeakReference<T>>();
         lock = new ReentrantLock();
     }
 
-    /* (non-Javadoc)
-     * @see de.greenrobot.dao.IIdentityScope#get(K)
-     */
     @Override
     public T get(K key) {
         lock.lock();
-        WeakReference<T> ref = identityScope.get(key);
+        WeakReference<T> ref = map.get(key);
         lock.unlock();
         if (ref != null) {
             return ref.get();
@@ -52,19 +47,28 @@ public class IdentityScopeObject<K, T> implements IdentityScope<K, T> {
         }
     }
 
-    /* (non-Javadoc)
-     * @see de.greenrobot.dao.IIdentityScope#put(K, T)
-     */
+    @Override
+    public T getNoLock(K key) {
+        WeakReference<T> ref = map.get(key);
+        if (ref != null) {
+            return ref.get();
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void put(K key, T entity) {
         lock.lock();
-        identityScope.put(key, new WeakReference<T>(entity));
+        map.put(key, new WeakReference<T>(entity));
         lock.unlock();
     }
 
-    /* (non-Javadoc)
-     * @see de.greenrobot.dao.IIdentityScope#detach(K, T)
-     */
+    @Override
+    public void putNoLock(K key, T entity) {
+        map.put(key, new WeakReference<T>(entity));
+    }
+
     @Override
     public boolean detach(K key, T entity) {
         lock.lock();
@@ -78,40 +82,33 @@ public class IdentityScopeObject<K, T> implements IdentityScope<K, T> {
         }
     }
 
-    /* (non-Javadoc)
-     * @see de.greenrobot.dao.IIdentityScope#remove(K)
-     */
     @Override
     public void remove(K key) {
         lock.lock();
-        identityScope.remove(key);
+        map.remove(key);
         lock.unlock();
     }
 
-    /* (non-Javadoc)
-     * @see de.greenrobot.dao.IIdentityScope#clear()
-     */
     @Override
     public void clear() {
         lock.lock();
-        identityScope.clear();
+        map.clear();
         lock.unlock();
     }
 
-    /* (non-Javadoc)
-     * @see de.greenrobot.dao.IIdentityScope#lock()
-     */
     @Override
     public void lock() {
         lock.lock();
     }
 
-    /* (non-Javadoc)
-     * @see de.greenrobot.dao.IIdentityScope#unlock()
-     */
     @Override
     public void unlock() {
         lock.unlock();
+    }
+
+    @Override
+    public void reserveRoom(int count) {
+        // HashMap does not allow
     }
 
 }

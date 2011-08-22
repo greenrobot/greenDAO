@@ -145,7 +145,7 @@ public final class LongHashMap<T> {
     }
 
     /** Target load: 0,6 */
-    public void prepareRoom(int entryCount) {
+    public void reserveRoom(int entryCount) {
         setCapacity(entryCount * 5 / 3);
     }
 

@@ -12,14 +12,19 @@ import de.greenrobot.dao.test.AbstractDaoTest;
 public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends AbstractDaoTest<D, T, K> {
     long start;
     private String traceName;
-    boolean useTraceView = true;
+    boolean useTraceView = false;
 
     public PerformanceTest(Class<D> daoClass) {
         super(daoClass, false);
     }
 
     public void testPerformance() throws Exception {
-        runTests(100); // Warmup
+        // runTests(100); // Warmup
+        runTests(1000);
+        runTests(1000);
+        runTests(1000);
+        runTests(1000);
+        runTests(1000);
         runTests(1000);
     }
 
@@ -38,7 +43,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         System.gc();
 
         dao.deleteAll();
-        runOneByOneTests(list, entityCount, entityCount / 100);
+//        runOneByOneTests(list, entityCount, entityCount / 100);
         dao.deleteAll();
         System.gc();
         DaoLog.d("------------------------");
@@ -62,7 +67,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         }
         clearIdentityScopeIfAny();
         System.gc();
-        
+
         // Debug.startMethodTracing("load-one-by-one-1");
         // list = runLoadOneByOne(keys);
         // Debug.stopMethodTracing();

@@ -253,7 +253,7 @@ public class LazyList<E> implements List<E>, Closeable {
 
     protected E loadEntity(int location) {
         cursor.moveToPosition(location);
-        E entity = dao.loadCurrent(cursor, 0);
+        E entity = dao.loadCurrent(cursor, 0, true);
         if (entity == null) {
             throw new DaoException("Loading of entity failed (null) at position " + location);
         }
