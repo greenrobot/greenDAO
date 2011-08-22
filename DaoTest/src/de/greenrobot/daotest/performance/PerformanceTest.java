@@ -19,7 +19,6 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
     }
 
     public void testPerformance() throws Exception {
-        // runTests(100); // Warmup
         runTests(1000);
         runTests(1000);
         runTests(1000);
@@ -34,8 +33,6 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         DaoLog.d("####################");
         clearIdentityScopeIfAny();
 
-        long start, time;
-
         List<T> list = new ArrayList<T>(entityCount);
         for (int i = 0; i < entityCount; i++) {
             list.add(createEntity());
@@ -43,23 +40,20 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         System.gc();
 
         dao.deleteAll();
-//        runOneByOneTests(list, entityCount, entityCount / 100);
+        runOneByOneTests(list, entityCount, entityCount / 10);
         dao.deleteAll();
-        System.gc();
         DaoLog.d("------------------------");
+        System.gc();
 
-        runBatchTests(list);
+        // runBatchTests(list);
 
-        start = System.currentTimeMillis();
+        startClock("delete-all");
         dao.deleteAll();
-        time = System.currentTimeMillis() - start;
-        DaoLog.d("Deleted all entities in " + time + "ms");
+        stopClock();
         System.gc();
     }
 
     protected void runOneByOneTests(List<T> list, int loadCount, int modifyCount) {
-        long start;
-        long time;
         dao.insertInTx(list);
         List<K> keys = new ArrayList<K>(loadCount);
         for (int i = 0; i < loadCount; i++) {
@@ -68,62 +62,49 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         clearIdentityScopeIfAny();
         System.gc();
 
-        // Debug.startMethodTracing("load-one-by-one-1");
-        // list = runLoadOneByOne(keys);
-        // Debug.stopMethodTracing();
-        //
-        // Debug.startMethodTracing("load-one-by-one-2");
-        // list = runLoadOneByOne(keys);
-        // Debug.stopMethodTracing();
+        list = runLoadOneByOne(keys, "load-one-by-one-1");
+        list = runLoadOneByOne(keys, "load-one-by-one-2");
+        Debug.stopMethodTracing();
 
         dao.deleteAll();
         System.gc();
 
-        start = System.currentTimeMillis();
+        startClock("insert-one-by-one");
         for (int i = 0; i < modifyCount; i++) {
             dao.insert(list.get(i));
         }
-        time = System.currentTimeMillis() - start;
-        DaoLog.d("Inserted (one-by-one) " + modifyCount + " entities in " + time + "ms");
+        stopClock(modifyCount + " entities");
+        System.gc();
 
-        start = System.currentTimeMillis();
+        startClock("update-one-by-one");
         for (int i = 0; i < modifyCount; i++) {
             dao.update(list.get(i));
         }
-        time = System.currentTimeMillis() - start;
-        DaoLog.d("Updated (one-by-one) " + modifyCount + " entities in " + time + "ms");
+        stopClock(modifyCount + " entities");
         System.gc();
 
-        start = System.currentTimeMillis();
+        startClock("delete-one-by-one");
         for (int i = 0; i < modifyCount; i++) {
             dao.delete(list.get(i));
         }
-        time = System.currentTimeMillis() - start;
-        DaoLog.d("Deleted (one-by-one) " + modifyCount + " entities in " + time + "ms");
+        stopClock(modifyCount + " entities");
         System.gc();
     }
 
-    protected List<T> runLoadOneByOne(List<K> keys) {
+    protected List<T> runLoadOneByOne(List<K> keys, String traceName) {
         List<T> list = new ArrayList<T>(keys.size());
-        long start;
-        long time;
-        start = System.currentTimeMillis();
+        startClock(traceName);
         for (K key : keys) {
             list.add(dao.load(key));
         }
-        time = System.currentTimeMillis() - start;
-        DaoLog.d("Load (one-by-one) " + keys.size() + " entities in " + time + "ms");
-        System.gc();
+        stopClock(keys.size() + " entities");
         return list;
     }
 
     protected void runBatchTests(List<T> list) {
-        long start;
-        long time;
-        start = System.currentTimeMillis();
+        startClock("insert");
         dao.insertInTx(list);
-        time = System.currentTimeMillis() - start;
-        DaoLog.d("Inserted (batch) " + list.size() + " entities in " + time + "ms");
+        stopClock(list.size() + " entities");
 
         list = null;
         System.gc();
@@ -132,21 +113,20 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         list = runLoadAll("load-all-1");
         list = runLoadAll("load-all-2");
 
-        start = System.currentTimeMillis();
+        startClock("update");
         dao.updateInTx(list);
-        time = System.currentTimeMillis() - start;
-        DaoLog.d("Updated (batch) " + list.size() + " entities in " + time + "ms");
+        stopClock(list.size() + " entities");
     }
 
     protected List<T> runLoadAll(String traceName) {
         startClock(traceName);
         List<T> list = dao.loadAll();
         stopClock(list.size() + " entities");
-        System.gc();
         return list;
     }
 
     protected void startClock(String traceName) {
+        System.gc();
         this.traceName = traceName;
         if (useTraceView) {
             Debug.startMethodTracing(traceName);
@@ -165,6 +145,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         if (useTraceView) {
             Debug.stopMethodTracing();
         }
+        System.gc();
     }
 
     protected abstract T createEntity();
