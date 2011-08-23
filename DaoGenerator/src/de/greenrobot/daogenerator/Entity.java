@@ -124,6 +124,14 @@ public class Entity {
         return toOne;
     }
 
+    public ToOne addToOneWithoutProperty(String name, Entity target, String fkColumnName, boolean notNull) {
+        Column column = new Column(fkColumnName, null, notNull);
+        Column[] fkColumns = { column };
+        ToOne toOne = new ToOne(schema, this, name, target, fkColumns);
+        toOneRelations.add(toOne);
+        return toOne;
+    }
+
     /**
      * Adds a new index to the entity.
      */
@@ -133,7 +141,7 @@ public class Entity {
     }
 
     /** The entity is represented by a protocol buffers object. Requires some special actions like using builders. */
-    public Entity useProtobuf() {
+    Entity useProtobuf() {
         protobuf = true;
         return this;
     }
@@ -149,7 +157,7 @@ public class Entity {
     public String getTableName() {
         return tableName;
     }
-    
+
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
@@ -285,6 +293,16 @@ public class Entity {
         }
 
         initIndexNamesWithDefaults();
+    }
+
+    void init3ndPass() {
+        for (Property property : properties) {
+            property.init3ndPass();
+        }
+
+        for (ToOne toOne : toOneRelations) {
+            toOne.init3ndPass();
+        }
     }
 
     protected void initNamesWithDefaults() {

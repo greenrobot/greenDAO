@@ -74,7 +74,7 @@ public class Property {
         public PropertyBuilder indexAsc(String indexNameOrNull, boolean isUnique) {
             Index index = new Index();
             index.addPropertyAsc(property);
-            if(isUnique) {
+            if (isUnique) {
                 index.makeUnique();
             }
             index.setName(indexNameOrNull);
@@ -85,7 +85,7 @@ public class Property {
         public PropertyBuilder indexDesc(String indexNameOrNull, boolean isUnique) {
             Index index = new Index();
             index.addPropertyDesc(property);
-            if(isUnique) {
+            if (isUnique) {
                 index.makeUnique();
             }
             index.setName(indexNameOrNull);
@@ -115,7 +115,7 @@ public class Property {
 
     /** Initialized in 2nd pass */
     private String constraints;
-    
+
     private int ordinal;
 
     private String javaType;
@@ -162,7 +162,7 @@ public class Property {
     public String getJavaType() {
         return javaType;
     }
-    
+
     public int getOrdinal() {
         return ordinal;
     }
@@ -207,6 +207,10 @@ public class Property {
         if (constraintBuilder.length() > 0) {
             constraints = newContraints;
         }
+    }
+
+    public void init3ndPass() {
+        // Nothing to do so far
     }
 
 }

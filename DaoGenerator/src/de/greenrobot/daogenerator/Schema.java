@@ -157,5 +157,12 @@ public class Schema {
             entity.init2ndPass();
         }
     }
+    
+    void init3ndPass() {
+        for (Entity entity : entities) {
+            entity.init3ndPass();
+        }
+    }
+
 
 }

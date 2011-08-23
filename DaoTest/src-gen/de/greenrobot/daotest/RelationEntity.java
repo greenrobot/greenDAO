@@ -27,6 +27,9 @@ public class RelationEntity {
     private TestEntity testNotNull;
     private Long testNotNull__resolvedKey;
 
+    private TestEntity testWithoutProperty;
+    private boolean testWithoutProperty__refreshed;
+
     public RelationEntity() {
     }
 
@@ -145,6 +148,24 @@ public class RelationEntity {
         this.testNotNull = testNotNull;
         testIdNotNull = testNotNull.getId();
         testNotNull__resolvedKey = testIdNotNull;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    public TestEntity getTestWithoutProperty() {
+        if (testWithoutProperty != null || !testWithoutProperty__refreshed) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            TestEntityDao dao = daoSession.getTestEntityDao();
+            dao.refresh(testWithoutProperty);
+            testWithoutProperty__refreshed = true;
+        }
+        return testWithoutProperty;
+    }
+
+    public void setTestWithoutProperty(TestEntity testWithoutProperty) {
+        this.testWithoutProperty = testWithoutProperty;
+        testWithoutProperty__refreshed = true;
     }
 
 }

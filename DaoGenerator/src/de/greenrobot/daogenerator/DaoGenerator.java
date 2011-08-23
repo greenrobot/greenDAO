@@ -67,6 +67,7 @@ public class DaoGenerator {
         Template templateDaoUnitTest = config.getTemplate("dao-unit-test.ftl");
 
         schema.init2ndPass();
+        schema.init3ndPass();
 
         List<Entity> entities = schema.getEntities();
 

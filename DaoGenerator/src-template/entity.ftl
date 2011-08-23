@@ -42,7 +42,11 @@ public class ${entity.className} <#if entity.active && false>extends ActiveEntit
 
 <#list entity.toOneRelations as toOne>
     private ${toOne.targetEntity.className} ${toOne.name};
+<#if toOne.fkProperties?has_content>
     private ${toOne.resolvedKeyJavaType[0]} ${toOne.name}__resolvedKey;
+<#else>
+    private boolean ${toOne.name}__refreshed;
+</#if>
 
 </#list>    
 </#if>
@@ -87,6 +91,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 <#list entity.toOneRelations as toOne>
     /** To-one relationship, resolved on first access. */
     public ${toOne.targetEntity.className} get${toOne.name?cap_first}() {
+<#if toOne.fkProperties?has_content>    
         if (${toOne.name}__resolvedKey == null || <#--
         --><#if toOne.resolvedKeyUseEquals[0]>!${toOne.name}__resolvedKey.equals(${toOne.fkProperties[0].propertyName})<#--
         --><#else>${toOne.name}__resolvedKey != ${toOne.fkProperties[0].propertyName}</#if>) {
@@ -97,18 +102,32 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
             ${toOne.name} = dao.load(${toOne.fkProperties[0].propertyName});
             ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
         }
+<#else>
+        if (${toOne.name} != null || !${toOne.name}__refreshed) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            ${toOne.targetEntity.classNameDao} dao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
+            dao.refresh(${toOne.name});
+            ${toOne.name}__refreshed = true;
+        }
+</#if>
         return ${toOne.name};
     }
 
     public void set${toOne.name?cap_first}(${toOne.targetEntity.className} ${toOne.name}) {
-<#if toOne.fkProperties[0].notNull>
+<#if toOne.fkColumns[0].notNull>
         if (${toOne.name} == null) {
             throw new DaoException("To-one property '${toOne.fkProperties[0].propertyName}' has not-null constraint; cannot set to-one to null");
         }
 </#if>
         this.${toOne.name} = ${toOne.name};
+<#if toOne.fkProperties?has_content>        
         ${toOne.fkProperties[0].propertyName} = <#if !toOne.fkProperties[0].notNull>${toOne.name} == null ? null : </#if>${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}();
         ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
+<#else>
+        ${toOne.name}__refreshed = true;
+</#if>
     }
 
 </#list>

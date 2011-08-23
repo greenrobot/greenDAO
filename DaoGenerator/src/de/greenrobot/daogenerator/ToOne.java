@@ -22,6 +22,7 @@ public class ToOne {
     private final Entity sourceEntity;
     private final Entity targetEntity;
     private final Property[] fkProperties;
+    private Column[] fkColumns;
     private final String[] resolvedKeyJavaType;
     private final boolean[] resolvedKeyUseEquals;
     private String name;
@@ -31,8 +32,20 @@ public class ToOne {
         this.sourceEntity = sourceEntity;
         this.targetEntity = targetEntity;
         this.fkProperties = fkProperties;
+        this.fkColumns = null;
         resolvedKeyJavaType = new String[fkProperties.length];
         resolvedKeyUseEquals = new boolean[fkProperties.length];
+    }
+
+    public ToOne(Schema schema, Entity sourceEntity, String name, Entity targetEntity, Column[] fkColumns) {
+        this.schema = schema;
+        this.sourceEntity = sourceEntity;
+        this.name = name;
+        this.targetEntity = targetEntity;
+        this.fkColumns = fkColumns;
+        this.fkProperties = null;
+        resolvedKeyJavaType = new String[fkColumns.length];
+        resolvedKeyUseEquals = new boolean[fkColumns.length];
     }
 
     public Entity getSourceEntity() {
@@ -45,6 +58,10 @@ public class ToOne {
 
     public Property[] getFkProperties() {
         return fkProperties;
+    }
+
+    public Column[] getFkColumns() {
+        return fkColumns;
     }
 
     public String[] getResolvedKeyJavaType() {
@@ -69,11 +86,38 @@ public class ToOne {
             nameCharArray[0] = Character.toLowerCase(nameCharArray[0]);
             name = new String(nameCharArray);
         }
-        for (int i = 0; i < fkProperties.length; i++) {
-            Property property = fkProperties[i];
-            PropertyType propertyType = property.getPropertyType();
-            resolvedKeyJavaType[i] = schema.mapToJavaTypeNullable(propertyType);
-            resolvedKeyUseEquals[i] = checkUseEquals(propertyType);
+        if (fkProperties != null) {
+            for (int i = 0; i < fkProperties.length; i++) {
+                Property property = fkProperties[i];
+                PropertyType propertyType = property.getPropertyType();
+                resolvedKeyJavaType[i] = schema.mapToJavaTypeNullable(propertyType);
+                resolvedKeyUseEquals[i] = checkUseEquals(propertyType);
+            }
+        } else {
+            if (fkColumns == null) {
+                throw new RuntimeException("Neither FK properties or columns are present");
+            }
+        }
+    }
+
+    public void init3ndPass() {
+        if (fkColumns != null) {
+            if (fkColumns.length != 1) {
+                throw new RuntimeException("Currently only single FK columns are supported: " + this);
+            }
+            Property targetPkProperty = targetEntity.getPkProperty();
+            fkColumns[0].setType(targetPkProperty.getColumnType());
+            PropertyType propertyType = targetPkProperty.getPropertyType();
+            resolvedKeyJavaType[0] = schema.mapToJavaTypeNullable(propertyType);
+            resolvedKeyUseEquals[0] = checkUseEquals(propertyType);
+        } else {
+            fkColumns = new Column[fkProperties.length];
+            for (int i = 0; i < fkProperties.length; i++) {
+                String name = fkProperties[i].getColumnName();
+                String type = fkProperties[i].getColumnType();
+                boolean notNull = fkProperties[i].isNotNull();
+                fkColumns[i] = new Column(name, type, notNull);
+            }
         }
     }
 
@@ -93,6 +137,11 @@ public class ToOne {
             break;
         }
         return useEquals;
+    }
+
+    @Override
+    public String toString() {
+        return "ToOne '" + name + "' from " + sourceEntity + " to " + targetEntity;
     }
 
 }

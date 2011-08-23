@@ -50,7 +50,6 @@ public class TestDaoGenerator {
         createAbcdef();
     }
 
-
     public void generate() throws Exception {
         new DaoGenerator().generateAll("../DaoTest/src-gen", "../DaoTest/src", schema);
     }
@@ -105,6 +104,7 @@ public class TestDaoGenerator {
         Property testIdNotNullProperty = relationEntity.addLongProperty("testIdNotNull").notNull().getProperty();
         relationEntity.addToOne(testEntity, testIdNotNullProperty).setName("testNotNull");
         relationEntity.addStringProperty("simpleString");
+        relationEntity.addToOneWithoutProperty("testWithoutProperty", testEntity, "WITHOUT_PROPERTY_TEST_ID", false);
     }
 
     protected void createDate() {
@@ -126,7 +126,6 @@ public class TestDaoGenerator {
         specialNamesEntity.addStringProperty("on");
         specialNamesEntity.addStringProperty("index");
     }
-
 
     private void createAbcdef() {
         Entity entity = schema.addEntity("AbcdefEntity");

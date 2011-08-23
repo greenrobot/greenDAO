@@ -56,16 +56,22 @@ public class DaoSession extends AbstractDaoSession {
 
         simpleEntityDaoConfig = daoConfigMap.get(SimpleEntityDao.class).clone();
         simpleEntityDaoConfig.initIdentityScope(type);
+
         simpleEntityNotNullDaoConfig = daoConfigMap.get(SimpleEntityNotNullDao.class).clone();
         simpleEntityNotNullDaoConfig.initIdentityScope(type);
+
         testEntityDaoConfig = daoConfigMap.get(TestEntityDao.class).clone();
         testEntityDaoConfig.initIdentityScope(type);
+
         relationEntityDaoConfig = daoConfigMap.get(RelationEntityDao.class).clone();
         relationEntityDaoConfig.initIdentityScope(type);
+
         dateEntityDaoConfig = daoConfigMap.get(DateEntityDao.class).clone();
         dateEntityDaoConfig.initIdentityScope(type);
+
         specialNamesEntityDaoConfig = daoConfigMap.get(SpecialNamesEntityDao.class).clone();
         specialNamesEntityDaoConfig.initIdentityScope(type);
+
         abcdefEntityDaoConfig = daoConfigMap.get(AbcdefEntityDao.class).clone();
         abcdefEntityDaoConfig.initIdentityScope(type);
 
