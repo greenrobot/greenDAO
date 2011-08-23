@@ -193,8 +193,12 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         dao.insert(entity);
 
         Cursor cursor = queryWithDummyColumnsInFront(5, "42", pk);
-        T entity2 = daoAccess.readEntity(cursor, 5);
-        assertEquals(pk, daoAccess.getKey(entity2));
+        try {
+            T entity2 = daoAccess.readEntity(cursor, 5);
+            assertEquals(pk, daoAccess.getKey(entity2));
+        } finally {
+            cursor.close();
+        }
     }
 
     public void testLoadPkWithOffset() {
@@ -211,8 +215,12 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         dao.insert(entity);
 
         Cursor cursor = queryWithDummyColumnsInFront(offset, "42", pk);
-        K pk2 = daoAccess.readKey(cursor, offset);
-        assertEquals(pk, pk2);
+        try {
+            K pk2 = daoAccess.readKey(cursor, offset);
+            assertEquals(pk, pk2);
+        } finally {
+            cursor.close();
+        }
     }
 
     protected Cursor queryWithDummyColumnsInFront(int dummyCount, String valueForColumn, K pk) {
@@ -233,11 +241,16 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         String select = builder.toString();
         Cursor cursor = db.rawQuery(select, null);
         assertTrue(cursor.moveToFirst());
-        for (int i = 0; i < dummyCount; i++) {
-            assertEquals(valueForColumn, cursor.getString(i));
-        }
-        if (pk != null) {
-            assertEquals(1, cursor.getCount());
+        try {
+            for (int i = 0; i < dummyCount; i++) {
+                assertEquals(valueForColumn, cursor.getString(i));
+            }
+            if (pk != null) {
+                assertEquals(1, cursor.getCount());
+            }
+        } catch (RuntimeException ex) {
+            cursor.close();
+            throw ex;
         }
         return cursor;
     }
