@@ -19,12 +19,12 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
     }
 
     public void testPerformance() throws Exception {
-        runTests(1000);
-        runTests(1000);
-        runTests(1000);
-        runTests(1000);
-        runTests(1000);
-        runTests(1000);
+        // runTests(1000);
+        // runTests(1000);
+        // runTests(1000);
+        // runTests(1000);
+        // runTests(1000);
+        // runTests(1000);
     }
 
     protected void runTests(int entityCount) {
@@ -40,7 +40,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
         System.gc();
 
         dao.deleteAll();
-        runOneByOneTests(list, entityCount, entityCount / 10);
+        // runOneByOneTests(list, entityCount, entityCount / 10);
         dao.deleteAll();
         DaoLog.d("------------------------");
         System.gc();

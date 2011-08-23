@@ -28,7 +28,7 @@ final class FastCursor implements Cursor {
 
     private final CursorWindow window;
     private int position;
-    private int count;
+    private final int count;
 
     FastCursor(CursorWindow window) {
         this.window = window;
@@ -243,6 +243,11 @@ final class FastCursor implements Cursor {
 
     @Override
     public Bundle respond(Bundle extras) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Since API level 11 */
+    public int getType(int columnIndex) {
         throw new UnsupportedOperationException();
     }
 
