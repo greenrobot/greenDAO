@@ -16,6 +16,8 @@
 
 package de.greenrobot.dao;
 
+import java.util.Collection;
+
 import de.greenrobot.dao.WhereCondition.PropertyCondition;
 
 /**
@@ -59,6 +61,10 @@ public class Property {
         StringBuilder condition = new StringBuilder(" IN (");
         SqlUtils.appendPlaceholders(condition, inValues.length).append(')');
         return new PropertyCondition(this, condition.toString(), inValues);
+    }
+
+    public WhereCondition in(Collection<?> inValues) {
+        return in(inValues.toArray());
     }
 
     public WhereCondition gt(Object value) {
