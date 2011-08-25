@@ -36,6 +36,7 @@ public class TestDaoGenerator {
 
     private Schema schema;
     private Entity testEntity;
+    private Schema schema2;
 
     public TestDaoGenerator() {
         schema = new Schema(1, "de.greenrobot.daotest");
@@ -48,10 +49,18 @@ public class TestDaoGenerator {
         createDate();
         createSpecialNames();
         createAbcdef();
+
+        schema2 = new Schema(1, "de.greenrobot.daotest2");
+        schema2.setDefaultJavaPackageTest("de.greenrobot.daotest2.entity");
+        schema2.enableKeepSections();
+        
+        schema2.addEntity("KeepEntity").addIdProperty();
     }
 
     public void generate() throws Exception {
-        new DaoGenerator().generateAll("../DaoTest/src-gen", "../DaoTest/src", schema);
+        DaoGenerator daoGenerator = new DaoGenerator();
+        daoGenerator.generateAll("../DaoTest/src-gen", "../DaoTest/src", schema);
+        daoGenerator.generateAll("../DaoTest/src-gen", "../DaoTest/src", schema2);
     }
 
     protected void createSimple() {

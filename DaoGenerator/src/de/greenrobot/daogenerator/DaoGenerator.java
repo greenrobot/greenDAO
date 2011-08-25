@@ -24,6 +24,8 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -36,6 +38,42 @@ import freemarker.template.Template;
  */
 public class DaoGenerator {
 
+    private Pattern patternKeepIncludes;
+    private Pattern patternKeepFields;
+    private Pattern patternKeepMethods;
+
+    private Template templateDao;
+    private Template templateDaoMaster;
+    private Template templateDaoSession;
+    private Template templateEntity;
+    private Template templateDaoUnitTest;
+
+    public DaoGenerator() throws IOException {
+        System.out.println("greenDAO Generator (preview)");
+        System.out.println("Copyright 2011 Markus Junginger, greenrobot.de. Licensed under GPL V3.");
+        System.out.println("This program comes with ABSOLUTELY NO WARRANTY");
+
+        patternKeepIncludes = compilePattern("INCLUDES");
+        patternKeepFields = compilePattern("FIELDS");
+        patternKeepMethods = compilePattern("METHODS");
+
+        Configuration config = new Configuration();
+        config.setClassForTemplateLoading(this.getClass(), "/");
+        config.setObjectWrapper(new DefaultObjectWrapper());
+
+        templateDao = config.getTemplate("dao.ftl");
+        templateDaoMaster = config.getTemplate("dao-master.ftl");
+        templateDaoSession = config.getTemplate("dao-session.ftl");
+        templateEntity = config.getTemplate("entity.ftl");
+        templateDaoUnitTest = config.getTemplate("dao-unit-test.ftl");
+    }
+
+    private Pattern compilePattern(String sectionName) {
+        int flags = Pattern.DOTALL | Pattern.MULTILINE;
+        return Pattern.compile(".*^\\s*?//\\s*?KEEP " + sectionName + ".*?\n(.*?)^\\s*// KEEP " + sectionName
+                + " END.*?\n", flags);
+    }
+
     /** Generates all entities and DAOs for the given schema. */
     public void generateAll(String outDir, Schema schema) throws Exception {
         generateAll(outDir, null, schema);
@@ -45,26 +83,12 @@ public class DaoGenerator {
     public void generateAll(String outDir, String outDirTest, Schema schema) throws Exception {
         long start = System.currentTimeMillis();
 
-        System.out.println("greenDAO Generator (preview)");
-        System.out.println("Copyright 2011 Markus Junginger, greenrobot.de. Licensed under GPL V3.");
-        System.out.println("This program comes with ABSOLUTELY NO WARRANTY");
-
         File outDirFile = toFileForceExists(outDir);
 
         File outDirTestFile = null;
         if (outDirTest != null) {
             outDirTestFile = toFileForceExists(outDirTest);
         }
-
-        Configuration config = new Configuration();
-        config.setClassForTemplateLoading(this.getClass(), "/");
-        config.setObjectWrapper(new DefaultObjectWrapper());
-
-        Template templateDao = config.getTemplate("dao.ftl");
-        Template templateDaoMaster = config.getTemplate("dao-master.ftl");
-        Template templateDaoSession = config.getTemplate("dao-session.ftl");
-        Template templateEntity = config.getTemplate("entity.ftl");
-        Template templateDaoUnitTest = config.getTemplate("dao-unit-test.ftl");
 
         schema.init2ndPass();
         schema.init3ndPass();
@@ -113,6 +137,10 @@ public class DaoGenerator {
             root.put("schema", schema);
             root.put("entity", entity);
 
+            if (schema.isKeepSections()) {
+                checkKeepSections(file, root);
+            }
+
             Writer writer = new FileWriter(file);
             try {
                 template.process(root, writer);
@@ -125,6 +153,34 @@ public class DaoGenerator {
             System.err.println("Error while generating " + javaPackage + "." + javaClassName + " ("
                     + outDirFile.getCanonicalPath() + ")");
             throw ex;
+        }
+    }
+
+    private void checkKeepSections(File file, Map<String, Object> root) {
+        if (file.exists()) {
+            try {
+                String contents = new String(DaoUtil.readAllBytes(file));
+
+                Matcher matcher;
+
+                matcher = patternKeepIncludes.matcher(contents);
+                if (matcher.matches()) {
+                    System.out.println(">>>>>>>>>>" + matcher.group(1));
+                    root.put("keepIncludes", matcher.group(1));
+                }
+
+                matcher = patternKeepFields.matcher(contents);
+                if (matcher.matches()) {
+                    root.put("keepFields", matcher.group(1));
+                }
+
+                matcher = patternKeepMethods.matcher(contents);
+                if (matcher.matches()) {
+                    root.put("keepMethods", matcher.group(1));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -34,7 +34,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
             builder.append(" FROM ${entity.tableName} T");
 <#list entity.toOneRelations as toOne>
             builder.append(" LEFT JOIN ${toOne.targetEntity.tableName} T${toOne_index}<#--
---> ON T.${toOne.fkColumns[0].name}=T${toOne_index}.${toOne.targetEntity.pkProperty.columnName}");
+--> ON T.'${toOne.fkColumns[0].name}'=T${toOne_index}.'${toOne.targetEntity.pkProperty.columnName}'");
 </#list>
             builder.append(' ');
             selectDeep = builder.toString();

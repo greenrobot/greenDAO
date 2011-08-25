@@ -32,12 +32,17 @@ public class Schema {
     private Map<PropertyType, String> propertyToDbType;
     private Map<PropertyType, String> propertyToJavaTypeNotNull;
     private Map<PropertyType, String> propertyToJavaTypeNullable;
+    private boolean keepSections;
 
     public Schema(int version, String defaultJavaPackage) {
         this.version = version;
         this.defaultJavaPackage = defaultJavaPackage;
         this.entities = new ArrayList<Entity>();
         initTypeMappings();
+    }
+
+    public void enableKeepSections() {
+        keepSections = true;
     }
 
     private void initTypeMappings() {
@@ -133,7 +138,7 @@ public class Schema {
     public void setDefaultJavaPackageDao(String defaultJavaPackageDao) {
         this.defaultJavaPackageDao = defaultJavaPackageDao;
     }
-    
+
     public String getDefaultJavaPackageTest() {
         return defaultJavaPackageTest;
     }
@@ -144,6 +149,10 @@ public class Schema {
 
     public List<Entity> getEntities() {
         return entities;
+    }
+    
+    public boolean isKeepSections() {
+        return keepSections;
     }
 
     void init2ndPass() {
@@ -157,12 +166,11 @@ public class Schema {
             entity.init2ndPass();
         }
     }
-    
+
     void init3ndPass() {
         for (Entity entity : entities) {
             entity.init3ndPass();
         }
     }
-
 
 }

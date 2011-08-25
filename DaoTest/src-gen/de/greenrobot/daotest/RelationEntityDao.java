@@ -84,6 +84,14 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         if (simpleString != null) {
             stmt.bindString(5, simpleString);
         }
+
+        TestEntity testWithoutProperty = entity.peakTestWithoutProperty();
+        if(testWithoutProperty != null) {
+            Long testWithoutProperty__targetKey = testWithoutProperty.getId();
+            if(testWithoutProperty__targetKey != null) {
+                // TODO bind testWithoutProperty__targetKey
+            }
+        }
     }
 
     @Override
@@ -158,10 +166,10 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
             builder.append(',');
             SqlUtils.appendColumns(builder, "T3", daoSession.getTestEntityDao().getAllColumns());
             builder.append(" FROM RELATION_ENTITY T");
-            builder.append(" LEFT JOIN RELATION_ENTITY T0 ON T.PARENT_ID=T0._id");
-            builder.append(" LEFT JOIN TEST_ENTITY T1 ON T.TEST_ID=T1._id");
-            builder.append(" LEFT JOIN TEST_ENTITY T2 ON T.TEST_ID_NOT_NULL=T2._id");
-            builder.append(" LEFT JOIN TEST_ENTITY T3 ON T.WITHOUT_PROPERTY_TEST_ID=T3._id");
+            builder.append(" LEFT JOIN RELATION_ENTITY T0 ON T.'PARENT_ID'=T0.'_id'");
+            builder.append(" LEFT JOIN TEST_ENTITY T1 ON T.'TEST_ID'=T1.'_id'");
+            builder.append(" LEFT JOIN TEST_ENTITY T2 ON T.'TEST_ID_NOT_NULL'=T2.'_id'");
+            builder.append(" LEFT JOIN TEST_ENTITY T3 ON T.'WITHOUT_PROPERTY_TEST_ID'=T3.'_id'");
             builder.append(' ');
             selectDeep = builder.toString();
         }
