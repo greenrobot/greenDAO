@@ -32,9 +32,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>DaoBase_src</name>
+			<name>DaoCore_src</name>
 			<type>2</type>
-			<locationURI>_android_DaoBase_b8e97d63/src</locationURI>
+			<locationURI>_android_DaoCore_b8ea2631/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
