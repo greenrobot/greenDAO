@@ -119,7 +119,7 @@ public class Query<T> {
     public T uniqueOrThrow() {
         T entity = unique();
         if (entity == null) {
-            new DaoException("No entity found for query");
+            throw new DaoException("No entity found for query");
         }
         return entity;
     }

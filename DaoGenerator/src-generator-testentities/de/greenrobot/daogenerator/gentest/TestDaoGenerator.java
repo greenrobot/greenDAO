@@ -100,6 +100,8 @@ public class TestDaoGenerator {
         testEntity.addStringProperty("simpleString");
         testEntity.addStringProperty("indexedString").index();
         testEntity.addStringProperty("indexedStringAscUnique").indexAsc(null, true);
+        testEntity.addDateProperty("simpleDate");
+        testEntity.addBooleanProperty("simpleBoolean");
         return testEntity;
     }
 

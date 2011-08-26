@@ -13,6 +13,8 @@ public class TestEntity {
     private String simpleString;
     private String indexedString;
     private String indexedStringAscUnique;
+    private java.util.Date simpleDate;
+    private Boolean simpleBoolean;
 
     public TestEntity() {
     }
@@ -21,7 +23,7 @@ public class TestEntity {
         this.id = id;
     }
 
-    public TestEntity(Long id, int simpleInt, Integer simpleInteger, String simpleStringNotNull, String simpleString, String indexedString, String indexedStringAscUnique) {
+    public TestEntity(Long id, int simpleInt, Integer simpleInteger, String simpleStringNotNull, String simpleString, String indexedString, String indexedStringAscUnique, java.util.Date simpleDate, Boolean simpleBoolean) {
         this.id = id;
         this.simpleInt = simpleInt;
         this.simpleInteger = simpleInteger;
@@ -29,6 +31,8 @@ public class TestEntity {
         this.simpleString = simpleString;
         this.indexedString = indexedString;
         this.indexedStringAscUnique = indexedStringAscUnique;
+        this.simpleDate = simpleDate;
+        this.simpleBoolean = simpleBoolean;
     }
 
     public Long getId() {
@@ -85,6 +89,22 @@ public class TestEntity {
 
     public void setIndexedStringAscUnique(String indexedStringAscUnique) {
         this.indexedStringAscUnique = indexedStringAscUnique;
+    }
+
+    public java.util.Date getSimpleDate() {
+        return simpleDate;
+    }
+
+    public void setSimpleDate(java.util.Date simpleDate) {
+        this.simpleDate = simpleDate;
+    }
+
+    public Boolean getSimpleBoolean() {
+        return simpleBoolean;
+    }
+
+    public void setSimpleBoolean(Boolean simpleBoolean) {
+        this.simpleBoolean = simpleBoolean;
     }
 
 }

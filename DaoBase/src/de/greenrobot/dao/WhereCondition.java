@@ -15,7 +15,7 @@
  */
 package de.greenrobot.dao;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 public interface WhereCondition {

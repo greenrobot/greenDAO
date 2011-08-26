@@ -1,6 +1,7 @@
 package de.greenrobot.daotest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.dao.QueryBuilder;
@@ -49,7 +50,7 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
                 .orderAsc(Properties.SimpleString).list();
         assertEquals(3, result.size());
 
-        TestEntity resultEntity1= result.get(0);
+        TestEntity resultEntity1 = result.get(0);
         assertEquals(value1, resultEntity1.getSimpleString());
         assertEquals(inserted.get(2).getId(), resultEntity1.getId());
 
@@ -89,6 +90,35 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         long hiId = Math.max(resultEntity1.getId(), resultEntity2.getId());
         assertEquals((long) inserted.get(0).getId(), loId);
         assertEquals((long) inserted.get(2).getId(), hiId);
+    }
+
+    public void testEqDate() {
+        ArrayList<TestEntity> inserted = insert(3);
+        TestEntity testEntity = inserted.get(1);
+
+        Date date = new Date();
+        testEntity.setSimpleDate(date);
+        dao.update(testEntity);
+
+        TestEntity testEntity2 = dao.queryBuilder().where(Properties.SimpleDate.eq(date)).uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
+
+        TestEntity testEntity3 = dao.queryBuilder().where(Properties.SimpleDate.eq(date.getTime())).uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity3.getId());
+    }
+
+    public void testEqBoolean() {
+        ArrayList<TestEntity> inserted = insert(3);
+        TestEntity testEntity = inserted.get(1);
+
+        testEntity.setSimpleBoolean(true);
+        dao.update(testEntity);
+
+        TestEntity testEntity2 = dao.queryBuilder().where(Properties.SimpleBoolean.eq(true)).uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
+
+        TestEntity testEntity3 = dao.queryBuilder().where(Properties.SimpleBoolean.eq(Boolean.TRUE)).uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity3.getId());
     }
 
 }
