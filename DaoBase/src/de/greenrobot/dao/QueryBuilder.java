@@ -154,6 +154,14 @@ public class QueryBuilder<T> {
         return this;
     }
 
+    public QueryBuilder<T> orderDesc(Property... properties) {
+        checkOrderBuilder();
+        for (Property property : properties) {
+            append(orderBuilder, property).append(" DESC");
+        }
+        return this;
+    }
+
     protected StringBuilder append(StringBuilder builder, Property property) {
         checkProperty(property);
         builder.append(tablePrefix).append('.').append(property.columnName);

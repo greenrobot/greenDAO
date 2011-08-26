@@ -15,6 +15,7 @@
  */
 package de.greenrobot.dao;
 
+import java.sql.Date;
 import java.util.List;
 
 public interface WhereCondition {
@@ -62,6 +63,47 @@ public interface WhereCondition {
 
     public static class PropertyCondition extends AbstractCondition {
 
+        private static Object checkValueForType(Property property, Object value) {
+            Class<?> type = property.type;
+            if (type == Date.class) {
+                if (value instanceof Date) {
+                    return ((Date) value).getTime();
+                } else if (value instanceof Long) {
+                    return value;
+                } else {
+                    throw new DaoException("Illegal date value: expected java.util.Date or Long for value " + value);
+                }
+            } else if (property.type == boolean.class || property.type == Boolean.class) {
+                if (value instanceof Boolean) {
+                    return ((Boolean) value) ? 1 : 0;
+                } else if (value instanceof Number) {
+                    int intValue = ((Number) value).intValue();
+                    if (intValue != 0 && intValue != 1) {
+                        throw new DaoException("Illegal boolean value: numbers must be 0 or 1, but was " + value);
+                    }
+                } else if (value instanceof String) {
+                    String stringValue = ((String) value);
+                    if ("TRUE".equalsIgnoreCase(stringValue)) {
+                        return 1;
+                    } else if ("FALSE".equalsIgnoreCase(stringValue)) {
+                        return 0;
+                    } else {
+                        throw new DaoException(
+                                "Illegal boolean value: Strings must be \"TRUE\" or \"FALSE\" (case insesnsitive), but was "
+                                        + value);
+                    }
+                }
+            }
+            return value;
+        }
+
+        private static Object[] checkValuesForType(Property property, Object[] values) {
+            for (int i = 0; i < values.length; i++) {
+                values[i] = checkValueForType(property, values[i]);
+            }
+            return values;
+        }
+
         public final Property property;
         public final String op;
 
@@ -71,13 +113,13 @@ public interface WhereCondition {
         }
 
         public PropertyCondition(Property property, String op, Object value) {
-            super(value);
+            super(checkValueForType(property, value));
             this.property = property;
             this.op = op;
         }
 
         public PropertyCondition(Property property, String op, Object[] values) {
-            super(values);
+            super(checkValuesForType(property, values));
             this.property = property;
             this.op = op;
         }
