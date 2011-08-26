@@ -103,8 +103,8 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         TestEntity testEntity2 = dao.queryBuilder().where(Properties.SimpleDate.eq(date)).uniqueOrThrow();
         assertEquals(testEntity.getId(), testEntity2.getId());
 
-        TestEntity testEntity3 = dao.queryBuilder().where(Properties.SimpleDate.eq(date.getTime())).uniqueOrThrow();
-        assertEquals(testEntity.getId(), testEntity3.getId());
+        testEntity2 = dao.queryBuilder().where(Properties.SimpleDate.eq(date.getTime())).uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
     }
 
     public void testEqBoolean() {
@@ -117,8 +117,31 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         TestEntity testEntity2 = dao.queryBuilder().where(Properties.SimpleBoolean.eq(true)).uniqueOrThrow();
         assertEquals(testEntity.getId(), testEntity2.getId());
 
-        TestEntity testEntity3 = dao.queryBuilder().where(Properties.SimpleBoolean.eq(Boolean.TRUE)).uniqueOrThrow();
-        assertEquals(testEntity.getId(), testEntity3.getId());
+        testEntity2 = dao.queryBuilder().where(Properties.SimpleBoolean.eq(Boolean.TRUE)).uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
+
+        testEntity2 = dao.queryBuilder().where(Properties.SimpleBoolean.eq("TRUE")).uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
+
+        testEntity2 = dao.queryBuilder().where(Properties.SimpleBoolean.eq("truE")).uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
+    }
+
+    public void testIsNullIsNotNull() {
+        ArrayList<TestEntity> inserted = insert(2);
+        TestEntity testEntityNull = inserted.get(0);
+        TestEntity testEntityNotNull = inserted.get(1);
+
+        testEntityNull.setSimpleInteger(null);
+        testEntityNotNull.setSimpleInteger(42);
+        dao.update(testEntityNull);
+        dao.update(testEntityNotNull);
+        
+        TestEntity testEntityNull2 = dao.queryBuilder().where(Properties.SimpleInteger.isNull()).uniqueOrThrow();
+        assertEquals(testEntityNull.getId(), testEntityNull2.getId());
+        
+        TestEntity testEntityNotNull2 = dao.queryBuilder().where(Properties.SimpleInteger.isNotNull()).uniqueOrThrow();
+        assertEquals(testEntityNotNull.getId(), testEntityNotNull2.getId());
     }
 
 }
