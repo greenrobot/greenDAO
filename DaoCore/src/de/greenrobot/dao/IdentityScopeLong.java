@@ -46,8 +46,12 @@ public class IdentityScopeLong<T> implements IdentityScope<Long, T> {
 
     public T get2(long key) {
         lock.lock();
-        WeakReference<T> ref = map.get(key);
-        lock.unlock();
+        WeakReference<T> ref;
+        try {
+            ref = map.get(key);
+        } finally {
+            lock.unlock();
+        }
         if (ref != null) {
             return ref.get();
         } else {
@@ -76,8 +80,11 @@ public class IdentityScopeLong<T> implements IdentityScope<Long, T> {
 
     public void put2(long key, T entity) {
         lock.lock();
-        map.put(key, new WeakReference<T>(entity));
-        lock.unlock();
+        try {
+            map.put(key, new WeakReference<T>(entity));
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void put2NoLock(long key, T entity) {
@@ -87,28 +94,36 @@ public class IdentityScopeLong<T> implements IdentityScope<Long, T> {
     @Override
     public boolean detach(Long key, T entity) {
         lock.lock();
-        if (get(key) == entity && entity != null) {
-            remove(key);
+        try {
+            if (get(key) == entity && entity != null) {
+                remove(key);
+                return true;
+            } else {
+                return false;
+            }
+        } finally {
             lock.unlock();
-            return true;
-        } else {
-            lock.unlock();
-            return false;
         }
     }
 
     @Override
     public void remove(Long key) {
         lock.lock();
-        map.remove(key);
-        lock.unlock();
+        try {
+            map.remove(key);
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
     public void clear() {
         lock.lock();
-        map.clear();
-        lock.unlock();
+        try {
+            map.clear();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override

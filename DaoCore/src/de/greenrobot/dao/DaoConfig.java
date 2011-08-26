@@ -21,7 +21,7 @@ import java.util.List;
 
 import android.database.sqlite.SQLiteDatabase;
 
-public final class DaoConfig {
+public final class DaoConfig implements Cloneable {
 
     final SQLiteDatabase db;
     final String tablename;
