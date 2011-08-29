@@ -147,6 +147,24 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         assertNull(dao.load(pk));
     }
 
+    public void testDeleteAll() {
+        List<K> pkList = new ArrayList<K>();
+        int LIST_SIZE = 100;
+        for (int i = 0; i < LIST_SIZE; i++) {
+            K pk = nextPk();
+            T entity = createEntity(pk);
+            dao.insert(entity);
+            assertNotNull(dao.load(pk));
+            pkList.add(pk);
+        }
+
+        dao.deleteAll();
+
+        for (int i = 0; i < LIST_SIZE; i++) {
+            assertNull(dao.load(pkList.get(i)));
+        }
+    }
+
     public void testRowId() {
         T entity1 = createEntityWithRandomPk();
         T entity2 = createEntityWithRandomPk();
