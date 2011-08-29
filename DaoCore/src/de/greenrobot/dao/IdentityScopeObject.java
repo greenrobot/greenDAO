@@ -15,6 +15,7 @@
  */
 package de.greenrobot.dao;
 
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -27,17 +28,17 @@ import java.util.concurrent.locks.ReentrantLock;
  * @param <T>
  */
 public class IdentityScopeObject<K, T> implements IdentityScope<K, T> {
-    private final HashMap<K, WeakReference<T>> map;
+    private final HashMap<K, Reference<T>> map;
     private final ReentrantLock lock;
 
     public IdentityScopeObject() {
-        map = new HashMap<K, WeakReference<T>>();
+        map = new HashMap<K, Reference<T>>();
         lock = new ReentrantLock();
     }
 
     @Override
     public T get(K key) {
-        WeakReference<T> ref;
+        Reference<T> ref;
         lock.lock();
         try {
             ref = map.get(key);
@@ -53,7 +54,7 @@ public class IdentityScopeObject<K, T> implements IdentityScope<K, T> {
 
     @Override
     public T getNoLock(K key) {
-        WeakReference<T> ref = map.get(key);
+        Reference<T> ref = map.get(key);
         if (ref != null) {
             return ref.get();
         } else {
