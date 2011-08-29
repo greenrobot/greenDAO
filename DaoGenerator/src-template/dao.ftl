@@ -116,6 +116,22 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
         }
 </#if>
 </#list>
+<#list entity.toOneRelations as toOne>
+<#if !toOne.fkProperties?has_content>
+
+        ${toOne.targetEntity.className} ${toOne.name} = entity.peak${toOne.name?cap_first}();
+        if(${toOne.name} != null) {
+            ${toOne.targetEntity.pkProperty.javaType} ${toOne.name}__targetKey = ${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}();
+<#if !toOne.targetEntity.pkProperty.notNull>
+            if(${toOne.name}__targetKey != null) {
+                // TODO bind ${toOne.name}__targetKey
+            }
+<#else>
+            // TODO bind ${toOne.name}__targetKey
+</#if>
+        }
+</#if>
+</#list>
     }
 
 <#if entity.active>
