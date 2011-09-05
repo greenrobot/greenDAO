@@ -101,7 +101,7 @@ public class Property {
     @SuppressWarnings("unused")
     private final Schema schema;
     private final Entity entity;
-    private final PropertyType propertyType;
+    private PropertyType propertyType;
     private final String propertyName;
 
     private String columnName;
@@ -133,6 +133,10 @@ public class Property {
 
     public PropertyType getPropertyType() {
         return propertyType;
+    }
+
+    public void setPropertyType(PropertyType propertyType) {
+        this.propertyType = propertyType;
     }
 
     public String getColumnName() {

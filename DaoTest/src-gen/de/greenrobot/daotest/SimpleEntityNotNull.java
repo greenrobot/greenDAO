@@ -14,7 +14,9 @@ public class SimpleEntityNotNull {
     private long simpleLong;
     private float simpleFloat;
     private double simpleDouble;
+    /** Not-null value. */
     private String simpleString;
+    /** Not-null value. */
     private byte[] simpleByteArray;
 
     public SimpleEntityNotNull() {
@@ -101,18 +103,22 @@ public class SimpleEntityNotNull {
         this.simpleDouble = simpleDouble;
     }
 
+    /** Not-null value. */
     public String getSimpleString() {
         return simpleString;
     }
 
+    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setSimpleString(String simpleString) {
         this.simpleString = simpleString;
     }
 
+    /** Not-null value. */
     public byte[] getSimpleByteArray() {
         return simpleByteArray;
     }
 
+    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setSimpleByteArray(byte[] simpleByteArray) {
         this.simpleByteArray = simpleByteArray;
     }

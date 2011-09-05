@@ -29,6 +29,7 @@ public class Entity {
     private final Schema schema;
     private final String className;
     private final List<Property> properties;
+    private List<Property> propertiesColumns;
     private final List<Property> propertiesPk;
     private final List<Property> propertiesNonPk;
     private final Set<String> propertyNames;
@@ -43,11 +44,13 @@ public class Entity {
     private String javaPackageTest;
     private Property pkProperty;
     private String pkType;
+
     private boolean protobuf;
     private boolean constructors;
     private boolean skipGeneration;
     private boolean skipGenerationTest;
     private boolean active;
+    private Boolean hasKeepSections;
 
     public Entity(Schema schema, String className) {
         this.schema = schema;
@@ -124,10 +127,23 @@ public class Entity {
         return toOne;
     }
 
-    public ToOne addToOneWithoutProperty(String name, Entity target, String fkColumnName, boolean notNull) {
-        Column column = new Column(fkColumnName, null, notNull);
-        Column[] fkColumns = { column };
-        ToOne toOne = new ToOne(schema, this, name, target, fkColumns);
+    public ToOne addToOneWithoutProperty(String name, Entity target, String fkColumnName) {
+        return addToOneWithoutProperty(name, target, fkColumnName, false, false);
+    }
+
+    public ToOne addToOneWithoutProperty(String name, Entity target, String fkColumnName, boolean notNull,
+            boolean unique) {
+        PropertyBuilder propertyBuilder = new PropertyBuilder(schema, this, null, name);
+        if (notNull) {
+            propertyBuilder.notNull();
+        }
+        if (unique) {
+            propertyBuilder.unique();
+        }
+        propertyBuilder.columnName(fkColumnName);
+        Property column = propertyBuilder.getProperty();
+        Property[] fkColumns = { column };
+        ToOne toOne = new ToOne(schema, this, target, fkColumns);
         toOneRelations.add(toOne);
         return toOne;
     }
@@ -168,6 +184,10 @@ public class Entity {
 
     public List<Property> getProperties() {
         return properties;
+    }
+
+    public List<Property> getPropertiesColumns() {
+        return propertiesColumns;
     }
 
     public String getJavaPackage() {

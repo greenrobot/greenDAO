@@ -1,15 +1,18 @@
 package de.greenrobot.daogenerator;
 
+@Deprecated
+/** @deprecated Currently unused. */
 public class Column {
     private String name;
     private String type;
     private boolean notNull;
+    private  boolean unique;
 
-    public Column(String name, String type, boolean notNull) {
-        super();
+    public Column(String name, String type, boolean notNull, boolean unique) {
         this.name = name;
         this.type = type;
         this.notNull = notNull;
+        this.unique = unique;
     }
 
     public String getName() {
@@ -34,6 +37,14 @@ public class Column {
 
     public void setNotNull(boolean notNull) {
         this.notNull = notNull;
+    }
+
+    public boolean isUnique() {
+        return unique;
+    }
+
+    public void setUnique(boolean unique) {
+        this.unique = unique;
     }
 
 }

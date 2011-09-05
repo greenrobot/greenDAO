@@ -8,6 +8,7 @@ public class DateEntity {
 
     private Long id;
     private java.util.Date date;
+    /** Not-null value. */
     private java.util.Date dateNotNull;
 
     public DateEntity() {
@@ -39,10 +40,12 @@ public class DateEntity {
         this.date = date;
     }
 
+    /** Not-null value. */
     public java.util.Date getDateNotNull() {
         return dateNotNull;
     }
 
+    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setDateNotNull(java.util.Date dateNotNull) {
         this.dateNotNull = dateNotNull;
     }

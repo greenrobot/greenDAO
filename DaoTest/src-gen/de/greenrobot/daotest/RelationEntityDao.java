@@ -45,11 +45,11 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'RELATION_ENTITY' (" + //
-                "'_id' INTEGER PRIMARY KEY ," + // 0
-                "'PARENT_ID' INTEGER," + // 1
-                "'TEST_ID' INTEGER," + // 2
-                "'TEST_ID_NOT_NULL' INTEGER NOT NULL ," + // 3
-                "'SIMPLE_STRING' TEXT);"; // 4
+                "'_id' INTEGER PRIMARY KEY ," + // 0: id
+                "'PARENT_ID' INTEGER," + // 1: parentId
+                "'TEST_ID' INTEGER," + // 2: testId
+                "'TEST_ID_NOT_NULL' INTEGER NOT NULL ," + // 3: testIdNotNull
+                "'SIMPLE_STRING' TEXT);"; // 4: simpleString
         db.execSQL(sql);
     }
 
@@ -83,14 +83,6 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         String simpleString = entity.getSimpleString();
         if (simpleString != null) {
             stmt.bindString(5, simpleString);
-        }
-
-        TestEntity testWithoutProperty = entity.peakTestWithoutProperty();
-        if(testWithoutProperty != null) {
-            Long testWithoutProperty__targetKey = testWithoutProperty.getId();
-            if(testWithoutProperty__targetKey != null) {
-                // TODO bind testWithoutProperty__targetKey
-            }
         }
     }
 
@@ -194,8 +186,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         }
         offset += daoSession.getTestEntityDao().getAllColumns().length;
 
-        TestEntity testWithoutProperty = loadCurrentOther(daoSession.getTestEntityDao(), cursor, offset);
-        entity.setTestWithoutProperty(testWithoutProperty);
+        TestEntity testEntity = loadCurrentOther(daoSession.getTestEntityDao(), cursor, offset);
+        entity.setTestEntity(testEntity);
 
         return entity;    
     }

@@ -43,15 +43,15 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'TEST_ENTITY' (" + //
-                "'_id' INTEGER PRIMARY KEY ," + // 0
-                "'SIMPLE_INT' INTEGER NOT NULL ," + // 1
-                "'SIMPLE_INTEGER' INTEGER," + // 2
-                "'SIMPLE_STRING_NOT_NULL' TEXT NOT NULL ," + // 3
-                "'SIMPLE_STRING' TEXT," + // 4
-                "'INDEXED_STRING' TEXT," + // 5
-                "'INDEXED_STRING_ASC_UNIQUE' TEXT," + // 6
-                "'SIMPLE_DATE' INTEGER," + // 7
-                "'SIMPLE_BOOLEAN' INTEGER);"; // 8
+                "'_id' INTEGER PRIMARY KEY ," + // 0: id
+                "'SIMPLE_INT' INTEGER NOT NULL ," + // 1: simpleInt
+                "'SIMPLE_INTEGER' INTEGER," + // 2: simpleInteger
+                "'SIMPLE_STRING_NOT_NULL' TEXT NOT NULL ," + // 3: simpleStringNotNull
+                "'SIMPLE_STRING' TEXT," + // 4: simpleString
+                "'INDEXED_STRING' TEXT," + // 5: indexedString
+                "'INDEXED_STRING_ASC_UNIQUE' TEXT," + // 6: indexedStringAscUnique
+                "'SIMPLE_DATE' INTEGER," + // 7: simpleDate
+                "'SIMPLE_BOOLEAN' INTEGER);"; // 8: simpleBoolean
         // Add Indexes
         sql += "CREATE INDEX IDX_TEST_ENTITY_INDEXED_STRING ON TEST_ENTITY" +
                 " (INDEXED_STRING);";

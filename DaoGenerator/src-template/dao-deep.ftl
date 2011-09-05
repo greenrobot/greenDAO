@@ -34,7 +34,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
             builder.append(" FROM ${entity.tableName} T");
 <#list entity.toOneRelations as toOne>
             builder.append(" LEFT JOIN ${toOne.targetEntity.tableName} T${toOne_index}<#--
---> ON T.'${toOne.fkColumns[0].name}'=T${toOne_index}.'${toOne.targetEntity.pkProperty.columnName}'");
+--> ON T.'${toOne.fkProperties[0].columnName}'=T${toOne_index}.'${toOne.targetEntity.pkProperty.columnName}'");
 </#list>
             builder.append(' ');
             selectDeep = builder.toString();
@@ -48,9 +48,9 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 
 <#list entity.toOneRelations as toOne>
         ${toOne.targetEntity.className} ${toOne.name} = loadCurrentOther(daoSession.get${toOne.targetEntity.classNameDao}(), cursor, offset);
-<#if toOne.fkColumns[0].notNull>         if(${toOne.name} != null) {
+<#if toOne.fkProperties[0].notNull>         if(${toOne.name} != null) {
     </#if>        entity.set${toOne.name?cap_first}(${toOne.name});
-<#if toOne.fkColumns[0].notNull>
+<#if toOne.fkProperties[0].notNull>
         }
 </#if>
 <#if toOne_has_next>

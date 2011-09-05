@@ -53,7 +53,7 @@ public class TestDaoGenerator {
         schema2 = new Schema(1, "de.greenrobot.daotest2");
         schema2.setDefaultJavaPackageTest("de.greenrobot.daotest2.entity");
         schema2.enableKeepSections();
-        
+
         schema2.addEntity("KeepEntity").addIdProperty();
     }
 
@@ -115,7 +115,7 @@ public class TestDaoGenerator {
         Property testIdNotNullProperty = relationEntity.addLongProperty("testIdNotNull").notNull().getProperty();
         relationEntity.addToOne(testEntity, testIdNotNullProperty).setName("testNotNull");
         relationEntity.addStringProperty("simpleString");
-        relationEntity.addToOneWithoutProperty("testWithoutProperty", testEntity, "WITHOUT_PROPERTY_TEST_ID", false);
+        relationEntity.addToOneWithoutProperty("testWithoutProperty", testEntity, "WITHOUT_PROPERTY_TEST_ID");
     }
 
     protected void createDate() {

@@ -46,18 +46,18 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'ABCDEF_ENTITY' (" + //
-                "'_id' INTEGER PRIMARY KEY ," + // 0
-                "'A' INTEGER," + // 1
-                "'B' INTEGER," + // 2
-                "'C' INTEGER," + // 3
-                "'D' INTEGER," + // 4
-                "'E' INTEGER," + // 5
-                "'F' INTEGER," + // 6
-                "'G' INTEGER," + // 7
-                "'H' INTEGER," + // 8
-                "'J' INTEGER," + // 9
-                "'I' INTEGER," + // 10
-                "'K' INTEGER);"; // 11
+                "'_id' INTEGER PRIMARY KEY ," + // 0: id
+                "'A' INTEGER," + // 1: a
+                "'B' INTEGER," + // 2: b
+                "'C' INTEGER," + // 3: c
+                "'D' INTEGER," + // 4: d
+                "'E' INTEGER," + // 5: e
+                "'F' INTEGER," + // 6: f
+                "'G' INTEGER," + // 7: g
+                "'H' INTEGER," + // 8: h
+                "'J' INTEGER," + // 9: j
+                "'I' INTEGER," + // 10: i
+                "'K' INTEGER);"; // 11: k
         db.execSQL(sql);
     }
 

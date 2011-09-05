@@ -76,7 +76,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'${entity.tableName}' (" + //
 <#list entity.properties as property>
-                "'${property.columnName}' ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>);";</#if> // ${property_index}
+                "'${property.columnName}' ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>);";</#if> // ${property_index}: ${property.propertyName}
 </#list>
 <#if entity.indexes?has_content >
         // Add Indexes

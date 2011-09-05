@@ -44,16 +44,16 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'SIMPLE_ENTITY_NOT_NULL' (" + //
-                "'_id' INTEGER PRIMARY KEY NOT NULL ," + // 0
-                "'SIMPLE_BOOLEAN' INTEGER NOT NULL ," + // 1
-                "'SIMPLE_BYTE' INTEGER NOT NULL ," + // 2
-                "'SIMPLE_SHORT' INTEGER NOT NULL ," + // 3
-                "'SIMPLE_INT' INTEGER NOT NULL ," + // 4
-                "'SIMPLE_LONG' INTEGER NOT NULL ," + // 5
-                "'SIMPLE_FLOAT' REAL NOT NULL ," + // 6
-                "'SIMPLE_DOUBLE' REAL NOT NULL ," + // 7
-                "'SIMPLE_STRING' TEXT NOT NULL ," + // 8
-                "'SIMPLE_BYTE_ARRAY' BLOB NOT NULL );"; // 9
+                "'_id' INTEGER PRIMARY KEY NOT NULL ," + // 0: id
+                "'SIMPLE_BOOLEAN' INTEGER NOT NULL ," + // 1: simpleBoolean
+                "'SIMPLE_BYTE' INTEGER NOT NULL ," + // 2: simpleByte
+                "'SIMPLE_SHORT' INTEGER NOT NULL ," + // 3: simpleShort
+                "'SIMPLE_INT' INTEGER NOT NULL ," + // 4: simpleInt
+                "'SIMPLE_LONG' INTEGER NOT NULL ," + // 5: simpleLong
+                "'SIMPLE_FLOAT' REAL NOT NULL ," + // 6: simpleFloat
+                "'SIMPLE_DOUBLE' REAL NOT NULL ," + // 7: simpleDouble
+                "'SIMPLE_STRING' TEXT NOT NULL ," + // 8: simpleString
+                "'SIMPLE_BYTE_ARRAY' BLOB NOT NULL );"; // 9: simpleByteArray
         db.execSQL(sql);
     }
 

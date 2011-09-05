@@ -145,7 +145,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 </#if>
 
     public void set${toOne.name?cap_first}(${toOne.targetEntity.className} ${toOne.name}) {
-<#if toOne.fkColumns[0].notNull>
+<#if toOne.fkProperties[0].notNull>
         if (${toOne.name} == null) {
             throw new DaoException("To-one property '${toOne.fkProperties[0].propertyName}' has not-null constraint; cannot set to-one to null");
         }

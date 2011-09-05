@@ -9,6 +9,7 @@ public class TestEntity {
     private Long id;
     private int simpleInt;
     private Integer simpleInteger;
+    /** Not-null value. */
     private String simpleStringNotNull;
     private String simpleString;
     private String indexedString;
@@ -59,10 +60,12 @@ public class TestEntity {
         this.simpleInteger = simpleInteger;
     }
 
+    /** Not-null value. */
     public String getSimpleStringNotNull() {
         return simpleStringNotNull;
     }
 
+    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setSimpleStringNotNull(String simpleStringNotNull) {
         this.simpleStringNotNull = simpleStringNotNull;
     }
