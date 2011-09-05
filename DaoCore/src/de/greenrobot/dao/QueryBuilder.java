@@ -147,16 +147,16 @@ public class QueryBuilder<T> {
     }
 
     public QueryBuilder<T> orderAsc(Property... properties) {
-        checkOrderBuilder();
         for (Property property : properties) {
+            checkOrderBuilder();
             append(orderBuilder, property).append(" ASC");
         }
         return this;
     }
 
     public QueryBuilder<T> orderDesc(Property... properties) {
-        checkOrderBuilder();
         for (Property property : properties) {
+            checkOrderBuilder();
             append(orderBuilder, property).append(" DESC");
         }
         return this;
