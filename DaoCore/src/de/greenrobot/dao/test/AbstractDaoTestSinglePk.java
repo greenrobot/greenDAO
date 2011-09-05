@@ -148,20 +148,23 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
     }
 
     public void testDeleteAll() {
+        List<T> entityList = new ArrayList<T>();
         List<K> pkList = new ArrayList<K>();
-        int LIST_SIZE = 100;
+        int LIST_SIZE = 10;
         for (int i = 0; i < LIST_SIZE; i++) {
             K pk = nextPk();
             T entity = createEntity(pk);
-            dao.insert(entity);
-            assertNotNull(dao.load(pk));
+            entityList.add(entity);
             pkList.add(pk);
+        }
+        dao.insertInTx(entityList);
+        for (K pk : pkList) {
+            assertNotNull(dao.load(pk));
         }
 
         dao.deleteAll();
-
-        for (int i = 0; i < LIST_SIZE; i++) {
-            assertNull(dao.load(pkList.get(i)));
+        for (K pk : pkList) {
+            assertNull(dao.load(pk));
         }
     }
 
