@@ -98,7 +98,6 @@ public class Property {
         }
     }
 
-    @SuppressWarnings("unused")
     private final Schema schema;
     private final Entity entity;
     private PropertyType propertyType;
@@ -175,7 +174,7 @@ public class Property {
         this.ordinal = ordinal;
     }
 
-    void init2ndPass(Schema schema, Entity table) {
+    void init2ndPass() {
         initConstraint();
         if (columnType == null) {
             columnType = schema.mapToDbType(propertyType);

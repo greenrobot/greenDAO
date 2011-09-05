@@ -28,6 +28,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         public final static Property TestId = new Property(2, Long.class, "testId", false, "TEST_ID");
         public final static Property TestIdNotNull = new Property(3, long.class, "testIdNotNull", false, "TEST_ID_NOT_NULL");
         public final static Property SimpleString = new Property(4, String.class, "simpleString", false, "SIMPLE_STRING");
+        public final static Property TestWithoutProperty = new Property(5, Long.class, "testWithoutProperty", false, "WITHOUT_PROPERTY_TEST_ID");
     };
 
     private DaoSession daoSession;
@@ -49,7 +50,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
                 "'PARENT_ID' INTEGER," + // 1: parentId
                 "'TEST_ID' INTEGER," + // 2: testId
                 "'TEST_ID_NOT_NULL' INTEGER NOT NULL ," + // 3: testIdNotNull
-                "'SIMPLE_STRING' TEXT);"; // 4: simpleString
+                "'SIMPLE_STRING' TEXT," + // 4: simpleString
+                "'WITHOUT_PROPERTY_TEST_ID' INTEGER);"; // 5: testWithoutProperty
         db.execSQL(sql);
     }
 
@@ -186,8 +188,8 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         }
         offset += daoSession.getTestEntityDao().getAllColumns().length;
 
-        TestEntity testEntity = loadCurrentOther(daoSession.getTestEntityDao(), cursor, offset);
-        entity.setTestEntity(testEntity);
+        TestEntity testWithoutProperty = loadCurrentOther(daoSession.getTestEntityDao(), cursor, offset);
+        entity.setTestWithoutProperty(testWithoutProperty);
 
         return entity;    
     }

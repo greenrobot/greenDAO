@@ -51,7 +51,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     public static final String TABLENAME = "${entity.tableName}";
 
     public static class Properties {
-<#list entity.properties as property>
+<#list entity.propertiesColumns as property>
         public final static Property ${property.propertyName?cap_first} = new Property(${property_index}, ${property.javaType}.class, "${property.propertyName}", ${property.primaryKey?string}, "${property.columnName}");
 </#list>
     };
@@ -75,7 +75,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'${entity.tableName}' (" + //
-<#list entity.properties as property>
+<#list entity.propertiesColumns as property>
                 "'${property.columnName}' ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>);";</#if> // ${property_index}: ${property.propertyName}
 </#list>
 <#if entity.indexes?has_content >

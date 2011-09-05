@@ -25,12 +25,14 @@ public class ToOne {
     private final String[] resolvedKeyJavaType;
     private final boolean[] resolvedKeyUseEquals;
     private String name;
+    private final boolean useFkProperty;
 
-    public ToOne(Schema schema, Entity sourceEntity, Entity targetEntity, Property[] fkProperties) {
+    public ToOne(Schema schema, Entity sourceEntity, Entity targetEntity, Property[] fkProperties, boolean useFkProperty) {
         this.schema = schema;
         this.sourceEntity = sourceEntity;
         this.targetEntity = targetEntity;
         this.fkProperties = fkProperties;
+        this.useFkProperty = useFkProperty;
         resolvedKeyJavaType = new String[fkProperties.length];
         resolvedKeyUseEquals = new boolean[fkProperties.length];
     }
@@ -63,6 +65,10 @@ public class ToOne {
         this.name = name;
     }
 
+    public boolean isUseFkProperty() {
+        return useFkProperty;
+    }
+
     public void init2ndPass() {
         if (name == null) {
             char[] nameCharArray = targetEntity.getClassName().toCharArray();
@@ -85,6 +91,9 @@ public class ToOne {
         if (propertyType == null) {
             propertyType = targetPkProperty.getPropertyType();
             property.setPropertyType(propertyType);
+            // Property is not a regular property with primitive getters/setters, so let it catch up
+            property.init2ndPass();
+            property.init3ndPass();
         } else if (propertyType != targetPkProperty.getPropertyType()) {
             System.err.println("Warning to-one property type does not match target key type: " + this);
         }

@@ -53,7 +53,7 @@ public class ${entity.className} <#if entity.active && false>extends ActiveEntit
 
 <#list entity.toOneRelations as toOne>
     private ${toOne.targetEntity.className} ${toOne.name};
-<#if toOne.fkProperties?has_content>
+<#if toOne.useFkProperty>
     private ${toOne.resolvedKeyJavaType[0]} ${toOne.name}__resolvedKey;
 <#else>
     private boolean ${toOne.name}__refreshed;
@@ -113,7 +113,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 <#list entity.toOneRelations as toOne>
     /** To-one relationship, resolved on first access. */
     public ${toOne.targetEntity.className} get${toOne.name?cap_first}() {
-<#if toOne.fkProperties?has_content>    
+<#if toOne.useFkProperty>    
         if (${toOne.name}__resolvedKey == null || <#--
         --><#if toOne.resolvedKeyUseEquals[0]>!${toOne.name}__resolvedKey.equals(${toOne.fkProperties[0].propertyName})<#--
         --><#else>${toOne.name}__resolvedKey != ${toOne.fkProperties[0].propertyName}</#if>) {
@@ -136,7 +136,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 </#if>
         return ${toOne.name};
     }
-<#if !toOne.fkProperties?has_content>
+<#if !toOne.useFkProperty>
 
     /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
     public ${toOne.targetEntity.className} peak${toOne.name?cap_first}() {
@@ -151,7 +151,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
         }
 </#if>
         this.${toOne.name} = ${toOne.name};
-<#if toOne.fkProperties?has_content>        
+<#if toOne.useFkProperty>        
         ${toOne.fkProperties[0].propertyName} = <#if !toOne.fkProperties[0].notNull>${toOne.name} == null ? null : </#if>${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}();
         ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
 <#else>

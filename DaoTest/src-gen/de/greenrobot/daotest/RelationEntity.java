@@ -27,8 +27,8 @@ public class RelationEntity {
     private TestEntity testNotNull;
     private Long testNotNull__resolvedKey;
 
-    private TestEntity testEntity;
-    private Long testEntity__resolvedKey;
+    private TestEntity testWithoutProperty;
+    private boolean testWithoutProperty__refreshed;
 
     public RelationEntity() {
     }
@@ -151,22 +151,26 @@ public class RelationEntity {
     }
 
     /** To-one relationship, resolved on first access. */
-    public TestEntity getTestEntity() {
-        if (testEntity__resolvedKey == null || !testEntity__resolvedKey.equals(testWithoutProperty)) {
+    public TestEntity getTestWithoutProperty() {
+        if (testWithoutProperty != null || !testWithoutProperty__refreshed) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             TestEntityDao dao = daoSession.getTestEntityDao();
-            testEntity = dao.load(testWithoutProperty);
-            testEntity__resolvedKey = testWithoutProperty;
+            dao.refresh(testWithoutProperty);
+            testWithoutProperty__refreshed = true;
         }
-        return testEntity;
+        return testWithoutProperty;
     }
 
-    public void setTestEntity(TestEntity testEntity) {
-        this.testEntity = testEntity;
-        testWithoutProperty = testEntity == null ? null : testEntity.getId();
-        testEntity__resolvedKey = testWithoutProperty;
+    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
+    public TestEntity peakTestWithoutProperty() {
+        return testWithoutProperty;
+    }
+
+    public void setTestWithoutProperty(TestEntity testWithoutProperty) {
+        this.testWithoutProperty = testWithoutProperty;
+        testWithoutProperty__refreshed = true;
     }
 
 }

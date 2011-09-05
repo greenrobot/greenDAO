@@ -122,7 +122,7 @@ public class Entity {
 
     public ToOne addToOne(Entity target, Property fkProperty) {
         Property[] fkProperties = { fkProperty };
-        ToOne toOne = new ToOne(schema, this, target, fkProperties);
+        ToOne toOne = new ToOne(schema, this, target, fkProperties, true);
         toOneRelations.add(toOne);
         return toOne;
     }
@@ -143,7 +143,8 @@ public class Entity {
         propertyBuilder.columnName(fkColumnName);
         Property column = propertyBuilder.getProperty();
         Property[] fkColumns = { column };
-        ToOne toOne = new ToOne(schema, this, target, fkColumns);
+        ToOne toOne = new ToOne(schema, this, target, fkColumns, false);
+        toOne.setName(name);
         toOneRelations.add(toOne);
         return toOne;
     }
@@ -292,7 +293,7 @@ public class Entity {
         for (int i = 0; i < properties.size(); i++) {
             Property property = properties.get(i);
             property.setOrdinal(i);
-            property.init2ndPass(schema, this);
+            property.init2ndPass();
             if (property.isPrimaryKey()) {
                 propertiesPk.add(property);
             } else {
@@ -308,8 +309,15 @@ public class Entity {
         }
 
         active = !toOneRelations.isEmpty();
+        propertiesColumns = new ArrayList<Property>(properties);
         for (ToOne toOne : toOneRelations) {
             toOne.init2ndPass();
+            Property[] fkProperties = toOne.getFkProperties();
+            for (Property fkProperty : fkProperties) {
+                if (!propertiesColumns.contains(fkProperty)) {
+                    propertiesColumns.add(fkProperty);
+                }
+            }
         }
 
         initIndexNamesWithDefaults();
