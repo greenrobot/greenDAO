@@ -90,22 +90,26 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
     }
 
     public void testAssignPk() {
-        T entity1 = createEntity(null);
-        if (daoAccess.isEntityUpdateable() && entity1 != null) {
-            T entity2 = createEntity(null);
+        if (daoAccess.isEntityUpdateable()) {
+            T entity1 = createEntity(null);
+            if (entity1 != null) {
+                T entity2 = createEntity(null);
 
-            dao.insert(entity1);
-            dao.insert(entity2);
+                dao.insert(entity1);
+                dao.insert(entity2);
 
-            K pk1 = daoAccess.getKey(entity1);
-            K pk2 = daoAccess.getKey(entity2);
+                K pk1 = daoAccess.getKey(entity1);
+                K pk2 = daoAccess.getKey(entity2);
 
-            assertFalse(pk1.equals(pk2));
+                assertFalse(pk1.equals(pk2));
 
-            assertNotNull(dao.load(pk1));
-            assertNotNull(dao.load(pk2));
+                assertNotNull(dao.load(pk1));
+                assertNotNull(dao.load(pk2));
+            } else {
+                DaoLog.d("Skipping testAssignPk for " + daoClass + " (createEntity returned null for null key)");
+            }
         } else {
-            DaoLog.d("Skipping testAssignPk for " + daoClass);
+            DaoLog.d("Skipping testAssignPk for not updateable " + daoClass);
         }
     }
 

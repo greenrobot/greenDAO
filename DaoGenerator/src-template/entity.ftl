@@ -101,6 +101,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
     public ${property.javaType} get${property.propertyName?cap_first}() {
         return ${property.propertyName};
     }
+
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
     /** Not-null value; ensure this value is available before it is saved to the database. */
 </#if>
