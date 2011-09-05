@@ -165,7 +165,6 @@ public class DaoGenerator {
 
                 matcher = patternKeepIncludes.matcher(contents);
                 if (matcher.matches()) {
-                    System.out.println(">>>>>>>>>>" + matcher.group(1));
                     root.put("keepIncludes", matcher.group(1));
                 }
 

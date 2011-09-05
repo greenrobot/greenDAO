@@ -19,6 +19,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <#assign toBindType = {"Boolean":"Long", "Byte":"Long", "Short":"Long", "Int":"Long", "Long":"Long", "Float":"Double", "Double":"Double", "String":"String", "ByteArray":"Blob" }>
 <#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob" }>
+<#assign complexTypes = ["String", "ByteArray", "Date"]>
 package ${entity.javaPackage};
 
 <#if entity.active>
@@ -40,6 +41,9 @@ import de.greenrobot.dao.DaoException;
 public class ${entity.className} <#if entity.active && false>extends ActiveEntity </#if>{
 
 <#list entity.properties as property>
+<#if property.notNull && complexTypes?seq_contains(property.propertyType)>
+    /** Not-null value. */
+</#if>
     private ${property.javaType} ${property.propertyName};
 </#list>
 
@@ -91,10 +95,15 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 
 </#if>
 <#list entity.properties as property>
+<#if property.notNull && complexTypes?seq_contains(property.propertyType)>
+    /** Not-null value. */
+</#if>
     public ${property.javaType} get${property.propertyName?cap_first}() {
         return ${property.propertyName};
     }
-
+<#if property.notNull && complexTypes?seq_contains(property.propertyType)>
+    /** Not-null value; ensure this value is available before it is saved to the database. */
+</#if>
     public void set${property.propertyName?cap_first}(${property.javaType} ${property.propertyName}) {
         this.${property.propertyName} = ${property.propertyName};
     }
