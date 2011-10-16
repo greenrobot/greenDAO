@@ -35,6 +35,8 @@ public class Entity {
     private final Set<String> propertyNames;
     private final List<Index> indexes;
     private final List<ToOne> toOneRelations;
+    private final List<ToMany> toManyRelations;
+    private final List<ToMany> incomingToManyRelations;
 
     private String tableName;
     private String classNameDao;
@@ -61,6 +63,8 @@ public class Entity {
         propertyNames = new HashSet<String>();
         indexes = new ArrayList<Index>();
         toOneRelations = new ArrayList<ToOne>();
+        toManyRelations = new ArrayList<ToMany>();
+        incomingToManyRelations = new ArrayList<ToMany>();
         constructors = true;
     }
 
@@ -127,6 +131,16 @@ public class Entity {
         return toOne;
     }
 
+    public ToMany addToMany(Entity target, Property fkProperty) {
+        Property[] sourceProperties = null;
+        Property[] targetProperties = { fkProperty };
+
+        ToMany toMany = new ToMany(schema, this, sourceProperties, target, targetProperties);
+        toManyRelations.add(toMany);
+        target.incomingToManyRelations.add(toMany);
+        return toMany;
+    }
+
     public ToOne addToOneWithoutProperty(String name, Entity target, String fkColumnName) {
         return addToOneWithoutProperty(name, target, fkColumnName, false, false);
     }
@@ -147,6 +161,10 @@ public class Entity {
         toOne.setName(name);
         toOneRelations.add(toOne);
         return toOne;
+    }
+
+    protected void addIncomingToMany(ToMany toMany) {
+        incomingToManyRelations.add(toMany);
     }
 
     /**
@@ -283,6 +301,14 @@ public class Entity {
         return toOneRelations;
     }
 
+    public List<ToMany> getToManyRelations() {
+        return toManyRelations;
+    }
+
+    public List<ToMany> getIncomingToManyRelations() {
+        return incomingToManyRelations;
+    }
+
     public boolean isActive() {
         return active;
     }
@@ -308,7 +334,7 @@ public class Entity {
             pkType = "Void";
         }
 
-        active = !toOneRelations.isEmpty();
+        active = !toOneRelations.isEmpty() || !toManyRelations.isEmpty();
         propertiesColumns = new ArrayList<Property>(properties);
         for (ToOne toOne : toOneRelations) {
             toOne.init2ndPass();
@@ -318,6 +344,15 @@ public class Entity {
                     propertiesColumns.add(fkProperty);
                 }
             }
+        }
+        for (ToMany toMany : toManyRelations) {
+            toMany.init2ndPass();
+            // Source Properties may not be virtual, so we do not need the following code:
+            // for (Property sourceProperty : toMany.getSourceProperties()) {
+            // if (!propertiesColumns.contains(sourceProperty)) {
+            // propertiesColumns.add(sourceProperty);
+            // }
+            // }
         }
 
         initIndexNamesWithDefaults();
@@ -331,6 +366,17 @@ public class Entity {
         for (ToOne toOne : toOneRelations) {
             toOne.init3ndPass();
         }
+
+        for (ToMany toMany : toManyRelations) {
+            toMany.init3ndPass();
+            Entity targetEntity = toMany.getTargetEntity();
+            for (Property targetProperty : toMany.getTargetProperties()) {
+                if (!targetEntity.propertiesColumns.contains(targetProperty)) {
+                    targetEntity.propertiesColumns.add(targetProperty);
+                }
+            }
+        }
+
     }
 
     protected void initNamesWithDefaults() {

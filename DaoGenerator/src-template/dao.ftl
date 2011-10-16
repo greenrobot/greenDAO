@@ -21,8 +21,10 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 <#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob", "Date": "Long"  }>
 package ${entity.javaPackageDao};
 
-<#if entity.toOneRelations?has_content>
+<#if entity.toOneRelations?has_content || entity.incomingToManyRelations?has_content>
 import java.util.List;
+</#if>
+<#if entity.toOneRelations?has_content>
 import java.util.ArrayList;
 </#if>
 import android.database.Cursor;
@@ -246,6 +248,14 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
         return ${(!entity.protobuf)?string};
     }
     
+<#list entity.incomingToManyRelations as toMany>
+    /** To-many relationship, resolved on first access. Changes to to-many relations are not persisted, make changes to the target entity. */
+    public List<${toMany.targetEntity.className}> query${toMany.sourceEntity.className?cap_first}${toMany.name?cap_first}(<#--
+    --><#list toMany.targetProperties as property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
+        return null;
+    }
+
+</#list>   
 <#if entity.toOneRelations?has_content>
     <#include "dao-deep.ftl">
 </#if>

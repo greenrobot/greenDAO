@@ -22,6 +22,9 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 <#assign complexTypes = ["String", "ByteArray", "Date"]>
 package ${entity.javaPackage};
 
+<#if entity.toManyRelations?has_content>
+import java.util.List;
+</#if>
 <#if entity.active>
 import ${schema.defaultJavaPackageDao}.DaoSession;
 import de.greenrobot.dao.DaoException;
@@ -59,7 +62,10 @@ public class ${entity.className} <#if entity.active && false>extends ActiveEntit
     private boolean ${toOne.name}__refreshed;
 </#if>
 
-</#list>    
+</#list>
+<#list entity.toManyRelations as toMany>
+    private List<${toMany.targetEntity.className}> ${toMany.name};
+</#list>
 </#if>
 <#if schema.keepSections>
     // KEEP FIELDS - put your custom fields here
@@ -110,6 +116,11 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
     }
 
 </#list>
+<#--
+##########################################
+########## To-One Relations ##############
+##########################################
+-->
 <#list entity.toOneRelations as toOne>
     /** To-one relationship, resolved on first access. */
     public ${toOne.targetEntity.className} get${toOne.name?cap_first}() {
@@ -159,6 +170,25 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 </#if>
     }
 
+</#list>
+<#--
+##########################################
+########## To-Many Relations #############
+##########################################
+-->
+<#list entity.toManyRelations as toMany>
+    /** To-many relationship, resolved on first access. Changes to to-many relations are not persisted, make changes to the target entity. */
+    public List<${toMany.targetEntity.className}> get${toMany.name?cap_first}() {
+        if (${toMany.name} == null) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            ${toMany.targetEntity.classNameDao} dao = daoSession.get${toMany.targetEntity.classNameDao?cap_first}();
+            ${toMany.name} = dao.query${toMany.sourceEntity.className?cap_first}${toMany.name?cap_first}(<#--
+                --><#list toMany.sourceProperties as property>${property.propertyName}<#if property_has_next>, </#if></#list>);
+        }
+        return ${toMany.name};
+    }
 </#list>
 <#--        
         return dao.query(", ${entity.tableName} T2 WHERE T.=T2. AND T.=?", <#list

@@ -49,6 +49,7 @@ public class TestDaoGenerator {
         createDate();
         createSpecialNames();
         createAbcdef();
+        createToMany();
 
         schema2 = new Schema(1, "de.greenrobot.daotest2");
         schema2.setDefaultJavaPackageTest("de.greenrobot.daotest2.entity");
@@ -116,6 +117,16 @@ public class TestDaoGenerator {
         relationEntity.addToOne(testEntity, testIdNotNullProperty).setName("testNotNull");
         relationEntity.addStringProperty("simpleString");
         relationEntity.addToOneWithoutProperty("testWithoutProperty", testEntity, "WITHOUT_PROPERTY_TEST_ID");
+    }
+
+    protected void createToMany() {
+        Entity toManyTargetEntity = schema.addEntity("ToManyTargetEntity");
+        Property toManyIdProperty = toManyTargetEntity.addLongProperty("toManyId").getProperty();
+        toManyTargetEntity.addIdProperty();
+
+        Entity toManyEntity = schema.addEntity("ToManyEntity");
+        toManyEntity.addIdProperty();
+        toManyEntity.addToMany(toManyTargetEntity, toManyIdProperty);
     }
 
     protected void createDate() {
