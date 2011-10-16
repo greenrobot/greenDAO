@@ -36,8 +36,8 @@ public class ToManyEntity {
         this.id = id;
     }
 
-    /** To-many relationship, resolved on first access. Changes to to-many relations are not persisted, make changes to the target entity. */
-    public List<ToManyTargetEntity> getToManyTargetEntity() {
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public synchronized List<ToManyTargetEntity> getToManyTargetEntity() {
         if (toManyTargetEntity == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
@@ -47,4 +47,10 @@ public class ToManyEntity {
         }
         return toManyTargetEntity;
     }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    public synchronized void resetToManyTargetEntity() {
+        toManyTargetEntity = null;
+    }
+
 }

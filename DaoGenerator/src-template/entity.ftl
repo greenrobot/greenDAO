@@ -177,8 +177,8 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 ##########################################
 -->
 <#list entity.toManyRelations as toMany>
-    /** To-many relationship, resolved on first access. Changes to to-many relations are not persisted, make changes to the target entity. */
-    public List<${toMany.targetEntity.className}> get${toMany.name?cap_first}() {
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public synchronized List<${toMany.targetEntity.className}> get${toMany.name?cap_first}() {
         if (${toMany.name} == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
@@ -189,11 +189,13 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
         }
         return ${toMany.name};
     }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    public synchronized void reset${toMany.name?cap_first}() {
+        ${toMany.name} = null;
+    }
+
 </#list>
-<#--        
-        return dao.query(", ${entity.tableName} T2 WHERE T.=T2. AND T.=?", <#list
-            toOne.fkProperties as fk>${fk.propertyName}<#if fk_has_next>, </#if></#list>);
--->
 <#if schema.keepSections>
     // KEEP METHODS - put your custom methods here
 ${keepMethods!}    // KEEP METHODS END
