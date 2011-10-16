@@ -184,7 +184,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
                 throw new DaoException("Entity is detached from DAO context");
             }
             ${toMany.targetEntity.classNameDao} dao = daoSession.get${toMany.targetEntity.classNameDao?cap_first}();
-            ${toMany.name} = dao.query${toMany.sourceEntity.className?cap_first}${toMany.name?cap_first}(<#--
+            ${toMany.name} = dao._query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
                 --><#list toMany.sourceProperties as property>${property.propertyName}<#if property_has_next>, </#if></#list>);
         }
         return ${toMany.name};

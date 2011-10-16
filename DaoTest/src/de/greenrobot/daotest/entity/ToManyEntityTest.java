@@ -1,5 +1,7 @@
 package de.greenrobot.daotest.entity;
 
+import java.util.List;
+
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
@@ -17,7 +19,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         super(DaoMaster.class);
     }
 
-    protected void testToManyBasics() {
+    public void testToManyBasics() {
         ToManyEntity entity = new ToManyEntity(1l);
 
         daoSession.insert(entity);
@@ -34,6 +36,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         targetDao.insertInTx(target1, target2, target3);
 
         ToManyEntity testEntity = daoSession.load(ToManyEntity.class, 1l);
-
+        List<ToManyTargetEntity> resolvedToMany = testEntity.getToManyTargetEntity();
+        assertEquals(3, resolvedToMany.size());
     }
 }

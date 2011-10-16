@@ -9,6 +9,8 @@ import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.Query;
+import de.greenrobot.dao.QueryBuilder;
 
 import de.greenrobot.daotest.ToManyTargetEntity;
 
@@ -25,6 +27,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         public final static Property Id = new Property(1, Long.class, "id", true, "_id");
     };
 
+    private Query toManyEntity_ToManyTargetEntityQuery;
 
     public ToManyTargetEntityDao(DaoConfig config) {
         super(config);
@@ -109,9 +112,17 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         return true;
     }
     
-    /** To-many relationship, resolved on first access. Changes to to-many relations are not persisted, make changes to the target entity. */
-    public List<ToManyTargetEntity> queryToManyEntityToManyTargetEntity(Long toManyId) {
-        return null;
+    /** Internal query to resolve the "toManyTargetEntity" to-many relationship of ToManyEntity. */
+    @SuppressWarnings("unchecked")
+    public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyTargetEntity(Long toManyId) {
+        if (toManyEntity_ToManyTargetEntityQuery == null) {
+            QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
+            queryBuilder.where(Properties.ToManyId.eq(toManyId));
+            toManyEntity_ToManyTargetEntityQuery = queryBuilder.build();
+        } else {
+            toManyEntity_ToManyTargetEntityQuery.setParameter(0, toManyId);
+        }
+        return toManyEntity_ToManyTargetEntityQuery.list();
     }
 
 }

@@ -54,7 +54,7 @@ public class Query<T> {
     // }
 
     /**
-     * Sets the parameter using the position in which it was added during building the query.
+     * Sets the parameter (0 based) using the position in which it was added during building the query.
      */
     public void setParameter(int index, Object parameter) {
         if (parameter != null) {

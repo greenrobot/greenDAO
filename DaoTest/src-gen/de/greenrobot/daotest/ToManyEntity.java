@@ -43,7 +43,7 @@ public class ToManyEntity {
                 throw new DaoException("Entity is detached from DAO context");
             }
             ToManyTargetEntityDao dao = daoSession.getToManyTargetEntityDao();
-            toManyTargetEntity = dao.queryToManyEntityToManyTargetEntity(id);
+            toManyTargetEntity = dao._queryToManyEntity_ToManyTargetEntity(id);
         }
         return toManyTargetEntity;
     }

@@ -38,6 +38,10 @@ import de.greenrobot.dao.Property;
 <#if entity.toOneRelations?has_content>
 import de.greenrobot.dao.SqlUtils;
 </#if>
+<#if entity.incomingToManyRelations?has_content>
+import de.greenrobot.dao.Query;
+import de.greenrobot.dao.QueryBuilder;
+</#if>
 
 import ${entity.javaPackage}.${entity.className};
 <#if entity.protobuf>
@@ -62,6 +66,9 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     private DaoSession daoSession;
 
 </#if>
+<#list entity.incomingToManyRelations as toMany>
+    private Query ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query;
+</#list>
 
     public ${entity.classNameDao}(DaoConfig config) {
         super(config);
@@ -249,10 +256,22 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
     }
     
 <#list entity.incomingToManyRelations as toMany>
-    /** To-many relationship, resolved on first access. Changes to to-many relations are not persisted, make changes to the target entity. */
-    public List<${toMany.targetEntity.className}> query${toMany.sourceEntity.className?cap_first}${toMany.name?cap_first}(<#--
+    /** Internal query to resolve the "${toMany.name}" to-many relationship of ${toMany.sourceEntity.className}. */
+    @SuppressWarnings("unchecked")
+    public synchronized List<${toMany.targetEntity.className}> _query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
     --><#list toMany.targetProperties as property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
-        return null;
+        if (${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query == null) {
+            QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
+<#list toMany.targetProperties as property>
+            queryBuilder.where(Properties.${property.propertyName?cap_first}.eq(${property.propertyName}));
+</#list>
+            ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query = queryBuilder.build();
+        } else {
+<#list toMany.targetProperties as property>
+            ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query.setParameter(${property_index}, ${property.propertyName});
+</#list>
+        }
+        return ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query.list();
     }
 
 </#list>   
