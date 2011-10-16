@@ -121,7 +121,9 @@ public class ToOne {
 
     @Override
     public String toString() {
-        return "ToOne '" + name + "' from " + sourceEntity + " to " + targetEntity;
+        String sourceName = sourceEntity != null ? sourceEntity.getClassName() : null;
+        String targetName = targetEntity != null ? targetEntity.getClassName() : null;
+        return "ToOne '" + name + "' from " + sourceName + " to " + targetName;
     }
 
 }

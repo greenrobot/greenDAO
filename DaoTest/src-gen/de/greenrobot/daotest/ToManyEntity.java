@@ -16,6 +16,7 @@ public class ToManyEntity {
     private DaoSession daoSession;
 
     private List<ToManyTargetEntity> toManyTargetEntity;
+    private List<ToManyTargetEntity> ToManyDescList;
     public ToManyEntity() {
     }
 
@@ -51,6 +52,23 @@ public class ToManyEntity {
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     public synchronized void resetToManyTargetEntity() {
         toManyTargetEntity = null;
+    }
+
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public synchronized List<ToManyTargetEntity> getToManyDescList() {
+        if (ToManyDescList == null) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            ToManyTargetEntityDao dao = daoSession.getToManyTargetEntityDao();
+            ToManyDescList = dao._queryToManyEntity_ToManyDescList(id);
+        }
+        return ToManyDescList;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    public synchronized void resetToManyDescList() {
+        ToManyDescList = null;
     }
 
 }

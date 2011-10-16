@@ -47,7 +47,6 @@ public class QueryBuilder<T> {
     public static boolean LOG_VALUES;
 
     private StringBuilder orderBuilder;
-    private StringBuilder tableBuilder;
     private StringBuilder joinBuilder;
 
     private final List<WhereCondition> whereConditions;
@@ -134,11 +133,13 @@ public class QueryBuilder<T> {
         }
     }
 
+    /** Not supported yet. */
     public <J> QueryBuilder<J> join(Class<J> entityClass, Property toOneProperty) {
         throw new UnsupportedOperationException();
         // return new QueryBuilder<J>();
     }
 
+    /** Not supported yet. */
     public <J> QueryBuilder<J> joinToMany(Class<J> entityClass, Property toManyProperty) {
         throw new UnsupportedOperationException();
         // @SuppressWarnings("unchecked")
@@ -146,6 +147,7 @@ public class QueryBuilder<T> {
         // return new QueryBuilder<J>(joinDao, "TX");
     }
 
+    /** Adds the given properties to the ORDER BY section using ascending order. */
     public QueryBuilder<T> orderAsc(Property... properties) {
         for (Property property : properties) {
             checkOrderBuilder();
@@ -154,11 +156,22 @@ public class QueryBuilder<T> {
         return this;
     }
 
+    /** Adds the given properties to the ORDER BY section using descending order. */
     public QueryBuilder<T> orderDesc(Property... properties) {
         for (Property property : properties) {
             checkOrderBuilder();
             append(orderBuilder, property).append(" DESC");
         }
+        return this;
+    }
+
+    /**
+     * Adds the given raw SQL string to the ORDER BY section. Do not use this for standard properties: ordedAsc and
+     * orderDesc are prefered.
+     */
+    public QueryBuilder<T> orderRaw(String rawOrder) {
+        checkOrderBuilder();
+        orderBuilder.append(rawOrder);
         return this;
     }
 
@@ -184,6 +197,10 @@ public class QueryBuilder<T> {
         }
     }
 
+    /**
+     * Builds a reusable query object (Query objects can be executed more efficiently than creating a QueryBuilder for
+     * each execution.
+     */
     public Query<T> build() {
         String select;
         if (joinBuilder == null || joinBuilder.length() == 0) {

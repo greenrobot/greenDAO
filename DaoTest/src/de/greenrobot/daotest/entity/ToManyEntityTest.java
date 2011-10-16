@@ -67,6 +67,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         for (int i = 0; i < count; i++) {
             ToManyTargetEntity target = new ToManyTargetEntity();
             target.setToManyId(id);
+            target.setToManyIdDesc(id);
             targetEntities[i] = target;
         }
 
@@ -114,5 +115,19 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         List<ToManyTargetEntity> resolvedToMany3 = testEntity.getToManyTargetEntity();
         assertEquals(0, resolvedToMany3.size());
     }
+    
+    public void testToManyOrder() {
+        prepareToMany(1, 3);
+
+        ToManyEntity testEntity = toManyEntityDao.load(1l);
+        List<ToManyTargetEntity> resolvedToManyAsc = testEntity.getToManyTargetEntity();
+        List<ToManyTargetEntity> resolvedToManyDesc = testEntity.getToManyDescList();
+        assertNotSame(resolvedToManyAsc, resolvedToManyDesc);
+        assertSame(resolvedToManyAsc.get(0), resolvedToManyDesc.get(2));
+        assertSame(resolvedToManyAsc.get(1), resolvedToManyDesc.get(1));
+        assertSame(resolvedToManyAsc.get(2), resolvedToManyDesc.get(0));
+    }
+
+
 
 }

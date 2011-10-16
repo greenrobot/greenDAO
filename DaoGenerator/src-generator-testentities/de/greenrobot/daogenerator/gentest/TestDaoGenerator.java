@@ -20,7 +20,9 @@ package de.greenrobot.daogenerator.gentest;
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Property;
+import de.greenrobot.daogenerator.Property.PropertyBuilder;
 import de.greenrobot.daogenerator.Schema;
+import de.greenrobot.daogenerator.ToMany;
 
 /**
  * Generates test entities for test project DaoTest.
@@ -122,11 +124,18 @@ public class TestDaoGenerator {
     protected void createToMany() {
         Entity toManyTargetEntity = schema.addEntity("ToManyTargetEntity");
         Property toManyIdProperty = toManyTargetEntity.addLongProperty("toManyId").getProperty();
+        Property toManyIdDescProperty = toManyTargetEntity.addLongProperty("toManyIdDesc").getProperty();
         toManyTargetEntity.addIdProperty();
 
         Entity toManyEntity = schema.addEntity("ToManyEntity");
-        toManyEntity.addIdProperty();
-        toManyEntity.addToMany(toManyTargetEntity, toManyIdProperty);
+        Property idProperty = toManyEntity.addIdProperty().getProperty();
+        
+        ToMany toMany = toManyEntity.addToMany(toManyTargetEntity, toManyIdProperty);
+        toMany.orderAsc(idProperty);
+        
+        ToMany toManyDesc = toManyEntity.addToMany(toManyTargetEntity, toManyIdDescProperty);
+        toManyDesc.setName("ToManyDescList");
+        toManyDesc.orderDesc(idProperty);
     }
 
     protected void createDate() {

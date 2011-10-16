@@ -7,6 +7,7 @@ package de.greenrobot.daotest;
 public class ToManyTargetEntity {
 
     private Long toManyId;
+    private Long toManyIdDesc;
     private Long id;
 
     public ToManyTargetEntity() {
@@ -16,8 +17,9 @@ public class ToManyTargetEntity {
         this.id = id;
     }
 
-    public ToManyTargetEntity(Long toManyId, Long id) {
+    public ToManyTargetEntity(Long toManyId, Long toManyIdDesc, Long id) {
         this.toManyId = toManyId;
+        this.toManyIdDesc = toManyIdDesc;
         this.id = id;
     }
 
@@ -27,6 +29,14 @@ public class ToManyTargetEntity {
 
     public void setToManyId(Long toManyId) {
         this.toManyId = toManyId;
+    }
+
+    public Long getToManyIdDesc() {
+        return toManyIdDesc;
+    }
+
+    public void setToManyIdDesc(Long toManyIdDesc) {
+        this.toManyIdDesc = toManyIdDesc;
     }
 
     public Long getId() {

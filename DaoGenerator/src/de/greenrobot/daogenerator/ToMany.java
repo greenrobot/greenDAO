@@ -19,13 +19,16 @@ package de.greenrobot.daogenerator;
 
 import java.util.List;
 
+/** To-many relationship from a source entity to many target entitites. */
 public class ToMany {
+    @SuppressWarnings("unused")
     private final Schema schema;
     private String name;
     private final Entity sourceEntity;
     private final Entity targetEntity;
     private Property[] sourceProperties;
     private final Property[] targetProperties;
+    private StringBuilder orderBuilder;
 
     public ToMany(Schema schema, Entity sourceEntity, Property[] sourceProperties, Entity targetEntity,
             Property[] targetProperties) {
@@ -62,6 +65,36 @@ public class ToMany {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    private void checkOrderBuilder() {
+        if (orderBuilder == null) {
+            orderBuilder = new StringBuilder();
+        } else if (orderBuilder.length() > 0) {
+            orderBuilder.append(",");
+        }
+    }
+
+    public void orderAsc(Property... properties) {
+        for (Property property : properties) {
+            checkOrderBuilder();
+            orderBuilder.append(property.getColumnName()).append(" ASC");
+        }
+    }
+
+    public void orderDesc(Property... properties) {
+        for (Property property : properties) {
+            checkOrderBuilder();
+            orderBuilder.append(property.getColumnName()).append(" DESC");
+        }
+    }
+
+    public String getOrder() {
+        if (orderBuilder == null) {
+            return null;
+        } else {
+            return orderBuilder.toString();
+        }
     }
 
     public void init2ndPass() {
@@ -101,27 +134,11 @@ public class ToMany {
     public void init3ndPass() {
     }
 
-    protected boolean checkUseEquals(PropertyType propertyType) {
-        boolean useEquals;
-        switch (propertyType) {
-        case Byte:
-        case Short:
-        case Int:
-        case Long:
-        case Boolean:
-        case Float:
-            useEquals = true;
-            break;
-        default:
-            useEquals = false;
-            break;
-        }
-        return useEquals;
-    }
-
     @Override
     public String toString() {
-        return "ToOne '" + name + "' from " + sourceEntity + " to " + targetEntity;
+        String sourceName = sourceEntity != null ? sourceEntity.getClassName() : null;
+        String targetName = targetEntity != null ? targetEntity.getClassName() : null;
+        return "ToMany '" + name + "' from " + sourceName + " to " + targetName;
     }
 
 }

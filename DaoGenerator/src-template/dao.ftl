@@ -265,6 +265,9 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 <#list toMany.targetProperties as property>
             queryBuilder.where(Properties.${property.propertyName?cap_first}.eq(${property.propertyName}));
 </#list>
+<#if toMany.order?has_content>
+            queryBuilder.orderRaw("${toMany.order}");
+</#if>
             ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query = queryBuilder.build();
         } else {
 <#list toMany.targetProperties as property>

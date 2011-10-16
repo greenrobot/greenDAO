@@ -24,10 +24,12 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
 
     public static class Properties {
         public final static Property ToManyId = new Property(0, Long.class, "toManyId", false, "TO_MANY_ID");
-        public final static Property Id = new Property(1, Long.class, "id", true, "_id");
+        public final static Property ToManyIdDesc = new Property(1, Long.class, "toManyIdDesc", false, "TO_MANY_ID_DESC");
+        public final static Property Id = new Property(2, Long.class, "id", true, "_id");
     };
 
     private Query toManyEntity_ToManyTargetEntityQuery;
+    private Query toManyEntity_ToManyDescListQuery;
 
     public ToManyTargetEntityDao(DaoConfig config) {
         super(config);
@@ -41,7 +43,8 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'TO_MANY_TARGET_ENTITY' (" + //
                 "'TO_MANY_ID' INTEGER," + // 0: toManyId
-                "'_id' INTEGER PRIMARY KEY );"; // 1: id
+                "'TO_MANY_ID_DESC' INTEGER," + // 1: toManyIdDesc
+                "'_id' INTEGER PRIMARY KEY );"; // 2: id
         db.execSQL(sql);
     }
 
@@ -61,16 +64,21 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
             stmt.bindLong(1, toManyId);
         }
  
+        Long toManyIdDesc = entity.getToManyIdDesc();
+        if (toManyIdDesc != null) {
+            stmt.bindLong(2, toManyIdDesc);
+        }
+ 
         Long id = entity.getId();
         if (id != null) {
-            stmt.bindLong(2, id);
+            stmt.bindLong(3, id);
         }
     }
 
     /** @inheritdoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1);
+        return cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2);
     }    
 
     /** @inheritdoc */
@@ -78,7 +86,8 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
     public ToManyTargetEntity readEntity(Cursor cursor, int offset) {
         ToManyTargetEntity entity = new ToManyTargetEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // toManyId
-            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1) // id
+            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // toManyIdDesc
+            cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2) // id
         );
         return entity;
     }
@@ -87,7 +96,8 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
     @Override
     public void readEntity(Cursor cursor, ToManyTargetEntity entity, int offset) {
         entity.setToManyId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
+        entity.setToManyIdDesc(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
+        entity.setId(cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2));
      }
     
     @Override
@@ -118,11 +128,26 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         if (toManyEntity_ToManyTargetEntityQuery == null) {
             QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
             queryBuilder.where(Properties.ToManyId.eq(toManyId));
+            queryBuilder.orderRaw("_id ASC");
             toManyEntity_ToManyTargetEntityQuery = queryBuilder.build();
         } else {
             toManyEntity_ToManyTargetEntityQuery.setParameter(0, toManyId);
         }
         return toManyEntity_ToManyTargetEntityQuery.list();
+    }
+
+    /** Internal query to resolve the "ToManyDescList" to-many relationship of ToManyEntity. */
+    @SuppressWarnings("unchecked")
+    public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyDescList(Long toManyIdDesc) {
+        if (toManyEntity_ToManyDescListQuery == null) {
+            QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
+            queryBuilder.where(Properties.ToManyIdDesc.eq(toManyIdDesc));
+            queryBuilder.orderRaw("_id DESC");
+            toManyEntity_ToManyDescListQuery = queryBuilder.build();
+        } else {
+            toManyEntity_ToManyDescListQuery.setParameter(0, toManyIdDesc);
+        }
+        return toManyEntity_ToManyDescListQuery.list();
     }
 
 }

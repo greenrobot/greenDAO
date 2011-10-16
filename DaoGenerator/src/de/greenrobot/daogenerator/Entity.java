@@ -131,10 +131,20 @@ public class Entity {
         return toOne;
     }
 
-    public ToMany addToMany(Entity target, Property fkProperty) {
-        Property[] sourceProperties = null;
-        Property[] targetProperties = { fkProperty };
+    /** Add a to-many relationship; the target entity is joined to the PK property of this entity. */
+    public ToMany addToMany(Entity target, Property targetProperty) {
+        Property[] targetProperties = { targetProperty };
+        return addToMany(null, target, targetProperties);
+    }
 
+    /** Add a to-many relationship; the target entity is joined to the PK property of this entity. */
+    public ToMany addToMany(Property sourceProperty, Entity target, Property targetProperty) {
+        Property[] sourceProperties = { sourceProperty };
+        Property[] targetProperties = { targetProperty };
+        return addToMany(sourceProperties, target, targetProperties);
+    }
+
+    private ToMany addToMany(Property[] sourceProperties, Entity target, Property[] targetProperties) {
         ToMany toMany = new ToMany(schema, this, sourceProperties, target, targetProperties);
         toManyRelations.add(toMany);
         target.incomingToManyRelations.add(toMany);
@@ -363,10 +373,15 @@ public class Entity {
             property.init3ndPass();
         }
 
+        Set<String> toOneNames = new HashSet<String>();
         for (ToOne toOne : toOneRelations) {
             toOne.init3ndPass();
+            if (!toOneNames.add(toOne.getName().toLowerCase())) {
+                throw new RuntimeException("Duplicate name for " + toOne);
+            }
         }
 
+        Set<String> toManyNames = new HashSet<String>();
         for (ToMany toMany : toManyRelations) {
             toMany.init3ndPass();
             Entity targetEntity = toMany.getTargetEntity();
@@ -374,6 +389,9 @@ public class Entity {
                 if (!targetEntity.propertiesColumns.contains(targetProperty)) {
                     targetEntity.propertiesColumns.add(targetProperty);
                 }
+            }
+            if (!toManyNames.add(toMany.getName().toLowerCase())) {
+                throw new RuntimeException("Duplicate name for " + toMany);
             }
         }
 
