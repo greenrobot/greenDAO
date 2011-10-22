@@ -9,5 +9,5 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/DaoExample/lib/greenDAO-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
