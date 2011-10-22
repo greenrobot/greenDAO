@@ -216,7 +216,7 @@ public class Property {
         }
     }
 
-    public void init3ndPass() {
+    void init3ndPass() {
         // Nothing to do so far
     }
     

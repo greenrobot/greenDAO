@@ -49,7 +49,7 @@ public class DaoGenerator {
     private Template templateDaoUnitTest;
 
     public DaoGenerator() throws IOException {
-        System.out.println("greenDAO Generator (preview)");
+        System.out.println("greenDAO Generator");
         System.out.println("Copyright 2011 Markus Junginger, greenrobot.de. Licensed under GPL V3.");
         System.out.println("This program comes with ABSOLUTELY NO WARRANTY");
 
@@ -137,7 +137,7 @@ public class DaoGenerator {
             root.put("schema", schema);
             root.put("entity", entity);
 
-            if (schema.isKeepSections()) {
+            if (entity != null && entity.getHasKeepSections()) {
                 checkKeepSections(file, root);
             }
 

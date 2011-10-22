@@ -32,7 +32,8 @@ public class Schema {
     private Map<PropertyType, String> propertyToDbType;
     private Map<PropertyType, String> propertyToJavaTypeNotNull;
     private Map<PropertyType, String> propertyToJavaTypeNullable;
-    private boolean keepSections;
+    private boolean hasKeepSectionsByDefault;
+    private boolean useActiveEntitiesByDefault;
 
     public Schema(int version, String defaultJavaPackage) {
         this.version = version;
@@ -41,8 +42,12 @@ public class Schema {
         initTypeMappings();
     }
 
-    public void enableKeepSections() {
-        keepSections = true;
+    public void enableKeepSectionsByDefault() {
+        hasKeepSectionsByDefault = true;
+    }
+
+    public void enableActiveEntitiesByDefault() {
+        useActiveEntitiesByDefault = true;
     }
 
     private void initTypeMappings() {
@@ -151,8 +156,12 @@ public class Schema {
         return entities;
     }
     
-    public boolean isKeepSections() {
-        return keepSections;
+    public boolean isHasKeepSectionsByDefault() {
+        return hasKeepSectionsByDefault;
+    }
+
+    public boolean isUseActiveEntitiesByDefault() {
+        return useActiveEntitiesByDefault;
     }
 
     void init2ndPass() {

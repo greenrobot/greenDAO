@@ -51,7 +51,7 @@ public class Entity {
     private boolean constructors;
     private boolean skipGeneration;
     private boolean skipGenerationTest;
-    private boolean active;
+    private Boolean active;
     private Boolean hasKeepSections;
 
     public Entity(Schema schema, String className) {
@@ -319,12 +319,20 @@ public class Entity {
         return incomingToManyRelations;
     }
 
-    public void setActive() {
-        active = true;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
-    public boolean isActive() {
+    public Boolean getActive() {
         return active;
+    }
+
+    public Boolean getHasKeepSections() {
+        return hasKeepSections;
+    }
+
+    public void setHasKeepSections(Boolean hasKeepSections) {
+        this.hasKeepSections = hasKeepSections;
     }
 
     void init2ndPass() {
@@ -348,7 +356,6 @@ public class Entity {
             pkType = "Void";
         }
 
-        active |= !toOneRelations.isEmpty() || !toManyRelations.isEmpty();
         propertiesColumns = new ArrayList<Property>(properties);
         for (ToOne toOne : toOneRelations) {
             toOne.init2ndPass();
@@ -359,6 +366,7 @@ public class Entity {
                 }
             }
         }
+
         for (ToMany toMany : toManyRelations) {
             toMany.init2ndPass();
             // Source Properties may not be virtual, so we do not need the following code:
@@ -367,6 +375,15 @@ public class Entity {
             // propertiesColumns.add(sourceProperty);
             // }
             // }
+        }
+
+        if (active == null) {
+            active = schema.isUseActiveEntitiesByDefault();
+        }
+        active |= !toOneRelations.isEmpty() || !toManyRelations.isEmpty();
+
+        if (hasKeepSections == null) {
+            hasKeepSections = schema.isHasKeepSectionsByDefault();
         }
 
         initIndexNamesWithDefaults();
@@ -398,7 +415,6 @@ public class Entity {
                 throw new RuntimeException("Duplicate name for " + toMany);
             }
         }
-
     }
 
     protected void initNamesWithDefaults() {

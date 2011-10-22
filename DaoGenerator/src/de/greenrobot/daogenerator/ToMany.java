@@ -92,7 +92,7 @@ public class ToMany {
         }
     }
 
-    public void init2ndPass() {
+    void init2ndPass() {
         if (name == null) {
             char[] nameCharArray = targetEntity.getClassName().toCharArray();
             nameCharArray[0] = Character.toLowerCase(nameCharArray[0]);
@@ -123,7 +123,7 @@ public class ToMany {
         }
     }
 
-    public void init3ndPass() {
+    void init3ndPass() {
     }
 
     @Override

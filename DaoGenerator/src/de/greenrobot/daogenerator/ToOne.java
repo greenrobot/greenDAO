@@ -69,7 +69,7 @@ public class ToOne {
         return useFkProperty;
     }
 
-    public void init2ndPass() {
+    void init2ndPass() {
         if (name == null) {
             char[] nameCharArray = targetEntity.getClassName().toCharArray();
             nameCharArray[0] = Character.toLowerCase(nameCharArray[0]);
@@ -79,7 +79,7 @@ public class ToOne {
     }
 
     /** Constructs fkColumns. Depends on 2nd pass of target key properties. */
-    public void init3ndPass() {
+    void init3ndPass() {
 
         Property targetPkProperty = targetEntity.getPkProperty();
         if (fkProperties.length != 1 || targetPkProperty == null) {

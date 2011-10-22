@@ -55,9 +55,10 @@ public class TestDaoGenerator {
 
         schema2 = new Schema(1, "de.greenrobot.daotest2");
         schema2.setDefaultJavaPackageTest("de.greenrobot.daotest2.entity");
-        schema2.enableKeepSections();
+        schema2.enableKeepSectionsByDefault();
 
-        schema2.addEntity("KeepEntity").addIdProperty();
+        Entity keepEntity = schema2.addEntity("KeepEntity");
+        keepEntity.addIdProperty();
     }
 
     public void generate() throws Exception {
@@ -131,20 +132,21 @@ public class TestDaoGenerator {
         Entity toManyEntity = schema.addEntity("ToManyEntity");
         Property sourceIdProperty = toManyEntity.addIdProperty().getProperty();
         Property sourceJoinProperty = toManyEntity.addStringProperty("sourceJoinProperty").getProperty();
-        
+
         ToMany toMany = toManyEntity.addToMany(toManyTargetEntity, toManyIdProperty);
         toMany.orderAsc(targetIdProperty);
-        
+
         ToMany toManyDesc = toManyEntity.addToMany(toManyTargetEntity, toManyIdDescProperty);
         toManyDesc.setName("ToManyDescList");
         toManyDesc.orderDesc(targetIdProperty);
-        
-        ToMany toManyByJoinProperty = toManyEntity.addToMany(sourceJoinProperty, toManyTargetEntity, targetJoinProperty);
+
+        ToMany toManyByJoinProperty = toManyEntity
+                .addToMany(sourceJoinProperty, toManyTargetEntity, targetJoinProperty);
         toManyByJoinProperty.setName("ToManyByJoinProperty");
         toManyByJoinProperty.orderAsc(targetIdProperty);
 
-        Property[] sourceProperties = {sourceIdProperty, sourceJoinProperty};
-        Property[] targetProperties = {toManyIdProperty, targetJoinProperty};
+        Property[] sourceProperties = { sourceIdProperty, sourceJoinProperty };
+        Property[] targetProperties = { toManyIdProperty, targetJoinProperty };
         ToMany toManyJoinTwo = toManyEntity.addToMany(sourceProperties, toManyTargetEntity, targetProperties);
         toManyJoinTwo.setName("ToManyJoinTwo");
         toManyJoinTwo.orderDesc(targetJoinProperty);
@@ -186,12 +188,12 @@ public class TestDaoGenerator {
         entity.addIntProperty("i");
         entity.addIntProperty("k");
     }
-    
+
     protected void createActive() {
         Entity activeEntity = schema.addEntity("AnActiveEntity");
         activeEntity.addIdProperty();
         activeEntity.addStringProperty("text");
-        activeEntity.setActive();
+        activeEntity.setActive(true);
     }
 
 }

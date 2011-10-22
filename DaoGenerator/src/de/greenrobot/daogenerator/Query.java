@@ -22,8 +22,10 @@ import java.util.List;
 
 /** NOT IMPLEMENTED YET. Check back later. */
 public class Query {
+    @SuppressWarnings("unused")
     private String name;
     private List<QueryParam> parameters;
+    @SuppressWarnings("unused")
     private boolean distinct;
 
     public Query(String name) {
