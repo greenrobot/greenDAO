@@ -173,6 +173,10 @@ public class Property {
     public void setOrdinal(int ordinal) {
         this.ordinal = ordinal;
     }
+    
+    public Entity getEntity() {
+        return entity;
+    }
 
     void init2ndPass() {
         initConstraint();
@@ -214,6 +218,11 @@ public class Property {
 
     public void init3ndPass() {
         // Nothing to do so far
+    }
+    
+    @Override
+    public String toString() {
+        return "Property "+propertyName+" of "+entity.getClassName();
     }
 
 }

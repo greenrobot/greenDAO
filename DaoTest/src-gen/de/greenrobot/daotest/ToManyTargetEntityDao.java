@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
-import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.Query;
 import de.greenrobot.dao.QueryBuilder;
@@ -26,10 +25,13 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         public final static Property ToManyId = new Property(0, Long.class, "toManyId", false, "TO_MANY_ID");
         public final static Property ToManyIdDesc = new Property(1, Long.class, "toManyIdDesc", false, "TO_MANY_ID_DESC");
         public final static Property Id = new Property(2, Long.class, "id", true, "_id");
+        public final static Property TargetJoinProperty = new Property(3, String.class, "targetJoinProperty", false, "TARGET_JOIN_PROPERTY");
     };
 
-    private Query toManyEntity_ToManyTargetEntityQuery;
-    private Query toManyEntity_ToManyDescListQuery;
+    private Query<ToManyTargetEntity> toManyEntity_ToManyTargetEntityQuery;
+    private Query<ToManyTargetEntity> toManyEntity_ToManyDescListQuery;
+    private Query<ToManyTargetEntity> toManyEntity_ToManyByJoinPropertyQuery;
+    private Query<ToManyTargetEntity> toManyEntity_ToManyJoinTwoQuery;
 
     public ToManyTargetEntityDao(DaoConfig config) {
         super(config);
@@ -44,7 +46,8 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'TO_MANY_TARGET_ENTITY' (" + //
                 "'TO_MANY_ID' INTEGER," + // 0: toManyId
                 "'TO_MANY_ID_DESC' INTEGER," + // 1: toManyIdDesc
-                "'_id' INTEGER PRIMARY KEY );"; // 2: id
+                "'_id' INTEGER PRIMARY KEY ," + // 2: id
+                "'TARGET_JOIN_PROPERTY' TEXT);"; // 3: targetJoinProperty
         db.execSQL(sql);
     }
 
@@ -73,6 +76,11 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         if (id != null) {
             stmt.bindLong(3, id);
         }
+ 
+        String targetJoinProperty = entity.getTargetJoinProperty();
+        if (targetJoinProperty != null) {
+            stmt.bindString(4, targetJoinProperty);
+        }
     }
 
     /** @inheritdoc */
@@ -87,7 +95,8 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         ToManyTargetEntity entity = new ToManyTargetEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // toManyId
             cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // toManyIdDesc
-            cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2) // id
+            cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2), // id
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // targetJoinProperty
         );
         return entity;
     }
@@ -98,6 +107,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         entity.setToManyId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setToManyIdDesc(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
         entity.setId(cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2));
+        entity.setTargetJoinProperty(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
      }
     
     @Override
@@ -123,7 +133,6 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
     }
     
     /** Internal query to resolve the "toManyTargetEntity" to-many relationship of ToManyEntity. */
-    @SuppressWarnings("unchecked")
     public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyTargetEntity(Long toManyId) {
         if (toManyEntity_ToManyTargetEntityQuery == null) {
             QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
@@ -137,7 +146,6 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
     }
 
     /** Internal query to resolve the "ToManyDescList" to-many relationship of ToManyEntity. */
-    @SuppressWarnings("unchecked")
     public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyDescList(Long toManyIdDesc) {
         if (toManyEntity_ToManyDescListQuery == null) {
             QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
@@ -148,6 +156,34 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
             toManyEntity_ToManyDescListQuery.setParameter(0, toManyIdDesc);
         }
         return toManyEntity_ToManyDescListQuery.list();
+    }
+
+    /** Internal query to resolve the "ToManyByJoinProperty" to-many relationship of ToManyEntity. */
+    public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyByJoinProperty(String targetJoinProperty) {
+        if (toManyEntity_ToManyByJoinPropertyQuery == null) {
+            QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
+            queryBuilder.where(Properties.TargetJoinProperty.eq(targetJoinProperty));
+            queryBuilder.orderRaw("TARGET_JOIN_PROPERTY ASC");
+            toManyEntity_ToManyByJoinPropertyQuery = queryBuilder.build();
+        } else {
+            toManyEntity_ToManyByJoinPropertyQuery.setParameter(0, targetJoinProperty);
+        }
+        return toManyEntity_ToManyByJoinPropertyQuery.list();
+    }
+
+    /** Internal query to resolve the "ToManyJoinTwo" to-many relationship of ToManyEntity. */
+    public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyJoinTwo(Long toManyId, String targetJoinProperty) {
+        if (toManyEntity_ToManyJoinTwoQuery == null) {
+            QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
+            queryBuilder.where(Properties.ToManyId.eq(toManyId));
+            queryBuilder.where(Properties.TargetJoinProperty.eq(targetJoinProperty));
+            queryBuilder.orderRaw("TO_MANY_ID DESC,TARGET_JOIN_PROPERTY DESC");
+            toManyEntity_ToManyJoinTwoQuery = queryBuilder.build();
+        } else {
+            toManyEntity_ToManyJoinTwoQuery.setParameter(0, toManyId);
+            toManyEntity_ToManyJoinTwoQuery.setParameter(1, targetJoinProperty);
+        }
+        return toManyEntity_ToManyJoinTwoQuery.list();
     }
 
 }

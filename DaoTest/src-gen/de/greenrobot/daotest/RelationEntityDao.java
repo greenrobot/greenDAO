@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
-import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.SqlUtils;
 

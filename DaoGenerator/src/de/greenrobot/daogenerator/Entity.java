@@ -144,7 +144,7 @@ public class Entity {
         return addToMany(sourceProperties, target, targetProperties);
     }
 
-    private ToMany addToMany(Property[] sourceProperties, Entity target, Property[] targetProperties) {
+    public ToMany addToMany(Property[] sourceProperties, Entity target, Property[] targetProperties) {
         ToMany toMany = new ToMany(schema, this, sourceProperties, target, targetProperties);
         toManyRelations.add(toMany);
         target.incomingToManyRelations.add(toMany);
@@ -444,5 +444,16 @@ public class Entity {
                 index.setName(indexName);
             }
         }
+    }
+
+    public void validatePropertyExists(Property property) {
+        if (!properties.contains(property)) {
+            throw new RuntimeException("Property " + property + " does not exist in " + this);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Entity " + className + " (package: " + javaPackage + ")";
     }
 }

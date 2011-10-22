@@ -9,6 +9,7 @@ public class ToManyTargetEntity {
     private Long toManyId;
     private Long toManyIdDesc;
     private Long id;
+    private String targetJoinProperty;
 
     public ToManyTargetEntity() {
     }
@@ -17,10 +18,11 @@ public class ToManyTargetEntity {
         this.id = id;
     }
 
-    public ToManyTargetEntity(Long toManyId, Long toManyIdDesc, Long id) {
+    public ToManyTargetEntity(Long toManyId, Long toManyIdDesc, Long id, String targetJoinProperty) {
         this.toManyId = toManyId;
         this.toManyIdDesc = toManyIdDesc;
         this.id = id;
+        this.targetJoinProperty = targetJoinProperty;
     }
 
     public Long getToManyId() {
@@ -45,6 +47,14 @@ public class ToManyTargetEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTargetJoinProperty() {
+        return targetJoinProperty;
+    }
+
+    public void setTargetJoinProperty(String targetJoinProperty) {
+        this.targetJoinProperty = targetJoinProperty;
     }
 
 }

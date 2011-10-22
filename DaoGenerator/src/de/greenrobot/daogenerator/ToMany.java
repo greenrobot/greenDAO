@@ -28,7 +28,7 @@ public class ToMany {
     private final Entity targetEntity;
     private Property[] sourceProperties;
     private final Property[] targetProperties;
-    private StringBuilder orderBuilder;
+    private final PropertyOrderList propertyOrderList;
 
     public ToMany(Schema schema, Entity sourceEntity, Property[] sourceProperties, Entity targetEntity,
             Property[] targetProperties) {
@@ -37,6 +37,7 @@ public class ToMany {
         this.targetEntity = targetEntity;
         this.sourceProperties = sourceProperties;
         this.targetProperties = targetProperties;
+        propertyOrderList = new PropertyOrderList();
     }
 
     public Entity getSourceEntity() {
@@ -67,33 +68,27 @@ public class ToMany {
         this.name = name;
     }
 
-    private void checkOrderBuilder() {
-        if (orderBuilder == null) {
-            orderBuilder = new StringBuilder();
-        } else if (orderBuilder.length() > 0) {
-            orderBuilder.append(",");
-        }
-    }
-
+    /** Property of target entity used for ascending order. */
     public void orderAsc(Property... properties) {
         for (Property property : properties) {
-            checkOrderBuilder();
-            orderBuilder.append(property.getColumnName()).append(" ASC");
+            targetEntity.validatePropertyExists(property);
+            propertyOrderList.addPropertyAsc(property);
         }
     }
 
+    /** Property of target entity used for descending order. */
     public void orderDesc(Property... properties) {
         for (Property property : properties) {
-            checkOrderBuilder();
-            orderBuilder.append(property.getColumnName()).append(" DESC");
+            targetEntity.validatePropertyExists(property);
+            propertyOrderList.addPropertyDesc(property);
         }
     }
 
     public String getOrder() {
-        if (orderBuilder == null) {
+        if (propertyOrderList.isEmpty()) {
             return null;
         } else {
-            return orderBuilder.toString();
+            return propertyOrderList.getCommaSeparatedString();
         }
     }
 
@@ -109,9 +104,6 @@ public class ToMany {
             sourceProperties = pks.toArray(sourceProperties);
         }
         int count = sourceProperties.length;
-        if (count != 1) {
-            throw new RuntimeException("Currently only single FK columns are supported: " + this);
-        }
         if (count != targetProperties.length) {
             throw new RuntimeException("Source properties do not match target properties: " + this);
         }

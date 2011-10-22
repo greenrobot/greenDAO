@@ -33,7 +33,6 @@ import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
-import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 <#if entity.toOneRelations?has_content>
 import de.greenrobot.dao.SqlUtils;
@@ -67,7 +66,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 
 </#if>
 <#list entity.incomingToManyRelations as toMany>
-    private Query ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query;
+    private Query<${toMany.targetEntity.className}> ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query;
 </#list>
 
     public ${entity.classNameDao}(DaoConfig config) {
@@ -257,7 +256,6 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
     
 <#list entity.incomingToManyRelations as toMany>
     /** Internal query to resolve the "${toMany.name}" to-many relationship of ${toMany.sourceEntity.className}. */
-    @SuppressWarnings("unchecked")
     public synchronized List<${toMany.targetEntity.className}> _query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
     --><#list toMany.targetProperties as property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
         if (${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query == null) {

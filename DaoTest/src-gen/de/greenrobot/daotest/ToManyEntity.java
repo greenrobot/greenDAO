@@ -11,17 +11,25 @@ import de.greenrobot.dao.DaoException;
 public class ToManyEntity {
 
     private Long id;
+    private String sourceJoinProperty;
 
     /** Used to resolve relations */
     private DaoSession daoSession;
 
     private List<ToManyTargetEntity> toManyTargetEntity;
     private List<ToManyTargetEntity> ToManyDescList;
+    private List<ToManyTargetEntity> ToManyByJoinProperty;
+    private List<ToManyTargetEntity> ToManyJoinTwo;
     public ToManyEntity() {
     }
 
     public ToManyEntity(Long id) {
         this.id = id;
+    }
+
+    public ToManyEntity(Long id, String sourceJoinProperty) {
+        this.id = id;
+        this.sourceJoinProperty = sourceJoinProperty;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -35,6 +43,14 @@ public class ToManyEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getSourceJoinProperty() {
+        return sourceJoinProperty;
+    }
+
+    public void setSourceJoinProperty(String sourceJoinProperty) {
+        this.sourceJoinProperty = sourceJoinProperty;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
@@ -69,6 +85,40 @@ public class ToManyEntity {
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     public synchronized void resetToManyDescList() {
         ToManyDescList = null;
+    }
+
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public synchronized List<ToManyTargetEntity> getToManyByJoinProperty() {
+        if (ToManyByJoinProperty == null) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            ToManyTargetEntityDao dao = daoSession.getToManyTargetEntityDao();
+            ToManyByJoinProperty = dao._queryToManyEntity_ToManyByJoinProperty(sourceJoinProperty);
+        }
+        return ToManyByJoinProperty;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    public synchronized void resetToManyByJoinProperty() {
+        ToManyByJoinProperty = null;
+    }
+
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public synchronized List<ToManyTargetEntity> getToManyJoinTwo() {
+        if (ToManyJoinTwo == null) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            ToManyTargetEntityDao dao = daoSession.getToManyTargetEntityDao();
+            ToManyJoinTwo = dao._queryToManyEntity_ToManyJoinTwo(id, sourceJoinProperty);
+        }
+        return ToManyJoinTwo;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    public synchronized void resetToManyJoinTwo() {
+        ToManyJoinTwo = null;
     }
 
 }

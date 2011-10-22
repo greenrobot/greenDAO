@@ -63,14 +63,18 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
     private ToManyTargetEntity[] prepareToMany(long id, int count) {
         ToManyEntity entity = new ToManyEntity(id);
         daoSession.insert(entity);
+        return insertTargetEntitites(id, count, null);
+    }
+
+    private ToManyTargetEntity[] insertTargetEntitites(Long toManyId, int count, String joinProperty) {
         ToManyTargetEntity[] targetEntities = new ToManyTargetEntity[count];
         for (int i = 0; i < count; i++) {
             ToManyTargetEntity target = new ToManyTargetEntity();
-            target.setToManyId(id);
-            target.setToManyIdDesc(id);
+            target.setToManyId(toManyId);
+            target.setToManyIdDesc(toManyId);
+            target.setTargetJoinProperty(joinProperty);
             targetEntities[i] = target;
         }
-
         toManyTargetEntityDao.insertInTx(targetEntities);
         return targetEntities;
     }
@@ -115,7 +119,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         List<ToManyTargetEntity> resolvedToMany3 = testEntity.getToManyTargetEntity();
         assertEquals(0, resolvedToMany3.size());
     }
-    
+
     public void testToManyOrder() {
         prepareToMany(1, 3);
 
@@ -123,11 +127,54 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         List<ToManyTargetEntity> resolvedToManyAsc = testEntity.getToManyTargetEntity();
         List<ToManyTargetEntity> resolvedToManyDesc = testEntity.getToManyDescList();
         assertNotSame(resolvedToManyAsc, resolvedToManyDesc);
+        assertEquals(resolvedToManyAsc.get(0).getId(), resolvedToManyDesc.get(2).getId());
         assertSame(resolvedToManyAsc.get(0), resolvedToManyDesc.get(2));
         assertSame(resolvedToManyAsc.get(1), resolvedToManyDesc.get(1));
         assertSame(resolvedToManyAsc.get(2), resolvedToManyDesc.get(0));
     }
 
+    public void testJoinProperty() {
+        ToManyEntity entity = new ToManyEntity(1l);
+        entity.setSourceJoinProperty("JOIN ME");
+        daoSession.insert(entity);
+        insertTargetEntitites(null, 3, "JOIN ME");
 
+        ToManyEntity testEntity = toManyEntityDao.load(1l);
+        List<ToManyTargetEntity> targetEntities = testEntity.getToManyByJoinProperty();
+        assertEquals(3, targetEntities.size());
+
+        ToManyTargetEntity middleEntity = targetEntities.get(1);
+        middleEntity.setTargetJoinProperty("DON'T JOIN ME");
+        toManyTargetEntityDao.update(middleEntity);
+
+        testEntity.resetToManyByJoinProperty();
+        targetEntities = testEntity.getToManyByJoinProperty();
+        assertEquals(2, targetEntities.size());
+
+        assertFalse(middleEntity.getId() == targetEntities.get(0).getId());
+        assertFalse(middleEntity.getId() == targetEntities.get(1).getId());
+    }
+
+    public void testTwoJoinProperty() {
+        ToManyEntity entity = new ToManyEntity(1l);
+        entity.setSourceJoinProperty("JOIN ME");
+        daoSession.insert(entity);
+        insertTargetEntitites(1l, 3, "JOIN ME");
+
+        ToManyEntity testEntity = toManyEntityDao.load(1l);
+        List<ToManyTargetEntity> targetEntities = testEntity.getToManyJoinTwo();
+        assertEquals(3, targetEntities.size());
+
+        ToManyTargetEntity middleEntity = targetEntities.get(1);
+        middleEntity.setTargetJoinProperty("DON'T JOIN ME");
+        toManyTargetEntityDao.update(middleEntity);
+
+        testEntity.resetToManyJoinTwo();
+        targetEntities = testEntity.getToManyJoinTwo();
+        assertEquals(2, targetEntities.size());
+
+        assertFalse(middleEntity.getId() == targetEntities.get(0).getId());
+        assertFalse(middleEntity.getId() == targetEntities.get(1).getId());
+    }
 
 }

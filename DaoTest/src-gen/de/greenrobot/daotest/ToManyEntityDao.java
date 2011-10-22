@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
-import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 
 import de.greenrobot.daotest.ToManyEntity;
@@ -21,6 +20,7 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
 
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
+        public final static Property SourceJoinProperty = new Property(1, String.class, "sourceJoinProperty", false, "SOURCE_JOIN_PROPERTY");
     };
 
     private DaoSession daoSession;
@@ -38,7 +38,8 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'TO_MANY_ENTITY' (" + //
-                "'_id' INTEGER PRIMARY KEY );"; // 0: id
+                "'_id' INTEGER PRIMARY KEY ," + // 0: id
+                "'SOURCE_JOIN_PROPERTY' TEXT);"; // 1: sourceJoinProperty
         db.execSQL(sql);
     }
 
@@ -56,6 +57,11 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
         Long id = entity.getId();
         if (id != null) {
             stmt.bindLong(1, id);
+        }
+ 
+        String sourceJoinProperty = entity.getSourceJoinProperty();
+        if (sourceJoinProperty != null) {
+            stmt.bindString(2, sourceJoinProperty);
         }
     }
 
@@ -75,7 +81,8 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
     @Override
     public ToManyEntity readEntity(Cursor cursor, int offset) {
         ToManyEntity entity = new ToManyEntity( //
-            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0) // id
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1) // sourceJoinProperty
         );
         return entity;
     }
@@ -84,6 +91,7 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
     @Override
     public void readEntity(Cursor cursor, ToManyEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setSourceJoinProperty(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
      }
     
     @Override

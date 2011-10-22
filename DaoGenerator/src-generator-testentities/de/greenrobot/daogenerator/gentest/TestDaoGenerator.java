@@ -20,7 +20,6 @@ package de.greenrobot.daogenerator.gentest;
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Property;
-import de.greenrobot.daogenerator.Property.PropertyBuilder;
 import de.greenrobot.daogenerator.Schema;
 import de.greenrobot.daogenerator.ToMany;
 
@@ -125,17 +124,30 @@ public class TestDaoGenerator {
         Entity toManyTargetEntity = schema.addEntity("ToManyTargetEntity");
         Property toManyIdProperty = toManyTargetEntity.addLongProperty("toManyId").getProperty();
         Property toManyIdDescProperty = toManyTargetEntity.addLongProperty("toManyIdDesc").getProperty();
-        toManyTargetEntity.addIdProperty();
+        Property targetIdProperty = toManyTargetEntity.addIdProperty().getProperty();
+        Property targetJoinProperty = toManyTargetEntity.addStringProperty("targetJoinProperty").getProperty();
 
         Entity toManyEntity = schema.addEntity("ToManyEntity");
-        Property idProperty = toManyEntity.addIdProperty().getProperty();
+        Property sourceIdProperty = toManyEntity.addIdProperty().getProperty();
+        Property sourceJoinProperty = toManyEntity.addStringProperty("sourceJoinProperty").getProperty();
         
         ToMany toMany = toManyEntity.addToMany(toManyTargetEntity, toManyIdProperty);
-        toMany.orderAsc(idProperty);
+        toMany.orderAsc(targetIdProperty);
         
         ToMany toManyDesc = toManyEntity.addToMany(toManyTargetEntity, toManyIdDescProperty);
         toManyDesc.setName("ToManyDescList");
-        toManyDesc.orderDesc(idProperty);
+        toManyDesc.orderDesc(targetIdProperty);
+        
+        ToMany toManyByJoinProperty = toManyEntity.addToMany(sourceJoinProperty, toManyTargetEntity, targetJoinProperty);
+        toManyByJoinProperty.setName("ToManyByJoinProperty");
+        toManyByJoinProperty.orderAsc(targetIdProperty);
+
+        Property[] sourceProperties = {sourceIdProperty, sourceJoinProperty};
+        Property[] targetProperties = {toManyIdProperty, targetJoinProperty};
+        ToMany toManyJoinTwo = toManyEntity.addToMany(sourceProperties, toManyTargetEntity, targetProperties);
+        toManyJoinTwo.setName("ToManyJoinTwo");
+        toManyJoinTwo.orderDesc(targetJoinProperty);
+        toManyJoinTwo.orderDesc(targetIdProperty);
     }
 
     protected void createDate() {
