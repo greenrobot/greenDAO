@@ -16,10 +16,14 @@ public class ToManyEntity {
     /** Used to resolve relations */
     private DaoSession daoSession;
 
+    /** Used for active entity operations. */
+    private ToManyEntityDao myDao;
+
     private List<ToManyTargetEntity> toManyTargetEntity;
     private List<ToManyTargetEntity> ToManyDescList;
     private List<ToManyTargetEntity> ToManyByJoinProperty;
     private List<ToManyTargetEntity> ToManyJoinTwo;
+
     public ToManyEntity() {
     }
 
@@ -35,6 +39,7 @@ public class ToManyEntity {
     /** called by internal mechanisms, do not call yourself. */
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
+        myDao = daoSession != null ? daoSession.getToManyEntityDao() : null;
     }
 
     public Long getId() {
@@ -59,8 +64,8 @@ public class ToManyEntity {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            ToManyTargetEntityDao dao = daoSession.getToManyTargetEntityDao();
-            toManyTargetEntity = dao._queryToManyEntity_ToManyTargetEntity(id);
+            ToManyTargetEntityDao targetDao = daoSession.getToManyTargetEntityDao();
+            toManyTargetEntity = targetDao._queryToManyEntity_ToManyTargetEntity(id);
         }
         return toManyTargetEntity;
     }
@@ -76,8 +81,8 @@ public class ToManyEntity {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            ToManyTargetEntityDao dao = daoSession.getToManyTargetEntityDao();
-            ToManyDescList = dao._queryToManyEntity_ToManyDescList(id);
+            ToManyTargetEntityDao targetDao = daoSession.getToManyTargetEntityDao();
+            ToManyDescList = targetDao._queryToManyEntity_ToManyDescList(id);
         }
         return ToManyDescList;
     }
@@ -93,8 +98,8 @@ public class ToManyEntity {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            ToManyTargetEntityDao dao = daoSession.getToManyTargetEntityDao();
-            ToManyByJoinProperty = dao._queryToManyEntity_ToManyByJoinProperty(sourceJoinProperty);
+            ToManyTargetEntityDao targetDao = daoSession.getToManyTargetEntityDao();
+            ToManyByJoinProperty = targetDao._queryToManyEntity_ToManyByJoinProperty(sourceJoinProperty);
         }
         return ToManyByJoinProperty;
     }
@@ -110,8 +115,8 @@ public class ToManyEntity {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            ToManyTargetEntityDao dao = daoSession.getToManyTargetEntityDao();
-            ToManyJoinTwo = dao._queryToManyEntity_ToManyJoinTwo(id, sourceJoinProperty);
+            ToManyTargetEntityDao targetDao = daoSession.getToManyTargetEntityDao();
+            ToManyJoinTwo = targetDao._queryToManyEntity_ToManyJoinTwo(id, sourceJoinProperty);
         }
         return ToManyJoinTwo;
     }
@@ -119,6 +124,30 @@ public class ToManyEntity {
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     public synchronized void resetToManyJoinTwo() {
         ToManyJoinTwo = null;
+    }
+
+    /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */
+    public void delete() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }    
+        myDao.delete(this);
+    }
+
+    /** Convenient call for {@link AbstractDao#update(Object)}. Entity must attached to an entity context. */
+    public void update() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }    
+        myDao.update(this);
+    }
+
+    /** Convenient call for {@link AbstractDao#refresh(Object)}. Entity must attached to an entity context. */
+    public void refresh() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }    
+        myDao.refresh(this);
     }
 
 }

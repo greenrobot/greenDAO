@@ -319,6 +319,10 @@ public class Entity {
         return incomingToManyRelations;
     }
 
+    public void setActive() {
+        active = true;
+    }
+
     public boolean isActive() {
         return active;
     }
@@ -344,7 +348,7 @@ public class Entity {
             pkType = "Void";
         }
 
-        active = !toOneRelations.isEmpty() || !toManyRelations.isEmpty();
+        active |= !toOneRelations.isEmpty() || !toManyRelations.isEmpty();
         propertiesColumns = new ArrayList<Property>(properties);
         for (ToOne toOne : toOneRelations) {
             toOne.init2ndPass();

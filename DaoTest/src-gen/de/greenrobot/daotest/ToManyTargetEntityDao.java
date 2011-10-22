@@ -163,7 +163,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         if (toManyEntity_ToManyByJoinPropertyQuery == null) {
             QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
             queryBuilder.where(Properties.TargetJoinProperty.eq(targetJoinProperty));
-            queryBuilder.orderRaw("TARGET_JOIN_PROPERTY ASC");
+            queryBuilder.orderRaw("_id ASC");
             toManyEntity_ToManyByJoinPropertyQuery = queryBuilder.build();
         } else {
             toManyEntity_ToManyByJoinPropertyQuery.setParameter(0, targetJoinProperty);
@@ -177,7 +177,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
             QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
             queryBuilder.where(Properties.ToManyId.eq(toManyId));
             queryBuilder.where(Properties.TargetJoinProperty.eq(targetJoinProperty));
-            queryBuilder.orderRaw("TO_MANY_ID DESC,TARGET_JOIN_PROPERTY DESC");
+            queryBuilder.orderRaw("TARGET_JOIN_PROPERTY DESC,_id DESC");
             toManyEntity_ToManyJoinTwoQuery = queryBuilder.build();
         } else {
             toManyEntity_ToManyJoinTwoQuery.setParameter(0, toManyId);

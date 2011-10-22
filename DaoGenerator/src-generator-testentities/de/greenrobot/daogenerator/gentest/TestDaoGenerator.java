@@ -51,6 +51,7 @@ public class TestDaoGenerator {
         createSpecialNames();
         createAbcdef();
         createToMany();
+        createActive();
 
         schema2 = new Schema(1, "de.greenrobot.daotest2");
         schema2.setDefaultJavaPackageTest("de.greenrobot.daotest2.entity");
@@ -185,4 +186,12 @@ public class TestDaoGenerator {
         entity.addIntProperty("i");
         entity.addIntProperty("k");
     }
+    
+    protected void createActive() {
+        Entity activeEntity = schema.addEntity("AnActiveEntity");
+        activeEntity.addIdProperty();
+        activeEntity.addStringProperty("text");
+        activeEntity.setActive();
+    }
+
 }
