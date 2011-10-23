@@ -63,8 +63,8 @@ public class TestDaoGenerator {
 
     public void generate() throws Exception {
         DaoGenerator daoGenerator = new DaoGenerator();
-        daoGenerator.generateAll("../DaoTest/src-gen", "../DaoTest/src", schema);
-        daoGenerator.generateAll("../DaoTest/src-gen", "../DaoTest/src", schema2);
+        daoGenerator.generateAll(schema, "../DaoTest/src-gen", "../DaoTest/src");
+        daoGenerator.generateAll(schema2, "../DaoTest/src-gen", "../DaoTest/src");
     }
 
     protected void createSimple() {

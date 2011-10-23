@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="DaoCore" default="build-all">
 
-	<target name="build-all" depends="build-jar, build-javadoc">
+	<target name="build-all" depends="delete-release, build-jar, build-javadoc">
 	</target>
+	
+    <target name="delete-release">
+        <delete dir="release" />
+    </target>
 
 	<target name="build-jar" description="Depends on Eclipse to have everthing compiled into bin/">
 		<mkdir dir="release" />
 		<jar jarfile="release/greenDAO.jar">
-			<fileset dir="bin">
+			<fileset dir="bin/classes">
 				<include name="de/greenrobot/**" />
 			</fileset>
 		</jar>

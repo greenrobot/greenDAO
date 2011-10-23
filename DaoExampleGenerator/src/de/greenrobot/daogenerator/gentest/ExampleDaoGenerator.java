@@ -37,7 +37,7 @@ public class ExampleDaoGenerator {
         note.addStringProperty("comment");
         note.addDateProperty("date");
 
-        new DaoGenerator().generateAll("../DaoExample/src-gen", schema);
+        new DaoGenerator().generateAll(schema, "../DaoExample/src-gen");
     }
 
 }

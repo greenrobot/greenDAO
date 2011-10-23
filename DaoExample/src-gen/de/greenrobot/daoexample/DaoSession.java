@@ -31,7 +31,7 @@ public class DaoSession extends AbstractDaoSession {
         super(db);
 
         noteDaoConfig = daoConfigMap.get(NoteDao.class).clone();
-        noteDaoConfig.setIdentityScope(createIdentityScope(type));
+        noteDaoConfig.initIdentityScope(type);
 
         noteDao = new NoteDao(noteDaoConfig, this);
 

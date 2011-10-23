@@ -47,7 +47,7 @@ public class SimpleDaoGeneratorTest {
         daoFile.delete();
         assertFalse(daoFile.exists());
 
-        new DaoGenerator().generateAll("test-out", schema);
+        new DaoGenerator().generateAll(schema, "test-out");
 
         assertEquals("PRIMARY KEY", idProperty.getConstraints());
         assertTrue(daoFile.toString(), daoFile.exists());

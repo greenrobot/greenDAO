@@ -75,12 +75,12 @@ public class DaoGenerator {
     }
 
     /** Generates all entities and DAOs for the given schema. */
-    public void generateAll(String outDir, Schema schema) throws Exception {
-        generateAll(outDir, null, schema);
+    public void generateAll(Schema schema, String outDir) throws Exception {
+        generateAll(schema, outDir, null);
     }
 
     /** Generates all entities and DAOs for the given schema. */
-    public void generateAll(String outDir, String outDirTest, Schema schema) throws Exception {
+    public void generateAll(Schema schema, String outDir, String outDirTest) throws Exception {
         long start = System.currentTimeMillis();
 
         File outDirFile = toFileForceExists(outDir);

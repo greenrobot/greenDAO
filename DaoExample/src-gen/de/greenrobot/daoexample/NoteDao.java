@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
-import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 
 import de.greenrobot.daoexample.Note;
@@ -38,10 +37,10 @@ public class NoteDao extends AbstractDao<Note, Long> {
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'NOTE' (" + //
-                "'_id' INTEGER PRIMARY KEY ," + // 0
-                "'TEXT' TEXT NOT NULL ," + // 1
-                "'COMMENT' TEXT," + // 2
-                "'DATE' INTEGER);"; // 3
+                "'_id' INTEGER PRIMARY KEY ," + // 0: id
+                "'TEXT' TEXT NOT NULL ," + // 1: text
+                "'COMMENT' TEXT," + // 2: comment
+                "'DATE' INTEGER);"; // 3: date
         db.execSQL(sql);
     }
 

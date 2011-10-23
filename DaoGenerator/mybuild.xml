@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
 Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)     
@@ -20,7 +19,11 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <project name="DaoGenerator" default="build-all">
 
-	<target name="build-all" depends="build-jar, build-javadoc"></target>
+	<target name="build-all" depends="delete-release, build-jar, build-javadoc"></target>
+	
+	<target name="delete-release">
+		<delete dir="release" />
+	</target>
 	
 	<target name="build-jar" description="Depends on Eclipse to have everthing compiled into bin/">
 		<mkdir dir="release" />
@@ -41,10 +44,10 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 	</target>
 
     <target name="refresh-example-jars" description="">
-        <ant antfile="../DaoBase/mybuild.xml" dir="../DaoBase/"/>
+        <ant antfile="../DaoCore/mybuild.xml" dir="../DaoCore/"/>
         <antcall target="build-all"></antcall>
-        <copy file="../DaoBase/release/greenDAO.jar" todir="../DaoExample/lib" ></copy>
-        <copy file="../DaoBase/release/greenDAO-javadoc.jar" todir="../DaoExample/lib" ></copy>
+        <copy file="../DaoCore/release/greenDAO.jar" todir="../DaoExample/lib" ></copy>
+        <copy file="../DaoCore/release/greenDAO-javadoc.jar" todir="../DaoExample/lib" ></copy>
         <copy file="release/greenDAO-generator.jar" todir="../DaoExampleGenerator/lib" ></copy>
         <copy file="release/greenDAO-generator-javadoc.jar" todir="../DaoExampleGenerator/lib" ></copy>
     </target>
@@ -54,7 +57,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
         <antcall target="refresh-example-jars" />
 
         <copy  todir="release/example/javadoc/greendao" >
-            <fileset dir="../DaoBase/release/docs/api/"/>
+            <fileset dir="../DaoCore/release/docs/api/"/>
         </copy>
         <copy  todir="release/example/javadoc/greendao-generator" >
             <fileset dir="release/docs/api/"/>
@@ -65,8 +68,8 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
         <copy  todir="release/example/DaoExampleGenerator" >
             <fileset dir="../DaoExampleGenerator"/>
         </copy>
-        <copy file="../DaoBase/release/greenDAO.jar" todir="release/example/" ></copy>
-        <copy file="../DaoBase/release/greenDAO-javadoc.jar" todir="release/example/" ></copy>
+        <copy file="../DaoCore/release/greenDAO.jar" todir="release/example/" ></copy>
+        <copy file="../DaoCore/release/greenDAO-javadoc.jar" todir="release/example/" ></copy>
         <copy file="release/greenDAO-generator.jar" todir="release/example/" ></copy>
         <copy file="release/greenDAO-generator-javadoc.jar" todir="release/example/" ></copy>
     	<zip destfile="release/greenDAO.zip" basedir="release/example/"></zip>
