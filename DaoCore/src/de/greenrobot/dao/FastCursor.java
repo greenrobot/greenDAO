@@ -24,6 +24,7 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
 
+/** Internal class used by greenDAO. */
 final class FastCursor implements Cursor {
 
     private final CursorWindow window;

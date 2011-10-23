@@ -21,6 +21,10 @@ import java.util.List;
 
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * Internal class used by greenDAO. DaoConfig stores essential data for DAOs, and is hold by AbstractDaoMaster. This
+ * class will retrieve the required information from the DAO classes.
+ */
 public final class DaoConfig implements Cloneable {
 
     final SQLiteDatabase db;
@@ -40,7 +44,7 @@ public final class DaoConfig implements Cloneable {
 
     private IdentityScope<?, ?> identityScope;
 
-    public DaoConfig(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>> daoClass) {
+    DaoConfig(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>> daoClass) {
         this.db = db;
         try {
             this.tablename = (String) daoClass.getField("TABLENAME").get(null);
@@ -101,7 +105,7 @@ public final class DaoConfig implements Cloneable {
     }
 
     /** Does not copy identity scope. */
-    public DaoConfig(DaoConfig source) {
+    DaoConfig(DaoConfig source) {
         db = source.db;
         tablename = source.tablename;
         properties = source.properties;
@@ -123,7 +127,7 @@ public final class DaoConfig implements Cloneable {
         return identityScope;
     }
 
-    public void setIdentityScope(IdentityScope<?, ?> identityScope) {
+    void setIdentityScope(IdentityScope<?, ?> identityScope) {
         this.identityScope = identityScope;
     }
 
@@ -132,7 +136,7 @@ public final class DaoConfig implements Cloneable {
         if (type == IdentityScopeType.None) {
             identityScope = null;
         } else if (type == IdentityScopeType.Session) {
-            if(keyIsNumeric) {
+            if (keyIsNumeric) {
                 identityScope = new IdentityScopeLong();
             } else {
                 identityScope = new IdentityScopeObject();

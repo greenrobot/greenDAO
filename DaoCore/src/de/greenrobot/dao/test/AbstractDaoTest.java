@@ -16,15 +16,12 @@
 
 package de.greenrobot.dao.test;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.IdentityScope;
-import de.greenrobot.dao.IdentityScopeObject;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.UnitTestDaoAccess;
 
@@ -42,8 +39,8 @@ import de.greenrobot.dao.UnitTestDaoAccess;
  */
 public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends DbTest {
 
-    protected D dao;
     protected final Class<D> daoClass;
+    protected D dao;
     protected UnitTestDaoAccess<T, K> daoAccess;
     protected Property pkColumn;
     protected IdentityScope<K, T> identityScopeForDao;
@@ -61,20 +58,17 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
         this.identityScopeForDao = identityScope;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void setUp() {
         super.setUp();
-        DaoConfig daoConfig = new DaoConfig(db, daoClass);
-        daoConfig.setIdentityScope(identityScopeForDao);
         try {
-            Constructor<D> constructor = daoClass.getConstructor(DaoConfig.class);
-            dao = constructor.newInstance(daoConfig);
-
             setUpTableForDao();
+            daoAccess = new UnitTestDaoAccess<T, K>(db, (Class<AbstractDao<T, K>>) daoClass, identityScopeForDao);
+            dao = (D) daoAccess.getDao();
         } catch (Exception e) {
             throw new RuntimeException("Could not prepare DAO Test", e);
         }
-        daoAccess = new UnitTestDaoAccess<T, K>(dao);
     }
 
     protected void setUpTableForDao() throws Exception {

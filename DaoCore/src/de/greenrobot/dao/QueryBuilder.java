@@ -229,11 +229,11 @@ public class QueryBuilder<T> {
 
         String sql = builder.toString();
         if (LOG_SQL) {
-            DaoLog.d("Built SQL: " + sql);
+            DaoLog.d("Built SQL for query: " + sql);
         }
 
         if (LOG_VALUES) {
-            DaoLog.d("Collected values: " + values);
+            DaoLog.d("Values for query: " + values);
         }
 
         return new Query<T>(dao, sql, values);

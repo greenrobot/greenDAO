@@ -16,14 +16,21 @@
 
 package de.greenrobot.dao;
 
+import java.lang.reflect.Constructor;
+
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
-/** Reserved for unit tests that want to access some non-public methods. Don't use for anything else. */
+/** Reserved for internal unit tests that want to access some non-public methods. Don't use for anything else. */
 public class UnitTestDaoAccess<T, K> {
-    private AbstractDao<T, K> dao;
+    private final AbstractDao<T, K> dao;
 
-    public UnitTestDaoAccess(AbstractDao<T, K> dao) {
-        this.dao = dao;
+    public UnitTestDaoAccess(SQLiteDatabase db, Class<AbstractDao<T, K>> daoClass, IdentityScope<?, ?> identityScope)
+            throws Exception {
+        DaoConfig daoConfig = new DaoConfig(db, daoClass);
+        daoConfig.setIdentityScope(identityScope);
+        Constructor<AbstractDao<T, K>> constructor = daoClass.getConstructor(DaoConfig.class);
+        dao = constructor.newInstance(daoConfig);
     }
 
     public K getKey(T entity) {
@@ -45,5 +52,9 @@ public class UnitTestDaoAccess<T, K> {
     public K readKey(Cursor cursor, int offset) {
         return dao.readKey(cursor, offset);
     }
-    
+
+    public AbstractDao<T, K> getDao() {
+        return dao;
+    }
+
 }

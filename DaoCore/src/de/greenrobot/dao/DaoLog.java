@@ -19,7 +19,7 @@ package de.greenrobot.dao;
 import android.util.Log;
 
 /**
- * A wrapper around the Android Log class providing a static Log Tag.
+ * Internal greenDAO logger class. A wrapper around the Android Log class providing a static Log Tag.
  * 
  * @author markus
  * 
