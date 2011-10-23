@@ -15,6 +15,7 @@
  */
 package de.greenrobot.dao;
 
+/** Helper class to create SQL statements as used by greenDAO internally. */
 public class SqlUtils {
 
     public static StringBuilder appendColumn(StringBuilder builder, String column) {

@@ -24,22 +24,28 @@ import java.io.OutputStream;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+/** Database utils, for example to execute SQL scripts */
 public class DbUtils {
 
     public static void vacuum(SQLiteDatabase db) {
         db.execSQL("VACUUM");
     }
 
+    /**
+     * Executes the given SQL asset in the given database. The database file may contain multiple SQL statements.
+     * Statements are split using a simple regular expression (something like "semicolon before a line break"), not by
+     * analyzing the SQL syntax. This will work for many SQL files, but check yours.
+     */
     public static void executeSqlScript(Context context, SQLiteDatabase db, String assetFilename) throws IOException {
-            byte[] bytes = readAsset(context, assetFilename);
-            String sql = new String(bytes, "UTF-8");
-            String[] lines = sql.split(";(\\s)*[\n\r]");
-            int count = executeSqlStatements(db, lines);
-            DaoLog.i("Executed " +count + " statements from SQL script '" + assetFilename + "'");
+        byte[] bytes = readAsset(context, assetFilename);
+        String sql = new String(bytes, "UTF-8");
+        String[] lines = sql.split(";(\\s)*[\n\r]");
+        int count = executeSqlStatements(db, lines);
+        DaoLog.i("Executed " + count + " statements from SQL script '" + assetFilename + "'");
     }
 
     public static int executeSqlStatements(SQLiteDatabase db, String[] statements) {
-        int count=0;
+        int count = 0;
         for (String line : statements) {
             line = line.trim();
             if (line.length() > 0) {

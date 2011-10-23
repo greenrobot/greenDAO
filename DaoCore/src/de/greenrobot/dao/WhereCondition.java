@@ -18,6 +18,7 @@ package de.greenrobot.dao;
 import java.util.Date;
 import java.util.List;
 
+/** Internal interface to model WHERE conditions used in queries. Use the {@link Property} objects in the DAO classes to create new conditions. */
 public interface WhereCondition {
 
     void appendTo(StringBuilder builder, String tableAlias);

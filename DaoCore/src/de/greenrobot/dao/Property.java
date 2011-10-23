@@ -21,7 +21,7 @@ import java.util.Collection;
 import de.greenrobot.dao.WhereCondition.PropertyCondition;
 
 /**
- * Meta data describing a property mapped to a database column.
+ * Meta data describing a property mapped to a database column; used to create WhereCondition object used by the query builder.
  * 
  * @author Markus
  */
@@ -40,53 +40,65 @@ public class Property {
         this.columnName = columnName;
     }
 
+    /** Creates an "equal ('=')" condition  for this property. */
     public WhereCondition eq(Object value) {
         return new PropertyCondition(this, "=?", value);
     }
 
+    /** Creates an "not equal ('<>')" condition  for this property. */
     public WhereCondition notEq(Object value) {
         return new PropertyCondition(this, "<>?", value);
     }
 
+    /** Creates an "LIKE" condition  for this property. */
     public WhereCondition like(String value) {
         return new PropertyCondition(this, " LIKE ?", value);
     }
 
+    /** Creates an "BETWEEN ... AND ..." condition  for this property. */
     public WhereCondition between(Object value1, Object value2) {
         Object[] values = { value1, value2 };
         return new PropertyCondition(this, " BETWEEN ? AND ?", values);
     }
 
+    /** Creates an "IN (..., ..., ...)" condition  for this property. */
     public WhereCondition in(Object... inValues) {
         StringBuilder condition = new StringBuilder(" IN (");
         SqlUtils.appendPlaceholders(condition, inValues.length).append(')');
         return new PropertyCondition(this, condition.toString(), inValues);
     }
 
+    /** Creates an "IN (..., ..., ...)" condition  for this property. */
     public WhereCondition in(Collection<?> inValues) {
         return in(inValues.toArray());
     }
 
+    /** Creates an "greater than ('>')" condition  for this property. */
     public WhereCondition gt(Object value) {
         return new PropertyCondition(this, ">?", value);
     }
 
+    /** Creates an "less than ('<')" condition  for this property. */
     public WhereCondition lt(Object value) {
         return new PropertyCondition(this, "<?", value);
     }
 
+    /** Creates an "greater or equal ('>=')" condition  for this property. */
     public WhereCondition ge(Object value) {
         return new PropertyCondition(this, ">=?", value);
     }
 
+    /** Creates an "less or equal ('<=')" condition  for this property. */
     public WhereCondition le(Object value) {
         return new PropertyCondition(this, "<=?", value);
     }
 
+    /** Creates an "IS NULL" condition  for this property. */
     public WhereCondition isNull() {
         return new PropertyCondition(this, " IS NULL");
     }
 
+    /** Creates an "IS NOT NULL" condition  for this property. */
     public WhereCondition isNotNull() {
         return new PropertyCondition(this, " IS NOT NULL");
     }

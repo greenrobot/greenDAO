@@ -18,6 +18,7 @@ package de.greenrobot.dao;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
+/** Helper class to create SQL statements for specific tables (used by greenDAO internally). */
 public class TableStatements {
     private final SQLiteDatabase db;
     private final String tablename;
@@ -33,7 +34,7 @@ public class TableStatements {
     private volatile String selectByKey;
     private volatile String selectByRowId;
 
-    public TableStatements(SQLiteDatabase db, String tablename, String[] allColumns, String[] pkColumns) {
+    protected TableStatements(SQLiteDatabase db, String tablename, String[] allColumns, String[] pkColumns) {
         this.db = db;
         this.tablename = tablename;
         this.allColumns = allColumns;
