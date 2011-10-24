@@ -1,23 +1,24 @@
-greenInject
-===========
-greenInject is a injection library for Android optimized for minimal size.
+greenDAO
+========
+greenDAO is a light & fast ORM solution for Android that maps objects to SQLite databases. Being highly optimized for Android, greenDAO offers great performance and consumes minimal memory.
 
-Read more about greenInject: https://github.com/greenrobot/greenInject/wiki
+Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
-### V0.6 (2011-09-08)
-* Workaround for http://code.google.com/p/android/issues/detail?id=5964 which crashes @OnClick annotations on Android 2.1 and below. Should be fine with Android 1.6 now.
-* Value binding for ImageView (one-way)
-* Annotation @Target allows compile time checks for annotation's location
-* Separated ValueBinder from Injector
-* Improved ValueBinder performance by static caching
+### V1.0 (2011-10-24): First open source release
+* To-many relations (lazily loaded on the entities)
+* To-many relations with custom join properties
+* Active entities can be updated, refreshed, and deleted directly
+* Significant performance improvements (faster identity scope, faster database result parser)
+* "Keep sections" for custom code in entities were added that won't be overwritten during code generation
+* Other minor improvements
 
-### V0.5 (2011-08-29)
-Initial open source version with basic features:
+### Third preview (2011-08-19) 
+http://greendao-orm.com/2011/08/19/query-builder-and-lazy-loading-lists/
 
-* Inject views
-* Inject most important resource types
-* Inject Intent extras
-* Value binding for TextView descendants and Strings
-* Listener Binding with @OnClick
+### Second preview (2011-08-12) 
+http://greendao-orm.com/2011/08/12/greendao-2nd-preview/
+
+### First public release (2011-08-04) 
+http://greendao-orm.com/2011/08/04/greendao-public-release/
