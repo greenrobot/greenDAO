@@ -17,9 +17,9 @@ You should have received a copy of the GNU General Public License
 along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project name="DaoGenerator" default="build-all">
+<project name="DaoGenerator" default="build-generator">
 
-	<target name="build-all" depends="delete-release, build-jar, build-javadoc"></target>
+	<target name="build-generator" depends="delete-release, build-jar, build-javadoc"></target>
 	
 	<target name="delete-release">
 		<delete dir="release" />
@@ -43,16 +43,16 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
         <jar jarfile="release/greenDAO-generator-javadoc.jar" basedir="release/docs/api"/>
 	</target>
 
-    <target name="refresh-example-jars" description="">
+    <target name="refresh-example-jars" description="(Also builds DaoCore and DaoGenerator)">
         <ant antfile="../DaoCore/mybuild.xml" dir="../DaoCore/"/>
-        <antcall target="build-all"></antcall>
+        <antcall target="build-generator"></antcall>
         <copy file="../DaoCore/release/greenDAO.jar" todir="../DaoExample/lib" ></copy>
         <copy file="../DaoCore/release/greenDAO-javadoc.jar" todir="../DaoExample/lib" ></copy>
         <copy file="release/greenDAO-generator.jar" todir="../DaoExampleGenerator/lib" ></copy>
         <copy file="release/greenDAO-generator-javadoc.jar" todir="../DaoExampleGenerator/lib" ></copy>
     </target>
 	
-	<target name="build-example" description="">
+	<target name="build-starter-package" description="Builds everything">
     	<delete dir="release/example"/>
         <antcall target="refresh-example-jars" />
 

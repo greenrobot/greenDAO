@@ -6,6 +6,10 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
+### V1.0.1 (2011-10-30): Bugfix release
+* Fixed generation of to-many relations
+* Fixed generated import statements when entities/DAO are not in the same package
+
 ### V1.0 (2011-10-24): First open source release
 * To-many relations (lazily loaded on the entities)
 * To-many relations with custom join properties
