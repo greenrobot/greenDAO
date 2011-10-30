@@ -100,7 +100,7 @@ public class DaoGenerator {
             if (!entity.isProtobuf() && !entity.isSkipGeneration()) {
                 generate(templateEntity, outDirFile, entity.getJavaPackage(), entity.getClassName(), schema, entity);
             }
-            if (outDirTestFile != null) {
+            if (outDirTestFile != null && !entity.isSkipGenerationTest()) {
                 String javaPackageTest = entity.getJavaPackageTest();
                 String classNameTest = entity.getClassNameTest();
                 File javaFilename = toJavaFilename(outDirTestFile, javaPackageTest, classNameTest);

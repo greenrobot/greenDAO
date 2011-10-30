@@ -19,7 +19,6 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 -->
 package ${entity.javaPackageTest};
 
-import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.test.AbstractDaoTestLongPk;
 import ${entity.javaPackage}.${entity.className};
 import ${entity.javaPackageDao}.${entity.classNameDao};

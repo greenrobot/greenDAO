@@ -18,9 +18,11 @@
 package de.greenrobot.daogenerator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import de.greenrobot.daogenerator.Property.PropertyBuilder;
 
@@ -37,6 +39,8 @@ public class Entity {
     private final List<ToOne> toOneRelations;
     private final List<ToMany> toManyRelations;
     private final List<ToMany> incomingToManyRelations;
+    private final Collection<String> additionalImportsEntity;
+    private final Collection<String> additionalImportsDao;
 
     private String tableName;
     private String classNameDao;
@@ -65,6 +69,8 @@ public class Entity {
         toOneRelations = new ArrayList<ToOne>();
         toManyRelations = new ArrayList<ToMany>();
         incomingToManyRelations = new ArrayList<ToMany>();
+        additionalImportsEntity = new TreeSet<String>();
+        additionalImportsDao = new TreeSet<String>();
         constructors = true;
     }
 
@@ -330,13 +336,21 @@ public class Entity {
     public Boolean getHasKeepSections() {
         return hasKeepSections;
     }
+    
+    public Collection<String> getAdditionalImportsEntity() {
+        return additionalImportsEntity;
+    }
+
+    public Collection<String> getAdditionalImportsDao() {
+        return additionalImportsDao;
+    }
 
     public void setHasKeepSections(Boolean hasKeepSections) {
         this.hasKeepSections = hasKeepSections;
     }
 
     void init2ndPass() {
-        initNamesWithDefaults();
+        init2nPassNamesWithDefaults();
 
         for (int i = 0; i < properties.size(); i++) {
             Property property = properties.get(i);
@@ -386,38 +400,10 @@ public class Entity {
             hasKeepSections = schema.isHasKeepSectionsByDefault();
         }
 
-        initIndexNamesWithDefaults();
+        init2ndPassIndexNamesWithDefaults();
     }
 
-    void init3ndPass() {
-        for (Property property : properties) {
-            property.init3ndPass();
-        }
-
-        Set<String> toOneNames = new HashSet<String>();
-        for (ToOne toOne : toOneRelations) {
-            toOne.init3ndPass();
-            if (!toOneNames.add(toOne.getName().toLowerCase())) {
-                throw new RuntimeException("Duplicate name for " + toOne);
-            }
-        }
-
-        Set<String> toManyNames = new HashSet<String>();
-        for (ToMany toMany : toManyRelations) {
-            toMany.init3ndPass();
-            Entity targetEntity = toMany.getTargetEntity();
-            for (Property targetProperty : toMany.getTargetProperties()) {
-                if (!targetEntity.propertiesColumns.contains(targetProperty)) {
-                    targetEntity.propertiesColumns.add(targetProperty);
-                }
-            }
-            if (!toManyNames.add(toMany.getName().toLowerCase())) {
-                throw new RuntimeException("Duplicate name for " + toMany);
-            }
-        }
-    }
-
-    protected void initNamesWithDefaults() {
+    protected void init2nPassNamesWithDefaults() {
         if (tableName == null) {
             tableName = DaoUtil.dbName(className);
         }
@@ -447,7 +433,7 @@ public class Entity {
         }
     }
 
-    protected void initIndexNamesWithDefaults() {
+    protected void init2ndPassIndexNamesWithDefaults() {
         for (int i = 0; i < indexes.size(); i++) {
             Index index = indexes.get(i);
             if (index.getName() == null) {
@@ -463,6 +449,68 @@ public class Entity {
                 // TODO can this get too long? how to shorten reliably without depending on the order (i)
                 index.setName(indexName);
             }
+        }
+    }
+
+    void init3ndPass() {
+        for (Property property : properties) {
+            property.init3ndPass();
+        }
+
+        init3rdPassRelations();
+        init3rdPassAdditionalImports();
+    }
+
+    private void init3rdPassRelations() {
+        Set<String> toOneNames = new HashSet<String>();
+        for (ToOne toOne : toOneRelations) {
+            toOne.init3ndPass();
+            if (!toOneNames.add(toOne.getName().toLowerCase())) {
+                throw new RuntimeException("Duplicate name for " + toOne);
+            }
+        }
+
+        Set<String> toManyNames = new HashSet<String>();
+        for (ToMany toMany : toManyRelations) {
+            toMany.init3ndPass();
+            Entity targetEntity = toMany.getTargetEntity();
+            for (Property targetProperty : toMany.getTargetProperties()) {
+                if (!targetEntity.propertiesColumns.contains(targetProperty)) {
+                    targetEntity.propertiesColumns.add(targetProperty);
+                }
+            }
+            if (!toManyNames.add(toMany.getName().toLowerCase())) {
+                throw new RuntimeException("Duplicate name for " + toMany);
+            }
+        }
+    }
+
+    private void init3rdPassAdditionalImports() {
+        if(!javaPackage.equals(javaPackageDao)) {
+            additionalImportsEntity.add(javaPackageDao + "." + classNameDao);
+        }
+        
+        for (ToOne toOne : toOneRelations) {
+            Entity targetEntity = toOne.getTargetEntity();
+            checkAdditionalImportsEntityTargetEntity(targetEntity);
+            // For deep loading
+            if (!targetEntity.getJavaPackage().equals(javaPackageDao)) {
+                additionalImportsDao.add(targetEntity.getJavaPackage() + "." + targetEntity.getClassName());
+            }
+        }
+
+        for (ToMany toMany : toManyRelations) {
+            Entity targetEntity = toMany.getTargetEntity();
+            checkAdditionalImportsEntityTargetEntity(targetEntity);
+        }
+    }
+
+    private void checkAdditionalImportsEntityTargetEntity(Entity targetEntity) {
+        if (!targetEntity.getJavaPackage().equals(javaPackage)) {
+            additionalImportsEntity.add(targetEntity.getJavaPackage() + "." + targetEntity.getClassName());
+        }
+        if (!targetEntity.getJavaPackageDao().equals(javaPackage)) {
+            additionalImportsEntity.add(targetEntity.getJavaPackageDao() + "." + targetEntity.getClassNameDao());
         }
     }
 

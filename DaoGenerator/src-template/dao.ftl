@@ -42,6 +42,16 @@ import de.greenrobot.dao.Query;
 import de.greenrobot.dao.QueryBuilder;
 </#if>
 
+<#if entity.javaPackageDao != schema.defaultJavaPackageDao>
+import ${schema.defaultJavaPackageDao}.DaoSession;
+
+</#if>
+<#if entity.additionalImportsDao?has_content>
+<#list entity.additionalImportsDao as additionalImport>
+import ${additionalImport};
+</#list>
+
+</#if>
 import ${entity.javaPackage}.${entity.className};
 <#if entity.protobuf>
 import ${entity.javaPackage}.${entity.className}.Builder;
@@ -259,7 +269,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
     public synchronized List<${toMany.targetEntity.className}> _query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
     --><#list toMany.targetProperties as property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
         if (${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query == null) {
-            QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
+            QueryBuilder<${toMany.targetEntity.className}> queryBuilder = queryBuilder();
 <#list toMany.targetProperties as property>
             queryBuilder.where(Properties.${property.propertyName?cap_first}.eq(${property.propertyName}));
 </#list>

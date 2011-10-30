@@ -53,12 +53,7 @@ public class TestDaoGenerator {
         createToMany();
         createActive();
 
-        schema2 = new Schema(1, "de.greenrobot.daotest2");
-        schema2.setDefaultJavaPackageTest("de.greenrobot.daotest2.entity");
-        schema2.enableKeepSectionsByDefault();
-
-        Entity keepEntity = schema2.addEntity("KeepEntity");
-        keepEntity.addIdProperty();
+        createSchema2();
     }
 
     public void generate() throws Exception {
@@ -194,6 +189,38 @@ public class TestDaoGenerator {
         activeEntity.addIdProperty();
         activeEntity.addStringProperty("text");
         activeEntity.setActive(true);
+    }
+
+    private void createSchema2() {
+        schema2 = new Schema(1, "de.greenrobot.daotest2");
+        schema2.setDefaultJavaPackageTest("de.greenrobot.daotest2.entity");
+        schema2.setDefaultJavaPackageDao("de.greenrobot.daotest2.dao");
+        schema2.enableKeepSectionsByDefault();
+
+        Entity keepEntity = schema2.addEntity("KeepEntity");
+        keepEntity.addIdProperty();
+
+        Entity toManyTarget2 = schema2.addEntity("ToManyTarget2");
+        toManyTarget2.addIdProperty();
+        Property toManyTarget2FkId = toManyTarget2.addLongProperty("fkId").getProperty();
+        toManyTarget2.setSkipGenerationTest(true);
+
+        Entity toOneTarget2 = schema2.addEntity("ToOneTarget2");
+        toOneTarget2.addIdProperty();
+        toOneTarget2.setJavaPackage("de.greenrobot.daotest2.to1_specialentity");
+        toOneTarget2.setJavaPackageDao("de.greenrobot.daotest2.to1_specialdao");
+        toOneTarget2.setJavaPackageTest("de.greenrobot.daotest2.to1_specialtest");
+        toOneTarget2.setSkipGenerationTest(true);
+
+        Entity relationSource2 = schema2.addEntity("RelationSource2");
+        relationSource2.addIdProperty();
+        relationSource2.addToMany(toManyTarget2, toManyTarget2FkId);
+        Property toOneId = relationSource2.addLongProperty("toOneId").getProperty();
+        relationSource2.addToOne(toOneTarget2, toOneId);
+        relationSource2.setJavaPackage("de.greenrobot.daotest2.specialentity");
+        relationSource2.setJavaPackageDao("de.greenrobot.daotest2.specialdao");
+        relationSource2.setJavaPackageTest("de.greenrobot.daotest2.specialtest");
+        relationSource2.setSkipGenerationTest(true);
     }
 
 }
