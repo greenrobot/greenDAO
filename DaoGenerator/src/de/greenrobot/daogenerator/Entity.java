@@ -41,6 +41,7 @@ public class Entity {
     private final List<ToMany> incomingToManyRelations;
     private final Collection<String> additionalImportsEntity;
     private final Collection<String> additionalImportsDao;
+    private final List<String> interfacesToImplement;
 
     private String tableName;
     private String classNameDao;
@@ -50,6 +51,7 @@ public class Entity {
     private String javaPackageTest;
     private Property pkProperty;
     private String pkType;
+    private String superclass;
 
     private boolean protobuf;
     private boolean constructors;
@@ -71,6 +73,7 @@ public class Entity {
         incomingToManyRelations = new ArrayList<ToMany>();
         additionalImportsEntity = new TreeSet<String>();
         additionalImportsDao = new TreeSet<String>();
+        interfacesToImplement = new ArrayList<String>();
         constructors = true;
     }
 
@@ -348,7 +351,28 @@ public class Entity {
     public void setHasKeepSections(Boolean hasKeepSections) {
         this.hasKeepSections = hasKeepSections;
     }
+    
+    public List<String> getInterfacesToImplement() {
+        return interfacesToImplement;
+    }
+    
+    public void implementsInterface(String ... interfaces) {
+        for (String interfaceToImplement : interfaces) {
+            interfacesToImplement.add(interfaceToImplement);
+        }
+    }
+    public void implementsSerializable() {
+        interfacesToImplement.add("java.io.Serializable");
+    }
+    
+    public String getSuperclass() {
+        return superclass;
+    }
 
+    public void setSuperclass(String classToExtend) {
+        this.superclass = classToExtend;
+    }
+    
     void init2ndPass() {
         init2nPassNamesWithDefaults();
 

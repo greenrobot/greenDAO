@@ -52,6 +52,7 @@ public class TestDaoGenerator {
         createAbcdef();
         createToMany();
         createActive();
+        createExtendsImplements();
 
         createSchema2();
     }
@@ -189,6 +190,15 @@ public class TestDaoGenerator {
         activeEntity.addIdProperty();
         activeEntity.addStringProperty("text");
         activeEntity.setActive(true);
+    }
+
+    protected void createExtendsImplements() {
+        Entity entity = schema.addEntity("ExtendsImplementsEntity");
+        entity.addIdProperty();
+        entity.addStringProperty("text");
+        entity.setSuperclass("TestSuperclass");
+        entity.implementsInterface("TestInterface");
+        entity.implementsSerializable();
     }
 
     private void createSchema2() {
