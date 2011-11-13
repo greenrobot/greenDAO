@@ -100,6 +100,9 @@ public class ToMany {
         }
         if (sourceProperties == null) {
             List<Property> pks = sourceEntity.getPropertiesPk();
+            if (pks.isEmpty()) {
+                throw new RuntimeException("Source entity has no primary key, but we need it for " + this);
+            }
             sourceProperties = new Property[pks.size()];
             sourceProperties = pks.toArray(sourceProperties);
         }

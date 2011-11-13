@@ -18,6 +18,7 @@ import de.greenrobot.daotest.SpecialNamesEntity;
 import de.greenrobot.daotest.AbcdefEntity;
 import de.greenrobot.daotest.ToManyTargetEntity;
 import de.greenrobot.daotest.ToManyEntity;
+import de.greenrobot.daotest.TreeEntity;
 import de.greenrobot.daotest.AnActiveEntity;
 import de.greenrobot.daotest.ExtendsImplementsEntity;
 
@@ -30,6 +31,7 @@ import de.greenrobot.daotest.SpecialNamesEntityDao;
 import de.greenrobot.daotest.AbcdefEntityDao;
 import de.greenrobot.daotest.ToManyTargetEntityDao;
 import de.greenrobot.daotest.ToManyEntityDao;
+import de.greenrobot.daotest.TreeEntityDao;
 import de.greenrobot.daotest.AnActiveEntityDao;
 import de.greenrobot.daotest.ExtendsImplementsEntityDao;
 
@@ -51,6 +53,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig abcdefEntityDaoConfig;
     private final DaoConfig toManyTargetEntityDaoConfig;
     private final DaoConfig toManyEntityDaoConfig;
+    private final DaoConfig treeEntityDaoConfig;
     private final DaoConfig anActiveEntityDaoConfig;
     private final DaoConfig extendsImplementsEntityDaoConfig;
 
@@ -63,6 +66,7 @@ public class DaoSession extends AbstractDaoSession {
     private final AbcdefEntityDao abcdefEntityDao;
     private final ToManyTargetEntityDao toManyTargetEntityDao;
     private final ToManyEntityDao toManyEntityDao;
+    private final TreeEntityDao treeEntityDao;
     private final AnActiveEntityDao anActiveEntityDao;
     private final ExtendsImplementsEntityDao extendsImplementsEntityDao;
 
@@ -97,6 +101,9 @@ public class DaoSession extends AbstractDaoSession {
         toManyEntityDaoConfig = daoConfigMap.get(ToManyEntityDao.class).clone();
         toManyEntityDaoConfig.initIdentityScope(type);
 
+        treeEntityDaoConfig = daoConfigMap.get(TreeEntityDao.class).clone();
+        treeEntityDaoConfig.initIdentityScope(type);
+
         anActiveEntityDaoConfig = daoConfigMap.get(AnActiveEntityDao.class).clone();
         anActiveEntityDaoConfig.initIdentityScope(type);
 
@@ -112,6 +119,7 @@ public class DaoSession extends AbstractDaoSession {
         abcdefEntityDao = new AbcdefEntityDao(abcdefEntityDaoConfig, this);
         toManyTargetEntityDao = new ToManyTargetEntityDao(toManyTargetEntityDaoConfig, this);
         toManyEntityDao = new ToManyEntityDao(toManyEntityDaoConfig, this);
+        treeEntityDao = new TreeEntityDao(treeEntityDaoConfig, this);
         anActiveEntityDao = new AnActiveEntityDao(anActiveEntityDaoConfig, this);
         extendsImplementsEntityDao = new ExtendsImplementsEntityDao(extendsImplementsEntityDaoConfig, this);
 
@@ -124,6 +132,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(AbcdefEntity.class, abcdefEntityDao);
         registerDao(ToManyTargetEntity.class, toManyTargetEntityDao);
         registerDao(ToManyEntity.class, toManyEntityDao);
+        registerDao(TreeEntity.class, treeEntityDao);
         registerDao(AnActiveEntity.class, anActiveEntityDao);
         registerDao(ExtendsImplementsEntity.class, extendsImplementsEntityDao);
     }
@@ -138,6 +147,7 @@ public class DaoSession extends AbstractDaoSession {
         abcdefEntityDaoConfig.getIdentityScope().clear();
         toManyTargetEntityDaoConfig.getIdentityScope().clear();
         toManyEntityDaoConfig.getIdentityScope().clear();
+        treeEntityDaoConfig.getIdentityScope().clear();
         anActiveEntityDaoConfig.getIdentityScope().clear();
         extendsImplementsEntityDaoConfig.getIdentityScope().clear();
     }
@@ -176,6 +186,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public ToManyEntityDao getToManyEntityDao() {
         return toManyEntityDao;
+    }
+
+    public TreeEntityDao getTreeEntityDao() {
+        return treeEntityDao;
     }
 
     public AnActiveEntityDao getAnActiveEntityDao() {

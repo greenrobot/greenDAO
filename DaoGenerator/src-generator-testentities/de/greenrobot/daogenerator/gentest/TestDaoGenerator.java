@@ -51,6 +51,7 @@ public class TestDaoGenerator {
         createSpecialNames();
         createAbcdef();
         createToMany();
+        createTreeEntity();
         createActive();
         createExtendsImplements();
 
@@ -147,6 +148,14 @@ public class TestDaoGenerator {
         toManyJoinTwo.setName("ToManyJoinTwo");
         toManyJoinTwo.orderDesc(targetJoinProperty);
         toManyJoinTwo.orderDesc(targetIdProperty);
+    }
+    
+    protected void createTreeEntity() {
+        Entity treeEntity = schema.addEntity("TreeEntity");
+        treeEntity.addIdProperty();
+        Property parentIdProperty = treeEntity.addLongProperty("parentId").getProperty();
+        treeEntity.addToOne(treeEntity, parentIdProperty).setName("parent");
+        treeEntity.addToMany(treeEntity, parentIdProperty).setName("children");
     }
 
     protected void createDate() {
