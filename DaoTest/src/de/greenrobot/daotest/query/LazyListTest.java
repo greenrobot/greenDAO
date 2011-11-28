@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daotest;
+package de.greenrobot.daotest.query;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -24,6 +24,7 @@ import java.util.NoSuchElementException;
 import de.greenrobot.dao.CloseableListIterator;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.LazyList;
+import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
 

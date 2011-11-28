@@ -15,13 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daotest;
+package de.greenrobot.daotest.query;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.dao.QueryBuilder;
 import de.greenrobot.dao.test.AbstractDaoTest;
+import de.greenrobot.daotest.AbcdefEntity;
+import de.greenrobot.daotest.AbcdefEntityDao;
 import de.greenrobot.daotest.AbcdefEntityDao.Properties;
 
 public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, AbcdefEntity, Long> {
