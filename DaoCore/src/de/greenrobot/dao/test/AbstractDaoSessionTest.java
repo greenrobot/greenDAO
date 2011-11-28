@@ -19,6 +19,7 @@ package de.greenrobot.dao.test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDaoMaster;
 import de.greenrobot.dao.AbstractDaoSession;
@@ -43,6 +44,11 @@ public abstract class AbstractDaoSessionTest<T extends AbstractDaoMaster, S exte
 
     public AbstractDaoSessionTest(Class<T> daoMasterClass, boolean inMemory) {
         super(inMemory);
+        this.daoMasterClass = daoMasterClass;
+    }
+
+    public AbstractDaoSessionTest(Class<Application> appClass, Class<T> daoMasterClass,  boolean inMemory) {
+        super(appClass, inMemory);
         this.daoMasterClass = daoMasterClass;
     }
 

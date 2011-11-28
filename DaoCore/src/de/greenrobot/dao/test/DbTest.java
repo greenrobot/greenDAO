@@ -40,7 +40,11 @@ public abstract class DbTest extends ApplicationTestCase<Application> {
     }
 
     public DbTest(boolean inMemory) {
-        super(Application.class);
+        this(Application.class, inMemory);
+    }
+
+    public DbTest(Class<Application> appClass, boolean inMemory) {
+        super(appClass);
         this.inMemory = inMemory;
         random = new Random();
     }
