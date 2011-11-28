@@ -28,25 +28,13 @@ import android.database.Cursor;
  * @param <T>
  *            The enitity class the query will return results for.
  */
-public class Query<T> {
-    private AbstractDao<T, ?> dao;
-    private final String sql;
-    private final String[] parameters;
+// TODO support long, double and other types, not just Strings, for parameters
+// TODO Make parameters setable by Property (if unique in paramaters)
+// TODO Query for PKs/ROW IDs
+public class Query<T> extends AbstractQuery<T> {
 
     public Query(AbstractDao<T, ?> dao, String sql, Collection<Object> valueList) {
-        this.dao = dao;
-        this.sql = sql;
-
-        parameters = new String[valueList.size()];
-        int idx = 0;
-        for (Object object : valueList) {
-            if (object != null) {
-                parameters[idx] = object.toString();
-            } else {
-                parameters[idx] = null;
-            }
-            idx++;
-        }
+        super(dao, sql, valueList);
     }
 
     // public void compile() {

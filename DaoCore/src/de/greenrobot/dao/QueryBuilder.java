@@ -210,18 +210,7 @@ public class QueryBuilder<T> {
         }
         StringBuilder builder = new StringBuilder(select);
 
-        if (!whereConditions.isEmpty()) {
-            builder.append(" WHERE ");
-            ListIterator<WhereCondition> iter = whereConditions.listIterator();
-            while (iter.hasNext()) {
-                if (iter.hasPrevious()) {
-                    builder.append(" AND ");
-                }
-                WhereCondition condition = iter.next();
-                condition.appendTo(builder, tablePrefix);
-                condition.appendValuesTo(values);
-            }
-        }
+        appendWhereClause(builder, tablePrefix);
 
         if (orderBuilder != null && orderBuilder.length() > 0) {
             builder.append(" ORDER BY ").append(orderBuilder);
@@ -237,6 +226,41 @@ public class QueryBuilder<T> {
         }
 
         return new Query<T>(dao, sql, values);
+    }
+    
+    /**
+     * Builds a reusable query object for deletion (Query objects can be executed more efficiently than creating a QueryBuilder for
+     * each execution.
+     */
+    public DeleteQuery<T> buildDelete() {
+        StringBuilder builder = new StringBuilder("DELETE FROM '");
+        builder.append(dao.getTablename()).append('\'');
+        appendWhereClause(builder, null);
+
+        String sql = builder.toString();
+        if (LOG_SQL) {
+            DaoLog.d("Built SQL for delete query: " + sql);
+        }
+        if (LOG_VALUES) {
+            DaoLog.d("Values for delete query: " + values);
+        }
+
+        return new DeleteQuery<T>(dao, sql, values);
+    }
+
+    private void appendWhereClause(StringBuilder builder, String tablePrefixOrNull) {
+        if (!whereConditions.isEmpty()) {
+            builder.append(" WHERE ");
+            ListIterator<WhereCondition> iter = whereConditions.listIterator();
+            while (iter.hasNext()) {
+                if (iter.hasPrevious()) {
+                    builder.append(" AND ");
+                }
+                WhereCondition condition = iter.next();
+                condition.appendTo(builder, tablePrefixOrNull);
+                condition.appendValuesTo(values);
+            }
+        }
     }
 
     /**

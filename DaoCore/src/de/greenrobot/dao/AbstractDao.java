@@ -144,11 +144,13 @@ public abstract class AbstractDao<T, K> {
         return loadCurrent(cursor, 0, true);
     }
 
+    /** Loads all available entities from the database. */ 
     public List<T> loadAll() {
         Cursor cursor = db.rawQuery(statements.getSelectAll(), null);
         return loadAllAndCloseCursor(cursor);
     }
 
+    /** Detaches an entity from the identity scope (session). Subsequent query results won't return this object. */
     public boolean detach(T entity) {
         if (identityScope != null) {
             return identityScope.detach(getKey(entity), entity);
