@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.app.Application;
+
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
@@ -29,7 +31,7 @@ import de.greenrobot.daotest.ToManyEntityDao;
 import de.greenrobot.daotest.ToManyTargetEntity;
 import de.greenrobot.daotest.ToManyTargetEntityDao;
 
-public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
+public class ToManyEntityTest extends AbstractDaoSessionTest<Application,DaoMaster, DaoSession> {
 
     private ToManyEntityDao toManyEntityDao;
     private ToManyTargetEntityDao toManyTargetEntityDao;

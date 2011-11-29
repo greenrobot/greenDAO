@@ -17,9 +17,10 @@
  */
 package de.greenrobot.daotest;
 
+import android.app.Application;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 
-public class DaoSessionTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
+public class DaoSessionTest extends AbstractDaoSessionTest<Application, DaoMaster, DaoSession> {
 
     public DaoSessionTest() {
         super(DaoMaster.class);

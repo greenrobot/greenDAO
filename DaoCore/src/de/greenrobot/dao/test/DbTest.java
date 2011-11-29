@@ -29,7 +29,7 @@ import android.test.ApplicationTestCase;
  * @author Markus
  * 
  */
-public abstract class DbTest extends ApplicationTestCase<Application> {
+public abstract class DbTest<T extends Application> extends ApplicationTestCase<T> {
 
     protected SQLiteDatabase db;
     protected Random random;
@@ -39,11 +39,12 @@ public abstract class DbTest extends ApplicationTestCase<Application> {
         this(true);
     }
 
+    @SuppressWarnings("unchecked")
     public DbTest(boolean inMemory) {
-        this(Application.class, inMemory);
+        this((Class<T>) Application.class, inMemory);
     }
 
-    public DbTest(Class<Application> appClass, boolean inMemory) {
+    public DbTest(Class<T> appClass, boolean inMemory) {
         super(appClass);
         this.inMemory = inMemory;
         random = new Random();

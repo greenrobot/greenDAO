@@ -18,6 +18,7 @@ package de.greenrobot.dao.test;
 
 import java.lang.reflect.Method;
 
+import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoLog;
@@ -37,7 +38,7 @@ import de.greenrobot.dao.UnitTestDaoAccess;
  * @param <K>
  *            Key type of the DAO
  */
-public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends DbTest {
+public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends DbTest<Application> {
 
     protected final Class<D> daoClass;
     protected D dao;

@@ -17,6 +17,7 @@
  */
 package de.greenrobot.daotest.entity;
 
+import android.app.Application;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.AnActiveEntity;
@@ -24,7 +25,7 @@ import de.greenrobot.daotest.AnActiveEntityDao;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
 
-public class AnActiveEntityTest extends  AbstractDaoSessionTest<DaoMaster, DaoSession> {
+public class AnActiveEntityTest extends  AbstractDaoSessionTest<Application,DaoMaster, DaoSession> {
 
 
     private AnActiveEntityDao dao;

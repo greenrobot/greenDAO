@@ -1,13 +1,13 @@
 package de.greenrobot.daotest.entity;
 
+import android.app.Application;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
-import de.greenrobot.dao.test.AbstractDaoTestLongPk;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
 import de.greenrobot.daotest.TreeEntity;
 import de.greenrobot.daotest.TreeEntityDao;
 
-public class TreeEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
+public class TreeEntityTest extends AbstractDaoSessionTest<Application,DaoMaster, DaoSession> {
 
     private TreeEntityDao treeEntityDao;
 
