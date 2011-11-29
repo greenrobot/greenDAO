@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.greenrobot.dao.Query;
 import de.greenrobot.dao.QueryBuilder;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
@@ -182,6 +183,20 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         result = dao.queryBuilder().orderDesc(Properties.SimpleInteger, Properties.SimpleString).list();
         assertEquals(2, result.size());
         assertEquals(entity.getId(), result.get(0). getId());
+    }
+    
+    public void testBuildTwice() {
+        insert(3);
+        String value = getSimpleString(1);
+
+        QueryBuilder<TestEntity> builder = dao.queryBuilder().where(Properties.SimpleString.eq(value));
+        Query<TestEntity> query1 = builder.build();
+        Query<TestEntity> query2 = builder.build();
+        List<TestEntity> list1 = query1.list();
+        List<TestEntity> list2 = query2.list();
+        assertEquals(1, list1.size());
+        assertEquals(1, list2.size());
+        assertEquals(list1.get(0).getId(), list2.get(0).getId());
     }
 
 }

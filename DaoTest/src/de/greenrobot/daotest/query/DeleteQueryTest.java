@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.dao.DeleteQuery;
+import de.greenrobot.dao.Query;
 import de.greenrobot.dao.QueryBuilder;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
@@ -83,6 +84,19 @@ public class DeleteQueryTest extends TestEntityTestBase {
 
         TestEntity remaining = dao.loadAll().get(0);
         assertEquals(getSimpleString(2), remaining.getSimpleString());
+    }
+    
+    public void testBuildQueryAndDeleteQuery() {
+        insert(3);
+        int value = getSimpleInteger(1);
+
+        QueryBuilder<TestEntity> builder = dao.queryBuilder().where(Properties.SimpleInteger.eq(value));
+        Query<TestEntity> query = builder.build();
+        DeleteQuery<TestEntity> deleteQuery = builder.buildDelete();
+
+        assertEquals(1, query.list().size());
+        deleteQuery.executeDeleteWithoutDetachingEntities();
+        assertEquals(0, query.list().size());
     }
 
 }

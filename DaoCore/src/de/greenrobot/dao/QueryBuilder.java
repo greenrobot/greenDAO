@@ -249,6 +249,7 @@ public class QueryBuilder<T> {
     }
 
     private void appendWhereClause(StringBuilder builder, String tablePrefixOrNull) {
+        values.clear();
         if (!whereConditions.isEmpty()) {
             builder.append(" WHERE ");
             ListIterator<WhereCondition> iter = whereConditions.listIterator();
