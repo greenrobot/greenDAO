@@ -7,7 +7,7 @@ import de.greenrobot.daotest2.to1_specialdao.ToOneTarget2Dao;
 // KEEP INCLUDES - put your custom includes here
 // KEEP INCLUDES END
 /**
- * Entity mapped to table TO_ONE_TARGET2 (schema version 1).
+ * Entity mapped to table TO_ONE_TARGET2.
  */
 public class ToOneTarget2 {
 

@@ -8,7 +8,7 @@ import de.greenrobot.daotest2.dao.KeepEntityDao;
 import android.os.Build;
 // KEEP INCLUDES END
 /**
- * Entity mapped to table KEEP_ENTITY (schema version 1).
+ * Entity mapped to table KEEP_ENTITY.
  */
 public class KeepEntity {
 
