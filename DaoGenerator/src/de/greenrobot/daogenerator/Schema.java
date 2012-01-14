@@ -22,7 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** The "root" model class to which you can add entities to. */
+/**
+ * The "root" model class to which you can add entities to.
+ * 
+ * @see <a href="http://greendao-orm.com/documentation/modelling-entities/">Modelling Entities (Documentation page)</a>
+ */
 public class Schema {
     private final int version;
     private final String defaultJavaPackage;
@@ -155,7 +159,7 @@ public class Schema {
     public List<Entity> getEntities() {
         return entities;
     }
-    
+
     public boolean isHasKeepSectionsByDefault() {
         return hasKeepSectionsByDefault;
     }

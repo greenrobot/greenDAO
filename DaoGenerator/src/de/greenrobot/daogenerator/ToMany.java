@@ -64,6 +64,10 @@ public class ToMany {
         return name;
     }
 
+    /**
+     * Sets the name of the relation, which is used as the property name in the entity (the source entity owning the
+     * to-many relationship).
+     */
     public void setName(String name) {
         this.name = name;
     }

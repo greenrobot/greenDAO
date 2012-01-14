@@ -17,6 +17,7 @@
  */
 package de.greenrobot.daogenerator;
 
+/** To-one relationship from a source entity to one (or zero) target entity. */
 public class ToOne {
     private final Schema schema;
     private final Entity sourceEntity;
@@ -61,6 +62,10 @@ public class ToOne {
         return name;
     }
 
+    /**
+     * Sets the name of the relation, which is used as the property name in the entity (the source entity owning the
+     * to-many relationship).
+     */
     public void setName(String name) {
         this.name = name;
     }

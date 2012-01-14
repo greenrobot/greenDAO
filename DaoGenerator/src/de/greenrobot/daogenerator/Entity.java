@@ -26,7 +26,24 @@ import java.util.TreeSet;
 
 import de.greenrobot.daogenerator.Property.PropertyBuilder;
 
-/** Model class for an entity: a Java data object mapped to a data base table. */
+/**
+ * Model class for an entity: a Java data object mapped to a data base table. A new entity is added to a {@link Schema}
+ * by the method {@link Schema#addEntity(String)} (there is no public constructor for {@link Entity} itself). <br/>
+ * <br/>
+ * Use the various addXXX methods to add entity properties, indexes, and relations to other entities (addToOne,
+ * addToMany).<br/>
+ * <br/>
+ * There are further configuration possibilities:
+ * <ul>
+ * <li>{@link Entity#implementsInterface(String...)} and {@link #implementsSerializable()} to specify interfaces the
+ * entity will implement</li>
+ * <li>{@link #setSuperclass(String)} to specify a class of which the entity will extend from</li>
+ * <li>Various setXXX methods</li>
+ * </ul>
+ * 
+ * @see <a href="http://greendao-orm.com/documentation/modelling-entities/">Modelling Entities (Documentation page)</a>
+ * @see <a href="http://greendao-orm.com/documentation/relations/">Relations (Documentation page)</a>
+ */
 public class Entity {
     private final Schema schema;
     private final String className;
@@ -60,7 +77,7 @@ public class Entity {
     private Boolean active;
     private Boolean hasKeepSections;
 
-    public Entity(Schema schema, String className) {
+    Entity(Schema schema, String className) {
         this.schema = schema;
         this.className = className;
         properties = new ArrayList<Property>();
@@ -133,20 +150,26 @@ public class Entity {
         return builder;
     }
 
-    public ToOne addToOne(Entity target, Property fkProperty) {
-        Property[] fkProperties = { fkProperty };
-        ToOne toOne = new ToOne(schema, this, target, fkProperties, true);
-        toOneRelations.add(toOne);
-        return toOne;
-    }
-
-    /** Add a to-many relationship; the target entity is joined to the PK property of this entity. */
+    /** Adds a to-many relationship; the target entity is joined to the PK property of this entity (typically the ID). */
     public ToMany addToMany(Entity target, Property targetProperty) {
         Property[] targetProperties = { targetProperty };
         return addToMany(null, target, targetProperties);
     }
 
-    /** Add a to-many relationship; the target entity is joined to the PK property of this entity. */
+    /**
+     * Convenience method for {@link Entity#addToMany(Entity, Property)} with a subsequent call to
+     * {@link ToMany#setName(String)}.
+     */
+    public ToMany addToMany(Entity target, Property targetProperty, String name) {
+        ToMany toMany = addToMany(target, targetProperty);
+        toMany.setName(name);
+        return toMany;
+    }
+
+    /**
+     * Add a to-many relationship; the target entity is joined using the given target property (of the target entity)
+     * and given source property (of this entity).
+     */
     public ToMany addToMany(Property sourceProperty, Entity target, Property targetProperty) {
         Property[] sourceProperties = { sourceProperty };
         Property[] targetProperties = { targetProperty };
@@ -158,6 +181,24 @@ public class Entity {
         toManyRelations.add(toMany);
         target.incomingToManyRelations.add(toMany);
         return toMany;
+    }
+
+    /**
+     * Adds a to-one relationship to the given target entity using the given given foreign key property (which belongs
+     * to this entity).
+     */
+    public ToOne addToOne(Entity target, Property fkProperty) {
+        Property[] fkProperties = { fkProperty };
+        ToOne toOne = new ToOne(schema, this, target, fkProperties, true);
+        toOneRelations.add(toOne);
+        return toOne;
+    }
+
+    /** Convenience for {@link #addToOne(Entity, Property)} with a subsequent call to {@link ToOne#setName(String)}. */
+    public ToOne addToOne(Entity target, Property fkProperty, String name) {
+        ToOne toOne = addToOne(target, fkProperty);
+        toOne.setName(name);
+        return toOne;
     }
 
     public ToOne addToOneWithoutProperty(String name, Entity target, String fkColumnName) {
@@ -328,6 +369,10 @@ public class Entity {
         return incomingToManyRelations;
     }
 
+    /**
+     * Entities with relations are active, but this method allows to make the entities active even if it does not have
+     * relations.
+     */
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -339,7 +384,7 @@ public class Entity {
     public Boolean getHasKeepSections() {
         return hasKeepSections;
     }
-    
+
     public Collection<String> getAdditionalImportsEntity() {
         return additionalImportsEntity;
     }
@@ -351,20 +396,21 @@ public class Entity {
     public void setHasKeepSections(Boolean hasKeepSections) {
         this.hasKeepSections = hasKeepSections;
     }
-    
+
     public List<String> getInterfacesToImplement() {
         return interfacesToImplement;
     }
-    
-    public void implementsInterface(String ... interfaces) {
+
+    public void implementsInterface(String... interfaces) {
         for (String interfaceToImplement : interfaces) {
             interfacesToImplement.add(interfaceToImplement);
         }
     }
+
     public void implementsSerializable() {
         interfacesToImplement.add("java.io.Serializable");
     }
-    
+
     public String getSuperclass() {
         return superclass;
     }
@@ -372,7 +418,7 @@ public class Entity {
     public void setSuperclass(String classToExtend) {
         this.superclass = classToExtend;
     }
-    
+
     void init2ndPass() {
         init2nPassNamesWithDefaults();
 
@@ -510,10 +556,10 @@ public class Entity {
     }
 
     private void init3rdPassAdditionalImports() {
-        if(!javaPackage.equals(javaPackageDao)) {
+        if (!javaPackage.equals(javaPackageDao)) {
             additionalImportsEntity.add(javaPackageDao + "." + classNameDao);
         }
-        
+
         for (ToOne toOne : toOneRelations) {
             Entity targetEntity = toOne.getTargetEntity();
             checkAdditionalImportsEntityTargetEntity(targetEntity);
