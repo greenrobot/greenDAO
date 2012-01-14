@@ -25,6 +25,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 /** Database utils, for example to execute SQL scripts */
+// TODO add unit tests
 public class DbUtils {
 
     public static void vacuum(SQLiteDatabase db) {
@@ -32,16 +33,46 @@ public class DbUtils {
     }
 
     /**
-     * Executes the given SQL asset in the given database. The database file may contain multiple SQL statements.
-     * Statements are split using a simple regular expression (something like "semicolon before a line break"), not by
-     * analyzing the SQL syntax. This will work for many SQL files, but check yours.
+     * Calls {@link #executeSqlScript(Context, SQLiteDatabase, String, boolean)} with transactional set to true.
+     * 
+     * @return number of statements executed.
      */
-    public static void executeSqlScript(Context context, SQLiteDatabase db, String assetFilename) throws IOException {
+    public static int executeSqlScript(Context context, SQLiteDatabase db, String assetFilename) throws IOException {
+        return executeSqlScript(context, db, assetFilename, true);
+    }
+
+    /**
+     * Executes the given SQL asset in the given database (SQL file should be UTF-8). The database file may contain
+     * multiple SQL statements. Statements are split using a simple regular expression (something like
+     * "semicolon before a line break"), not by analyzing the SQL syntax. This will work for many SQL files, but check
+     * yours.
+     * 
+     * @return number of statements executed.
+     */
+    public static int executeSqlScript(Context context, SQLiteDatabase db, String assetFilename, boolean transactional)
+            throws IOException {
         byte[] bytes = readAsset(context, assetFilename);
         String sql = new String(bytes, "UTF-8");
         String[] lines = sql.split(";(\\s)*[\n\r]");
-        int count = executeSqlStatements(db, lines);
+        int count;
+        if (transactional) {
+            count = executeSqlStatementsInTx(db, lines);
+        } else {
+            count = executeSqlStatements(db, lines);
+        }
         DaoLog.i("Executed " + count + " statements from SQL script '" + assetFilename + "'");
+        return count;
+    }
+
+    public static int executeSqlStatementsInTx(SQLiteDatabase db, String[] statements) {
+        db.beginTransaction();
+        try {
+            int count = executeSqlStatements(db, statements);
+            db.setTransactionSuccessful();
+            return count;
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public static int executeSqlStatements(SQLiteDatabase db, String[] statements) {
