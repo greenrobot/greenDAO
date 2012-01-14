@@ -140,6 +140,13 @@ public class Entity {
         return toOne;
     }
 
+    public ToOne addToOne(Entity target, Property fkProperty, String name) {
+        Property[] fkProperties = { fkProperty };
+        ToOne toOne = new ToOne(schema, this, target, fkProperties, true, name);
+        toOneRelations.add(toOne);
+        return toOne;
+    }
+    
     /** Add a to-many relationship; the target entity is joined to the PK property of this entity. */
     public ToMany addToMany(Entity target, Property targetProperty) {
         Property[] targetProperties = { targetProperty };
