@@ -37,6 +37,11 @@ public class ToOne {
         resolvedKeyUseEquals = new boolean[fkProperties.length];
     }
 
+    public ToOne(Schema schema, Entity sourceEntity, Entity targetEntity, Property[] fkProperties, boolean useFkProperty, String name) {
+    	this(schema, sourceEntity, targetEntity, fkProperties, useFkProperty);
+    	this.name = name;
+    }
+    
     public Entity getSourceEntity() {
         return sourceEntity;
     }
