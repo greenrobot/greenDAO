@@ -32,9 +32,19 @@ import android.database.Cursor;
 // TODO Make parameters setable by Property (if unique in paramaters)
 // TODO Query for PKs/ROW IDs
 public class Query<T> extends AbstractQuery<T> {
+    private int limitPosition = -1;
+    private int offsetPosition = -1;
 
-    public Query(AbstractDao<T, ?> dao, String sql, Collection<Object> valueList) {
+    Query(AbstractDao<T, ?> dao, String sql, Collection<Object> valueList) {
         super(dao, sql, valueList);
+    }
+
+    void setLimitPosition(int limitPosition) {
+        this.limitPosition = limitPosition;
+    }
+
+    void setOffsetPosition(int offsetPosition) {
+        this.offsetPosition = offsetPosition;
     }
 
     // public void compile() {
@@ -45,11 +55,28 @@ public class Query<T> extends AbstractQuery<T> {
      * Sets the parameter (0 based) using the position in which it was added during building the query.
      */
     public void setParameter(int index, Object parameter) {
+        if (index >= 0 && (index == limitPosition || index == offsetPosition)) {
+            throw new IllegalArgumentException("Illegal parameter index: " + index);
+        }
         if (parameter != null) {
             parameters[index] = parameter.toString();
         } else {
             parameters[index] = null;
         }
+    }
+
+    public void setLimit(int limit) {
+        if (limitPosition == -1) {
+            throw new IllegalStateException("Limit must be set with QueryBuilder before it can be used here");
+        }
+        parameters[limitPosition] = Integer.toString(limit);
+    }
+
+    public void setOffset(int offset) {
+        if (offsetPosition == -1) {
+            throw new IllegalStateException("Offset must be set with QueryBuilder before it can be used here");
+        }
+        parameters[offsetPosition] = Integer.toString(offset);
     }
 
     /** Executes the query and returns the result as a list containing all entities loaded into memory. */

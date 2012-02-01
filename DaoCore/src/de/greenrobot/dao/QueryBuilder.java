@@ -55,6 +55,10 @@ public class QueryBuilder<T> {
     private final AbstractDao<T, ?> dao;
     private final String tablePrefix;
 
+    private Integer limit;
+
+    private Integer offset;
+
     protected QueryBuilder(AbstractDao<T, ?> dao) {
         this(dao, "T");
     }
@@ -197,6 +201,18 @@ public class QueryBuilder<T> {
         }
     }
 
+    /** Limits the number of results returned by queries. */
+    public QueryBuilder<T> limit(int limit) {
+        this.limit = limit;
+        return this;
+    }
+
+    /** Sets the offset for query results. */
+    public QueryBuilder<T> offset(int offset) {
+        this.offset = offset;
+        return this;
+    }
+
     /**
      * Builds a reusable query object (Query objects can be executed more efficiently than creating a QueryBuilder for
      * each execution.
@@ -216,6 +232,23 @@ public class QueryBuilder<T> {
             builder.append(" ORDER BY ").append(orderBuilder);
         }
 
+        int limitPosition = -1;
+        if (limit != null) {
+            builder.append(" LIMIT ?");
+            values.add(limit);
+            limitPosition = values.size() - 1;
+        }
+
+        int offsetPosition = -1;
+        if (offset != null) {
+            if (limit == null) {
+                throw new IllegalStateException("Offset cannot be set without limit");
+            }
+            builder.append(" OFFSET ?");
+            values.add(offset);
+            offsetPosition = values.size() - 1;
+        }
+
         String sql = builder.toString();
         if (LOG_SQL) {
             DaoLog.d("Built SQL for query: " + sql);
@@ -225,12 +258,19 @@ public class QueryBuilder<T> {
             DaoLog.d("Values for query: " + values);
         }
 
-        return new Query<T>(dao, sql, values);
+        Query<T> query = new Query<T>(dao, sql, values);
+        if (limitPosition != -1) {
+            query.setLimitPosition(limitPosition);
+        }
+        if (offsetPosition != -1) {
+            query.setOffsetPosition(offsetPosition);
+        }
+        return query;
     }
-    
+
     /**
-     * Builds a reusable query object for deletion (Query objects can be executed more efficiently than creating a QueryBuilder for
-     * each execution.
+     * Builds a reusable query object for deletion (Query objects can be executed more efficiently than creating a
+     * QueryBuilder for each execution.
      */
     public DeleteQuery<T> buildDelete() {
         StringBuilder builder = new StringBuilder("DELETE FROM '");
