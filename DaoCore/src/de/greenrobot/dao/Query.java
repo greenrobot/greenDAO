@@ -65,6 +65,10 @@ public class Query<T> extends AbstractQuery<T> {
         }
     }
 
+    /**
+     * Sets the limit of the maximum number of results returned by this Query. {@link QueryBuilder#limit(int) must have
+     * been called on the QueryBuilder that created this Query object.
+     */
     public void setLimit(int limit) {
         if (limitPosition == -1) {
             throw new IllegalStateException("Limit must be set with QueryBuilder before it can be used here");
@@ -72,6 +76,10 @@ public class Query<T> extends AbstractQuery<T> {
         parameters[limitPosition] = Integer.toString(limit);
     }
 
+    /**
+     * Sets the offset for results returned by this Query. {@link QueryBuilder#offset(int) must have been called on the
+     * QueryBuilder that created this Query object.
+     */
     public void setOffset(int offset) {
         if (offsetPosition == -1) {
             throw new IllegalStateException("Offset must be set with QueryBuilder before it can be used here");

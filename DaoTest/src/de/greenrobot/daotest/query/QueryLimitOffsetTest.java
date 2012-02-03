@@ -26,6 +26,7 @@ import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
 
 public class QueryLimitOffsetTest extends TestEntityTestBase {
+    
     @Override
     protected void setUp() {
         super.setUp();
@@ -87,6 +88,36 @@ public class QueryLimitOffsetTest extends TestEntityTestBase {
             //OK
         }
     }
+    
+    public void testQueryLimitAndSetParameter() {
+        Query<TestEntity> query = dao.queryBuilder().limit(5).offset(1).build();
+        try{
+            query.setParameter(0, null);
+            fail("Offset/limit parameters must not interfere with user parameters");
+        } catch(RuntimeException expected) {
+            //OK
+        }
+    }
+    
+    public void testQueryUnsetLimit() {
+        Query<TestEntity> query = dao.queryBuilder().build();
+        try{
+            query.setLimit(1);
+            fail("Limit must be defined in builder first");
+        } catch(RuntimeException expected) {
+            //OK
+        }
+    } 
+
+    public void testQueryUnsetOffset() {
+        Query<TestEntity> query = dao.queryBuilder().limit(1).build();
+        try{
+            query.setOffset(1);
+            fail("Offset must be defined in builder first");
+        } catch(RuntimeException expected) {
+            //OK
+        }
+    } 
 
 
 
