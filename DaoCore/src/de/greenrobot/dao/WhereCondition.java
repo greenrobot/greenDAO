@@ -133,9 +133,8 @@ public interface WhereCondition {
             if (tableAlias != null) {
                 builder.append(tableAlias).append('.');
             }
-            builder.append(property.columnName).append(op);
+            builder.append('\'').append(property.columnName).append('\'').append(op);
         }
-
     }
 
     public static class StringCondition extends AbstractCondition {

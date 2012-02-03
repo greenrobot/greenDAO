@@ -181,7 +181,7 @@ public class QueryBuilder<T> {
 
     protected StringBuilder append(StringBuilder builder, Property property) {
         checkProperty(property);
-        builder.append(tablePrefix).append('.').append(property.columnName);
+        builder.append(tablePrefix).append('.').append('\'').append(property.columnName).append('\'');
         return builder;
     }
 
@@ -276,11 +276,12 @@ public class QueryBuilder<T> {
      * QueryBuilder for each execution.
      */
     public DeleteQuery<T> buildDelete() {
-        StringBuilder builder = new StringBuilder("DELETE FROM '");
-        builder.append(dao.getTablename()).append('\'');
-        appendWhereClause(builder, null);
-
+        String tablename = dao.getTablename();
+        String baseSql = SqlUtils.createSqlDelete(tablename, null);
+        StringBuilder builder = new StringBuilder(baseSql);
+        appendWhereClause(builder, tablename);
         String sql = builder.toString();
+
         if (LOG_SQL) {
             DaoLog.d("Built SQL for delete query: " + sql);
         }

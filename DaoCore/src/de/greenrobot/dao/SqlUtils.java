@@ -109,7 +109,7 @@ public class SqlUtils {
         builder.append(tablename);
         if (columns != null && columns.length > 0) {
             builder.append(" WHERE ");
-            SqlUtils.appendColumnsEqValue(builder, tablename, columns);
+            appendColumnsEqValue(builder, tablename, columns);
         }
         return builder.toString();
     }
