@@ -6,6 +6,15 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
+### V1.1.0 (2012-02-?? unreleased): Feature release
+* DeleteQuery for bulk deletes
+* Entities may implement Java interfaces
+* Entities may extend a Java class
+* Added LIMIT and OFFSET support for QueryBuilder and Query
+* Convenience methods to add named relationships
+* SQL scripts are executed in a transaction by default
+* Fixed queries with special column names (SQL keywords)
+
 ### V1.0.1 (2011-10-30): Bugfix release
 * Fixed generation of to-many relations
 * Fixed generated import statements when entities/DAO are not in the same package
