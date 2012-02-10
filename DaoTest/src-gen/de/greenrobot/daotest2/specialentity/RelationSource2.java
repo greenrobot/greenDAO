@@ -31,7 +31,7 @@ public class RelationSource2 {
     private ToOneTarget2 toOneTarget2;
     private Long toOneTarget2__resolvedKey;
 
-    private List<ToManyTarget2> toManyTarget2;
+    private List<ToManyTarget2> toManyTarget2List;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
@@ -90,20 +90,20 @@ public class RelationSource2 {
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
-    public synchronized List<ToManyTarget2> getToManyTarget2() {
-        if (toManyTarget2 == null) {
+    public synchronized List<ToManyTarget2> getToManyTarget2List() {
+        if (toManyTarget2List == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             ToManyTarget2Dao targetDao = daoSession.getToManyTarget2Dao();
-            toManyTarget2 = targetDao._queryRelationSource2_ToManyTarget2(id);
+            toManyTarget2List = targetDao._queryRelationSource2_ToManyTarget2List(id);
         }
-        return toManyTarget2;
+        return toManyTarget2List;
     }
 
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    public synchronized void resetToManyTarget2() {
-        toManyTarget2 = null;
+    public synchronized void resetToManyTarget2List() {
+        toManyTarget2List = null;
     }
 
     /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */

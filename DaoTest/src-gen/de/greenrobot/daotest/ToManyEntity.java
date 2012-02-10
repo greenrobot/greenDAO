@@ -19,7 +19,7 @@ public class ToManyEntity {
     /** Used for active entity operations. */
     private ToManyEntityDao myDao;
 
-    private List<ToManyTargetEntity> toManyTargetEntity;
+    private List<ToManyTargetEntity> toManyTargetEntityList;
     private List<ToManyTargetEntity> ToManyDescList;
     private List<ToManyTargetEntity> ToManyByJoinProperty;
     private List<ToManyTargetEntity> ToManyJoinTwo;
@@ -59,20 +59,20 @@ public class ToManyEntity {
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
-    public synchronized List<ToManyTargetEntity> getToManyTargetEntity() {
-        if (toManyTargetEntity == null) {
+    public synchronized List<ToManyTargetEntity> getToManyTargetEntityList() {
+        if (toManyTargetEntityList == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             ToManyTargetEntityDao targetDao = daoSession.getToManyTargetEntityDao();
-            toManyTargetEntity = targetDao._queryToManyEntity_ToManyTargetEntity(id);
+            toManyTargetEntityList = targetDao._queryToManyEntity_ToManyTargetEntityList(id);
         }
-        return toManyTargetEntity;
+        return toManyTargetEntityList;
     }
 
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    public synchronized void resetToManyTargetEntity() {
-        toManyTargetEntity = null;
+    public synchronized void resetToManyTargetEntityList() {
+        toManyTargetEntityList = null;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */

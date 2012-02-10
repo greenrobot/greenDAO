@@ -28,7 +28,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         public final static Property TargetJoinProperty = new Property(3, String.class, "targetJoinProperty", false, "TARGET_JOIN_PROPERTY");
     };
 
-    private Query<ToManyTargetEntity> toManyEntity_ToManyTargetEntityQuery;
+    private Query<ToManyTargetEntity> toManyEntity_ToManyTargetEntityListQuery;
     private Query<ToManyTargetEntity> toManyEntity_ToManyDescListQuery;
     private Query<ToManyTargetEntity> toManyEntity_ToManyByJoinPropertyQuery;
     private Query<ToManyTargetEntity> toManyEntity_ToManyJoinTwoQuery;
@@ -132,17 +132,17 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         return true;
     }
     
-    /** Internal query to resolve the "toManyTargetEntity" to-many relationship of ToManyEntity. */
-    public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyTargetEntity(Long toManyId) {
-        if (toManyEntity_ToManyTargetEntityQuery == null) {
+    /** Internal query to resolve the "toManyTargetEntityList" to-many relationship of ToManyEntity. */
+    public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyTargetEntityList(Long toManyId) {
+        if (toManyEntity_ToManyTargetEntityListQuery == null) {
             QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
             queryBuilder.where(Properties.ToManyId.eq(toManyId));
             queryBuilder.orderRaw("_id ASC");
-            toManyEntity_ToManyTargetEntityQuery = queryBuilder.build();
+            toManyEntity_ToManyTargetEntityListQuery = queryBuilder.build();
         } else {
-            toManyEntity_ToManyTargetEntityQuery.setParameter(0, toManyId);
+            toManyEntity_ToManyTargetEntityListQuery.setParameter(0, toManyId);
         }
-        return toManyEntity_ToManyTargetEntityQuery.list();
+        return toManyEntity_ToManyTargetEntityListQuery.list();
     }
 
     /** Internal query to resolve the "ToManyDescList" to-many relationship of ToManyEntity. */

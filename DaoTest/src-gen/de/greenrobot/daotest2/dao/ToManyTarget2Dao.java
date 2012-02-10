@@ -26,7 +26,7 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
         public final static Property FkId = new Property(1, Long.class, "fkId", false, "FK_ID");
     };
 
-    private Query<ToManyTarget2> relationSource2_ToManyTarget2Query;
+    private Query<ToManyTarget2> relationSource2_ToManyTarget2ListQuery;
 
     public ToManyTarget2Dao(DaoConfig config) {
         super(config);
@@ -111,16 +111,16 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
         return true;
     }
     
-    /** Internal query to resolve the "toManyTarget2" to-many relationship of RelationSource2. */
-    public synchronized List<ToManyTarget2> _queryRelationSource2_ToManyTarget2(Long fkId) {
-        if (relationSource2_ToManyTarget2Query == null) {
+    /** Internal query to resolve the "toManyTarget2List" to-many relationship of RelationSource2. */
+    public synchronized List<ToManyTarget2> _queryRelationSource2_ToManyTarget2List(Long fkId) {
+        if (relationSource2_ToManyTarget2ListQuery == null) {
             QueryBuilder<ToManyTarget2> queryBuilder = queryBuilder();
             queryBuilder.where(Properties.FkId.eq(fkId));
-            relationSource2_ToManyTarget2Query = queryBuilder.build();
+            relationSource2_ToManyTarget2ListQuery = queryBuilder.build();
         } else {
-            relationSource2_ToManyTarget2Query.setParameter(0, fkId);
+            relationSource2_ToManyTarget2ListQuery.setParameter(0, fkId);
         }
-        return relationSource2_ToManyTarget2Query.list();
+        return relationSource2_ToManyTarget2ListQuery.list();
     }
 
 }
