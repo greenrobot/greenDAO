@@ -153,20 +153,25 @@ public class QueryBuilder<T> {
 
     /** Adds the given properties to the ORDER BY section using ascending order. */
     public QueryBuilder<T> orderAsc(Property... properties) {
-        for (Property property : properties) {
-            checkOrderBuilder();
-            append(orderBuilder, property).append(" ASC");
-        }
+        orderAscOrDesc(" ASC", properties);
         return this;
     }
 
     /** Adds the given properties to the ORDER BY section using descending order. */
     public QueryBuilder<T> orderDesc(Property... properties) {
+        orderAscOrDesc(" DESC", properties);
+        return this;
+    }
+
+    private void orderAscOrDesc(String ascOrDescWithLeadingSpace, Property... properties) {
         for (Property property : properties) {
             checkOrderBuilder();
-            append(orderBuilder, property).append(" DESC");
+            append(orderBuilder, property);
+            if (String.class.equals(property.type)) {
+                orderBuilder.append(" COLLATE LOCALIZED");
+            }
+            orderBuilder.append(ascOrDescWithLeadingSpace);
         }
-        return this;
     }
 
     /**
