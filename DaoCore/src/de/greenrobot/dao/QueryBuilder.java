@@ -174,6 +174,14 @@ public class QueryBuilder<T> {
         }
     }
 
+    /** Adds the given properties to the ORDER BY section using the given custom order. */
+    public QueryBuilder<T> orderCustom(Property property, String customOrderForProperty) {
+        checkOrderBuilder();
+        append(orderBuilder, property).append(' ');
+        orderBuilder.append(customOrderForProperty);
+        return this;
+    }
+
     /**
      * Adds the given raw SQL string to the ORDER BY section. Do not use this for standard properties: ordedAsc and
      * orderDesc are prefered.

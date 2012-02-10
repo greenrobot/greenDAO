@@ -92,6 +92,21 @@ public class QueryBuilderOrderTest extends TestEntityTestBase {
         assertEquals(entityUE.getId(), result.get(2).getId());
         assertEquals(entityV.getId(), result.get(3).getId());
     }
+    
+    public void testOrderCustom() {
+        List<TestEntity> list = new ArrayList<TestEntity>();
+        TestEntity entityAA = addEntity(list, "Aa");
+        TestEntity entityAB = addEntity(list, "ab");
+        TestEntity entityAC = addEntity(list, "Ac");
+        dao.insertInTx(list);
+
+        List<TestEntity> result = dao.queryBuilder().orderCustom(Properties.SimpleString,"ASC").list();
+        assertEquals(list.size(), result.size());
+        assertEquals(entityAA.getId(), result.get(0).getId());
+        assertEquals(entityAC.getId(), result.get(1).getId());
+        assertEquals(entityAB.getId(), result.get(2).getId());
+    }
+
 
     private TestEntity addEntity(List<TestEntity> list, String simpleString) {
         TestEntity entityAB = createEntity(42, simpleString);
