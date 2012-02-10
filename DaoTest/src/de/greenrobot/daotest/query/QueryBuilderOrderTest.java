@@ -92,7 +92,7 @@ public class QueryBuilderOrderTest extends TestEntityTestBase {
         assertEquals(entityUE.getId(), result.get(2).getId());
         assertEquals(entityV.getId(), result.get(3).getId());
     }
-    
+
     public void testOrderCustom() {
         List<TestEntity> list = new ArrayList<TestEntity>();
         TestEntity entityAA = addEntity(list, "Aa");
@@ -100,13 +100,20 @@ public class QueryBuilderOrderTest extends TestEntityTestBase {
         TestEntity entityAC = addEntity(list, "Ac");
         dao.insertInTx(list);
 
-        List<TestEntity> result = dao.queryBuilder().orderCustom(Properties.SimpleString,"ASC").list();
+        List<TestEntity> result = dao.queryBuilder().orderCustom(Properties.SimpleString, "ASC").list();
         assertEquals(list.size(), result.size());
         assertEquals(entityAA.getId(), result.get(0).getId());
         assertEquals(entityAC.getId(), result.get(1).getId());
         assertEquals(entityAB.getId(), result.get(2).getId());
     }
 
+    public void testOrderRaw() {
+        ArrayList<TestEntity> inserted = insert(2);
+        TestEntity entity = inserted.get(0);
+        List<TestEntity> result = dao.queryBuilder().orderRaw(Properties.SimpleInteger.columnName + " ASC").list();
+        assertEquals(2, result.size());
+        assertEquals(entity.getId(), result.get(0).getId());
+    }
 
     private TestEntity addEntity(List<TestEntity> list, String simpleString) {
         TestEntity entityAB = createEntity(42, simpleString);
