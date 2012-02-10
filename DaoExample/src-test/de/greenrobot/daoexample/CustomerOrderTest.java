@@ -3,9 +3,10 @@ package de.greenrobot.daoexample;
 import java.util.Date;
 import java.util.List;
 
+import android.app.Application;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 
-public class CustomerOrderTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
+public class CustomerOrderTest extends AbstractDaoSessionTest<Application, DaoMaster, DaoSession> {
 
     public CustomerOrderTest() {
         super(DaoMaster.class);
