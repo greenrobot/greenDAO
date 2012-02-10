@@ -14,6 +14,8 @@ Release History
 * Convenience methods to add named relationships
 * SQL scripts are executed in a transaction by default
 * Fixed queries with special column names (SQL keywords)
+* Changed default names for to-many relations to end with "List"
+* ORDER BY uses LOCALIZED collation for strings by default
 
 ### V1.0.1 (2011-10-30): Bugfix release
 * Fixed generation of to-many relations
