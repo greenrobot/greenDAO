@@ -18,6 +18,7 @@
 package de.greenrobot.daotest.query;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.greenrobot.dao.QueryBuilder;
@@ -33,16 +34,15 @@ public class QueryBuilderOrderTest extends TestEntityTestBase {
         QueryBuilder.LOG_VALUES = true;
     }
 
-
     public void testOrderAsc() {
         ArrayList<TestEntity> inserted = insert(2);
         TestEntity entity = inserted.get(0);
         List<TestEntity> result = dao.queryBuilder().orderAsc(Properties.SimpleInteger).list();
         assertEquals(2, result.size());
-        assertEquals(entity.getId(), result.get(0). getId());
+        assertEquals(entity.getId(), result.get(0).getId());
         result = dao.queryBuilder().orderAsc(Properties.SimpleInteger, Properties.SimpleString).list();
         assertEquals(2, result.size());
-        assertEquals(entity.getId(), result.get(0). getId());
+        assertEquals(entity.getId(), result.get(0).getId());
     }
 
     public void testOrderDesc() {
@@ -50,10 +50,53 @@ public class QueryBuilderOrderTest extends TestEntityTestBase {
         TestEntity entity = inserted.get(1);
         List<TestEntity> result = dao.queryBuilder().orderDesc(Properties.SimpleInteger).list();
         assertEquals(2, result.size());
-        assertEquals(entity.getId(), result.get(0). getId());
+        assertEquals(entity.getId(), result.get(0).getId());
         result = dao.queryBuilder().orderDesc(Properties.SimpleInteger, Properties.SimpleString).list();
         assertEquals(2, result.size());
-        assertEquals(entity.getId(), result.get(0). getId());
+        assertEquals(entity.getId(), result.get(0).getId());
+    }
+
+    public void testOrderUpperLowercase() {
+        List<TestEntity> list = new ArrayList<TestEntity>();
+        TestEntity entityAA = addEntity(list, "aa");
+        TestEntity entityAB = addEntity(list, "Ab");
+        TestEntity entityAC = addEntity(list, "ac");
+        TestEntity entityZA = addEntity(list, "ZA");
+        TestEntity entityZB = addEntity(list, "zB");
+        TestEntity entityZC = addEntity(list, "ZC");
+        Collections.shuffle(list);
+        dao.insertInTx(list);
+
+        List<TestEntity> result = dao.queryBuilder().orderAsc(Properties.SimpleString).list();
+        assertEquals(list.size(), result.size());
+        assertEquals(entityAA.getId(), result.get(0).getId());
+        assertEquals(entityAB.getId(), result.get(1).getId());
+        assertEquals(entityAC.getId(), result.get(2).getId());
+        assertEquals(entityZA.getId(), result.get(3).getId());
+        assertEquals(entityZB.getId(), result.get(4).getId());
+        assertEquals(entityZC.getId(), result.get(5).getId());
+    }
+
+    public void testOrderUmlauts() {
+        List<TestEntity> list = new ArrayList<TestEntity>();
+        TestEntity entityV = addEntity(list, "V");
+        TestEntity entityB = addEntity(list, "B");
+        TestEntity entityUE = addEntity(list, "Ü");
+        TestEntity entityAE = addEntity(list, "Ä");
+        dao.insertInTx(list);
+
+        List<TestEntity> result = dao.queryBuilder().orderAsc(Properties.SimpleString).list();
+        assertEquals(list.size(), result.size());
+        assertEquals(entityAE.getId(), result.get(0).getId());
+        assertEquals(entityB.getId(), result.get(1).getId());
+        assertEquals(entityUE.getId(), result.get(2).getId());
+        assertEquals(entityV.getId(), result.get(3).getId());
+    }
+
+    private TestEntity addEntity(List<TestEntity> list, String simpleString) {
+        TestEntity entityAB = createEntity(42, simpleString);
+        list.add(entityAB);
+        return entityAB;
     }
 
 }
