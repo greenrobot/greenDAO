@@ -163,28 +163,6 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         assertEquals(testEntityNotNull.getId(), testEntityNotNull2.getId());
     }
 
-    public void testOrderAsc() {
-        ArrayList<TestEntity> inserted = insert(2);
-        TestEntity entity = inserted.get(0);
-        List<TestEntity> result = dao.queryBuilder().orderAsc(Properties.SimpleInteger).list();
-        assertEquals(2, result.size());
-        assertEquals(entity.getId(), result.get(0). getId());
-        result = dao.queryBuilder().orderAsc(Properties.SimpleInteger, Properties.SimpleString).list();
-        assertEquals(2, result.size());
-        assertEquals(entity.getId(), result.get(0). getId());
-    }
-
-    public void testOrderDesc() {
-        ArrayList<TestEntity> inserted = insert(2);
-        TestEntity entity = inserted.get(1);
-        List<TestEntity> result = dao.queryBuilder().orderDesc(Properties.SimpleInteger).list();
-        assertEquals(2, result.size());
-        assertEquals(entity.getId(), result.get(0). getId());
-        result = dao.queryBuilder().orderDesc(Properties.SimpleInteger, Properties.SimpleString).list();
-        assertEquals(2, result.size());
-        assertEquals(entity.getId(), result.get(0). getId());
-    }
-    
     public void testBuildTwice() {
         insert(3);
         String value = getSimpleString(1);
