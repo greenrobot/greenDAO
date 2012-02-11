@@ -3,10 +3,10 @@
 
 	<target name="build-all" depends="delete-release, build-jar, build-javadoc">
 	</target>
-	
-    <target name="delete-release">
-        <delete dir="release" />
-    </target>
+
+	<target name="delete-release">
+		<delete dir="release" />
+	</target>
 
 	<target name="build-jar" description="Depends on Eclipse to have everthing compiled into bin/">
 		<mkdir dir="release" />
@@ -27,7 +27,7 @@
 			<doctitle>
 				<![CDATA[<h1>greenDAO API</h1>]]></doctitle>
 		<bottom>
-			<![CDATA[<i>Copyright &#169; 2011 greenrobot.de. All Rights Reserved.</i>]]></bottom>
+			<![CDATA[<i>Copyright &#169; 2011-2012 greenrobot.de. All Rights Reserved.</i>]]></bottom>
 </javadoc>
 <jar jarfile="release/greenDAO-javadoc.jar" basedir="release/docs/api" />
 </target>

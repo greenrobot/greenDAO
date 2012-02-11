@@ -6,7 +6,7 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
-### V1.1.0 (2012-02-?? unreleased): Feature release
+### V1.1.0 (2012-02-13 unreleased): Feature release
 * DeleteQuery for bulk deletes
 * Entities may implement Java interfaces
 * Entities may extend a Java class
@@ -21,7 +21,7 @@ Release History
 * Fixed generation of to-many relations
 * Fixed generated import statements when entities/DAO are not in the same package
 
-### V1.0 (2011-10-24): First open source release
+### V1.0.0 (2011-10-24): First open source release
 * To-many relations (lazily loaded on the entities)
 * To-many relations with custom join properties
 * Active entities can be updated, refreshed, and deleted directly
