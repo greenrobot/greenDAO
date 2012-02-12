@@ -358,7 +358,7 @@ public abstract class AbstractDao<T, K> {
         return loadAllAndCloseCursor(cursor);
     }
 
-    /** Performs a standard Android-style query for entities. */
+    /** @deprecated  groupBy & having does not make sense for entities. Method will be removed. */
     public List<T> query(String selection, String[] selectionArgs, String groupBy, String having, String orderby) {
         Cursor cursor = db.query(config.tablename, getAllColumns(), selection, selectionArgs, groupBy, having, orderby);
         return loadAllAndCloseCursor(cursor);
