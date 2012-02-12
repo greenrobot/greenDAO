@@ -59,6 +59,15 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         runTests(100); // Warmup
         deleteAll();
         runTests(1000);
+        deleteAll();
+        runTests(1000);
+        deleteAll();
+        runTests(1000);
+        deleteAll();
+        runTests(1000);
+        deleteAll();
+        runTests(1000);
+        Log.d("DAO", "---------------End");
     }
 
     protected void deleteAll() {
@@ -66,6 +75,8 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
     }
 
     protected void runTests(int entityCount) throws Exception {
+        Log.d("DAO", "---------------Start: " + entityCount);
+
         long start, time;
 
         final List<SimpleEntityNotNull> list = new ArrayList<SimpleEntityNotNull>();
@@ -113,6 +124,7 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         Log.d("DAO", "ORMLite: Loaded " + reloaded.size() + " entities in " + time + "ms");
 
         System.gc();
+        Log.d("DAO", "---------------End: " + entityCount);
     }
 
     protected void runOneByOne(List<SimpleEntityNotNull> list, int count) throws SQLException {
