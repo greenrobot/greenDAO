@@ -153,7 +153,8 @@ public abstract class AbstractDao<T, K> {
     /** Detaches an entity from the identity scope (session). Subsequent query results won't return this object. */
     public boolean detach(T entity) {
         if (identityScope != null) {
-            return identityScope.detach(getKey(entity), entity);
+            K key = getKeyVerified(entity);
+            return identityScope.detach(key, entity);
         } else {
             return false;
         }
@@ -379,7 +380,7 @@ public abstract class AbstractDao<T, K> {
     /** Deletes the given entity from the database. Currently, only single value PK entities are supported. */
     public void delete(T entity) {
         assertSinglePk();
-        K key = getKey(entity);
+        K key = getKeyVerified(entity);
         deleteByKey(key);
         if (identityScope != null) {
             identityScope.remove(key);
@@ -406,7 +407,7 @@ public abstract class AbstractDao<T, K> {
     /** Resets all locally changed properties of the entity by reloading the values from the database. */
     public void refresh(T entity) {
         assertSinglePk();
-        K key = getKey(entity);
+        K key = getKeyVerified(entity);
         String sql = statements.getSelectByKey();
         String[] keyArray = new String[] { key.toString() };
         Cursor cursor = db.rawQuery(sql, keyArray);
@@ -519,6 +520,20 @@ public abstract class AbstractDao<T, K> {
 
     public long count() {
         return DatabaseUtils.queryNumEntries(db, '\'' + config.tablename + '\'');
+    }
+
+    /** See {@link #getKey(Object)}, but guarantees that the returned key is never null (throws if null). */
+    protected K getKeyVerified(T entity) {
+        K key = getKey(entity);
+        if (key == null) {
+            if (entity == null) {
+                throw new NullPointerException("Entity may not be null");
+            } else {
+                throw new DaoException("Entity has no key");
+            }
+        } else {
+            return key;
+        }
     }
 
     /** Reads the values from the current position of the given cursor and returns a new entity. */
