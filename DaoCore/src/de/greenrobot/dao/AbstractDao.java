@@ -144,7 +144,7 @@ public abstract class AbstractDao<T, K> {
         return loadCurrent(cursor, 0, true);
     }
 
-    /** Loads all available entities from the database. */ 
+    /** Loads all available entities from the database. */
     public List<T> loadAll() {
         Cursor cursor = db.rawQuery(statements.getSelectAll(), null);
         return loadAllAndCloseCursor(cursor);
@@ -269,10 +269,12 @@ public abstract class AbstractDao<T, K> {
         List<T> list = new ArrayList<T>(count);
         if (cursor instanceof CrossProcessCursor) {
             CursorWindow window = ((CrossProcessCursor) cursor).getWindow();
-            if (window.getNumRows() == count) {
-                cursor = new FastCursor(window);
-            } else {
-                DaoLog.d("Window vs. result size: " + window.getNumRows() + "/" + count);
+            if (window != null) { // E.g. Roboelectric has no Window at this point
+                if (window.getNumRows() == count) {
+                    cursor = new FastCursor(window);
+                } else {
+                    DaoLog.d("Window vs. result size: " + window.getNumRows() + "/" + count);
+                }
             }
         }
 
@@ -358,7 +360,7 @@ public abstract class AbstractDao<T, K> {
         return loadAllAndCloseCursor(cursor);
     }
 
-    /** @deprecated  groupBy & having does not make sense for entities. Method will be removed. */
+    /** @deprecated groupBy & having does not make sense for entities. Method will be removed. */
     public List<T> query(String selection, String[] selectionArgs, String groupBy, String having, String orderby) {
         Cursor cursor = db.query(config.tablename, getAllColumns(), selection, selectionArgs, groupBy, having, orderby);
         return loadAllAndCloseCursor(cursor);
