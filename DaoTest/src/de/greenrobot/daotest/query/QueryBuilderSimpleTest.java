@@ -80,7 +80,23 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         TestEntity resultEntity3 = result.get(2);
         assertEquals(value3, resultEntity3.getSimpleString());
         assertEquals(inserted.get(9).getId(), resultEntity3.getId());
+    }
 
+    public void testNotIn() {
+        ArrayList<TestEntity> inserted = insert(5);
+        String value1 = getSimpleString(0);
+        String value2 = getSimpleString(2);
+        String value3 = getSimpleString(4);
+
+        List<TestEntity> result = dao.queryBuilder().where(Properties.SimpleString.notIn(value1, value2, value3))
+                .orderAsc(Properties.SimpleString).list();
+        assertEquals(2, result.size());
+
+        TestEntity resultEntity1 = result.get(0);
+        assertEquals(inserted.get(1).getId(), resultEntity1.getId());
+
+        TestEntity resultEntity2 = result.get(1);
+        assertEquals(inserted.get(3).getId(), resultEntity2.getId());
     }
 
     public void testEqStringAndInteger() {
@@ -155,10 +171,10 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         testEntityNotNull.setSimpleInteger(42);
         dao.update(testEntityNull);
         dao.update(testEntityNotNull);
-        
+
         TestEntity testEntityNull2 = dao.queryBuilder().where(Properties.SimpleInteger.isNull()).uniqueOrThrow();
         assertEquals(testEntityNull.getId(), testEntityNull2.getId());
-        
+
         TestEntity testEntityNotNull2 = dao.queryBuilder().where(Properties.SimpleInteger.isNotNull()).uniqueOrThrow();
         assertEquals(testEntityNotNull.getId(), testEntityNotNull2.getId());
     }

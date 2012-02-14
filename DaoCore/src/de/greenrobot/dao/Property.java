@@ -73,6 +73,18 @@ public class Property {
         return in(inValues.toArray());
     }
 
+    /** Creates an "NOT IN (..., ..., ...)" condition  for this property. */
+    public WhereCondition notIn(Object... notInValues) {
+        StringBuilder condition = new StringBuilder(" NOT IN (");
+        SqlUtils.appendPlaceholders(condition, notInValues.length).append(')');
+        return new PropertyCondition(this, condition.toString(), notInValues);
+    }
+
+    /** Creates an "NOT IN (..., ..., ...)" condition  for this property. */
+    public WhereCondition notIn(Collection<?> notInValues) {
+        return notIn(notInValues.toArray());
+    }
+
     /** Creates an "greater than ('>')" condition  for this property. */
     public WhereCondition gt(Object value) {
         return new PropertyCondition(this, ">?", value);
