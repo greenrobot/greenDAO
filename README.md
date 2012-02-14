@@ -6,10 +6,10 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
-### V1.1.1 (2012-02-??, unrelease): Bugfix release
+### V1.1.1 (2012-02-14): Mini bugfix&feature release
+* Added NOT IN condition for QueryBuilder
 * Fix for Roboelectric (Issue #22)
-* Minor fixes (Issue #5)
-* ...
+* Minor fix (Issue #5)
 
 ### V1.1.0 (2012-02-13): Feature release
 * DeleteQuery for bulk deletes

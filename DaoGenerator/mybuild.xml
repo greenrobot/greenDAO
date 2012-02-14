@@ -56,16 +56,16 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
     	<delete dir="release/example"/>
         <antcall target="refresh-example-jars" />
 
-        <copy  todir="release/example/javadoc/greendao" >
+        <copy todir="release/example/javadoc/greendao" >
             <fileset dir="../DaoCore/release/docs/api/"/>
         </copy>
-        <copy  todir="release/example/javadoc/greendao-generator" >
+        <copy todir="release/example/javadoc/greendao-generator" >
             <fileset dir="release/docs/api/"/>
         </copy>
-        <copy  todir="release/example/DaoExample" >
+        <copy todir="release/example/DaoExample" >
             <fileset dir="../DaoExample"/>
         </copy>
-        <copy  todir="release/example/DaoExampleGenerator" >
+        <copy todir="release/example/DaoExampleGenerator" >
             <fileset dir="../DaoExampleGenerator"/>
         </copy>
         <copy file="../DaoCore/release/greenDAO.jar" todir="release/example/" ></copy>
