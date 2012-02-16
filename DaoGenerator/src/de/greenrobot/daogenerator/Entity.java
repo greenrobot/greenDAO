@@ -177,6 +177,10 @@ public class Entity {
     }
 
     public ToMany addToMany(Property[] sourceProperties, Entity target, Property[] targetProperties) {
+        if(protobuf) {
+            throw new IllegalStateException("Protobuf entities do not support realtions, currently");
+        }
+
         ToMany toMany = new ToMany(schema, this, sourceProperties, target, targetProperties);
         toManyRelations.add(toMany);
         target.incomingToManyRelations.add(toMany);
@@ -188,6 +192,10 @@ public class Entity {
      * to this entity).
      */
     public ToOne addToOne(Entity target, Property fkProperty) {
+        if(protobuf) {
+            throw new IllegalStateException("Protobuf entities do not support realtions, currently");
+        }
+
         Property[] fkProperties = { fkProperty };
         ToOne toOne = new ToOne(schema, this, target, fkProperties, true);
         toOneRelations.add(toOne);
