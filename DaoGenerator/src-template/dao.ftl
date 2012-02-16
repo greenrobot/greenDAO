@@ -113,7 +113,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "'${entity.tableName}'";
         db.execSQL(sql);
     }
-    
+
 </#if>
     /** @inheritdoc */
     @Override

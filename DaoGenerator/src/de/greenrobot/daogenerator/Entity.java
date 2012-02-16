@@ -576,7 +576,7 @@ public class Entity {
     }
 
     private void init3rdPassAdditionalImports() {
-        if (!javaPackage.equals(javaPackageDao)) {
+        if (active && !javaPackage.equals(javaPackageDao)) {
             additionalImportsEntity.add(javaPackageDao + "." + classNameDao);
         }
 
