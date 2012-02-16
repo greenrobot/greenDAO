@@ -41,14 +41,18 @@ public class DaoMaster extends AbstractDaoMaster {
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
 <#list schema.entities as entity>
+<#if !entity.skipTableCreation>
         ${entity.classNameDao}.createTable(db, ifNotExists);
+</#if>
 </#list>
     }
     
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(SQLiteDatabase db, boolean ifExists) {
 <#list schema.entities as entity>
+<#if !entity.skipTableCreation>
         ${entity.classNameDao}.dropTable(db, ifExists);
+</#if>
 </#list>
     }
     

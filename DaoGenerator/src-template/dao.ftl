@@ -90,6 +90,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 </#if>
     }
 
+<#if !entity.skipTableCreation>
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'${entity.tableName}' (" + //
@@ -112,7 +113,8 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "'${entity.tableName}'";
         db.execSQL(sql);
     }
-
+    
+</#if>
     /** @inheritdoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, ${entity.className} entity) {

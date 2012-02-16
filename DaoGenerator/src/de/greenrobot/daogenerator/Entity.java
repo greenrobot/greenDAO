@@ -74,6 +74,7 @@ public class Entity {
     private boolean constructors;
     private boolean skipGeneration;
     private boolean skipGenerationTest;
+    private boolean skipTableCreation;
     private Boolean active;
     private Boolean hasKeepSections;
 
@@ -355,6 +356,17 @@ public class Entity {
      */
     public void setSkipGeneration(boolean skipGeneration) {
         this.skipGeneration = skipGeneration;
+    }
+
+    /**
+     * Flag if CREATE & DROP TABLE scripts should be skipped in Dao.
+     */
+    public void setSkipTableCreation(boolean skipTableCreation) {
+        this.skipTableCreation = skipTableCreation;
+    }
+    
+    public boolean isSkipTableCreation() {
+        return skipTableCreation;
     }
 
     public boolean isSkipGenerationTest() {
