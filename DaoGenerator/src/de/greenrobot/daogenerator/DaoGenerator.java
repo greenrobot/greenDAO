@@ -93,8 +93,9 @@ public class DaoGenerator {
         schema.init2ndPass();
         schema.init3ndPass();
 
-        List<Entity> entities = schema.getEntities();
+        System.out.println("Processing schema version " + schema.getVersion() + "...");
 
+        List<Entity> entities = schema.getEntities();
         for (Entity entity : entities) {
             generate(templateDao, outDirFile, entity.getJavaPackageDao(), entity.getClassNameDao(), schema, entity);
             if (!entity.isProtobuf() && !entity.isSkipGeneration()) {
