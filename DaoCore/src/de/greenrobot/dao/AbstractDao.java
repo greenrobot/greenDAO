@@ -45,7 +45,7 @@ public abstract class AbstractDao<T, K> {
     protected TableStatements statements;
 
     protected final AbstractDaoSession session;
-    protected final int pkOridinal;
+    protected final int pkOrdinal;
 
     public AbstractDao(DaoConfig config) {
         this(config, null);
@@ -61,7 +61,7 @@ public abstract class AbstractDao<T, K> {
             identityScopeLong = (IdentityScopeLong<T>) identityScope;
         }
         statements = config.statements;
-        pkOridinal = config.pkProperty != null ? config.pkProperty.oridinal : -1;
+        pkOrdinal = config.pkProperty != null ? config.pkProperty.ordinal : -1;
     }
 
     public AbstractDaoSession getSession() {
@@ -302,12 +302,12 @@ public abstract class AbstractDao<T, K> {
         if (identityScopeLong != null) {
             if (offset != 0) {
                 // Occurs with deep loads (left outer joins)
-                if (cursor.isNull(pkOridinal + offset)) {
+                if (cursor.isNull(pkOrdinal + offset)) {
                     return null;
                 }
             }
 
-            long key = cursor.getLong(pkOridinal + offset);
+            long key = cursor.getLong(pkOrdinal + offset);
             T entity = lock ? identityScopeLong.get2(key) : identityScopeLong.get2NoLock(key);
             if (entity != null) {
                 return entity;

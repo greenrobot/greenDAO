@@ -96,10 +96,10 @@ public final class DaoConfig implements Cloneable {
         Property[] properties = new Property[fields.length];
         for (Field field : fields) {
             Property property = (Property) field.get(null);
-            if (properties[property.oridinal] != null) {
+            if (properties[property.ordinal] != null) {
                 throw new DaoException("Duplicate property ordinals");
             }
-            properties[property.oridinal] = property;
+            properties[property.ordinal] = property;
         }
         return properties;
     }
