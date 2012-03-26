@@ -46,8 +46,8 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
     <target name="refresh-example-jars" description="(Also builds DaoCore and DaoGenerator)">
         <ant antfile="../DaoCore/mybuild.xml" dir="../DaoCore/"/>
         <antcall target="build-generator"></antcall>
-        <copy file="../DaoCore/release/greenDAO.jar" todir="../DaoExample/lib" ></copy>
-        <copy file="../DaoCore/release/greenDAO-javadoc.jar" todir="../DaoExample/lib" ></copy>
+        <copy file="../DaoCore/release/greenDAO.jar" todir="../DaoExample/libs" ></copy>
+        <copy file="../DaoCore/release/greenDAO-javadoc.jar" todir="../DaoExample/docs" ></copy>
         <copy file="release/greenDAO-generator.jar" todir="../DaoExampleGenerator/lib" ></copy>
         <copy file="release/greenDAO-generator-javadoc.jar" todir="../DaoExampleGenerator/lib" ></copy>
     </target>
