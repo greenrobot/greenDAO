@@ -6,6 +6,11 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
+### V1.1.2 (2012-03-26): ADT 17 support for demo project
+* Demo projects works with ADT 17 (moved greendao.jar into libs)
+* CREATE/DROP TABLE may be skipped for entity types: This allows having multiple entity tapes operate on one table
+* Minor improvements
+
 ### V1.1.1 (2012-02-14): Mini bugfix&feature release
 * Added NOT IN condition for QueryBuilder
 * Fix for Roboelectric (Issue #22)
