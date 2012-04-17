@@ -23,11 +23,10 @@ import de.greenrobot.daotest.SpecialNamesEntity;
 import de.greenrobot.daotest.SpecialNamesEntityDao;
 import de.greenrobot.daotest.SpecialNamesEntityDao.Properties;
 
-public class QuerySpecialNames extends  AbstractDaoTest<SpecialNamesEntityDao, SpecialNamesEntity, Long> {
+public class QuerySpecialNamesTest extends  AbstractDaoTest<SpecialNamesEntityDao, SpecialNamesEntity, Long> {
     
-    public QuerySpecialNames() {
+    public QuerySpecialNamesTest() {
         super(SpecialNamesEntityDao.class);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
