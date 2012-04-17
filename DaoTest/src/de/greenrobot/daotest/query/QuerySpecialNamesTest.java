@@ -46,6 +46,7 @@ public class QuerySpecialNamesTest extends  AbstractDaoTest<SpecialNamesEntityDa
         queryBuilder.where(Properties.On.isNotNull());
         queryBuilder.where(Properties.Select.isNotNull());
         queryBuilder.where(Properties.Sum.isNotNull());
+        queryBuilder.where(Properties.Order.isNotNull());
         queryBuilder.list();
     } 
 
@@ -59,6 +60,7 @@ public class QuerySpecialNamesTest extends  AbstractDaoTest<SpecialNamesEntityDa
         queryBuilder.orderAsc(Properties.On);
         queryBuilder.orderAsc(Properties.Select);
         queryBuilder.orderAsc(Properties.Sum);
+        queryBuilder.orderAsc(Properties.Order);
         queryBuilder.list();
     } 
 

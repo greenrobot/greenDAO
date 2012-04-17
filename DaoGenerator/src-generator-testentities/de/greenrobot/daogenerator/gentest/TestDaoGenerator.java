@@ -176,6 +176,7 @@ public class TestDaoGenerator {
         specialNamesEntity.addStringProperty("distinct");
         specialNamesEntity.addStringProperty("on");
         specialNamesEntity.addStringProperty("index");
+        specialNamesEntity.addStringProperty("order");
     }
 
     private void createAbcdef() {
