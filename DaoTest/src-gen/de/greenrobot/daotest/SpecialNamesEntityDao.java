@@ -28,7 +28,7 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
         public final static Property Distinct = new Property(6, String.class, "distinct", false, "DISTINCT");
         public final static Property On = new Property(7, String.class, "on", false, "ON");
         public final static Property Index = new Property(8, String.class, "index", false, "INDEX");
-        public final static Property Order = new Property(9, String.class, "order", false, "ORDER");
+        public final static Property Order = new Property(9, Integer.class, "order", false, "ORDER");
     };
 
 
@@ -52,7 +52,7 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
                 "'DISTINCT' TEXT," + // 6: distinct
                 "'ON' TEXT," + // 7: on
                 "'INDEX' TEXT," + // 8: index
-                "'ORDER' TEXT);"; // 9: order
+                "'ORDER' INTEGER);"; // 9: order
         db.execSQL(sql);
     }
 
@@ -112,9 +112,9 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
             stmt.bindString(9, index);
         }
  
-        String order = entity.getOrder();
+        Integer order = entity.getOrder();
         if (order != null) {
-            stmt.bindString(10, order);
+            stmt.bindLong(10, order);
         }
     }
 
@@ -137,7 +137,7 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // distinct
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // on
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // index
-            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9) // order
+            cursor.isNull(offset + 9) ? null : cursor.getInt(offset + 9) // order
         );
         return entity;
     }
@@ -154,7 +154,7 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
         entity.setDistinct(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setOn(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setIndex(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
-        entity.setOrder(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setOrder(cursor.isNull(offset + 9) ? null : cursor.getInt(offset + 9));
      }
     
     @Override

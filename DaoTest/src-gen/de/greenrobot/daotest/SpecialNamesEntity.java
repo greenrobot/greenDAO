@@ -15,7 +15,7 @@ public class SpecialNamesEntity {
     private String distinct;
     private String on;
     private String index;
-    private String order;
+    private Integer order;
 
     public SpecialNamesEntity() {
     }
@@ -24,7 +24,7 @@ public class SpecialNamesEntity {
         this.id = id;
     }
 
-    public SpecialNamesEntity(Long id, String count, String select, String sum, String avg, String join, String distinct, String on, String index, String order) {
+    public SpecialNamesEntity(Long id, String count, String select, String sum, String avg, String join, String distinct, String on, String index, Integer order) {
         this.id = id;
         this.count = count;
         this.select = select;
@@ -109,11 +109,11 @@ public class SpecialNamesEntity {
         this.index = index;
     }
 
-    public String getOrder() {
+    public Integer getOrder() {
         return order;
     }
 
-    public void setOrder(String order) {
+    public void setOrder(Integer order) {
         this.order = order;
     }
 
