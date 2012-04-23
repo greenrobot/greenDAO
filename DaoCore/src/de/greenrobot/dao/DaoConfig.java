@@ -16,6 +16,7 @@
 package de.greenrobot.dao;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,9 +94,20 @@ public final class DaoConfig implements Cloneable {
             throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException {
         Class<?> propertiesClass = Class.forName(daoClass.getName() + "$Properties");
         Field[] fields = propertiesClass.getDeclaredFields();
-        Property[] properties = new Property[fields.length];
+
+        ArrayList<Property> propertyList = new ArrayList<Property>();
         for (Field field : fields) {
-            Property property = (Property) field.get(null);
+            // There might be other fields introduced by some tools, just ignore them (see issue #28)
+            if ((field.getModifiers() & Modifier.STATIC) != 0) {
+                Object fieldValue = field.get(null);
+                if (fieldValue instanceof Property) {
+                    propertyList.add((Property) fieldValue);
+                }
+            }
+        }
+
+        Property[] properties = new Property[propertyList.size()];
+        for (Property property : propertyList) {
             if (properties[property.ordinal] != null) {
                 throw new DaoException("Duplicate property ordinals");
             }
