@@ -98,7 +98,7 @@ public final class DaoConfig implements Cloneable {
         ArrayList<Property> propertyList = new ArrayList<Property>();
         for (Field field : fields) {
             // There might be other fields introduced by some tools, just ignore them (see issue #28)
-            if ((field.getModifiers() & Modifier.STATIC) != 0) {
+            if ((field.getModifiers() & Modifier.STATIC) != 0 && (field.getModifiers() & Modifier.PUBLIC) != 0) {
                 Object fieldValue = field.get(null);
                 if (fieldValue instanceof Property) {
                     propertyList.add((Property) fieldValue);
