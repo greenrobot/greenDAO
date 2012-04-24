@@ -23,8 +23,8 @@ import de.greenrobot.daotest.SpecialNamesEntity;
 import de.greenrobot.daotest.SpecialNamesEntityDao;
 import de.greenrobot.daotest.SpecialNamesEntityDao.Properties;
 
-public class QuerySpecialNamesTest extends  AbstractDaoTest<SpecialNamesEntityDao, SpecialNamesEntity, Long> {
-    
+public class QuerySpecialNamesTest extends AbstractDaoTest<SpecialNamesEntityDao, SpecialNamesEntity, Long> {
+
     public QuerySpecialNamesTest() {
         super(SpecialNamesEntityDao.class);
     }
@@ -48,7 +48,21 @@ public class QuerySpecialNamesTest extends  AbstractDaoTest<SpecialNamesEntityDa
         queryBuilder.where(Properties.Sum.isNotNull());
         queryBuilder.where(Properties.Order.isNotNull());
         queryBuilder.list();
-    } 
+    }
+
+    public void testWhereWithSpecialNamesWithValues() {
+        QueryBuilder<SpecialNamesEntity> queryBuilder = dao.queryBuilder();
+        queryBuilder.where(Properties.Avg.eq("test"));
+        queryBuilder.where(Properties.Count.notIn("test", "test2"));
+        queryBuilder.where(Properties.Distinct.ge("test"));
+        queryBuilder.where(Properties.Index.le("test"));
+        queryBuilder.where(Properties.Join.like("test"));
+        queryBuilder.where(Properties.On.notEq("test"));
+        queryBuilder.where(Properties.Select.in("test", "test2"));
+        queryBuilder.where(Properties.Sum.lt(1));
+        queryBuilder.where(Properties.Order.gt(1));
+        queryBuilder.list();
+    }
 
     public void testOrderWithSpecialNames() {
         QueryBuilder<SpecialNamesEntity> queryBuilder = dao.queryBuilder();
@@ -62,6 +76,6 @@ public class QuerySpecialNamesTest extends  AbstractDaoTest<SpecialNamesEntityDa
         queryBuilder.orderAsc(Properties.Sum);
         queryBuilder.orderAsc(Properties.Order);
         queryBuilder.list();
-    } 
+    }
 
 }
