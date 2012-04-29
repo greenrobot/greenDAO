@@ -199,6 +199,44 @@ public abstract class AbstractDao<T, K> {
      */
     public void insertInTx(Iterable<T> entities, boolean setPrimaryKey) {
         SQLiteStatement stmt = statements.getInsertStatement();
+        executeInsertInTx(stmt, entities, setPrimaryKey);
+    }
+
+    /**
+     * Inserts or replaces the given entities in the database using a transaction. The given entities will become
+     * tracked if the PK is set.
+     * 
+     * @param entities
+     *            The entities to insert.
+     * @param setPrimaryKey
+     *            if true, the PKs of the given will be set after the insert; pass false to improve performance.
+     */
+    public void insertOrReplaceInTx(Iterable<T> entities, boolean setPrimaryKey) {
+        SQLiteStatement stmt = statements.getInsertOrReplaceStatement();
+        executeInsertInTx(stmt, entities, setPrimaryKey);
+    }
+
+    /**
+     * Inserts or replaces the given entities in the database using a transaction.
+     * 
+     * @param entities
+     *            The entities to insert.
+     */
+    public void insertOrReplaceInTx(Iterable<T> entities) {
+        insertOrReplaceInTx(entities, isEntityUpdateable());
+    }
+
+    /**
+     * Inserts or replaces the given entities in the database using a transaction.
+     * 
+     * @param entities
+     *            The entities to insert.
+     */
+    public void insertOrReplaceInTx(T... entities) {
+        insertOrReplaceInTx(Arrays.asList(entities), isEntityUpdateable());
+    }
+
+    private void executeInsertInTx(SQLiteStatement stmt, Iterable<T> entities, boolean setPrimaryKey) {
         synchronized (stmt) {
             db.beginTransaction();
             try {
@@ -520,6 +558,16 @@ public abstract class AbstractDao<T, K> {
                 db.endTransaction();
             }
         }
+    }
+
+    /**
+     * Inserts the given entities in the database using a transaction.
+     * 
+     * @param entities
+     *            The entities to insert.
+     */
+    public void updateInTx(T... entities) {
+        updateInTx(Arrays.asList(entities));
     }
 
     protected void assertSinglePk() {

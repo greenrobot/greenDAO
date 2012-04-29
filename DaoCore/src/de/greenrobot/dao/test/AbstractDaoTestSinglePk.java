@@ -140,6 +140,17 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         long rowId2 = dao.insertOrReplace(entity);
         assertEquals(rowId1, rowId2);
     }
+    
+    public void testInsertOrReplaceInTx() {
+        dao.deleteAll();
+        List<T> list = new ArrayList<T>();
+        for (int i = 0; i < 20; i++) {
+            list.add(createEntityWithRandomPk());
+        }
+        dao.insertOrReplaceInTx(list);
+        dao.insertOrReplaceInTx(list);
+        assertEquals(list.size(), dao.count());
+    }
 
     public void testDelete() {
         K pk = nextPk();
