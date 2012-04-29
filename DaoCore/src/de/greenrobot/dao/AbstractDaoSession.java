@@ -157,5 +157,10 @@ public class AbstractDaoSession {
             db.endTransaction();
         }
     }
+    
+    /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
+    public SQLiteDatabase getDatabase() {
+        return db;
+    }
 
 }

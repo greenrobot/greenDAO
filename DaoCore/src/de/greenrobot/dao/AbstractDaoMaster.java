@@ -22,7 +22,7 @@ import java.util.Map;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
- * The master of dao will guide you: start dao sessions with the master. 
+ * The master of dao will guide you: start dao sessions with the master.
  * 
  * @author Markus
  */
@@ -31,12 +31,11 @@ public abstract class AbstractDaoMaster {
     protected final int schemaVersion;
     protected final Map<Class<? extends AbstractDao<?, ?>>, DaoConfig> daoConfigMap;
 
-
     public AbstractDaoMaster(SQLiteDatabase db, int schemaVersion) {
         this.db = db;
         this.schemaVersion = schemaVersion;
-        
-        daoConfigMap = new HashMap<Class<? extends AbstractDao<?, ?>> , DaoConfig>();
+
+        daoConfigMap = new HashMap<Class<? extends AbstractDao<?, ?>>, DaoConfig>();
     }
 
     protected void registerDaoClass(Class<? extends AbstractDao<?, ?>> daoClass) {
@@ -46,6 +45,11 @@ public abstract class AbstractDaoMaster {
 
     public int getSchemaVersion() {
         return schemaVersion;
+    }
+
+    /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
+    public SQLiteDatabase getDatabase() {
+        return db;
     }
 
     public abstract AbstractDaoSession newSession();

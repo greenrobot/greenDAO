@@ -227,29 +227,39 @@ public abstract class AbstractDao<T, K> {
         }
     }
 
-    /** Insert an entity into the table associated with a concrete DAO. */
+    /**
+     * Insert an entity into the table associated with a concrete DAO.
+     * 
+     * @return row ID of newly inserted entity
+     */
     public long insert(T entity) {
+        return executeInsert(entity, statements.getInsertStatement());
+    }
+
+    /**
+     * Insert an entity into the table associated with a concrete DAO <b>without</b> setting key property. Warning: This
+     * may be faster, but the entity should not be used anymore. The entity also won't be attached to identy scope.
+     * 
+     * @return row ID of newly inserted entity
+     */
+    public long insertWithoutSettingPk(T entity) {
         SQLiteStatement stmt = statements.getInsertStatement();
         synchronized (stmt) {
             bindValues(stmt, entity);
-            long rowId = stmt.executeInsert();
-            updateKeyAfterInsertAndAttach(entity, rowId, true);
-            return rowId;
+            return stmt.executeInsert();
         }
     }
 
-    /** Insert an entity into the table associated with a concrete DAO. */
-    public void insertWithoutSettingPk(T entity) {
-        SQLiteStatement stmt = statements.getInsertStatement();
-        synchronized (stmt) {
-            bindValues(stmt, entity);
-            stmt.execute();
-        }
-    }
-
-    /** Insert an entity into the table associated with a concrete DAO. */
+    /**
+     * Insert an entity into the table associated with a concrete DAO.
+     * 
+     * @return row ID of newly inserted entity
+     */
     public long insertOrReplace(T entity) {
-        SQLiteStatement stmt = statements.getInsertOrReplaceStatement();
+        return executeInsert(entity, statements.getInsertOrReplaceStatement());
+    }
+
+    private long executeInsert(T entity, SQLiteStatement stmt) {
         long rowId;
         synchronized (stmt) {
             bindValues(stmt, entity);
@@ -534,6 +544,11 @@ public abstract class AbstractDao<T, K> {
         } else {
             return key;
         }
+    }
+
+    /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
+    public SQLiteDatabase getDatabase() {
+        return db;
     }
 
     /** Reads the values from the current position of the given cursor and returns a new entity. */
