@@ -6,6 +6,11 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
+### Next version (unreleased): Minor features
+* Added getDatabase in DaoMaster, DaoSession, and Dao
+* Added insertOrReplaceInTx in Dao
+* Minor fixes
+
 ### V1.1.2 (2012-03-26): ADT 17 support for demo project
 * Demo projects works with ADT 17 (moved greendao.jar into libs)
 * CREATE/DROP TABLE may be skipped for entity types: This allows having multiple entity tapes operate on one table
