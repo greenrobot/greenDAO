@@ -305,6 +305,27 @@ public class QueryBuilder<T> {
         return new DeleteQuery<T>(dao, sql, values);
     }
 
+    /**
+     * Builds a reusable query object for counting rows (Query objects can be executed more efficiently than creating a
+     * QueryBuilder for each execution.
+     */
+    public CountQuery<T> buildCount() {
+        String tablename = dao.getTablename();
+        String baseSql = SqlUtils.createSqlSelectCountStar(tablename);
+        StringBuilder builder = new StringBuilder(baseSql);
+        appendWhereClause(builder, tablename);
+        String sql = builder.toString();
+
+        if (LOG_SQL) {
+            DaoLog.d("Built SQL for count query: " + sql);
+        }
+        if (LOG_VALUES) {
+            DaoLog.d("Values for count query: " + values);
+        }
+
+        return new CountQuery<T>(dao, sql, values);
+    }
+
     private void appendWhereClause(StringBuilder builder, String tablePrefixOrNull) {
         values.clear();
         if (!whereConditions.isEmpty()) {
@@ -373,6 +394,15 @@ public class QueryBuilder<T> {
      */
     public T uniqueOrThrow() {
         return build().uniqueOrThrow();
+    }
+
+    /**
+     * Shorthand for {@link QueryBuilder#buildCount() buildCount()}.{@link CountQuery#count() count()}; see
+     * {@link CountQuery#count()} for details. To execute a query more than once, you should build the query and keep
+     * the {@link CountQuery} object for efficiency reasons.
+     */
+    public long count() {
+        return buildCount().count();
     }
 
 }

@@ -71,8 +71,7 @@ public class SqlUtils {
         return builder;
     }
 
-    public static StringBuilder appendColumnsEqValue(StringBuilder builder, String tableAlias,
-            String[] columns) {
+    public static StringBuilder appendColumnsEqValue(StringBuilder builder, String tableAlias, String[] columns) {
         for (int i = 0; i < columns.length; i++) {
             appendColumn(builder, tableAlias, columns[i]).append("=?");
             if (i < columns.length - 1) {
@@ -102,6 +101,12 @@ public class SqlUtils {
         SqlUtils.appendColumns(builder, tableAlias, columns).append(" FROM ");
         builder.append(tablename).append(' ').append(tableAlias).append(' ');
         return builder.toString();
+    }
+
+    /** Creates SELECT COUNT(*) with a trailing space. */
+    public static String createSqlSelectCountStar(String tablename) {
+        StringBuilder builder = new StringBuilder("SELECT COUNT(*) FROM ");
+        return builder.append(tablename).append(' ').toString();
     }
 
     public static String createSqlDelete(String tablename, String[] columns) {
