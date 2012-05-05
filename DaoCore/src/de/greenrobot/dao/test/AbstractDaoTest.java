@@ -85,7 +85,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
             DaoLog.d("No identity scope to clear");
         }
     }
-    
+
     protected void logTableDump() {
         logTableDump(dao.getTablename());
     }

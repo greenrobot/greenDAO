@@ -57,6 +57,11 @@ public abstract class DbTest<T extends Application> extends ApplicationTestCase<
 
     @Override
     protected void setUp() {
+        try {
+            super.setUp();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         createApplication();
         setUpDb();
     }
@@ -77,8 +82,9 @@ public abstract class DbTest<T extends Application> extends ApplicationTestCase<
         if (!inMemory) {
             getApplication().deleteDatabase("test-db");
         }
+        super.tearDown();
     }
-    
+
     protected void logTableDump(String tablename) {
         DbUtils.logTableDump(db, tablename);
     }

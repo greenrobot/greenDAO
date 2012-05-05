@@ -99,7 +99,9 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
                 dao.insert(entity2);
 
                 K pk1 = daoAccess.getKey(entity1);
+                assertNotNull(pk1);
                 K pk2 = daoAccess.getKey(entity2);
+                assertNotNull(pk2);
 
                 assertFalse(pk1.equals(pk2));
 
@@ -138,7 +140,9 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         T entity = createEntityWithRandomPk();
         long rowId1 = dao.insert(entity);
         long rowId2 = dao.insertOrReplace(entity);
-        assertEquals(rowId1, rowId2);
+        if (dao.getPkProperty().type == Long.class) {
+            assertEquals(rowId1, rowId2);
+        }
     }
 
     public void testInsertOrReplaceInTx() {

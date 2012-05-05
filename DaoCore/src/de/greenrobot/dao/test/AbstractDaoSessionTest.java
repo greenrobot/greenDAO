@@ -32,7 +32,8 @@ import de.greenrobot.dao.AbstractDaoSession;
  * @param <T>
  *            Type of a concrete DAO master
  */
-public abstract class AbstractDaoSessionTest<A extends Application, T extends AbstractDaoMaster, S extends AbstractDaoSession> extends DbTest<A> {
+public abstract class AbstractDaoSessionTest<A extends Application, T extends AbstractDaoMaster, S extends AbstractDaoSession>
+        extends DbTest<A> {
 
     private final Class<T> daoMasterClass;
     protected T daoMaster;
@@ -47,7 +48,7 @@ public abstract class AbstractDaoSessionTest<A extends Application, T extends Ab
         this.daoMasterClass = daoMasterClass;
     }
 
-    public AbstractDaoSessionTest(Class<A> appClass, Class<T> daoMasterClass,  boolean inMemory) {
+    public AbstractDaoSessionTest(Class<A> appClass, Class<T> daoMasterClass, boolean inMemory) {
         super(appClass, inMemory);
         this.daoMasterClass = daoMasterClass;
     }
