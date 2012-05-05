@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 /** Database utils, for example to execute SQL scripts */
@@ -118,6 +120,16 @@ public class DbUtils {
             return readAllBytes(in);
         } finally {
             in.close();
+        }
+    }
+
+    public static void logTableDump(SQLiteDatabase db, String tablename) {
+        Cursor cursor = db.query(tablename, null, null, null, null, null, null);
+        try {
+            String dump = DatabaseUtils.dumpCursorToString(cursor);
+            DaoLog.d(dump);
+        } finally {
+            cursor.close();
         }
     }
 

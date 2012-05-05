@@ -18,8 +18,13 @@ package de.greenrobot.dao.test;
 
 import java.util.Random;
 
+import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.DbUtils;
+
 import android.app.Application;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.ApplicationTestCase;
 
@@ -72,6 +77,10 @@ public abstract class DbTest<T extends Application> extends ApplicationTestCase<
         if (!inMemory) {
             getApplication().deleteDatabase("test-db");
         }
+    }
+    
+    protected void logTableDump(String tablename) {
+        DbUtils.logTableDump(db, tablename);
     }
 
 }
