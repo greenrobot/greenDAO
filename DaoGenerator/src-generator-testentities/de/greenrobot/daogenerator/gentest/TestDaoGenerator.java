@@ -54,6 +54,7 @@ public class TestDaoGenerator {
         createTreeEntity();
         createActive();
         createExtendsImplements();
+        createStringKeyValue();
 
         createSchema2();
     }
@@ -241,6 +242,12 @@ public class TestDaoGenerator {
         relationSource2.setJavaPackageDao("de.greenrobot.daotest2.specialdao");
         relationSource2.setJavaPackageTest("de.greenrobot.daotest2.specialtest");
         relationSource2.setSkipGenerationTest(true);
+    }
+    
+    protected void createStringKeyValue() {
+        Entity entity = schema.addEntity("StringKeyValueEntity");
+        entity.addStringProperty("key").primaryKey();
+        entity.addStringProperty("value");
     }
 
 }

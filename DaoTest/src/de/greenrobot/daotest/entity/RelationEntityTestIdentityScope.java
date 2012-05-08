@@ -57,7 +57,7 @@ public class RelationEntityTestIdentityScope extends RelationEntityTest {
         assertTestEntity(entity2);
         assertSame(entity.getTestEntity(), entity2.getTestEntity());
     }
-    
+
     public void testLoadDeepIdentityScope() {
         RelationEntity entity = insertEntityWithRelations(42l);
         RelationEntity entity2 = dao.loadDeep(entity.getId());
@@ -69,12 +69,12 @@ public class RelationEntityTestIdentityScope extends RelationEntityTest {
 
     public void testQueryDeepIdentityScope() {
         RelationEntity entity = insertEntityWithRelations(42l);
-        
+
         String columnName = RelationEntityDao.Properties.SimpleString.columnName;
         List<RelationEntity> entityList = dao.queryDeep("WHERE T." + columnName + "=?", "findMe");
-        RelationEntity entity2  = entityList.get(0);
+        RelationEntity entity2 = entityList.get(0);
         entityList = dao.queryDeep("WHERE T." + columnName + "=?", "findMe");
-        RelationEntity entity3  = entityList.get(0);
+        RelationEntity entity3 = entityList.get(0);
 
         assertSame(entity, entity2);
         assertSame(entity, entity3);
