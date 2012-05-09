@@ -7,9 +7,11 @@ Home page, documentation, and support links: http://greendao-orm.com/
 Release History
 ---------------
 ### Next version (unreleased): Minor features
+* Limited support of String PKs
 * Added CountQuery for creating SELECT COUNT (*) queries with QueryBuilder
 * Added getDatabase in DaoMaster, DaoSession, and Dao
 * Added insertOrReplaceInTx in Dao
+* Made DAOs and DaoSessions in active entities transient
 * Minor fixes
 
 ### V1.1.2 (2012-03-26): ADT 17 support for demo project
