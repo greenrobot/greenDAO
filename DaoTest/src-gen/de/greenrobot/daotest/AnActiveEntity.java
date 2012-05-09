@@ -13,10 +13,10 @@ public class AnActiveEntity {
     private String text;
 
     /** Used to resolve relations */
-    private DaoSession daoSession;
+    private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private AnActiveEntityDao myDao;
+    private transient AnActiveEntityDao myDao;
 
 
     public AnActiveEntity() {

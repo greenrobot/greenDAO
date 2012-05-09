@@ -16,10 +16,10 @@ public class RelationEntity {
     private String simpleString;
 
     /** Used to resolve relations */
-    private DaoSession daoSession;
+    private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private RelationEntityDao myDao;
+    private transient RelationEntityDao myDao;
 
     private RelationEntity parent;
     private Long parent__resolvedKey;

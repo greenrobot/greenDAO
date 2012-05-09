@@ -61,10 +61,10 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 
 <#if entity.active>
     /** Used to resolve relations */
-    private DaoSession daoSession;
+    private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private ${entity.classNameDao} myDao;
+    private transient ${entity.classNameDao} myDao;
 
 <#list entity.toOneRelations as toOne>
     private ${toOne.targetEntity.className} ${toOne.name};

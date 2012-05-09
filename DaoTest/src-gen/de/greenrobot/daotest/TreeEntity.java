@@ -14,10 +14,10 @@ public class TreeEntity {
     private Long parentId;
 
     /** Used to resolve relations */
-    private DaoSession daoSession;
+    private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private TreeEntityDao myDao;
+    private transient TreeEntityDao myDao;
 
     private TreeEntity parent;
     private Long parent__resolvedKey;

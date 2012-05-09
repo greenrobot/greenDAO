@@ -14,10 +14,10 @@ public class ToManyEntity {
     private String sourceJoinProperty;
 
     /** Used to resolve relations */
-    private DaoSession daoSession;
+    private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private ToManyEntityDao myDao;
+    private transient ToManyEntityDao myDao;
 
     private List<ToManyTargetEntity> toManyTargetEntityList;
     private List<ToManyTargetEntity> ToManyDescList;

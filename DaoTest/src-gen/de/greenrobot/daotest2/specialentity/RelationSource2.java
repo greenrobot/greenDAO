@@ -23,10 +23,10 @@ public class RelationSource2 {
     private Long toOneId;
 
     /** Used to resolve relations */
-    private DaoSession daoSession;
+    private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private RelationSource2Dao myDao;
+    private transient RelationSource2Dao myDao;
 
     private ToOneTarget2 toOneTarget2;
     private Long toOneTarget2__resolvedKey;
