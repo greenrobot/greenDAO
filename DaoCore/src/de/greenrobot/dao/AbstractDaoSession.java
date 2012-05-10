@@ -114,7 +114,7 @@ public class AbstractDaoSession {
         AbstractDao<T, K> dao = (AbstractDao<T, K>) getDao(entityClass);
         return dao.queryRaw(where, selectionArgs);
     }
-    
+
     /** Convenient call for {@link AbstractDao#queryBuilder()}. */
     public <T> QueryBuilder<T> queryBuilder(Class<T> entityClass) {
         @SuppressWarnings("unchecked")
@@ -157,7 +157,27 @@ public class AbstractDaoSession {
             db.endTransaction();
         }
     }
-    
+
+    /**
+     * Like {@link #callInTx(Callable)} but does not require Exception handling (rethrows an Exception as a runtime
+     * DaoException).
+     */
+    public <V> V callInTxNoException(Callable<V> callable) {
+        db.beginTransaction();
+        try {
+            V result;
+            try {
+                result = callable.call();
+            } catch (Exception e) {
+                throw new DaoException("Callable failed", e);
+            }
+            db.setTransactionSuccessful();
+            return result;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
     public SQLiteDatabase getDatabase() {
         return db;
