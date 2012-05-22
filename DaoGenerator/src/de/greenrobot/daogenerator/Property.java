@@ -41,16 +41,36 @@ public class Property {
             property.primaryKey = true;
             return this;
         }
+        
+        public PropertyBuilder primaryKeyAutoincrement() {
+        	property.primaryKey = true;
+        	property.pkAutoincrement = true;
+        	return this;
+        }
 
         public PropertyBuilder primaryKeyAsc() {
             property.primaryKey = true;
             property.pkAsc = true;
             return this;
         }
-
+        
+        public PropertyBuilder primaryKeyAscAutoincrement() {
+            property.primaryKey = true;
+            property.pkAsc = true;
+            property.pkAutoincrement = true;
+            return this;
+        }
+        
         public PropertyBuilder primaryKeyDesc() {
             property.primaryKey = true;
             property.pkDesc = true;
+            return this;
+        }
+        
+        public PropertyBuilder primaryKeyDescAutoincrement() {
+            property.primaryKey = true;
+            property.pkDesc = true;
+            property.pkAutoincrement = true;
             return this;
         }
 
@@ -108,9 +128,11 @@ public class Property {
     private boolean primaryKey;
     private boolean pkAsc;
     private boolean pkDesc;
+    private boolean pkAutoincrement;
 
     private boolean unique;
     private boolean notNull;
+    
 
     /** Initialized in 2nd pass */
     private String constraints;
@@ -202,6 +224,9 @@ public class Property {
             }
             if (pkDesc) {
                 constraintBuilder.append(" DESC");
+            }
+            if (pkAutoincrement) {
+                constraintBuilder.append(" AUTOINCREMENT");
             }
         }
         if (notNull) {

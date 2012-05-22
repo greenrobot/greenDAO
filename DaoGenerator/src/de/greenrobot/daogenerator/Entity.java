@@ -150,6 +150,13 @@ public class Entity {
         builder.columnName("_id").primaryKey();
         return builder;
     }
+    
+    /** Adds a standard _id column with an autoincrement required by standard Android classes, e.g. list adapters. */
+    public PropertyBuilder addIdPropertyAutoincremented() {
+        PropertyBuilder builder = addLongProperty("id");
+        builder.columnName("_id").primaryKeyAutoincrement();
+        return builder;
+    }
 
     /** Adds a to-many relationship; the target entity is joined to the PK property of this entity (typically the ID). */
     public ToMany addToMany(Entity target, Property targetProperty) {
