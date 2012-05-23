@@ -99,7 +99,8 @@ public final class DaoConfig implements Cloneable {
         final int modifierMask = Modifier.STATIC | Modifier.PUBLIC;
         for (Field field : fields) {
             // There might be other fields introduced by some tools, just ignore them (see issue #28)
-            if ((field.getModifiers() & modifierMask) == modifierMask) {
+            if ((field.getModifiers() & modifierMask) == modifierMask &&
+            		!field.isSynthetic()) {
                 Object fieldValue = field.get(null);
                 if (fieldValue instanceof Property) {
                     propertyList.add((Property) fieldValue);
