@@ -93,19 +93,18 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 <#if !entity.skipTableCreation>
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'${entity.tableName}' (" + //
+        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'${entity.tableName}' (" + //
 <#list entity.propertiesColumns as property>
-                "'${property.columnName}' ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>);";</#if> // ${property_index}: ${property.propertyName}
+                "'${property.columnName}' ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>);");</#if> // ${property_index}: ${property.propertyName}
 </#list>
 <#if entity.indexes?has_content >
         // Add Indexes
 <#list entity.indexes as index>
-        sql += "CREATE <#if index.unique>UNIQUE </#if>INDEX ${index.name} ON ${entity.tableName}" +
+        db.execSQL("CREATE <#if index.unique>UNIQUE </#if>INDEX ${index.name} ON ${entity.tableName}" +
                 " (<#list index.properties 
-as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
+as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#list>
 </#if>         
-        db.execSQL(sql);
     }
 
     /** Drops the underlying database table. */
