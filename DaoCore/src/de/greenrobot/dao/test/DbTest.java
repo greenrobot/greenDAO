@@ -18,15 +18,11 @@ package de.greenrobot.dao.test;
 
 import java.util.Random;
 
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.DbUtils;
-
 import android.app.Application;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.ApplicationTestCase;
+import de.greenrobot.dao.DbUtils;
 
 /**
  * Base class for database related testing. Prepares an in-memory or an file-based DB.

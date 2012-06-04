@@ -36,6 +36,8 @@ import android.database.sqlite.SQLiteDatabase;
  * in a query, you will get a single Java object instead of two when using a session cache. This is particular useful
  * for relations pointing to a common set of entities.
  * 
+ * This class is thread-safe.
+ * 
  * @author Markus
  * 
  */

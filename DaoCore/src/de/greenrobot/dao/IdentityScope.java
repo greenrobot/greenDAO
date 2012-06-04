@@ -38,6 +38,8 @@ public interface IdentityScope<K, T> {
 
     void remove(K key);
 
+    void remove(Iterable<K> key);
+
     void clear();
 
     void lock();

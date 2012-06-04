@@ -25,7 +25,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.SQLException;
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.SqlUtils;
 
@@ -156,6 +155,27 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         assertEquals(0, dao.count());
         for (T entity : entityList) {
             K key = daoAccess.getKey(entity);
+            assertNotNull(key);
+            assertNull(dao.load(key));
+        }
+    }
+
+    public void testDeleteInTx() {
+        List<T> entityList = new ArrayList<T>();
+        for (int i = 0; i < 10; i++) {
+            T entity = createEntityWithRandomPk();
+            entityList.add(entity);
+        }
+        dao.insertInTx(entityList);
+        List<T> entitiesToDelete = new ArrayList<T>();
+        entitiesToDelete.add(entityList.get(0));
+        entitiesToDelete.add(entityList.get(3));
+        entitiesToDelete.add(entityList.get(4));
+        entitiesToDelete.add(entityList.get(8));
+        dao.deleteInTx(entitiesToDelete);
+        assertEquals(entityList.size() - entitiesToDelete.size(), dao.count());
+        for (T deletedEntity : entitiesToDelete) {
+            K key = daoAccess.getKey(deletedEntity);
             assertNotNull(key);
             assertNull(dao.load(key));
         }

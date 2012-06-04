@@ -101,6 +101,18 @@ public class IdentityScopeObject<K, T> implements IdentityScope<K, T> {
             lock.unlock();
         }
     }
+    
+    @Override
+    public void remove(Iterable< K> keys) {
+        lock.lock();
+        try {
+            for (K key : keys) {
+                map.remove(key);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
 
     @Override
     public void clear() {

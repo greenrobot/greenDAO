@@ -30,6 +30,8 @@ import android.database.sqlite.SQLiteStatement;
 /**
  * Base class for all DAOs: Implements entity operations like insert, load, delete, and query.
  * 
+ * This class is thread-safe.
+ * 
  * @author Markus
  * 
  * @param <T>
@@ -440,16 +442,70 @@ public abstract class AbstractDao<T, K> {
         assertSinglePk();
         SQLiteStatement stmt = statements.getDeleteStatement();
         synchronized (stmt) {
-            if (key instanceof Long) {
-                stmt.bindLong(1, (Long) key);
-            } else {
-                stmt.bindString(1, key.toString());
-            }
-            stmt.execute();
+            deleteByKeyInsideSynchronized(key, stmt);
         }
         if (identityScope != null) {
             identityScope.remove(key);
         }
+    }
+
+    private void deleteByKeyInsideSynchronized(K key, SQLiteStatement stmt) {
+        if (key instanceof Long) {
+            stmt.bindLong(1, (Long) key);
+        } else {
+            stmt.bindString(1, key.toString());
+        }
+        stmt.execute();
+    }
+
+    /**
+     * Deletes the given entities in the database using a transaction.
+     * 
+     * @param entities
+     *            The entities to delete.
+     */
+    public void deleteInTx(Iterable<T> entities) {
+        assertSinglePk();
+        SQLiteStatement stmt = statements.getDeleteStatement();
+        synchronized (stmt) {
+            db.beginTransaction();
+            try {
+                List<K> keysToRemoveFromIdentityScope = null;
+                if (identityScope != null) {
+                    identityScope.lock();
+                    keysToRemoveFromIdentityScope = new ArrayList<K>();
+                }
+                try {
+                    for (T entity : entities) {
+                        K key = getKeyVerified(entity);
+                        deleteByKeyInsideSynchronized(key, stmt);
+                        if (keysToRemoveFromIdentityScope != null) {
+                            keysToRemoveFromIdentityScope.add(key);
+                        }
+                    }
+                } finally {
+                    if (identityScope != null) {
+                        identityScope.unlock();
+                    }
+                }
+                db.setTransactionSuccessful();
+                if (keysToRemoveFromIdentityScope != null && identityScope != null) {
+                    identityScope.remove(keysToRemoveFromIdentityScope);
+                }
+            } finally {
+                db.endTransaction();
+            }
+        }
+    }
+
+    /**
+     * Deletes the given entities in the database using a transaction.
+     * 
+     * @param entities
+     *            The entities to delete.
+     */
+    public void deleteInTx(T... entities) {
+        deleteInTx(Arrays.asList(entities));
     }
 
     /** Resets all locally changed properties of the entity by reloading the values from the database. */
@@ -529,12 +585,10 @@ public abstract class AbstractDao<T, K> {
     }
 
     /**
-     * Inserts the given entities in the database using a transaction.
+     * Updates the given entities in the database using a transaction.
      * 
      * @param entities
      *            The entities to insert.
-     * @param setPrimaryKey
-     *            if true, the PKs of the given will be set after the insert; pass false to improve performance.
      */
     public void updateInTx(Iterable<T> entities) {
         SQLiteStatement stmt = statements.getUpdateStatement();
@@ -561,10 +615,10 @@ public abstract class AbstractDao<T, K> {
     }
 
     /**
-     * Inserts the given entities in the database using a transaction.
+     * Updates the given entities in the database using a transaction.
      * 
      * @param entities
-     *            The entities to insert.
+     *            The entities to update.
      */
     public void updateInTx(T... entities) {
         updateInTx(Arrays.asList(entities));

@@ -118,6 +118,18 @@ public class IdentityScopeLong<T> implements IdentityScope<Long, T> {
     }
 
     @Override
+    public void remove(Iterable< Long> keys) {
+        lock.lock();
+        try {
+            for (Long key : keys) {
+                map.remove(key);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
     public void clear() {
         lock.lock();
         try {
