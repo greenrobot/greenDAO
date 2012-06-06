@@ -18,6 +18,10 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
 
     public static final String TABLENAME = "SPECIAL_NAMES_ENTITY";
 
+    /**
+     * Properties of entity SpecialNamesEntity.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Count = new Property(1, String.class, "count", false, "COUNT");

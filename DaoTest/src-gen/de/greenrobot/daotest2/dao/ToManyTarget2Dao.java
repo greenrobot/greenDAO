@@ -21,6 +21,10 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
 
     public static final String TABLENAME = "TO_MANY_TARGET2";
 
+    /**
+     * Properties of entity ToManyTarget2.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property FkId = new Property(1, Long.class, "fkId", false, "FK_ID");

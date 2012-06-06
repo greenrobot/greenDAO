@@ -18,6 +18,10 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
 
     public static final String TABLENAME = "STRING_KEY_VALUE_ENTITY";
 
+    /**
+     * Properties of entity StringKeyValueEntity.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Key = new Property(0, String.class, "key", true, "KEY");
         public final static Property Value = new Property(1, String.class, "value", false, "VALUE");

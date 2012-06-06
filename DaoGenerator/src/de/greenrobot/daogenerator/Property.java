@@ -54,6 +54,15 @@ public class Property {
             return this;
         }
 
+        public PropertyBuilder autoincrement() {
+            if (!property.primaryKey || property.propertyType != PropertyType.Long) {
+                throw new RuntimeException(
+                        "AUTOINCREMENT is only available to primary key properties of type long/Long");
+            }
+            property.autoincrement = true;
+            return this;
+        }
+
         public PropertyBuilder unique() {
             property.unique = true;
             return this;
@@ -105,9 +114,11 @@ public class Property {
 
     private String columnName;
     private String columnType;
+
     private boolean primaryKey;
     private boolean pkAsc;
     private boolean pkDesc;
+    private boolean autoincrement;
 
     private boolean unique;
     private boolean notNull;
@@ -150,6 +161,10 @@ public class Property {
         return primaryKey;
     }
 
+    public boolean isAutoincrement() {
+        return autoincrement;
+    }
+
     public String getConstraints() {
         return constraints;
     }
@@ -173,7 +188,7 @@ public class Property {
     public void setOrdinal(int ordinal) {
         this.ordinal = ordinal;
     }
-    
+
     public Entity getEntity() {
         return entity;
     }
@@ -203,6 +218,9 @@ public class Property {
             if (pkDesc) {
                 constraintBuilder.append(" DESC");
             }
+            if (autoincrement) {
+                constraintBuilder.append(" AUTOINCREMENT");
+            }
         }
         if (notNull) {
             constraintBuilder.append(" NOT NULL");
@@ -219,10 +237,10 @@ public class Property {
     void init3ndPass() {
         // Nothing to do so far
     }
-    
+
     @Override
     public String toString() {
-        return "Property "+propertyName+" of "+entity.getClassName();
+        return "Property " + propertyName + " of " + entity.getClassName();
     }
 
 }

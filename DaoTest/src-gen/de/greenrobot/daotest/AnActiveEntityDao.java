@@ -18,6 +18,10 @@ public class AnActiveEntityDao extends AbstractDao<AnActiveEntity, Long> {
 
     public static final String TABLENAME = "AN_ACTIVE_ENTITY";
 
+    /**
+     * Properties of entity AnActiveEntity.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Text = new Property(1, String.class, "text", false, "TEXT");

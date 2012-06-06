@@ -12,6 +12,7 @@ Release History
 * Added getDatabase in DaoMaster, DaoSession, and Dao
 * Added insertOrReplaceInTx in Dao
 * Added deleteInTx in Dao
+* Added autoincrement() creating AUTOINCREMENT PKs
 * Made DAOs and DaoSessions in active entities transient (allows serialization of entities)
 * Minor fixes
 

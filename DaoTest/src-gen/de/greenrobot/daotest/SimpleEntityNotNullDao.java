@@ -18,6 +18,10 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
 
     public static final String TABLENAME = "SIMPLE_ENTITY_NOT_NULL";
 
+    /**
+     * Properties of entity SimpleEntityNotNull.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, long.class, "id", true, "_id");
         public final static Property SimpleBoolean = new Property(1, boolean.class, "simpleBoolean", false, "SIMPLE_BOOLEAN");

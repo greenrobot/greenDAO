@@ -18,6 +18,10 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
 
     public static final String TABLENAME = "TO_MANY_ENTITY";
 
+    /**
+     * Properties of entity ToManyEntity.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property SourceJoinProperty = new Property(1, String.class, "sourceJoinProperty", false, "SOURCE_JOIN_PROPERTY");

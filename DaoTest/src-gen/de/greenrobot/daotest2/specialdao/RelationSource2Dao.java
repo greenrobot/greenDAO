@@ -25,6 +25,10 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
 
     public static final String TABLENAME = "RELATION_SOURCE2";
 
+    /**
+     * Properties of entity RelationSource2.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property ToOneId = new Property(1, Long.class, "toOneId", false, "TO_ONE_ID");

@@ -18,6 +18,10 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
 
     public static final String TABLENAME = "SIMPLE_ENTITY";
 
+    /**
+     * Properties of entity SimpleEntity.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property SimpleBoolean = new Property(1, Boolean.class, "simpleBoolean", false, "SIMPLE_BOOLEAN");

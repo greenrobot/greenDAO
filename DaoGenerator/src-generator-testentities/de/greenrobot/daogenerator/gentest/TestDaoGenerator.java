@@ -55,7 +55,8 @@ public class TestDaoGenerator {
         createActive();
         createExtendsImplements();
         createStringKeyValue();
-
+        createAutoincrement();
+        
         createSchema2();
     }
 
@@ -248,6 +249,11 @@ public class TestDaoGenerator {
         Entity entity = schema.addEntity("StringKeyValueEntity");
         entity.addStringProperty("key").primaryKey();
         entity.addStringProperty("value");
+    }
+
+    protected void createAutoincrement() {
+        Entity entity = schema.addEntity("AutoincrementEntity");
+        entity.addIdProperty().autoincrement();
     }
 
 }

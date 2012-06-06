@@ -18,6 +18,10 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
 
     public static final String TABLENAME = "TEST_ENTITY";
 
+    /**
+     * Properties of entity TestEntity.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property SimpleInt = new Property(1, int.class, "simpleInt", false, "SIMPLE_INT");
