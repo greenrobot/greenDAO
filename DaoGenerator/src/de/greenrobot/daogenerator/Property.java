@@ -59,7 +59,7 @@ public class Property {
                 throw new RuntimeException(
                         "AUTOINCREMENT is only available to primary key properties of type long/Long");
             }
-            property.autoincrement = true;
+            property.pkAutoincrement = true;
             return this;
         }
 
@@ -118,7 +118,7 @@ public class Property {
     private boolean primaryKey;
     private boolean pkAsc;
     private boolean pkDesc;
-    private boolean autoincrement;
+    private boolean pkAutoincrement;
 
     private boolean unique;
     private boolean notNull;
@@ -162,7 +162,7 @@ public class Property {
     }
 
     public boolean isAutoincrement() {
-        return autoincrement;
+        return pkAutoincrement;
     }
 
     public String getConstraints() {
@@ -218,7 +218,7 @@ public class Property {
             if (pkDesc) {
                 constraintBuilder.append(" DESC");
             }
-            if (autoincrement) {
+            if (pkAutoincrement) {
                 constraintBuilder.append(" AUTOINCREMENT");
             }
         }
