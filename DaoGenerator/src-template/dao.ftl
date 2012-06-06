@@ -244,7 +244,6 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
         entity.set${entity.pkProperty.propertyName?cap_first}(rowId);
         return rowId;
 <#else>
-        // TODO XXX Only Long PKs are supported currently
         return null;
 </#if>
 </#if>

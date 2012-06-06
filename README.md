@@ -6,7 +6,7 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
-### Next version (unreleased): Minor features
+### Next version (unreleased): Feature release
 * Limited support of String PKs
 * Added CountQuery for creating SELECT COUNT (*) queries with QueryBuilder
 * Added getDatabase in DaoMaster, DaoSession, and Dao

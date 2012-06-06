@@ -19,20 +19,27 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 -->
 package ${entity.javaPackageTest};
 
+<#assign isStringPK = entity.pkProperty?? && entity.pkProperty.propertyType == "String" />
+<#if isStringPK>
+import de.greenrobot.dao.test.AbstractDaoTestStringPk;
+<#else>
 import de.greenrobot.dao.test.AbstractDaoTestLongPk;
+</#if>
+
 import ${entity.javaPackage}.${entity.className};
 import ${entity.javaPackageDao}.${entity.classNameDao};
 
-public class ${entity.classNameTest} extends AbstractDaoTestLongPk<${entity.classNameDao}, ${entity.className}> {
+public class ${entity.classNameTest} extends <#if
+isStringPK>AbstractDaoTestStringPk<${entity.classNameDao}, ${entity.className}><#else>AbstractDaoTestLongPk<${entity.classNameDao}, ${entity.className}></#if> {
 
     public ${entity.classNameTest}() {
         super(${entity.classNameDao}.class);
     }
 
     @Override
-    protected ${entity.className} createEntity(Long key) {
+    protected ${entity.className} createEntity(<#if isStringPK>String<#else>Long</#if> key) {
         ${entity.className} entity = new ${entity.className}();
-        entity.setId(key);
+        entity.set${entity.pkProperty.propertyName?cap_first}(key);
 <#list entity.properties as property>
 <#if property.notNull>
         entity.set${property.propertyName?cap_first}();

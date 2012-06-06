@@ -91,7 +91,6 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
     
     @Override
     protected String updateKeyAfterInsert(StringKeyValueEntity entity, long rowId) {
-        // TODO XXX Only Long PKs are supported currently
         return null;
     }
     
