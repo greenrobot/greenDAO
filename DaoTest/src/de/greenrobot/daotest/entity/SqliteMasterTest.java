@@ -14,11 +14,6 @@ public class SqliteMasterTest extends AbstractDaoTest<SqliteMasterDao, SqliteMas
         super(SqliteMasterDao.class);
     }
 
-    protected SqliteMaster createEntity(Void key) {
-        SqliteMaster entity = new SqliteMaster();
-        return entity;
-    }
-
     public void testLoadAll() {
         List<SqliteMaster> all = dao.loadAll();
         for (SqliteMaster meta : all) {

@@ -46,7 +46,7 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'SIMPLE_ENTITY' (" + //
+        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'SIMPLE_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'SIMPLE_BOOLEAN' INTEGER," + // 1: simpleBoolean
                 "'SIMPLE_BYTE' INTEGER," + // 2: simpleByte
@@ -56,8 +56,7 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
                 "'SIMPLE_FLOAT' REAL," + // 6: simpleFloat
                 "'SIMPLE_DOUBLE' REAL," + // 7: simpleDouble
                 "'SIMPLE_STRING' TEXT," + // 8: simpleString
-                "'SIMPLE_BYTE_ARRAY' BLOB);"; // 9: simpleByteArray
-        db.execSQL(sql);
+                "'SIMPLE_BYTE_ARRAY' BLOB);"); // 9: simpleByteArray
     }
 
     /** Drops the underlying database table. */

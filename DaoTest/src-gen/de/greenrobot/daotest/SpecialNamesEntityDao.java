@@ -46,7 +46,7 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'SPECIAL_NAMES_ENTITY' (" + //
+        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'SPECIAL_NAMES_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'COUNT' TEXT," + // 1: count
                 "'SELECT' TEXT," + // 2: select
@@ -56,8 +56,7 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
                 "'DISTINCT' TEXT," + // 6: distinct
                 "'ON' TEXT," + // 7: on
                 "'INDEX' TEXT," + // 8: index
-                "'ORDER' INTEGER);"; // 9: order
-        db.execSQL(sql);
+                "'ORDER' INTEGER);"); // 9: order
     }
 
     /** Drops the underlying database table. */

@@ -47,10 +47,9 @@ public class TreeEntityDao extends AbstractDao<TreeEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'TREE_ENTITY' (" + //
+        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'TREE_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
-                "'PARENT_ID' INTEGER);"; // 1: parentId
-        db.execSQL(sql);
+                "'PARENT_ID' INTEGER);"); // 1: parentId
     }
 
     /** Drops the underlying database table. */

@@ -47,12 +47,11 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'TO_MANY_TARGET_ENTITY' (" + //
+        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'TO_MANY_TARGET_ENTITY' (" + //
                 "'TO_MANY_ID' INTEGER," + // 0: toManyId
                 "'TO_MANY_ID_DESC' INTEGER," + // 1: toManyIdDesc
                 "'_id' INTEGER PRIMARY KEY ," + // 2: id
-                "'TARGET_JOIN_PROPERTY' TEXT);"; // 3: targetJoinProperty
-        db.execSQL(sql);
+                "'TARGET_JOIN_PROPERTY' TEXT);"); // 3: targetJoinProperty
     }
 
     /** Drops the underlying database table. */

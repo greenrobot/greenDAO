@@ -41,10 +41,9 @@ public class AnActiveEntityDao extends AbstractDao<AnActiveEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'AN_ACTIVE_ENTITY' (" + //
+        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'AN_ACTIVE_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
-                "'TEXT' TEXT);"; // 1: text
-        db.execSQL(sql);
+                "'TEXT' TEXT);"); // 1: text
     }
 
     /** Drops the underlying database table. */

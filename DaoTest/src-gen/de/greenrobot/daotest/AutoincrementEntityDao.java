@@ -37,9 +37,8 @@ public class AutoincrementEntityDao extends AbstractDao<AutoincrementEntity, Lon
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'AUTOINCREMENT_ENTITY' (" + //
-                "'_id' INTEGER PRIMARY KEY AUTOINCREMENT );"; // 0: id
-        db.execSQL(sql);
+        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'AUTOINCREMENT_ENTITY' (" + //
+                "'_id' INTEGER PRIMARY KEY AUTOINCREMENT );"); // 0: id
     }
 
     /** Drops the underlying database table. */

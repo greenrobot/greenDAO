@@ -48,14 +48,13 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'RELATION_ENTITY' (" + //
+        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'RELATION_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'PARENT_ID' INTEGER," + // 1: parentId
                 "'TEST_ID' INTEGER," + // 2: testId
                 "'TEST_ID_NOT_NULL' INTEGER NOT NULL ," + // 3: testIdNotNull
                 "'SIMPLE_STRING' TEXT," + // 4: simpleString
-                "'WITHOUT_PROPERTY_TEST_ID' INTEGER);"; // 5: testWithoutProperty
-        db.execSQL(sql);
+                "'WITHOUT_PROPERTY_TEST_ID' INTEGER);"); // 5: testWithoutProperty
     }
 
     /** Drops the underlying database table. */
