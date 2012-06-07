@@ -39,7 +39,9 @@ isStringPK>AbstractDaoTestStringPk<${entity.classNameDao}, ${entity.className}><
     @Override
     protected ${entity.className} createEntity(<#if isStringPK>String<#else>Long</#if> key) {
         ${entity.className} entity = new ${entity.className}();
+<#if entity.pkProperty??>
         entity.set${entity.pkProperty.propertyName?cap_first}(key);
+</#if>
 <#list entity.properties as property>
 <#if property.notNull>
         entity.set${property.propertyName?cap_first}();

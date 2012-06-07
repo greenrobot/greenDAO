@@ -73,8 +73,12 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
     }
 
     protected void setUpTableForDao() throws Exception {
-        Method createTableMethod = daoClass.getMethod("createTable", SQLiteDatabase.class, boolean.class);
-        createTableMethod.invoke(null, db, false);
+        try {
+            Method createTableMethod = daoClass.getMethod("createTable", SQLiteDatabase.class, boolean.class);
+            createTableMethod.invoke(null, db, false);
+        } catch (NoSuchMethodException e) {
+            DaoLog.i("No createTable method");
+        }
     }
 
     protected void clearIdentityScopeIfAny() {

@@ -237,13 +237,18 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
     /** @inheritdoc */
     @Override
     protected ${entity.pkType} updateKeyAfterInsert(${entity.className} entity, long rowId) {
-<#if entity.pkProperty?? && entity.pkProperty.propertyType == "Long">
+<#if entity.pkProperty??>
+<#if entity.pkProperty.propertyType == "Long">
 <#if !entity.protobuf>
         entity.set${entity.pkProperty.propertyName?cap_first}(rowId);
 </#if>
         return rowId;
 <#else>
         return entity.get${entity.pkProperty.propertyName?cap_first}();
+</#if>
+<#else>
+        // Unsupported or missing PK type
+        return null;
 </#if>
     }
     
