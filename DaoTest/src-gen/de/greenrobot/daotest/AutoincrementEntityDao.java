@@ -80,6 +80,7 @@ public class AutoincrementEntityDao extends AbstractDao<AutoincrementEntity, Lon
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(AutoincrementEntity entity, long rowId) {
         entity.setId(rowId);

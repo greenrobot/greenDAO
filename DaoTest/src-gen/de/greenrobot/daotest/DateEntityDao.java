@@ -94,6 +94,7 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
         entity.setDateNotNull(new java.util.Date(cursor.getLong(offset + 2)));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(DateEntity entity, long rowId) {
         entity.setId(rowId);

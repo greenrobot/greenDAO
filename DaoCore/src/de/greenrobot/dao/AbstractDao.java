@@ -665,6 +665,10 @@ public abstract class AbstractDao<T, K> {
     /** Binds the entity's values to the statement. Make sure to synchronize the statement outside of the method. */
     abstract protected void bindValues(SQLiteStatement stmt, T entity);
 
+    /**
+     * Updates the entity's key if possible (only for Long PKs currently). This method must always return the entity's
+     * key regardless of whether the key existed before or not.
+     */
     abstract protected K updateKeyAfterInsert(T entity, long rowId);
 
     /**

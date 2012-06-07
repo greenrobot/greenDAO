@@ -210,7 +210,7 @@ public class Property {
 
     private void initConstraint() {
         StringBuilder constraintBuilder = new StringBuilder();
-        if (isPrimaryKey()) {
+        if (primaryKey) {
             constraintBuilder.append("PRIMARY KEY");
             if (pkAsc) {
                 constraintBuilder.append(" ASC");
@@ -222,7 +222,9 @@ public class Property {
                 constraintBuilder.append(" AUTOINCREMENT");
             }
         }
-        if (notNull) {
+        // Always have String PKs NOT NULL because SQLite is pretty strange in this respect:
+        // One could insert multiple rows with NULL PKs
+        if (notNull || (primaryKey && propertyType == PropertyType.String)) {
             constraintBuilder.append(" NOT NULL");
         }
         if (unique) {

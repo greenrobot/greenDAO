@@ -126,6 +126,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         entity.setSimpleString(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(RelationEntity entity, long rowId) {
         entity.setId(rowId);

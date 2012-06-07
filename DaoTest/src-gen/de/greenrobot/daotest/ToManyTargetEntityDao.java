@@ -114,6 +114,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         entity.setTargetJoinProperty(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(ToManyTargetEntity entity, long rowId) {
         entity.setId(rowId);

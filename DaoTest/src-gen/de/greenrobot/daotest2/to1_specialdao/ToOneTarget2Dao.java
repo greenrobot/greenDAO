@@ -82,6 +82,7 @@ public class ToOneTarget2Dao extends AbstractDao<ToOneTarget2, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(ToOneTarget2 entity, long rowId) {
         entity.setId(rowId);

@@ -20,7 +20,7 @@ package de.greenrobot.daotest.entity;
 import de.greenrobot.dao.IdentityScopeLong;
 import de.greenrobot.daotest.TestEntity;
 
-public class TestEntityTestIdentityScope extends TestEntityTest {
+public class TestEntityIdentityScopeTest extends TestEntityTest {
     @Override
     protected void setUp() {
         setIdentityScopeBeforeSetUp(new IdentityScopeLong<TestEntity>());

@@ -65,16 +65,15 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         if (pkColumn == null) {
             throw new RuntimeException("Test does not work without a PK column");
         }
-
     }
 
     public void testInsertAndLoad() {
         K pk = nextPk();
         T entity = createEntity(pk);
         dao.insert(entity);
+        assertEquals(pk, daoAccess.getKey(entity));
         T entity2 = dao.load(pk);
         assertNotNull(entity2);
-        // assertNotSame(entity, entity2); // Unless we'll cache stuff one day --> we do now
         assertEquals(daoAccess.getKey(entity), daoAccess.getKey(entity2));
     }
 

@@ -89,6 +89,7 @@ public class ExtendsImplementsEntityDao extends AbstractDao<ExtendsImplementsEnt
         entity.setText(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(ExtendsImplementsEntity entity, long rowId) {
         entity.setId(rowId);

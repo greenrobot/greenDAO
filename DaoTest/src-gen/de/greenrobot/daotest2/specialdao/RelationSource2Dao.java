@@ -105,6 +105,7 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
         entity.setToOneId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(RelationSource2 entity, long rowId) {
         entity.setId(rowId);

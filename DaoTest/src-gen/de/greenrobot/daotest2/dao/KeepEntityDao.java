@@ -80,6 +80,7 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(KeepEntity entity, long rowId) {
         entity.setId(rowId);

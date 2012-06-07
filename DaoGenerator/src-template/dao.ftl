@@ -234,18 +234,16 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);";
 </#if>
      }
     
+    /** @inheritdoc */
     @Override
     protected ${entity.pkType} updateKeyAfterInsert(${entity.className} entity, long rowId) {
-<#if entity.protobuf>
-        // Do nothing: Cannot update protobuf entities after insert
-        return null;
-<#else>
 <#if entity.pkProperty?? && entity.pkProperty.propertyType == "Long">
+<#if !entity.protobuf>
         entity.set${entity.pkProperty.propertyName?cap_first}(rowId);
+</#if>
         return rowId;
 <#else>
-        return null;
-</#if>
+        return entity.get${entity.pkProperty.propertyName?cap_first}();
 </#if>
     }
     

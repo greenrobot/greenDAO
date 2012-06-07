@@ -121,6 +121,7 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
         entity.setSimpleByteArray(cursor.getBlob(offset + 9));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(SimpleEntityNotNull entity, long rowId) {
         entity.setId(rowId);

@@ -161,6 +161,7 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
         entity.setSimpleByteArray(cursor.isNull(offset + 9) ? null : cursor.getBlob(offset + 9));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(SimpleEntity entity, long rowId) {
         entity.setId(rowId);

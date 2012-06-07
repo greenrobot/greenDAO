@@ -39,7 +39,7 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'STRING_KEY_VALUE_ENTITY' (" + //
-                "'KEY' TEXT PRIMARY KEY ," + // 0: key
+                "'KEY' TEXT PRIMARY KEY NOT NULL ," + // 0: key
                 "'VALUE' TEXT);"; // 1: value
         db.execSQL(sql);
     }
@@ -89,9 +89,10 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
         entity.setValue(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
      }
     
+    /** @inheritdoc */
     @Override
     protected String updateKeyAfterInsert(StringKeyValueEntity entity, long rowId) {
-        return null;
+        return entity.getKey();
     }
     
     /** @inheritdoc */

@@ -149,6 +149,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         entity.setSimpleBoolean(cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0);
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(TestEntity entity, long rowId) {
         entity.setId(rowId);

@@ -179,6 +179,7 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
         entity.setK(cursor.isNull(offset + 11) ? null : cursor.getInt(offset + 11));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(AbcdefEntity entity, long rowId) {
         entity.setId(rowId);

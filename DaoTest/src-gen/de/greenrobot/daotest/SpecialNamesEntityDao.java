@@ -161,6 +161,7 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
         entity.setOrder(cursor.isNull(offset + 9) ? null : cursor.getInt(offset + 9));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(SpecialNamesEntity entity, long rowId) {
         entity.setId(rowId);

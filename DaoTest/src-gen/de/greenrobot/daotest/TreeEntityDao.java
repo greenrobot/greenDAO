@@ -104,6 +104,7 @@ public class TreeEntityDao extends AbstractDao<TreeEntity, Long> {
         entity.setParentId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(TreeEntity entity, long rowId) {
         entity.setId(rowId);

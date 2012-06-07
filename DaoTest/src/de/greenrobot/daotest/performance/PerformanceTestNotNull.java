@@ -27,7 +27,6 @@ public class PerformanceTestNotNull extends PerformanceTest<SimpleEntityNotNullD
 
     public PerformanceTestNotNull() {
         super(SimpleEntityNotNullDao.class);
-        // setIdentityScopeBeforeSetUp(new de.greenrobot.dao.IdentityScope<Long, SimpleEntityNotNull>());
     }
 
     @Override

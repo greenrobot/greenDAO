@@ -98,6 +98,7 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
         entity.setSourceJoinProperty(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(ToManyEntity entity, long rowId) {
         entity.setId(rowId);

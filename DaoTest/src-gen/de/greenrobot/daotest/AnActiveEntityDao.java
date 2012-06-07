@@ -98,6 +98,7 @@ public class AnActiveEntityDao extends AbstractDao<AnActiveEntity, Long> {
         entity.setText(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(AnActiveEntity entity, long rowId) {
         entity.setId(rowId);
