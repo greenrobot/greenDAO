@@ -56,7 +56,8 @@ public class TestDaoGenerator {
         createExtendsImplements();
         createStringKeyValue();
         createAutoincrement();
-        
+        createSqliteMaster();
+
         createSchema2();
     }
 
@@ -151,7 +152,7 @@ public class TestDaoGenerator {
         toManyJoinTwo.orderDesc(targetJoinProperty);
         toManyJoinTwo.orderDesc(targetIdProperty);
     }
-    
+
     protected void createTreeEntity() {
         Entity treeEntity = schema.addEntity("TreeEntity");
         treeEntity.addIdProperty();
@@ -244,7 +245,7 @@ public class TestDaoGenerator {
         relationSource2.setJavaPackageTest("de.greenrobot.daotest2.specialtest");
         relationSource2.setSkipGenerationTest(true);
     }
-    
+
     protected void createStringKeyValue() {
         Entity entity = schema.addEntity("StringKeyValueEntity");
         entity.addStringProperty("key").primaryKey();
@@ -254,6 +255,17 @@ public class TestDaoGenerator {
     protected void createAutoincrement() {
         Entity entity = schema.addEntity("AutoincrementEntity");
         entity.addIdProperty().autoincrement();
+    }
+
+    protected void createSqliteMaster() {
+        Entity entity = schema.addEntity("SqliteMaster");
+        entity.setSkipTableCreation(true);
+        entity.setHasKeepSections(true);
+        entity.addStringProperty("type");
+        entity.addStringProperty("name");
+        entity.addStringProperty("tableName").columnName("tbl_name");
+        entity.addLongProperty("rootpage");
+        entity.addStringProperty("sql");
     }
 
 }
