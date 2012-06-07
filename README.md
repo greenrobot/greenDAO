@@ -6,8 +6,9 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
-### Next version (unreleased): Feature release
-* Limited support of String PKs
+### V1.2.0 RC (to be released 2012-06-??): Feature release
+* Limited support of String PKs (no relations using String FKs yet)
+* Fixed index creation (please update your schema)
 * Added CountQuery for creating SELECT COUNT (*) queries with QueryBuilder
 * Added getDatabase in DaoMaster, DaoSession, and Dao
 * Added insertOrReplaceInTx in Dao
