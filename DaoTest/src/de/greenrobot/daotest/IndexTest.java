@@ -19,7 +19,7 @@ public class IndexTest extends AbstractDaoTest<SqliteMasterDao, SqliteMaster, Vo
     public void testIndexesCreated() {
         Assert.assertEquals(0, getIndexes().size());
 
-        TestEntityDao.createTable(db, true);
+        TestEntityDao.createTable(db, false);
         List<SqliteMaster> indexes = getIndexes();
         Assert.assertEquals(2, indexes.size());
 
@@ -33,6 +33,14 @@ public class IndexTest extends AbstractDaoTest<SqliteMasterDao, SqliteMaster, Vo
         for (SqliteMaster index : indexes) {
             DaoLog.v(index.toString());
         }
+    }
+    
+    public void testIndexCreateIfNotExists() {
+        Assert.assertEquals(0, getIndexes().size());
+        TestEntityDao.createTable(db, false);
+        Assert.assertEquals(2, getIndexes().size());
+        TestEntityDao.createTable(db, true);
+        Assert.assertEquals(2, getIndexes().size());
     }
 
     private List<SqliteMaster> getIndexes() {

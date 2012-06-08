@@ -38,7 +38,8 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'STRING_KEY_VALUE_ENTITY' (" + //
+        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        db.execSQL("CREATE TABLE " + constraint + "'STRING_KEY_VALUE_ENTITY' (" + //
                 "'KEY' TEXT PRIMARY KEY NOT NULL ," + // 0: key
                 "'VALUE' TEXT);"); // 1: value
     }

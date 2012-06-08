@@ -48,7 +48,8 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'RELATION_SOURCE2' (" + //
+        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        db.execSQL("CREATE TABLE " + constraint + "'RELATION_SOURCE2' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'TO_ONE_ID' INTEGER);"); // 1: toOneId
     }

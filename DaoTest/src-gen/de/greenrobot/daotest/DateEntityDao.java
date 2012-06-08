@@ -39,7 +39,8 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'DATE_ENTITY' (" + //
+        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        db.execSQL("CREATE TABLE " + constraint + "'DATE_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'DATE' INTEGER," + // 1: date
                 "'DATE_NOT_NULL' INTEGER NOT NULL );"); // 2: dateNotNull

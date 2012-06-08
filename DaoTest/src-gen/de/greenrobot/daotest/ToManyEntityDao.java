@@ -41,7 +41,8 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'TO_MANY_ENTITY' (" + //
+        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        db.execSQL("CREATE TABLE " + constraint + "'TO_MANY_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'SOURCE_JOIN_PROPERTY' TEXT);"); // 1: sourceJoinProperty
     }

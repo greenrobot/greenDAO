@@ -42,7 +42,8 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'TO_MANY_TARGET2' (" + //
+        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        db.execSQL("CREATE TABLE " + constraint + "'TO_MANY_TARGET2' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'FK_ID' INTEGER);"); // 1: fkId
     }

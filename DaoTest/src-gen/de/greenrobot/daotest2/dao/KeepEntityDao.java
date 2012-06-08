@@ -37,7 +37,8 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        db.execSQL("CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'KEEP_ENTITY' (" + //
+        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        db.execSQL("CREATE TABLE " + constraint + "'KEEP_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY );"); // 0: id
     }
 
