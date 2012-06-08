@@ -18,6 +18,10 @@ public class NoteDao extends AbstractDao<Note, Long> {
 
     public static final String TABLENAME = "NOTE";
 
+    /**
+     * Properties of entity Note.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Text = new Property(1, String.class, "text", false, "TEXT");
@@ -36,12 +40,12 @@ public class NoteDao extends AbstractDao<Note, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'NOTE' (" + //
+        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        db.execSQL("CREATE TABLE " + constraint + "'NOTE' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'TEXT' TEXT NOT NULL ," + // 1: text
                 "'COMMENT' TEXT," + // 2: comment
-                "'DATE' INTEGER);"; // 3: date
-        db.execSQL(sql);
+                "'DATE' INTEGER);"); // 3: date
     }
 
     /** Drops the underlying database table. */
@@ -99,6 +103,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
         entity.setDate(cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(Note entity, long rowId) {
         entity.setId(rowId);

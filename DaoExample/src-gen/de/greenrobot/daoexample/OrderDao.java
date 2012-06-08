@@ -23,6 +23,10 @@ public class OrderDao extends AbstractDao<Order, Long> {
 
     public static final String TABLENAME = "ORDERS";
 
+    /**
+     * Properties of entity Order.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Date = new Property(1, java.util.Date.class, "date", false, "DATE");
@@ -44,11 +48,11 @@ public class OrderDao extends AbstractDao<Order, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'ORDERS' (" + //
+        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        db.execSQL("CREATE TABLE " + constraint + "'ORDERS' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'DATE' INTEGER," + // 1: date
-                "'CUSTOMER_ID' INTEGER NOT NULL );"; // 2: customerId
-        db.execSQL(sql);
+                "'CUSTOMER_ID' INTEGER NOT NULL );"); // 2: customerId
     }
 
     /** Drops the underlying database table. */
@@ -105,6 +109,7 @@ public class OrderDao extends AbstractDao<Order, Long> {
         entity.setCustomerId(cursor.getLong(offset + 2));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(Order entity, long rowId) {
         entity.setId(rowId);

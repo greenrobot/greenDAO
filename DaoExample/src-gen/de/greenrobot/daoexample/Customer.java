@@ -15,10 +15,10 @@ public class Customer {
     private String name;
 
     /** Used to resolve relations */
-    private DaoSession daoSession;
+    private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private CustomerDao myDao;
+    private transient CustomerDao myDao;
 
     private List<Order> orders;
 

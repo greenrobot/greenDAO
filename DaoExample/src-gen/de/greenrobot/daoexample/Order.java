@@ -14,10 +14,10 @@ public class Order {
     private long customerId;
 
     /** Used to resolve relations */
-    private DaoSession daoSession;
+    private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private OrderDao myDao;
+    private transient OrderDao myDao;
 
     private Customer customer;
     private Long customer__resolvedKey;

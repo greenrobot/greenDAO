@@ -16,7 +16,8 @@
 package de.greenrobot.dao;
 
 /**
- * Common interface for a identity scopes needed internally by greenDAO. Identity scopes let greenDAO re-use Java objects.
+ * Common interface for a identity scopes needed internally by greenDAO. Identity scopes let greenDAO re-use Java
+ * objects.
  * 
  * @author Markus
  * 

@@ -6,7 +6,7 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
-### V1.2.0 RC (to be released 2012-06-??): Feature release
+### V1.2.0 (2012-06-08): Feature release
 * Limited support of String PKs (no relations using String FKs yet)
 * Fixed index creation (please update your schema)
 * Added CountQuery for creating SELECT COUNT (*) queries with QueryBuilder
