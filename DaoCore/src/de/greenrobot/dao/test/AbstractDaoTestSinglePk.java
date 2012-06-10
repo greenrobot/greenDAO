@@ -288,6 +288,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         return cursor;
     }
 
+    /** Provides a collision free PK () not returned before in the current test. */
     protected K nextPk() {
         for (int i = 0; i < 100000; i++) {
             K pk = createRandomPk();
@@ -299,7 +300,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
     }
 
     protected T createEntityWithRandomPk() {
-        return createEntity(createRandomPk());
+        return createEntity(nextPk());
     }
 
     /** K does not have to be collision free, check nextPk for collision free PKs. */
