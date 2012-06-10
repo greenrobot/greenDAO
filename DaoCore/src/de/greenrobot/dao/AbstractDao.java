@@ -310,8 +310,13 @@ public abstract class AbstractDao<T, K> {
     }
 
     protected void updateKeyAfterInsertAndAttach(T entity, long rowId, boolean lock) {
-        K key = updateKeyAfterInsert(entity, rowId);
-        attachEntity(key, entity, lock);
+        if (rowId != -1) {
+            K key = updateKeyAfterInsert(entity, rowId);
+            attachEntity(key, entity, lock);
+        } else {
+            // TODO When does this actually happen? Should we throw instead?
+            DaoLog.w("Could not insert row (executeInsert returned -1)");
+        }
     }
 
     /** Reads all available rows from the given cursor and returns a list of entities. */
