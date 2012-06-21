@@ -98,6 +98,18 @@ public interface WhereCondition {
                     }
                 }
             }
+				else if (type == java.math.BigInteger.class){
+					if (value instanceof java.math.BigInteger) {
+                    return ((java.math.BigInteger) value).longValue();
+                } else if (value instanceof Long) {
+                    return value;
+                } else if (value instanceof String){
+                	return new java.math.BigInteger((String)value).longValue();
+                }
+                else {
+                    throw new DaoException("Illegal BigInteger value: expected java.math.BigInteger, Long, or String for value " + value + " it is " + value.getClass());
+                }
+				}
             return value;
         }
 
