@@ -100,10 +100,20 @@ public class QueryBuilder<T> {
         return this;
     }
 
+    /**
+     * Creates a WhereCondition by combining the given conditions using OR. The returned WhereCondition must be used
+     * inside {@link #where(WhereCondition, WhereCondition...)} or
+     * {@link #whereOr(WhereCondition, WhereCondition, WhereCondition...)}.
+     */
     public WhereCondition or(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
         return combineWhereConditions(" OR ", cond1, cond2, condMore);
     }
 
+    /**
+     * Creates a WhereCondition by combining the given conditions using AND. The returned WhereCondition must be used
+     * inside {@link #where(WhereCondition, WhereCondition...)} or
+     * {@link #whereOr(WhereCondition, WhereCondition, WhereCondition...)}.
+     */
     public WhereCondition and(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
         return combineWhereConditions(" AND ", cond1, cond2, condMore);
     }
