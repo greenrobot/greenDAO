@@ -154,6 +154,15 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
             // TODO bind ${toOne.name}__targetKey
 </#if>
         }
+<#else>
+		if (entity.get${entity.pkProperty.propertyName?cap_first}() == null) {
+			// TODO: Handle cyclic dependency to avoid recursive saving
+        	${toOne.targetEntity.className} ${toOne.name} = entity.get${toOne.name?cap_first}();
+        	if (${toOne.name} != null && ${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}() == null) {
+        		daoSession.get${toOne.targetEntity.classNameDao}().insert(${toOne.name});
+        		entity.set${toOne.name?cap_first}(${toOne.name});
+        	}
+        }
 </#if>
 </#list>
     }

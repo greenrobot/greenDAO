@@ -139,9 +139,9 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
     /** To-one relationship, resolved on first access. */
     public ${toOne.targetEntity.className} get${toOne.name?cap_first}() {
 <#if toOne.useFkProperty>    
-        if (${toOne.name}__resolvedKey == null || <#--
+        if (id != null && (${toOne.name}__resolvedKey == null || <#--
         --><#if toOne.resolvedKeyUseEquals[0]>!${toOne.name}__resolvedKey.equals(${toOne.fkProperties[0].propertyName})<#--
-        --><#else>${toOne.name}__resolvedKey != ${toOne.fkProperties[0].propertyName}</#if>) {
+        --><#else>${toOne.name}__resolvedKey != ${toOne.fkProperties[0].propertyName}</#if>)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
@@ -150,7 +150,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
             ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
         }
 <#else>
-        if (${toOne.name} != null || !${toOne.name}__refreshed) {
+        if (id != null && (${toOne.name} != null || !${toOne.name}__refreshed)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
