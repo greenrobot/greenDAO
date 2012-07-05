@@ -20,12 +20,12 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 package ${schema.defaultJavaPackageDao};
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import de.greenrobot.dao.AbstractDaoMaster;
 import de.greenrobot.dao.IdentityScopeType;
+import de.greenrobot.dao.wrapper.SQLiteDatabaseWrapper;
+import de.greenrobot.dao.wrapper.SQLiteOpenHelperWrapper;
 
 <#list schema.entities as entity>
 import ${entity.javaPackageDao}.${entity.classNameDao};
@@ -39,7 +39,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public static final int SCHEMA_VERSION = ${schema.version};
 
     /** Creates underlying database table using DAOs. */
-    public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createAllTables(SQLiteDatabaseWrapper db, boolean ifNotExists) {
 <#list schema.entities as entity>
 <#if !entity.skipTableCreation>
         ${entity.classNameDao}.createTable(db, ifNotExists);
@@ -48,7 +48,7 @@ public class DaoMaster extends AbstractDaoMaster {
     }
     
     /** Drops underlying database table using DAOs. */
-    public static void dropAllTables(SQLiteDatabase db, boolean ifExists) {
+    public static void dropAllTables(SQLiteDatabaseWrapper db, boolean ifExists) {
 <#list schema.entities as entity>
 <#if !entity.skipTableCreation>
         ${entity.classNameDao}.dropTable(db, ifExists);
@@ -56,14 +56,14 @@ public class DaoMaster extends AbstractDaoMaster {
 </#list>
     }
     
-    public static abstract class OpenHelper extends SQLiteOpenHelper {
+    public static abstract class OpenHelper extends SQLiteOpenHelperWrapper {
 
-        public OpenHelper(Context context, String name, CursorFactory factory) {
-            super(context, name, factory, SCHEMA_VERSION);
+        public OpenHelper(Context context, String name, String password, CursorFactory factory) {
+            super(context, name, password, factory, SCHEMA_VERSION);
         }
 
         @Override
-        public void onCreate(SQLiteDatabase db) {
+        public void onCreate(SQLiteDatabaseWrapper db) {
             Log.i("greenDAO", "Creating tables for schema version " + SCHEMA_VERSION);
             createAllTables(db, false);
         }
@@ -71,19 +71,19 @@ public class DaoMaster extends AbstractDaoMaster {
     
     /** WARNING: Drops all table on Upgrade! Use only during development. */
     public static class DevOpenHelper extends OpenHelper {
-        public DevOpenHelper(Context context, String name, CursorFactory factory) {
-            super(context, name, factory);
+        public DevOpenHelper(Context context, String name, String password, CursorFactory factory) {
+            super(context, name, password, factory);
         }
 
         @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        public void onUpgrade(SQLiteDatabaseWrapper db, int oldVersion, int newVersion) {
             Log.i("greenDAO", "Upgrading schema from version " + oldVersion + " to " + newVersion + " by dropping all tables");
             dropAllTables(db, true);
             onCreate(db);
         }
     }
 
-    public DaoMaster(SQLiteDatabase db) {
+    public DaoMaster(SQLiteDatabaseWrapper db) {
         super(db, SCHEMA_VERSION);
 <#list schema.entities as entity>
         registerDaoClass(${entity.classNameDao}.class);

@@ -20,7 +20,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.database.sqlite.SQLiteDatabase;
+import de.greenrobot.dao.wrapper.SQLiteDatabaseWrapper;
 
 /**
  * Internal class used by greenDAO. DaoConfig stores essential data for DAOs, and is hold by AbstractDaoMaster. This
@@ -28,7 +28,7 @@ import android.database.sqlite.SQLiteDatabase;
  */
 public final class DaoConfig implements Cloneable {
 
-    final SQLiteDatabase db;
+    final SQLiteDatabaseWrapper db;
     final String tablename;
     final Property[] properties;
 
@@ -45,7 +45,7 @@ public final class DaoConfig implements Cloneable {
 
     private IdentityScope<?, ?> identityScope;
 
-    DaoConfig(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>> daoClass) {
+    DaoConfig(SQLiteDatabaseWrapper db, Class<? extends AbstractDao<?, ?>> daoClass) {
         this.db = db;
         try {
             this.tablename = (String) daoClass.getField("TABLENAME").get(null);

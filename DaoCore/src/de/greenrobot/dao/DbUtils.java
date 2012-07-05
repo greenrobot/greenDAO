@@ -21,25 +21,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import de.greenrobot.dao.wrapper.SQLiteDatabaseWrapper;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
 
 /** Database utils, for example to execute SQL scripts */
 // TODO add unit tests
 public class DbUtils {
 
-    public static void vacuum(SQLiteDatabase db) {
+    public static void vacuum(SQLiteDatabaseWrapper db) {
         db.execSQL("VACUUM");
     }
 
     /**
-     * Calls {@link #executeSqlScript(Context, SQLiteDatabase, String, boolean)} with transactional set to true.
+     * Calls {@link #executeSqlScript(Context, SQLiteDatabaseWrapper, String, boolean)} with transactional set to true.
      * 
      * @return number of statements executed.
      */
-    public static int executeSqlScript(Context context, SQLiteDatabase db, String assetFilename) throws IOException {
+    public static int executeSqlScript(Context context, SQLiteDatabaseWrapper db, String assetFilename) throws IOException {
         return executeSqlScript(context, db, assetFilename, true);
     }
 
@@ -51,7 +52,7 @@ public class DbUtils {
      * 
      * @return number of statements executed.
      */
-    public static int executeSqlScript(Context context, SQLiteDatabase db, String assetFilename, boolean transactional)
+    public static int executeSqlScript(Context context, SQLiteDatabaseWrapper db, String assetFilename, boolean transactional)
             throws IOException {
         byte[] bytes = readAsset(context, assetFilename);
         String sql = new String(bytes, "UTF-8");
@@ -66,7 +67,7 @@ public class DbUtils {
         return count;
     }
 
-    public static int executeSqlStatementsInTx(SQLiteDatabase db, String[] statements) {
+    public static int executeSqlStatementsInTx(SQLiteDatabaseWrapper db, String[] statements) {
         db.beginTransaction();
         try {
             int count = executeSqlStatements(db, statements);
@@ -77,7 +78,7 @@ public class DbUtils {
         }
     }
 
-    public static int executeSqlStatements(SQLiteDatabase db, String[] statements) {
+    public static int executeSqlStatements(SQLiteDatabaseWrapper db, String[] statements) {
         int count = 0;
         for (String line : statements) {
             line = line.trim();
@@ -123,7 +124,7 @@ public class DbUtils {
         }
     }
 
-    public static void logTableDump(SQLiteDatabase db, String tablename) {
+    public static void logTableDump(SQLiteDatabaseWrapper db, String tablename) {
         Cursor cursor = db.query(tablename, null, null, null, null, null, null);
         try {
             String dump = DatabaseUtils.dumpCursorToString(cursor);

@@ -20,9 +20,9 @@ import java.util.Random;
 
 import android.app.Application;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.test.ApplicationTestCase;
 import de.greenrobot.dao.DbUtils;
+import de.greenrobot.dao.wrapper.SQLiteDatabaseWrapper;
 
 /**
  * Base class for database related testing. Prepares an in-memory or an file-based DB.
@@ -32,57 +32,57 @@ import de.greenrobot.dao.DbUtils;
  */
 public abstract class DbTest<T extends Application> extends ApplicationTestCase<T> {
 
-    protected SQLiteDatabase db;
-    protected Random random;
-    protected final boolean inMemory;
+	protected SQLiteDatabaseWrapper db;
+	protected Random random;
+	protected final boolean inMemory;
 
-    public DbTest() {
-        this(true);
-    }
+	public DbTest() {
+		this(true);
+	}
 
-    @SuppressWarnings("unchecked")
-    public DbTest(boolean inMemory) {
-        this((Class<T>) Application.class, inMemory);
-    }
+	@SuppressWarnings("unchecked")
+	public DbTest(boolean inMemory) {
+		this((Class<T>) Application.class, inMemory);
+	}
 
-    public DbTest(Class<T> appClass, boolean inMemory) {
-        super(appClass);
-        this.inMemory = inMemory;
-        random = new Random();
-    }
+	public DbTest(Class<T> appClass, boolean inMemory) {
+		super(appClass);
+		this.inMemory = inMemory;
+		random = new Random();
+	}
 
-    @Override
-    protected void setUp() {
-        try {
-            super.setUp();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        createApplication();
-        setUpDb();
-    }
+	@Override
+	protected void setUp() {
+		try {
+			super.setUp();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		createApplication();
+		setUpDb();
+	}
 
-    /** Override if you create your own DB */
-    protected void setUpDb() {
-        if (inMemory) {
-            db = SQLiteDatabase.create(null);
-        } else {
-            getApplication().deleteDatabase("test-db");
-            db = getApplication().openOrCreateDatabase("test-db", Context.MODE_PRIVATE, null);
-        }
-    }
+	/** Override if you create your own DB */
+	protected void setUpDb() {
+		if (inMemory) {
+			db = SQLiteDatabaseWrapper.create(null, null);
+		} else {
+			getApplication().deleteDatabase("test-db");
+			db = new SQLiteDatabaseWrapper(getApplication().openOrCreateDatabase("test-db", Context.MODE_PRIVATE, null));
+		}
+	}
 
-    @Override
-    protected void tearDown() throws Exception {
-        db.close();
-        if (!inMemory) {
-            getApplication().deleteDatabase("test-db");
-        }
-        super.tearDown();
-    }
+	@Override
+	protected void tearDown() throws Exception {
+		db.close();
+		if (!inMemory) {
+			getApplication().deleteDatabase("test-db");
+		}
+		super.tearDown();
+	}
 
-    protected void logTableDump(String tablename) {
-        DbUtils.logTableDump(db, tablename);
-    }
+	protected void logTableDump(String tablename) {
+		DbUtils.logTableDump(db, tablename);
+	}
 
 }

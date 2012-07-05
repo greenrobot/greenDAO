@@ -15,33 +15,33 @@
  */
 package de.greenrobot.dao;
 
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
+import de.greenrobot.dao.wrapper.SQLiteDatabaseWrapper;
+import de.greenrobot.dao.wrapper.SQLiteStatementWrapper;
 
 /** Helper class to create SQL statements for specific tables (used by greenDAO internally). */
 public class TableStatements {
-    private final SQLiteDatabase db;
+    private final SQLiteDatabaseWrapper db;
     private final String tablename;
     private final String[] allColumns;
     private final String[] pkColumns;
 
-    private SQLiteStatement insertStatement;
-    private SQLiteStatement insertOrReplaceStatement;
-    private SQLiteStatement updateStatement;
-    private SQLiteStatement deleteStatement;
+    private SQLiteStatementWrapper insertStatement;
+    private SQLiteStatementWrapper insertOrReplaceStatement;
+    private SQLiteStatementWrapper updateStatement;
+    private SQLiteStatementWrapper deleteStatement;
 
     private volatile String selectAll;
     private volatile String selectByKey;
     private volatile String selectByRowId;
 
-    protected TableStatements(SQLiteDatabase db, String tablename, String[] allColumns, String[] pkColumns) {
+    protected TableStatements(SQLiteDatabaseWrapper db, String tablename, String[] allColumns, String[] pkColumns) {
         this.db = db;
         this.tablename = tablename;
         this.allColumns = allColumns;
         this.pkColumns = pkColumns;
     }
 
-    protected SQLiteStatement getInsertStatement() {
+    protected SQLiteStatementWrapper getInsertStatement() {
         if (insertStatement == null) {
             String sql = SqlUtils.createSqlInsert("INSERT INTO ", tablename, allColumns);
             insertStatement = db.compileStatement(sql);
@@ -49,7 +49,7 @@ public class TableStatements {
         return insertStatement;
     }
 
-    protected SQLiteStatement getInsertOrReplaceStatement() {
+    protected SQLiteStatementWrapper getInsertOrReplaceStatement() {
         if (insertOrReplaceStatement == null) {
             String sql = SqlUtils.createSqlInsert("INSERT OR REPLACE INTO ", tablename, allColumns);
             insertOrReplaceStatement = db.compileStatement(sql);
@@ -57,7 +57,7 @@ public class TableStatements {
         return insertOrReplaceStatement;
     }
 
-    protected SQLiteStatement getDeleteStatement() {
+    protected SQLiteStatementWrapper getDeleteStatement() {
         if (deleteStatement == null) {
             String sql = SqlUtils.createSqlDelete(tablename, pkColumns);
             deleteStatement = db.compileStatement(sql);
@@ -65,7 +65,7 @@ public class TableStatements {
         return deleteStatement;
     }
 
-    protected SQLiteStatement getUpdateStatement() {
+    protected SQLiteStatementWrapper getUpdateStatement() {
         if (updateStatement == null) {
             String sql = SqlUtils.createSqlUpdate(tablename, allColumns, pkColumns);
             updateStatement = db.compileStatement(sql);
