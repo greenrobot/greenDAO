@@ -19,7 +19,7 @@ package de.greenrobot.dao;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.database.sqlite.SQLiteDatabase;
+import de.greenrobot.dao.wrapper.SQLiteDatabaseWrapper;
 
 /**
  * The master of dao will guide you: start dao sessions with the master.
@@ -27,11 +27,11 @@ import android.database.sqlite.SQLiteDatabase;
  * @author Markus
  */
 public abstract class AbstractDaoMaster {
-    protected final SQLiteDatabase db;
+    protected final SQLiteDatabaseWrapper db;
     protected final int schemaVersion;
     protected final Map<Class<? extends AbstractDao<?, ?>>, DaoConfig> daoConfigMap;
 
-    public AbstractDaoMaster(SQLiteDatabase db, int schemaVersion) {
+    public AbstractDaoMaster(SQLiteDatabaseWrapper db, int schemaVersion) {
         this.db = db;
         this.schemaVersion = schemaVersion;
 
@@ -47,8 +47,8 @@ public abstract class AbstractDaoMaster {
         return schemaVersion;
     }
 
-    /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
-    public SQLiteDatabase getDatabase() {
+    /** Gets the SQLiteDatabaseWrapper for custom database access. Not needed for greenDAO entities. */
+    public SQLiteDatabaseWrapper getDatabase() {
         return db;
     }
 

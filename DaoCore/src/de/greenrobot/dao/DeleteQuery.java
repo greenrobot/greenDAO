@@ -17,7 +17,7 @@ package de.greenrobot.dao;
 
 import java.util.Collection;
 
-import android.database.sqlite.SQLiteStatement;
+import de.greenrobot.dao.wrapper.SQLiteStatementWrapper;
 
 /**
  * A repeatable query for deleting entities.<br/>
@@ -30,7 +30,7 @@ import android.database.sqlite.SQLiteStatement;
  */
 public class DeleteQuery<T> extends AbstractQuery<T> {
 
-    private SQLiteStatement compiledStatement;
+    private SQLiteStatementWrapper compiledStatement;
 
     public DeleteQuery(AbstractDao<T, ?> dao, String sql, Collection<Object> valueList) {
         super(dao, sql, valueList);

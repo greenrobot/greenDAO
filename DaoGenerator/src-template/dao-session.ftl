@@ -19,14 +19,13 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 -->
 package ${schema.defaultJavaPackageDao};
 
-import android.database.sqlite.SQLiteDatabase;
-
 import java.util.Map;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.AbstractDaoSession;
 import de.greenrobot.dao.IdentityScopeType;
+import de.greenrobot.dao.wrapper.SQLiteDatabaseWrapper;
 
 <#list schema.entities as entity>
 import ${entity.javaPackage}.${entity.className};
@@ -53,7 +52,7 @@ public class DaoSession extends AbstractDaoSession {
     private final ${entity.classNameDao} ${entity.classNameDao?uncap_first};
 </#list>        
 
-    public DaoSession(SQLiteDatabase db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
+    public DaoSession(SQLiteDatabaseWrapper db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
             daoConfigMap) {
         super(db);
 

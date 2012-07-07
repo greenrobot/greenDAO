@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import android.database.sqlite.SQLiteDatabase;
+import de.greenrobot.dao.wrapper.SQLiteDatabaseWrapper;
 
 /**
  * DaoSession gives you access to your DAOs, offers convenient persistence methods, and also serves as a session cache.<br/>
@@ -42,10 +42,10 @@ import android.database.sqlite.SQLiteDatabase;
  * 
  */
 public class AbstractDaoSession {
-    private final SQLiteDatabase db;
+    private final SQLiteDatabaseWrapper db;
     private final Map<Class<?>, AbstractDao<?, ?>> entityToDao;
 
-    public AbstractDaoSession(SQLiteDatabase db) {
+    public AbstractDaoSession(SQLiteDatabaseWrapper db) {
         this.db = db;
         this.entityToDao = new HashMap<Class<?>, AbstractDao<?, ?>>();
     }
@@ -180,8 +180,8 @@ public class AbstractDaoSession {
         }
     }
 
-    /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
-    public SQLiteDatabase getDatabase() {
+    /** Gets the SQLiteDatabaseWrapper for custom database access. Not needed for greenDAO entities. */
+    public SQLiteDatabaseWrapper getDatabase() {
         return db;
     }
 
