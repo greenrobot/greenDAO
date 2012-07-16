@@ -134,6 +134,10 @@ public class Entity {
     public PropertyBuilder addDateProperty(String propertyName) {
         return addProperty(PropertyType.Date, propertyName);
     }
+    
+    public PropertyBuilder addBigIntegerProperty(String propertyName) {
+        return addProperty(PropertyType.BigInteger, propertyName);
+    }
 
     public PropertyBuilder addProperty(PropertyType propertyType, String propertyName) {
         if (!propertyNames.add(propertyName)) {

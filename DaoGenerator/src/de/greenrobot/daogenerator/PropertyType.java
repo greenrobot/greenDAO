@@ -23,5 +23,5 @@ package de.greenrobot.daogenerator;
  * @author Markus
  */
 public enum PropertyType {
-    Byte, Short, Int, Long, Boolean, Float, Double, String, ByteArray, Date
+    Byte, Short, Int, Long, Boolean, Float, Double, String, ByteArray, Date, BigInteger
 }
