@@ -52,6 +52,7 @@ public class AsyncOperationExecutor implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void executeOperation(AsyncOperation operation) {
+        operation.timeStarted = System.currentTimeMillis();
         try {
             switch (operation.type) {
             case Delete:
@@ -72,6 +73,7 @@ public class AsyncOperationExecutor implements Runnable {
         } catch (Throwable th) {
             operation.throwable = th;
         }
-
+        operation.timeCompleted = System.currentTimeMillis();
+        operation.completed = true;
     }
 }

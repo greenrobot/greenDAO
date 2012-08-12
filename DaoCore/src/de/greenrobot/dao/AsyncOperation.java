@@ -6,6 +6,7 @@ public class AsyncOperation {
         InsertOrReplace, InsertOrReplaceInTxIterable, InsertOrReplaceInTxArray, //
         Update, UpdateInTxIterable, UpdateInTxArray, //
         Delete, DeleteInTxIterable, DeleteInTxArray, //
+        TransactionRunnable
     }
 
     public static final int FLAG_MERGE_TX = 1;
@@ -15,7 +16,10 @@ public class AsyncOperation {
     final Object entity;
     final int flags;
 
-    Throwable throwable;
+    volatile long timeStarted;
+    volatile long timeCompleted;
+    volatile boolean completed;
+    volatile Throwable throwable;
 
     public AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object entity) {
         this(type, dao, entity, 0);
@@ -47,6 +51,34 @@ public class AsyncOperation {
 
     public boolean isMergeTx() {
         return (flags & FLAG_MERGE_TX) != 0;
+    }
+
+    public long getTimeStarted() {
+        return timeStarted;
+    }
+
+    public long getTimeCompleted() {
+        return timeCompleted;
+    }
+
+    public long getDuration() {
+        if (timeCompleted == 0) {
+            throw new DaoException("This operation did not yet complete");
+        } else {
+            return timeCompleted - timeStarted;
+        }
+    }
+
+    public boolean isFailed() {
+        return throwable != null;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public boolean isCompletedSucessfully() {
+        return completed && throwable == null;
     }
 
 }
