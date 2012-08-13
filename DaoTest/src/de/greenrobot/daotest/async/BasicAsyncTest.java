@@ -1,25 +1,9 @@
 package de.greenrobot.daotest.async;
 
-import android.app.Application;
-import de.greenrobot.dao.AsyncSession;
-import de.greenrobot.dao.test.AbstractDaoSessionTest;
-import de.greenrobot.daotest.DaoMaster;
-import de.greenrobot.daotest.DaoSession;
+import de.greenrobot.dao.AsyncOperation;
 import de.greenrobot.daotest.SimpleEntity;
 
-public class BasicAsyncTest extends AbstractDaoSessionTest<Application, DaoMaster, DaoSession> {
-
-    private AsyncSession asyncSession;
-
-    public BasicAsyncTest() {
-        super(DaoMaster.class);
-    }
-
-    @Override
-    protected void setUp() {
-        super.setUp();
-        asyncSession = daoSession.startAsyncSession();
-    }
+public class BasicAsyncTest extends AbstractAsyncTest {
 
     public void testWaitForCompletionNoOps() {
         assertTrue(asyncSession.isCompleted());
@@ -30,11 +14,14 @@ public class BasicAsyncTest extends AbstractDaoSessionTest<Application, DaoMaste
     public void testAsyncInsert() {
         SimpleEntity entity = new SimpleEntity();
         entity.setSimpleString("heho");
-        asyncSession.insert(entity);
-        assertTrue(asyncSession.waitForCompletion(1000));
+        AsyncOperation operation = asyncSession.insert(entity);
+        assertWaitForCompletion1Sec();
         SimpleEntity entity2 = daoSession.load(SimpleEntity.class, entity.getId());
         assertNotNull(entity2);
         assertEquals("heho", entity2.getSimpleString());
+        assertSame(operation, completedOperations.get(0));
+        assertEquals(1, completedOperations.size());
+        assertTrue(operation.isCompleted());
     }
 
 }
