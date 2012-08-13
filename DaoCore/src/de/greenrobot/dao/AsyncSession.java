@@ -60,6 +60,16 @@ public class AsyncSession {
         return enqueueEntityOperation(OperationType.Insert, entity, flags);
     }
 
+    /** Asynchronous version of {@link AbstractDao#insertInTx(Object...)}. */
+    public <E> AsyncOperation insertInTx(Class<E> entityClass, E... entities) {
+        return insertInTx(entityClass, 0, entities);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#insertInTx(Object...)}. */
+    public <E> AsyncOperation insertInTx(Class<E> entityClass, int flags, E... entities) {
+        return enqueEntityOperation(OperationType.InsertInTxArray, entityClass, entities, flags);
+    }
+
     /** Asynchronous version of {@link AbstractDao#insertInTx(Iterable)}. */
     public <E> AsyncOperation insertInTx(Class<E> entityClass, Iterable<E> entities) {
         return insertInTx(entityClass, entities, 0);
@@ -68,6 +78,96 @@ public class AsyncSession {
     /** Asynchronous version of {@link AbstractDao#insertInTx(Iterable)}. */
     public <E> AsyncOperation insertInTx(Class<E> entityClass, Iterable<E> entities, int flags) {
         return enqueEntityOperation(OperationType.InsertInTxIterable, entityClass, entities, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#insertOrReplace(Object)}. */
+    public AsyncOperation insertOrReplace(Object entity) {
+        return insertOrReplace(entity, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#insertOrReplace(Object)}. */
+    public AsyncOperation insertOrReplace(Object entity, int flags) {
+        return enqueueEntityOperation(OperationType.InsertOrReplace, entity, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#insertOrReplaceInTx(Object...)}. */
+    public <E> AsyncOperation insertOrReplaceInTx(Class<E> entityClass, E... entities) {
+        return insertOrReplaceInTx(entityClass, 0, entities);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#insertOrReplaceInTx(Object...)}. */
+    public <E> AsyncOperation insertOrReplaceInTx(Class<E> entityClass, int flags, E... entities) {
+        return enqueEntityOperation(OperationType.InsertOrReplaceInTxArray, entityClass, entities, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#insertOrReplaceInTx(Iterable)}. */
+    public <E> AsyncOperation insertOrReplaceInTx(Class<E> entityClass, Iterable<E> entities) {
+        return insertOrReplaceInTx(entityClass, entities, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#insertOrReplaceInTx(Iterable)}. */
+    public <E> AsyncOperation insertOrReplaceInTx(Class<E> entityClass, Iterable<E> entities, int flags) {
+        return enqueEntityOperation(OperationType.InsertOrReplaceInTxIterable, entityClass, entities, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#update(Object)}. */
+    public AsyncOperation update(Object entity) {
+        return update(entity, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#update(Object)}. */
+    public AsyncOperation update(Object entity, int flags) {
+        return enqueueEntityOperation(OperationType.Update, entity, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#updateInTx(Object...)}. */
+    public <E> AsyncOperation updateInTx(Class<E> entityClass, E... entities) {
+        return updateInTx(entityClass, 0, entities);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#updateInTx(Object...)}. */
+    public <E> AsyncOperation updateInTx(Class<E> entityClass, int flags, E... entities) {
+        return enqueEntityOperation(OperationType.UpdateInTxArray, entityClass, entities, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#updateInTx(Iterable)}. */
+    public <E> AsyncOperation updateInTx(Class<E> entityClass, Iterable<E> entities) {
+        return updateInTx(entityClass, entities, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#updateInTx(Iterable)}. */
+    public <E> AsyncOperation updateInTx(Class<E> entityClass, Iterable<E> entities, int flags) {
+        return enqueEntityOperation(OperationType.UpdateInTxIterable, entityClass, entities, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#delete(Object)}. */
+    public AsyncOperation delete(Object entity) {
+        return delete(entity, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#delete(Object)}. */
+    public AsyncOperation delete(Object entity, int flags) {
+        return enqueueEntityOperation(OperationType.Delete, entity, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#deleteInTx(Object...)}. */
+    public <E> AsyncOperation deleteInTx(Class<E> entityClass, E... entities) {
+        return deleteInTx(entityClass, 0, entities);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#deleteInTx(Object...)}. */
+    public <E> AsyncOperation deleteInTx(Class<E> entityClass, int flags, E... entities) {
+        return enqueEntityOperation(OperationType.DeleteInTxArray, entityClass, entities, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#deleteInTx(Iterable)}. */
+    public <E> AsyncOperation deleteInTx(Class<E> entityClass, Iterable<E> entities) {
+        return deleteInTx(entityClass, entities, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#deleteInTx(Iterable)}. */
+    public <E> AsyncOperation deleteInTx(Class<E> entityClass, Iterable<E> entities, int flags) {
+        return enqueEntityOperation(OperationType.DeleteInTxIterable, entityClass, entities, flags);
     }
 
     private AsyncOperation enqueueEntityOperation(OperationType type, Object entity, int flags) {
