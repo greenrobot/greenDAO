@@ -2,6 +2,17 @@ package de.greenrobot.dao;
 
 import de.greenrobot.dao.AsyncOperation.OperationType;
 
+/**
+ * Asynchronous interface to entity operations. All operations will enqueued a @link {@link AsyncOperation} and return
+ * immediately (fine to call on the UI/main thread). The queue will be processed in a (single) background thread. The
+ * processing order is the call order of the operations. It's possible to start multiple AsyncSessions that will execute
+ * concurrently.
+ * 
+ * @author Markus
+ * 
+ * @see AbstractDaoSession#startAsyncSession()
+ */
+// Facade to AsyncOperationExecutor: prepares operations and delegates work to AsyncOperationExecutor.
 public class AsyncSession {
     final AbstractDaoSession session;
     final AsyncOperationExecutor executor;
@@ -39,16 +50,30 @@ public class AsyncSession {
         return executor.waitForCompletion(maxMillis);
     }
 
-    public void insert(Object entity) {
-        AbstractDao<?, ?> dao = session.getDao(entity.getClass());
-        AsyncOperation operation = new AsyncOperation(OperationType.Insert, dao, entity);
-        executor.enqueue(operation);
+    /** Asynchronous version of {@link AbstractDao#insert(Object)}. */
+    public AsyncOperation insert(Object entity) {
+        return insert(entity, 0);
     }
 
-    public <E> void insertInTx(Class<E> entityClass, Iterable<E> entities) {
-        AbstractDao<?, ?> dao = session.getDao(entityClass);
-        AsyncOperation operation = new AsyncOperation(OperationType.InsertInTxIterable, dao, entities);
+    /** Asynchronous version of {@link AbstractDao#insert(Object)}. */
+    public AsyncOperation insert(Object entity, int flags) {
+        AbstractDao<?, ?> dao = session.getDao(entity.getClass());
+        AsyncOperation operation = new AsyncOperation(OperationType.Insert, dao, entity, flags);
         executor.enqueue(operation);
+        return operation;
+    }
+
+    /** Asynchronous version of {@link AbstractDao#insertInTx(Iterable)}. */
+    public <E> AsyncOperation insertInTx(Class<E> entityClass, Iterable<E> entities) {
+        return insertInTx(entityClass, entities, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#insertInTx(Iterable)}. */
+    public <E> AsyncOperation insertInTx(Class<E> entityClass, Iterable<E> entities, int flags) {
+        AbstractDao<?, ?> dao = session.getDao(entityClass);
+        AsyncOperation operation = new AsyncOperation(OperationType.InsertInTxIterable, dao, entities, flags);
+        executor.enqueue(operation);
+        return operation;
     }
 
 }

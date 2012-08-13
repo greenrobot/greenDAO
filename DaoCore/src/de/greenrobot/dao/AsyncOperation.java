@@ -1,5 +1,28 @@
+/*
+ * Copyright (C) 2012 Markus Junginger, greenrobot (http://greenrobot.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.greenrobot.dao;
 
+/**
+ * An operation that will be enqueued for asynchronous execution.
+ * 
+ * @author Markus
+ * 
+ * @see AsyncSession
+ */
 public class AsyncOperation {
     public static enum OperationType {
         Insert, InsertInTxIterable, InsertInTxArray, //
@@ -23,12 +46,12 @@ public class AsyncOperation {
     volatile Throwable throwable;
     volatile Object result;
 
-    public AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter) {
+    AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter) {
         this(type, dao, parameter, 0);
     }
 
     @SuppressWarnings("unchecked")
-    public AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter, int flags) {
+    AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter, int flags) {
         this.type = type;
         this.flags = flags;
         this.dao = (AbstractDao<Object, ?>) dao;
@@ -51,10 +74,15 @@ public class AsyncOperation {
         return parameter;
     }
 
+    /**
+     * If the operation has a result AND the operation is completed ({@link #isCompleted()}), the result will be
+     * available here.
+     */
     public Object getResult() {
         return result;
     }
 
+    /** @return true if this operation may be merged with others into a single database transaction. */
     public boolean isMergeTx() {
         return (flags & FLAG_MERGE_TX) != 0;
     }
