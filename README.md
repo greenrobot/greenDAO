@@ -6,6 +6,13 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
+### V1.3.0 Preview (2012-??-??): New asynchronous API
+* AsyncSession (acquired from DaoSession.startAsyncSession()) provides most operations for DAOs, Queries, and transactions in a asynchronously variant
+* AsyncOperations are processed in order by a background thread
+* waitForCompletion methods for AsyncSession and AsyncOperations
+* AsyncOperationListener for asynchronous callback when operations complete
+* Asynchronous operations can be merged in single transactions (details follow)
+
 ### V1.2.0 (2012-06-08): Feature release
 * Limited support of String PKs (no relations using String FKs yet)
 * Fixed index creation (please update your schema)
