@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import android.database.sqlite.SQLiteDatabase;
 
-public class AsyncOperationExecutor implements Runnable {
+class AsyncOperationExecutor implements Runnable {
 
     private static ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -17,6 +17,9 @@ public class AsyncOperationExecutor implements Runnable {
     private volatile boolean executorRunning;
     private volatile int maxOperationCountToMerge;
     private volatile AsyncOperationListener listener;
+
+    private int countOperationsEnqueued;
+    private int countOperationsCompleted;
 
     AsyncOperationExecutor() {
         queue = new LinkedBlockingQueue<AsyncOperation>();
@@ -26,6 +29,7 @@ public class AsyncOperationExecutor implements Runnable {
     public void enqueue(AsyncOperation operation) {
         synchronized (this) {
             queue.add(operation);
+            countOperationsEnqueued++;
             if (!executorRunning) {
                 executorRunning = true;
                 executorService.execute(this);
@@ -47,6 +51,23 @@ public class AsyncOperationExecutor implements Runnable {
 
     public void setListener(AsyncOperationListener listener) {
         this.listener = listener;
+    }
+
+    public synchronized boolean isCompleted() {
+        return countOperationsEnqueued == countOperationsCompleted;
+    }
+
+    public synchronized void waitForCompletion() throws InterruptedException {
+        while (!isCompleted()) {
+            wait();
+        }
+    }
+
+    public synchronized boolean waitForCompletion(int maxMillis) throws InterruptedException {
+        if (!isCompleted()) {
+            wait(maxMillis);
+        }
+        return isCompleted();
     }
 
     @Override
@@ -145,11 +166,16 @@ public class AsyncOperationExecutor implements Runnable {
         }
     }
 
-
     private void postOperationCompleted(AsyncOperation operation) {
         AsyncOperationListener listenerToCall = listener;
         if (listenerToCall != null) {
             listenerToCall.onAsyncOperationCompleted(operation);
+        }
+        synchronized (this) {
+            countOperationsCompleted++;
+            if (countOperationsCompleted == countOperationsEnqueued) {
+                notifyAll();
+            }
         }
     }
 
@@ -158,7 +184,6 @@ public class AsyncOperationExecutor implements Runnable {
         postOperationCompleted(operation);
     }
 
-    
     @SuppressWarnings("unchecked")
     private void executeOperation(AsyncOperation operation) {
         operation.timeStarted = System.currentTimeMillis();

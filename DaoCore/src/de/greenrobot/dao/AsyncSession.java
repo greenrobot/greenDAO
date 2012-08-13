@@ -27,6 +27,18 @@ public class AsyncSession {
         executor.setListener(listener);
     }
 
+    public boolean isCompleted() {
+        return executor.isCompleted();
+    }
+
+    public void waitForCompletion() throws InterruptedException {
+        executor.waitForCompletion();
+    }
+
+    public boolean waitForCompletion(int maxMillis) throws InterruptedException {
+        return executor.waitForCompletion(maxMillis);
+    }
+
     public void insert(Object entity) {
         AbstractDao<?, ?> dao = session.getDao(entity.getClass());
         AsyncOperation operation = new AsyncOperation(OperationType.Insert, dao, entity);
