@@ -31,7 +31,8 @@ public class AsyncOperation {
         InsertOrReplace, InsertOrReplaceInTxIterable, InsertOrReplaceInTxArray, //
         Update, UpdateInTxIterable, UpdateInTxArray, //
         Delete, DeleteInTxIterable, DeleteInTxArray, //
-        TransactionRunnable, TransactionCallable
+        TransactionRunnable, TransactionCallable, //
+        QueryList, QueryUnique
     }
 
     public static final int FLAG_MERGE_TX = 1;

@@ -200,7 +200,7 @@ class AsyncOperationExecutor implements Runnable {
         postOperationCompleted(operation);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void executeOperation(AsyncOperation operation) {
         operation.timeStarted = System.currentTimeMillis();
         try {
@@ -246,6 +246,10 @@ class AsyncOperationExecutor implements Runnable {
                 break;
             case TransactionCallable:
                 executeTransactionCallable(operation);
+            case QueryList:
+                operation.result = ((Query) operation.parameter).list();
+            case QueryUnique:
+                operation.result = ((Query) operation.parameter).unique();
             default:
                 throw new DaoException("Unsupported operation: " + operation.type);
             }

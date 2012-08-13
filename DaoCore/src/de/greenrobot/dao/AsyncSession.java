@@ -192,6 +192,26 @@ public class AsyncSession {
         return enqueueDatabaseOperation(OperationType.TransactionCallable, callable, flags);
     }
 
+    /** Asynchronous version of {@link Query#list()}. */
+    public AsyncOperation queryList(Query<?> query) {
+        return queryList(query, 0);
+    }
+
+    /** Asynchronous version of {@link Query#list()}. */
+    public AsyncOperation queryList(Query<?> query, int flags) {
+        return enqueueDatabaseOperation(OperationType.QueryList, query, flags);
+    }
+
+    /** Asynchronous version of {@link Query#unique()}. */
+    public AsyncOperation queryUnique(Query<?> query) {
+        return queryUnique(query, 0);
+    }
+
+    /** Asynchronous version of {@link Query#unique()}. */
+    public AsyncOperation queryUnique(Query<?> query, int flags) {
+        return enqueueDatabaseOperation(OperationType.QueryUnique, query, flags);
+    }
+
     private AsyncOperation enqueueDatabaseOperation(OperationType type, Object param, int flags) {
         AsyncOperation operation = new AsyncOperation(type, session.getDatabase(), param, flags);
         executor.enqueue(operation);
