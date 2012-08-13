@@ -1,5 +1,7 @@
 package de.greenrobot.dao;
 
+import java.util.concurrent.Callable;
+
 import de.greenrobot.dao.AsyncOperation.OperationType;
 
 /**
@@ -168,6 +170,32 @@ public class AsyncSession {
     /** Asynchronous version of {@link AbstractDao#deleteInTx(Iterable)}. */
     public <E> AsyncOperation deleteInTx(Class<E> entityClass, Iterable<E> entities, int flags) {
         return enqueEntityOperation(OperationType.DeleteInTxIterable, entityClass, entities, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDaoSession#runInTx(Runnable)}. */
+    public AsyncOperation runInTx(Runnable runnable) {
+        return runInTx(runnable, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDaoSession#runInTx(Runnable)}. */
+    public AsyncOperation runInTx(Runnable runnable, int flags) {
+        return enqueueDatabaseOperation(OperationType.TransactionRunnable, runnable, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDaoSession#callInTx(Callable)}. */
+    public AsyncOperation callInTx(Callable<?> callable) {
+        return callInTx(callable, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDaoSession#callInTx(Callable)}. */
+    public AsyncOperation callInTx(Callable<?> callable, int flags) {
+        return enqueueDatabaseOperation(OperationType.TransactionCallable, callable, flags);
+    }
+
+    private AsyncOperation enqueueDatabaseOperation(OperationType type, Object param, int flags) {
+        AsyncOperation operation = new AsyncOperation(type, session.getDatabase(), param, flags);
+        executor.enqueue(operation);
+        return operation;
     }
 
     private AsyncOperation enqueueEntityOperation(OperationType type, Object entity, int flags) {

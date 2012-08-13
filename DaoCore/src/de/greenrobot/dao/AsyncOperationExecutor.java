@@ -133,7 +133,7 @@ class AsyncOperationExecutor implements Runnable {
         mergedOps.add(operation);
         mergedOps.add(operation2);
 
-        SQLiteDatabase db = operation.dao.getDatabase();
+        SQLiteDatabase db = operation.getDatabase();
         db.beginTransaction();
         boolean failed = false;
         try {
@@ -257,7 +257,7 @@ class AsyncOperationExecutor implements Runnable {
     }
 
     private void executeTransactionRunnable(AsyncOperation operation) {
-        SQLiteDatabase db = operation.dao.getDatabase();
+        SQLiteDatabase db = operation.getDatabase();
         db.beginTransaction();
         try {
             ((Runnable) operation.parameter).run();
@@ -269,7 +269,7 @@ class AsyncOperationExecutor implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void executeTransactionCallable(AsyncOperation operation) throws Exception {
-        SQLiteDatabase db = operation.dao.getDatabase();
+        SQLiteDatabase db = operation.getDatabase();
         db.beginTransaction();
         try {
             operation.result = ((Callable<Object>) operation.parameter).call();

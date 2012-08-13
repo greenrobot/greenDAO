@@ -16,6 +16,8 @@
 
 package de.greenrobot.dao;
 
+import android.database.sqlite.SQLiteDatabase;
+
 /**
  * An operation that will be enqueued for asynchronous execution.
  * 
@@ -36,6 +38,7 @@ public class AsyncOperation {
 
     final OperationType type;
     final AbstractDao<Object, ?> dao;
+    private final SQLiteDatabase database;
     /** Entity, Iterable<Entity>, Entity[], or Runnable. */
     final Object parameter;
     final int flags;
@@ -46,15 +49,20 @@ public class AsyncOperation {
     volatile Throwable throwable;
     volatile Object result;
 
-    AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter) {
-        this(type, dao, parameter, 0);
-    }
-
     @SuppressWarnings("unchecked")
     AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter, int flags) {
         this.type = type;
         this.flags = flags;
         this.dao = (AbstractDao<Object, ?>) dao;
+        this.database = null;
+        this.parameter = parameter;
+    }
+
+    AsyncOperation(OperationType type, SQLiteDatabase database, Object parameter, int flags) {
+        this.type = type;
+        this.database = database;
+        this.flags = flags;
+        this.dao = null;
         this.parameter = parameter;
     }
 
@@ -87,12 +95,16 @@ public class AsyncOperation {
         return (flags & FLAG_MERGE_TX) != 0;
     }
 
+    SQLiteDatabase getDatabase() {
+        return database != null ? database : dao.getDatabase();
+    }
+
     /**
      * @return true if this operation is mergeable with the given operation. Checks for null, {@link #FLAG_MERGE_TX},
      *         and if the database instances match.
      */
     boolean isMergeableWith(AsyncOperation other) {
-        return other != null && isMergeTx() && other.isMergeTx() && dao.getDatabase() == other.dao.getDatabase();
+        return other != null && isMergeTx() && other.isMergeTx() && getDatabase() == other.getDatabase();
     }
 
     public long getTimeStarted() {
