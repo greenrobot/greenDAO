@@ -49,7 +49,7 @@ public class AsyncOperation {
 
     volatile long timeStarted;
     volatile long timeCompleted;
-    volatile boolean completed;
+    private volatile boolean completed;
     volatile Throwable throwable;
     volatile Object result;
 
@@ -87,10 +87,15 @@ public class AsyncOperation {
     }
 
     /**
-     * If the operation has a result AND the operation is completed ({@link #isCompleted()}), the result will be
-     * available here.
+     * The operation's result after it has completed. Will throw an Execption if no result is available yet. If you want
+     * to wait for completion, see {@link #waitForCompletion()}.
+     * 
+     * @return The operation's result or null if the operation type does not produce any result.
      */
     public Object getResult() {
+        if (!completed) {
+            throw new DaoException("The operation did not complete yet, consider waitForCompletion instead");
+        }
         return result;
     }
 
@@ -133,6 +138,46 @@ public class AsyncOperation {
 
     public boolean isCompleted() {
         return completed;
+    }
+
+    /**
+     * Waits until the operation is complete. If the thread gets interrupted, any {@link InterruptedException} will be
+     * rethrown as a {@link DaoException}.
+     * 
+     * @return Result if any, see {@link #getResult()}
+     */
+    public synchronized Object waitForCompletion() {
+        while (!completed) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                throw new DaoException("Interrupted while waiting for operation to complete", e);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Waits until the operation is complete, but at most the given amount of milliseconds.If the thread gets
+     * interrupted, any {@link InterruptedException} will be rethrown as a {@link DaoException}.
+     * 
+     * @return true if the operation completed in the given time frame.
+     */
+    public synchronized Object waitForCompletion(int maxMillis) {
+        if (!completed) {
+            try {
+                wait(maxMillis);
+            } catch (InterruptedException e) {
+                throw new DaoException("Interrupted while waiting for operation to complete", e);
+            }
+        }
+        return completed;
+    }
+
+    /** Called when the operation is done. Notifies any threads waiting for this operation's completion. */
+    synchronized void setCompleted() {
+        completed = true;
+        notifyAll();
     }
 
     public boolean isCompletedSucessfully() {

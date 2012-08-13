@@ -73,15 +73,33 @@ class AsyncOperationExecutor implements Runnable {
         return countOperationsEnqueued == countOperationsCompleted;
     }
 
-    public synchronized void waitForCompletion() throws InterruptedException {
+    /**
+     * Waits until all enqueued operations are complete. If the thread gets interrupted, any
+     * {@link InterruptedException} will be rethrown as a {@link DaoException}.
+     */
+    public synchronized void waitForCompletion() {
         while (!isCompleted()) {
-            wait();
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                throw new DaoException("Interrupted while waiting for all operations to complete", e);
+            }
         }
     }
 
-    public synchronized boolean waitForCompletion(int maxMillis) throws InterruptedException {
+    /**
+     * Waits until all enqueued operations are complete, but at most the given amount of milliseconds. If the thread
+     * gets interrupted, any {@link InterruptedException} will be rethrown as a {@link DaoException}.
+     * 
+     * @return true if operations completed in the given time frame.
+     */
+    public synchronized boolean waitForCompletion(int maxMillis) {
         if (!isCompleted()) {
-            wait(maxMillis);
+            try {
+                wait(maxMillis);
+            } catch (InterruptedException e) {
+                throw new DaoException("Interrupted while waiting for all operations to complete", e);
+            }
         }
         return isCompleted();
     }
@@ -173,7 +191,7 @@ class AsyncOperationExecutor implements Runnable {
                 for (AsyncOperation asyncOperation : mergedOps) {
                     // Check listener again in case the listener removed itself in the callback
                     if (listener != null) {
-                        postOperationCompleted(asyncOperation);
+                        handleOperationCompleted(asyncOperation);
                     } else {
                         break;
                     }
@@ -182,7 +200,9 @@ class AsyncOperationExecutor implements Runnable {
         }
     }
 
-    private void postOperationCompleted(AsyncOperation operation) {
+    private void handleOperationCompleted(AsyncOperation operation) {
+        operation.setCompleted();
+
         AsyncOperationListener listenerToCall = listener;
         if (listenerToCall != null) {
             listenerToCall.onAsyncOperationCompleted(operation);
@@ -197,7 +217,7 @@ class AsyncOperationExecutor implements Runnable {
 
     private void executeOperationAndPostCompleted(AsyncOperation operation) {
         executeOperation(operation);
-        postOperationCompleted(operation);
+        handleOperationCompleted(operation);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -270,7 +290,7 @@ class AsyncOperationExecutor implements Runnable {
             operation.throwable = th;
         }
         operation.timeCompleted = System.currentTimeMillis();
-        operation.completed = true;
+        // Do not set it to completed here because it might be a merged TX
     }
 
     private void executeTransactionRunnable(AsyncOperation operation) {

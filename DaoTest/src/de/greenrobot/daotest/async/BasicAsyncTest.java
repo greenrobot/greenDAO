@@ -21,13 +21,13 @@ public class BasicAsyncTest extends AbstractDaoSessionTest<Application, DaoMaste
         asyncSession = daoSession.startAsyncSession();
     }
 
-    public void testWaitForCompletionNoOps() throws InterruptedException {
+    public void testWaitForCompletionNoOps() {
         assertTrue(asyncSession.isCompleted());
         assertTrue(asyncSession.waitForCompletion(1));
         asyncSession.waitForCompletion();
     }
 
-    public void testAsyncInsert() throws InterruptedException {
+    public void testAsyncInsert() {
         SimpleEntity entity = new SimpleEntity();
         entity.setSimpleString("heho");
         asyncSession.insert(entity);

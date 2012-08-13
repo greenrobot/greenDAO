@@ -16,11 +16,11 @@ import de.greenrobot.dao.AsyncOperation.OperationType;
  */
 // Facade to AsyncOperationExecutor: prepares operations and delegates work to AsyncOperationExecutor.
 public class AsyncSession {
-    final AbstractDaoSession session;
-    final AsyncOperationExecutor executor;
+    private final AbstractDaoSession daoSession;
+    private final AsyncOperationExecutor executor;
 
-    AsyncSession(AbstractDaoSession session) {
-        this.session = session;
+    AsyncSession(AbstractDaoSession daoSession) {
+        this.daoSession = daoSession;
         this.executor = new AsyncOperationExecutor();
     }
 
@@ -44,11 +44,21 @@ public class AsyncSession {
         return executor.isCompleted();
     }
 
-    public void waitForCompletion() throws InterruptedException {
+    /**
+     * Waits until all enqueued operations are complete. If the thread gets interrupted, any
+     * {@link InterruptedException} will be rethrown as a {@link DaoException}.
+     */
+    public void waitForCompletion() {
         executor.waitForCompletion();
     }
 
-    public boolean waitForCompletion(int maxMillis) throws InterruptedException {
+    /**
+     * Waits until all enqueued operations are complete, but at most the given amount of milliseconds. If the thread
+     * gets interrupted, any {@link InterruptedException} will be rethrown as a {@link DaoException}.
+     * 
+     * @return true if operations completed in the given time frame.
+     */
+    public boolean waitForCompletion(int maxMillis) {
         return executor.waitForCompletion(maxMillis);
     }
 
@@ -273,7 +283,7 @@ public class AsyncSession {
     }
 
     private AsyncOperation enqueueDatabaseOperation(OperationType type, Object param, int flags) {
-        AsyncOperation operation = new AsyncOperation(type, session.getDatabase(), param, flags);
+        AsyncOperation operation = new AsyncOperation(type, daoSession.getDatabase(), param, flags);
         executor.enqueue(operation);
         return operation;
     }
@@ -283,7 +293,7 @@ public class AsyncSession {
     }
 
     private <E> AsyncOperation enqueEntityOperation(OperationType type, Class<E> entityClass, Object param, int flags) {
-        AbstractDao<?, ?> dao = session.getDao(entityClass);
+        AbstractDao<?, ?> dao = daoSession.getDao(entityClass);
         AsyncOperation operation = new AsyncOperation(type, dao, param, flags);
         executor.enqueue(operation);
         return operation;
