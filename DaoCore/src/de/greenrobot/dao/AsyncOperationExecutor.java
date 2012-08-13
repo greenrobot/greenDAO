@@ -250,6 +250,19 @@ class AsyncOperationExecutor implements Runnable {
                 operation.result = ((Query) operation.parameter).list();
             case QueryUnique:
                 operation.result = ((Query) operation.parameter).unique();
+            case DeleteByKey:
+                operation.dao.deleteByKey(operation.parameter);
+            case DeleteAll:
+                operation.dao.deleteAll();
+            case Load:
+                operation.result = operation.dao.load(operation.parameter);
+            case LoadAll:
+                operation.result = operation.dao.loadAll();
+            case Count:
+                operation.result = operation.dao.count();
+            case Refresh:
+                operation.dao.refresh(operation.parameter);
+                break;
             default:
                 throw new DaoException("Unsupported operation: " + operation.type);
             }

@@ -152,6 +152,16 @@ public class AsyncSession {
         return enqueueEntityOperation(OperationType.Delete, entity, flags);
     }
 
+    /** Asynchronous version of {@link AbstractDao#deleteByKey(Object)}. */
+    public AsyncOperation deleteByKey(Object key) {
+        return deleteByKey(key, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#deleteByKey(Object)}. */
+    public AsyncOperation deleteByKey(Object key, int flags) {
+        return enqueueEntityOperation(OperationType.DeleteByKey, key, flags);
+    }
+
     /** Asynchronous version of {@link AbstractDao#deleteInTx(Object...)}. */
     public <E> AsyncOperation deleteInTx(Class<E> entityClass, E... entities) {
         return deleteInTx(entityClass, 0, entities);
@@ -170,6 +180,16 @@ public class AsyncSession {
     /** Asynchronous version of {@link AbstractDao#deleteInTx(Iterable)}. */
     public <E> AsyncOperation deleteInTx(Class<E> entityClass, Iterable<E> entities, int flags) {
         return enqueEntityOperation(OperationType.DeleteInTxIterable, entityClass, entities, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#deleteAll()}. */
+    public <E> AsyncOperation deleteAll(Class<E> entityClass) {
+        return deleteAll(entityClass, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#deleteAll()}. */
+    public <E> AsyncOperation deleteAll(Class<E> entityClass, int flags) {
+        return enqueEntityOperation(OperationType.DeleteAll, entityClass, null, flags);
     }
 
     /** Asynchronous version of {@link AbstractDaoSession#runInTx(Runnable)}. */
@@ -210,6 +230,46 @@ public class AsyncSession {
     /** Asynchronous version of {@link Query#unique()}. */
     public AsyncOperation queryUnique(Query<?> query, int flags) {
         return enqueueDatabaseOperation(OperationType.QueryUnique, query, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#load(Object)}. */
+    public AsyncOperation load(Class<?> entityClass, Object key) {
+        return load(entityClass, key, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#load(Object)}. */
+    public AsyncOperation load(Class<?> entityClass, Object key, int flags) {
+        return enqueEntityOperation(OperationType.Load, entityClass, key, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#loadAll()}. */
+    public AsyncOperation loadAll(Class<?> entityClass) {
+        return loadAll(entityClass, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#loadAll()}. */
+    public AsyncOperation loadAll(Class<?> entityClass, int flags) {
+        return enqueEntityOperation(OperationType.LoadAll, entityClass, null, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#count()}. */
+    public AsyncOperation count(Class<?> entityClass) {
+        return count(entityClass, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#count()}. */
+    public AsyncOperation count(Class<?> entityClass, int flags) {
+        return enqueEntityOperation(OperationType.Count, entityClass, null, flags);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#refresh(Object)}. */
+    public AsyncOperation refresh(Object entity) {
+        return refresh(entity, 0);
+    }
+
+    /** Asynchronous version of {@link AbstractDao#refresh(Object)}. */
+    public AsyncOperation refresh(Object entity, int flags) {
+        return enqueueEntityOperation(OperationType.Refresh, entity, flags);
     }
 
     private AsyncOperation enqueueDatabaseOperation(OperationType type, Object param, int flags) {

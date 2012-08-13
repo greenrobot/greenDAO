@@ -31,14 +31,17 @@ public class AsyncOperation {
         InsertOrReplace, InsertOrReplaceInTxIterable, InsertOrReplaceInTxArray, //
         Update, UpdateInTxIterable, UpdateInTxArray, //
         Delete, DeleteInTxIterable, DeleteInTxArray, //
+        DeleteByKey, DeleteAll, //
         TransactionRunnable, TransactionCallable, //
-        QueryList, QueryUnique
+        QueryList, QueryUnique, //
+        Load, LoadAll, //
+        Count, Refresh
     }
 
     public static final int FLAG_MERGE_TX = 1;
 
     final OperationType type;
-    final AbstractDao<Object, ?> dao;
+    final AbstractDao<Object, Object> dao;
     private final SQLiteDatabase database;
     /** Entity, Iterable<Entity>, Entity[], or Runnable. */
     final Object parameter;
@@ -54,7 +57,7 @@ public class AsyncOperation {
     AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter, int flags) {
         this.type = type;
         this.flags = flags;
-        this.dao = (AbstractDao<Object, ?>) dao;
+        this.dao = (AbstractDao<Object, Object>) dao;
         this.database = null;
         this.parameter = parameter;
     }
