@@ -57,10 +57,7 @@ public class AsyncSession {
 
     /** Asynchronous version of {@link AbstractDao#insert(Object)}. */
     public AsyncOperation insert(Object entity, int flags) {
-        AbstractDao<?, ?> dao = session.getDao(entity.getClass());
-        AsyncOperation operation = new AsyncOperation(OperationType.Insert, dao, entity, flags);
-        executor.enqueue(operation);
-        return operation;
+        return enqueueEntityOperation(OperationType.Insert, entity, flags);
     }
 
     /** Asynchronous version of {@link AbstractDao#insertInTx(Iterable)}. */
@@ -70,8 +67,16 @@ public class AsyncSession {
 
     /** Asynchronous version of {@link AbstractDao#insertInTx(Iterable)}. */
     public <E> AsyncOperation insertInTx(Class<E> entityClass, Iterable<E> entities, int flags) {
+        return enqueEntityOperation(OperationType.InsertInTxIterable, entityClass, entities, flags);
+    }
+
+    private AsyncOperation enqueueEntityOperation(OperationType type, Object entity, int flags) {
+        return enqueEntityOperation(type, entity.getClass(), entity, flags);
+    }
+
+    private <E> AsyncOperation enqueEntityOperation(OperationType type, Class<E> entityClass, Object param, int flags) {
         AbstractDao<?, ?> dao = session.getDao(entityClass);
-        AsyncOperation operation = new AsyncOperation(OperationType.InsertInTxIterable, dao, entities, flags);
+        AsyncOperation operation = new AsyncOperation(type, dao, param, flags);
         executor.enqueue(operation);
         return operation;
     }
