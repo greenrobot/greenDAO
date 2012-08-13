@@ -6,31 +6,33 @@ public class AsyncOperation {
         InsertOrReplace, InsertOrReplaceInTxIterable, InsertOrReplaceInTxArray, //
         Update, UpdateInTxIterable, UpdateInTxArray, //
         Delete, DeleteInTxIterable, DeleteInTxArray, //
-        TransactionRunnable
+        TransactionRunnable, TransactionCallable
     }
 
     public static final int FLAG_MERGE_TX = 1;
 
     final OperationType type;
     final AbstractDao<Object, ?> dao;
-    final Object entity;
+    /** Entity, Iterable<Entity>, Entity[], or Runnable. */
+    final Object parameter;
     final int flags;
 
     volatile long timeStarted;
     volatile long timeCompleted;
     volatile boolean completed;
     volatile Throwable throwable;
+    volatile Object result;
 
-    public AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object entity) {
-        this(type, dao, entity, 0);
+    public AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter) {
+        this(type, dao, parameter, 0);
     }
 
     @SuppressWarnings("unchecked")
-    public AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object entity, int flags) {
+    public AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter, int flags) {
         this.type = type;
         this.flags = flags;
         this.dao = (AbstractDao<Object, ?>) dao;
-        this.entity = entity;
+        this.parameter = parameter;
     }
 
     public Throwable getThrowable() {
@@ -45,8 +47,12 @@ public class AsyncOperation {
         return type;
     }
 
-    public Object getEntity() {
-        return entity;
+    public Object getParameter() {
+        return parameter;
+    }
+
+    public Object getResult() {
+        return result;
     }
 
     public boolean isMergeTx() {
@@ -95,6 +101,7 @@ public class AsyncOperation {
         timeCompleted = 0;
         completed = false;
         throwable = null;
+        result = null;
     }
 
 }

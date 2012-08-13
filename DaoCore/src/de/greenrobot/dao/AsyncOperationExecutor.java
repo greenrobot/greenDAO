@@ -2,6 +2,7 @@ package de.greenrobot.dao;
 
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -190,17 +191,46 @@ class AsyncOperationExecutor implements Runnable {
         try {
             switch (operation.type) {
             case Delete:
-                operation.dao.delete(operation.entity);
+                operation.dao.delete(operation.parameter);
+                break;
+            case DeleteInTxIterable:
+                operation.dao.deleteInTx((Iterable<Object>) operation.parameter);
+                break;
+            case DeleteInTxArray:
+                operation.dao.deleteInTx((Object[]) operation.parameter);
                 break;
             case Insert:
-                operation.dao.insert(operation.entity);
+                operation.dao.insert(operation.parameter);
                 break;
             case InsertInTxIterable:
-                operation.dao.insertInTx((Iterable<Object>) operation.entity);
+                operation.dao.insertInTx((Iterable<Object>) operation.parameter);
+                break;
+            case InsertInTxArray:
+                operation.dao.insertInTx((Object[]) operation.parameter);
+                break;
+            case InsertOrReplace:
+                operation.dao.insertOrReplace(operation.parameter);
+                break;
+            case InsertOrReplaceInTxIterable:
+                operation.dao.insertOrReplaceInTx((Iterable<Object>) operation.parameter);
+                break;
+            case InsertOrReplaceInTxArray:
+                operation.dao.insertOrReplaceInTx((Object[]) operation.parameter);
                 break;
             case Update:
-                operation.dao.update(operation.entity);
+                operation.dao.update(operation.parameter);
                 break;
+            case UpdateInTxIterable:
+                operation.dao.updateInTx((Iterable<Object>) operation.parameter);
+                break;
+            case UpdateInTxArray:
+                operation.dao.updateInTx((Object[]) operation.parameter);
+                break;
+            case TransactionRunnable:
+                executeTransactionRunnable(operation);
+                break;
+            case TransactionCallable:
+                executeTransactionCallable(operation);
             default:
                 throw new DaoException("Unsupported operation: " + operation.type);
             }
@@ -210,4 +240,28 @@ class AsyncOperationExecutor implements Runnable {
         operation.timeCompleted = System.currentTimeMillis();
         operation.completed = true;
     }
+
+    private void executeTransactionRunnable(AsyncOperation operation) {
+        SQLiteDatabase db = operation.dao.getDatabase();
+        db.beginTransaction();
+        try {
+            ((Runnable) operation.parameter).run();
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void executeTransactionCallable(AsyncOperation operation) throws Exception {
+        SQLiteDatabase db = operation.dao.getDatabase();
+        db.beginTransaction();
+        try {
+            operation.result = ((Callable<Object>) operation.parameter).call();
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
 }
