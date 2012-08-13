@@ -185,4 +185,11 @@ public class AbstractDaoSession {
         return db;
     }
 
+    /**
+     * Creates a new {@link AsyncSession} to issue asynchronous entity operations. See {@link AsyncSession} for details.
+     */
+    public AsyncSession startAsyncSession() {
+        return new AsyncSession(this);
+    }
+
 }
