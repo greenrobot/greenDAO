@@ -53,6 +53,14 @@ public class AsyncOperation {
         return (flags & FLAG_MERGE_TX) != 0;
     }
 
+    /**
+     * @return true if this operation is mergeable with the given operation. Checks for null, {@link #FLAG_MERGE_TX},
+     *         and if the database instances match.
+     */
+    boolean isMergeableWith(AsyncOperation other) {
+        return other != null && isMergeTx() && other.isMergeTx() && dao.getDatabase() == other.dao.getDatabase();
+    }
+
     public long getTimeStarted() {
         return timeStarted;
     }
@@ -79,6 +87,14 @@ public class AsyncOperation {
 
     public boolean isCompletedSucessfully() {
         return completed && throwable == null;
+    }
+
+    /** Reset to prepare another execution run. */
+    void reset() {
+        timeStarted = 0;
+        timeCompleted = 0;
+        completed = false;
+        throwable = null;
     }
 
 }

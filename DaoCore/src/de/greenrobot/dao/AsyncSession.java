@@ -6,9 +6,25 @@ public class AsyncSession {
     final AbstractDaoSession session;
     final AsyncOperationExecutor executor;
 
-    AsyncSession(AbstractDaoSession session, AsyncOperationExecutor executor) {
+    AsyncSession(AbstractDaoSession session) {
         this.session = session;
-        this.executor = executor;
+        this.executor = new AsyncOperationExecutor();
+    }
+
+    public int getMaxOperationCountToMerge() {
+        return executor.getMaxOperationCountToMerge();
+    }
+
+    public void setMaxOperationCountToMerge(int maxOperationCountToMerge) {
+        executor.setMaxOperationCountToMerge(maxOperationCountToMerge);
+    }
+
+    public AsyncOperationListener getListener() {
+        return executor.getListener();
+    }
+
+    public void setListener(AsyncOperationListener listener) {
+        executor.setListener(listener);
     }
 
     public void insert(Object entity) {
@@ -17,7 +33,7 @@ public class AsyncSession {
         executor.enqueue(operation);
     }
 
-    public <E> void insertInTx(Class <E> entityClass, Iterable<E> entities) {
+    public <E> void insertInTx(Class<E> entityClass, Iterable<E> entities) {
         AbstractDao<?, ?> dao = session.getDao(entityClass);
         AsyncOperation operation = new AsyncOperation(OperationType.InsertInTxIterable, dao, entities);
         executor.enqueue(operation);
