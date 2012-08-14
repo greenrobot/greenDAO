@@ -13,6 +13,13 @@ public class BasicAsyncTest extends AbstractAsyncTest {
     Thread txThread;
     boolean testListenerMainThread_done;
 
+    public void testSequenceNumber() {
+        AsyncOperation op1 = asyncSession.count(SimpleEntity.class);
+        assertEquals(1, op1.getSequenceNumber());
+        AsyncOperation op2 = asyncSession.count(SimpleEntity.class);
+        assertEquals(2, op2.getSequenceNumber());
+    }
+
     public void testWaitForCompletionNoOps() {
         assertTrue(asyncSession.isCompleted());
         assertTrue(asyncSession.waitForCompletion(1));

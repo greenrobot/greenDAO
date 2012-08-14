@@ -60,6 +60,8 @@ public class AsyncOperation {
     volatile Object result;
     volatile int mergedOperationsCount;
 
+    int sequenceNumber;
+
     @SuppressWarnings("unchecked")
     AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter, int flags) {
         this.type = type;
@@ -201,6 +203,14 @@ public class AsyncOperation {
      */
     public int getMergedOperationsCount() {
         return mergedOperationsCount;
+    }
+
+    /**
+     * Each operation get a unique sequence number when the operation is enqueued. Can be used for efficiently
+     * identifying/mapping operations.
+     */
+    public int getSequenceNumber() {
+        return sequenceNumber;
     }
 
     /** Reset to prepare another execution run. */

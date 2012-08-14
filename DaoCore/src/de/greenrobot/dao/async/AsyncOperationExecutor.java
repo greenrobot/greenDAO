@@ -46,6 +46,7 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
     private int countOperationsCompleted;
 
     private Handler handlerMainThread;
+    private int lastSequenceNumber;
 
     AsyncOperationExecutor() {
         queue = new LinkedBlockingQueue<AsyncOperation>();
@@ -54,6 +55,7 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
 
     public void enqueue(AsyncOperation operation) {
         synchronized (this) {
+            operation.sequenceNumber = ++lastSequenceNumber;
             queue.add(operation);
             countOperationsEnqueued++;
             if (!executorRunning) {
