@@ -15,11 +15,11 @@
  */
 package de.greenrobot.dao;
 
+import de.greenrobot.dao.WhereCondition.PropertyCondition;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-
-import de.greenrobot.dao.WhereCondition.PropertyCondition;
 
 /**
  * Builds custom entity queries using constraints and parameters and without SQL (QueryBuilder creates SQL for you). To
@@ -32,9 +32,9 @@ import de.greenrobot.dao.WhereCondition.PropertyCondition;
  * <code>
  *  List<User> joes = dao.queryBuilder().where(Properties.FirstName.eq("Joe")).orderAsc(Properties.LastName).list();
  *  </code>
- * 
+ *
  * @author Markus
- * 
+ *
  * @param <T>
  *            Entity class to create an query for.
  */
@@ -239,16 +239,23 @@ public class QueryBuilder<T> {
         return this;
     }
 
+    public Query<T> build() {
+        return build(false);
+    }
     /**
      * Builds a reusable query object (Query objects can be executed more efficiently than creating a QueryBuilder for
      * each execution.
      */
-    public Query<T> build() {
+    public Query<T> build(boolean onlyPk) {
         String select;
         if (joinBuilder == null || joinBuilder.length() == 0) {
-            select = dao.getStatements().getSelectAll();
+            select = onlyPk
+                    ? dao.getStatements().getSelectPk()
+                    : dao.getStatements().getSelectAll();
         } else {
-            select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
+            select = onlyPk
+                    ? SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getPkColumns())
+                    : SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
         }
         StringBuilder builder = new StringBuilder(select);
 
@@ -297,8 +304,16 @@ public class QueryBuilder<T> {
     /**
      * Builds a reusable query object for deletion (Query objects can be executed more efficiently than creating a
      * QueryBuilder for each execution.
+     *
      */
     public DeleteQuery<T> buildDelete() {
+        if(limit != null || (orderBuilder != null && orderBuilder.length() > 0)) {
+            return buildDeleteWithLimitAndOrder();
+        }
+        return buildSimpleDelete();
+    }
+
+    protected DeleteQuery<T> buildSimpleDelete() {
         String tablename = dao.getTablename();
         String baseSql = SqlUtils.createSqlDelete(tablename, null);
         StringBuilder builder = new StringBuilder(baseSql);
@@ -312,6 +327,32 @@ public class QueryBuilder<T> {
             DaoLog.d("Values for delete query: " + values);
         }
 
+        return new DeleteQuery<T>(dao, sql, values);
+    }
+
+    /*
+    * Android does not come with SQLITE_ENABLE_UPDATE_DELETE_LIMIT option enabled which prevents us from writing
+    * delete queries with limit and order. This method overcomes that limitation by re-writing the query as an IN
+    * statement
+    *
+    * */
+    protected DeleteQuery<T> buildDeleteWithLimitAndOrder() {
+        if(dao.getPkColumns().length != 1) {
+            throw new UnsupportedOperationException("Delete with Limit and Order is only supported " +
+                    "for tables with 1 PK column");
+        }
+        Query<T> selectQuery = build(true);
+        String baseSql = SqlUtils.createSqlDelete(dao.getTablename(), null);
+        StringBuilder builder = new StringBuilder(baseSql);
+        builder.append(" WHERE ").append(dao.getPkColumns()[0])
+                .append(" IN( ").append(selectQuery.getSql()).append(" )");
+        String sql = builder.toString();
+        if (LOG_SQL) {
+            DaoLog.d("Built SQL for delete query: " + sql);
+        }
+        if (LOG_VALUES) {
+            DaoLog.d("Values for delete query: " + values);
+        }
         return new DeleteQuery<T>(dao, sql, values);
     }
 
