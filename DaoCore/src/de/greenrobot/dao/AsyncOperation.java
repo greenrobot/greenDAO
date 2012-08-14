@@ -25,7 +25,7 @@ import android.database.sqlite.SQLiteDatabase;
  * 
  * @see AsyncSession
  */
-// TODO Implement Future?
+// TODO Implement Future<V>
 public class AsyncOperation {
     public static enum OperationType {
         Insert, InsertInTxIterable, InsertInTxArray, //
@@ -40,6 +40,9 @@ public class AsyncOperation {
     }
 
     public static final int FLAG_MERGE_TX = 1;
+
+    /** TODO unused, just an idea */
+    public static final int FLAG_STOP_QUEUE_ON_EXCEPTION = 1 << 1;
 
     final OperationType type;
     final AbstractDao<Object, Object> dao;
@@ -88,14 +91,18 @@ public class AsyncOperation {
     }
 
     /**
-     * The operation's result after it has completed. Will throw an Execption if no result is available yet. If you want
-     * to wait for completion, see {@link #waitForCompletion()}.
+     * The operation's result after it has completed. Waits until a result is available.
      * 
      * @return The operation's result or null if the operation type does not produce any result.
+     * @throws TODO change Exception
+     * @see #waitForCompletion()
      */
-    public Object getResult() {
+    public synchronized Object getResult() {
         if (!completed) {
-            throw new DaoException("The operation did not complete yet, consider waitForCompletion instead");
+            waitForCompletion();
+        }
+        if (throwable != null) {
+            throw new DaoException("AsyncOp failed", throwable);
         }
         return result;
     }

@@ -3,6 +3,7 @@ package de.greenrobot.daotest.async;
 import java.util.concurrent.Callable;
 
 import de.greenrobot.dao.AsyncOperation;
+import de.greenrobot.dao.DaoException;
 import de.greenrobot.daotest.SimpleEntity;
 
 public class BasicAsyncTest extends AbstractAsyncTest {
@@ -42,6 +43,37 @@ public class BasicAsyncTest extends AbstractAsyncTest {
         assertSingleOperationCompleted(operation);
     }
 
+    public void testOperationGetResult() {
+        SimpleEntity entity = new SimpleEntity();
+        entity.setSimpleString("heho");
+        daoSession.insert(entity);
+        daoSession.clear();
+        
+        AsyncOperation operation = asyncSession.load(SimpleEntity.class, entity.getId());
+        SimpleEntity result = (SimpleEntity) operation.getResult();
+        assertTrue(operation.isCompleted());
+        assertTrue(operation.isCompletedSucessfully());
+        assertNotNull(result);
+        assertNotSame(entity, result);
+        assertEquals(entity.getId(),result.getId());
+        assertEquals(entity.getSimpleString(),result.getSimpleString());
+    }
+    
+    public void testOperationGetResultException() {
+        SimpleEntity entity = new SimpleEntity();
+        daoSession.insert(entity);
+        AsyncOperation operation = asyncSession.insert(entity);
+        try{
+            operation.getResult();
+            fail("getResult should have thrown");
+        } catch(DaoException expected) {
+            //OK
+        }
+        assertTrue( operation.isCompleted());
+        assertFalse( operation.isCompletedSucessfully());
+        assertTrue(operation.isFailed());
+    }
+    
     public void testAsyncException() {
         SimpleEntity entity = new SimpleEntity();
         daoSession.insert(entity);
