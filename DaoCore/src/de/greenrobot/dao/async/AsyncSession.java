@@ -36,6 +36,14 @@ public class AsyncSession {
         executor.setMaxOperationCountToMerge(maxOperationCountToMerge);
     }
 
+    public int getWaitForMergeMillis() {
+        return executor.getWaitForMergeMillis();
+    }
+
+    public void setWaitForMergeMillis(int waitForMergeMillis) {
+        executor.setWaitForMergeMillis(waitForMergeMillis);
+    }
+
     public AsyncOperationListener getListener() {
         return executor.getListener();
     }

@@ -23,14 +23,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.Query;
-
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.Query;
 
 class AsyncOperationExecutor implements Runnable, Handler.Callback {
 
@@ -41,6 +40,7 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
     private volatile int maxOperationCountToMerge;
     private volatile AsyncOperationListener listener;
     private volatile AsyncOperationListener listenerMainThread;
+    private volatile int waitForMergeMillis;
 
     private int countOperationsEnqueued;
     private int countOperationsCompleted;
@@ -51,6 +51,7 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
     AsyncOperationExecutor() {
         queue = new LinkedBlockingQueue<AsyncOperation>();
         maxOperationCountToMerge = 50;
+        waitForMergeMillis = 50;
     }
 
     public void enqueue(AsyncOperation operation) {
@@ -71,6 +72,14 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
 
     public void setMaxOperationCountToMerge(int maxOperationCountToMerge) {
         this.maxOperationCountToMerge = maxOperationCountToMerge;
+    }
+
+    public int getWaitForMergeMillis() {
+        return waitForMergeMillis;
+    }
+
+    public void setWaitForMergeMillis(int waitForMergeMillis) {
+        this.waitForMergeMillis = waitForMergeMillis;
     }
 
     public AsyncOperationListener getListener() {
@@ -143,7 +152,7 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
                     if (operation != null) {
                         if (operation.isMergeTx()) {
                             // Wait some ms for another operation to merge because a TX is expensive
-                            AsyncOperation operation2 = queue.poll(50, TimeUnit.MILLISECONDS);
+                            AsyncOperation operation2 = queue.poll(waitForMergeMillis, TimeUnit.MILLISECONDS);
                             if (operation2 != null) {
                                 if (operation.isMergeableWith(operation2)) {
                                     mergeTxAndExecute(operation, operation2);
