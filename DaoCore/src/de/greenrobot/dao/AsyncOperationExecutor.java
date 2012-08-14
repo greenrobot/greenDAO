@@ -266,20 +266,28 @@ class AsyncOperationExecutor implements Runnable {
                 break;
             case TransactionCallable:
                 executeTransactionCallable(operation);
+                break;
             case QueryList:
                 operation.result = ((Query) operation.parameter).list();
+                break;
             case QueryUnique:
                 operation.result = ((Query) operation.parameter).unique();
+                break;
             case DeleteByKey:
                 operation.dao.deleteByKey(operation.parameter);
+                break;
             case DeleteAll:
                 operation.dao.deleteAll();
+                break;
             case Load:
                 operation.result = operation.dao.load(operation.parameter);
+                break;
             case LoadAll:
                 operation.result = operation.dao.loadAll();
+                break;
             case Count:
                 operation.result = operation.dao.count();
+                break;
             case Refresh:
                 operation.dao.refresh(operation.parameter);
                 break;
