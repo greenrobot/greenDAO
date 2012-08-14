@@ -96,7 +96,7 @@ public class AsyncOperation {
      * The operation's result after it has completed. Waits until a result is available.
      * 
      * @return The operation's result or null if the operation type does not produce any result.
-     * @throws TODO change Exception
+     * @throws {@link AsyncDaoException} if the operation produced an exception
      * @see #waitForCompletion()
      */
     public synchronized Object getResult() {
@@ -104,7 +104,7 @@ public class AsyncOperation {
             waitForCompletion();
         }
         if (throwable != null) {
-            throw new DaoException("AsyncOp failed", throwable);
+            throw new AsyncDaoException(this, throwable);
         }
         return result;
     }

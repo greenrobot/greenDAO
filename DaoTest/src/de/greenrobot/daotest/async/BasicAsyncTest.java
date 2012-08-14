@@ -3,6 +3,7 @@ package de.greenrobot.daotest.async;
 import java.util.concurrent.Callable;
 
 import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.async.AsyncDaoException;
 import de.greenrobot.dao.async.AsyncOperation;
 import de.greenrobot.daotest.SimpleEntity;
 
@@ -66,7 +67,7 @@ public class BasicAsyncTest extends AbstractAsyncTest {
         try{
             operation.getResult();
             fail("getResult should have thrown");
-        } catch(DaoException expected) {
+        } catch(AsyncDaoException expected) {
             //OK
         }
         assertTrue( operation.isCompleted());

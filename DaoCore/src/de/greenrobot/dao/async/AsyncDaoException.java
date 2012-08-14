@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-package de.greenrobot.dao;
+package de.greenrobot.dao.async;
+
+import de.greenrobot.dao.DaoException;
 
 /**
- * Can be queued (future work).
+ * Used here: {@link AsyncOperation#getResult()}.
  * 
  * @author Markus
  */
-public class Command {
-    public static enum CommandType {
-        Insert, InsertInTx, AndSoOn
+public class AsyncDaoException extends DaoException {
+
+    private static final long serialVersionUID = 5872157552005102382L;
+
+    private final AsyncOperation failedOperation;
+
+    public AsyncDaoException(AsyncOperation failedOperation, Throwable cause) {
+        super(cause);
+        this.failedOperation = failedOperation;
     }
 
-    public CommandType type;
-    public AbstractDao<?, ?> dao;
-    public Object data;
-
-    public Command(CommandType type, AbstractDao<?, ?> dao, Object data) {
-        this.type = type;
-        this.dao = dao;
-        this.data = data;
+    public AsyncOperation getFailedOperation() {
+        return failedOperation;
     }
 
 }
