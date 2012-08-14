@@ -39,4 +39,10 @@ public abstract class AbstractAsyncTest extends AbstractDaoSessionTest<Applicati
         completedOperations.add(operation);
     }
 
+    protected void assertSingleOperationCompleted(AsyncOperation operation) {
+        assertSame(operation, completedOperations.get(0));
+        assertEquals(1, completedOperations.size());
+        assertTrue(operation.isCompleted());
+    }
+
 }

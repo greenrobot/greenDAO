@@ -25,6 +25,7 @@ import android.database.sqlite.SQLiteDatabase;
  * 
  * @see AsyncSession
  */
+// TODO Implement Future?
 public class AsyncOperation {
     public static enum OperationType {
         Insert, InsertInTxIterable, InsertInTxArray, //
@@ -163,7 +164,7 @@ public class AsyncOperation {
      * 
      * @return true if the operation completed in the given time frame.
      */
-    public synchronized Object waitForCompletion(int maxMillis) {
+    public synchronized boolean waitForCompletion(int maxMillis) {
         if (!completed) {
             try {
                 wait(maxMillis);
