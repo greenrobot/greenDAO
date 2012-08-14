@@ -78,7 +78,7 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
     public void setListener(AsyncOperationListener listener) {
         this.listener = listener;
     }
-    
+
     public AsyncOperationListener getListenerMainThread() {
         return listenerMainThread;
     }
@@ -164,16 +164,17 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
         }
     }
 
-    private void mergeTxAndExecute(AsyncOperation operation, AsyncOperation operation2) {
+    private void mergeTxAndExecute(AsyncOperation operation1, AsyncOperation operation2) {
         ArrayList<AsyncOperation> mergedOps = new ArrayList<AsyncOperation>();
-        mergedOps.add(operation);
+        mergedOps.add(operation1);
         mergedOps.add(operation2);
 
-        SQLiteDatabase db = operation.getDatabase();
+        SQLiteDatabase db = operation1.getDatabase();
         db.beginTransaction();
         boolean failed = false;
         try {
             for (int i = 0; i < mergedOps.size(); i++) {
+                AsyncOperation operation = mergedOps.get(i);
                 executeOperation(operation);
                 if (operation.isFailed()) {
                     // Operation may still have changed the DB, roll back everything
@@ -205,15 +206,10 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
                 executeOperationAndPostCompleted(asyncOperation);
             }
         } else {
-            if (listener != null) {
-                for (AsyncOperation asyncOperation : mergedOps) {
-                    // Check listener again in case the listener removed itself in the callback
-                    if (listener != null) {
-                        handleOperationCompleted(asyncOperation);
-                    } else {
-                        break;
-                    }
-                }
+            int mergedCount = mergedOps.size();
+            for (AsyncOperation asyncOperation : mergedOps) {
+                asyncOperation.mergedOperationsCount = mergedCount;
+                handleOperationCompleted(asyncOperation);
             }
         }
     }
@@ -225,14 +221,14 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
         if (listenerToCall != null) {
             listenerToCall.onAsyncOperationCompleted(operation);
         }
-        synchronized (this) {
-            if (listenerMainThread != null) {
-                if(handlerMainThread == null) {
-                    handlerMainThread = new Handler(Looper.getMainLooper(), this);
-                }
-                Message msg = handlerMainThread.obtainMessage(1, operation);
-                handlerMainThread.sendMessage(msg);
+        if (listenerMainThread != null) {
+            if (handlerMainThread == null) {
+                handlerMainThread = new Handler(Looper.getMainLooper(), this);
             }
+            Message msg = handlerMainThread.obtainMessage(1, operation);
+            handlerMainThread.sendMessage(msg);
+        }
+        synchronized (this) {
             countOperationsCompleted++;
             if (countOperationsCompleted == countOperationsEnqueued) {
                 notifyAll();

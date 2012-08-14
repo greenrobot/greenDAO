@@ -58,6 +58,7 @@ public class AsyncOperation {
     private volatile boolean completed;
     volatile Throwable throwable;
     volatile Object result;
+    volatile int mergedOperationsCount;
 
     @SuppressWarnings("unchecked")
     AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter, int flags) {
@@ -194,6 +195,14 @@ public class AsyncOperation {
         return completed && throwable == null;
     }
 
+    /**
+     * If this operation was successfully merged with other operation into a single TX, this will give the count of
+     * merged operations. If the operation was not merged, it will be 0.
+     */
+    public int getMergedOperationsCount() {
+        return mergedOperationsCount;
+    }
+
     /** Reset to prepare another execution run. */
     void reset() {
         timeStarted = 0;
@@ -201,6 +210,7 @@ public class AsyncOperation {
         completed = false;
         throwable = null;
         result = null;
+        mergedOperationsCount = 0;
     }
 
 }
