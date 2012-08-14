@@ -19,9 +19,9 @@ import java.util.Collection;
 
 /**
  * A repeatable query returning entities.
- * 
+ *
  * @author Markus
- * 
+ *
  * @param <T>
  *            The enitity class the query will return results for.
  */
@@ -62,4 +62,11 @@ abstract class AbstractQuery<T> {
         }
     }
 
+    public String getSql() {
+        return sql;
+    }
+
+    public String[] getParameters() {
+        return parameters;
+    }
 }

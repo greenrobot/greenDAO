@@ -33,6 +33,7 @@ public class TableStatements {
     private volatile String selectAll;
     private volatile String selectByKey;
     private volatile String selectByRowId;
+    private volatile String selectPk;
 
     protected TableStatements(SQLiteDatabase db, String tablename, String[] allColumns, String[] pkColumns) {
         this.db = db;
@@ -79,6 +80,14 @@ public class TableStatements {
             selectAll = SqlUtils.createSqlSelect(tablename, "T", allColumns);
         }
         return selectAll;
+    }
+
+    /** creates a select which only selects PK. */
+    protected String getSelectPk() {
+        if(selectPk == null) {
+            selectPk = SqlUtils.createSqlSelect(tablename, "T", pkColumns);
+        }
+        return selectPk;
     }
 
     // TODO precompile
