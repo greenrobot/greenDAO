@@ -28,8 +28,11 @@ import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.Query;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 
-class AsyncOperationExecutor implements Runnable {
+class AsyncOperationExecutor implements Runnable, Handler.Callback {
 
     private static ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -37,9 +40,12 @@ class AsyncOperationExecutor implements Runnable {
     private volatile boolean executorRunning;
     private volatile int maxOperationCountToMerge;
     private volatile AsyncOperationListener listener;
+    private volatile AsyncOperationListener listenerMainThread;
 
     private int countOperationsEnqueued;
     private int countOperationsCompleted;
+
+    private Handler handlerMainThread;
 
     AsyncOperationExecutor() {
         queue = new LinkedBlockingQueue<AsyncOperation>();
@@ -71,6 +77,14 @@ class AsyncOperationExecutor implements Runnable {
 
     public void setListener(AsyncOperationListener listener) {
         this.listener = listener;
+    }
+    
+    public AsyncOperationListener getListenerMainThread() {
+        return listenerMainThread;
+    }
+
+    public void setListenerMainThread(AsyncOperationListener listenerMainThread) {
+        this.listenerMainThread = listenerMainThread;
     }
 
     public synchronized boolean isCompleted() {
@@ -212,6 +226,13 @@ class AsyncOperationExecutor implements Runnable {
             listenerToCall.onAsyncOperationCompleted(operation);
         }
         synchronized (this) {
+            if (listenerMainThread != null) {
+                if(handlerMainThread == null) {
+                    handlerMainThread = new Handler(Looper.getMainLooper(), this);
+                }
+                Message msg = handlerMainThread.obtainMessage(1, operation);
+                handlerMainThread.sendMessage(msg);
+            }
             countOperationsCompleted++;
             if (countOperationsCompleted == countOperationsEnqueued) {
                 notifyAll();
@@ -326,6 +347,15 @@ class AsyncOperationExecutor implements Runnable {
         } finally {
             db.endTransaction();
         }
+    }
+
+    @Override
+    public boolean handleMessage(Message msg) {
+        AsyncOperationListener listenerToCall = listenerMainThread;
+        if (listenerToCall != null) {
+            listenerToCall.onAsyncOperationCompleted((AsyncOperation) msg.obj);
+        }
+        return false;
     }
 
 }

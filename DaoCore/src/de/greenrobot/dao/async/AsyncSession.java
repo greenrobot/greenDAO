@@ -44,6 +44,14 @@ public class AsyncSession {
         executor.setListener(listener);
     }
 
+    public AsyncOperationListener getListenerMainThread() {
+        return executor.getListenerMainThread();
+    }
+
+    public void setListenerMainThread(AsyncOperationListener listenerMainThread) {
+        executor.setListenerMainThread(listenerMainThread);
+    }
+
     public boolean isCompleted() {
         return executor.isCompleted();
     }

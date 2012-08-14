@@ -2,14 +2,16 @@ package de.greenrobot.daotest.async;
 
 import java.util.concurrent.Callable;
 
-import de.greenrobot.dao.DaoException;
+import android.os.Looper;
 import de.greenrobot.dao.async.AsyncDaoException;
 import de.greenrobot.dao.async.AsyncOperation;
+import de.greenrobot.dao.async.AsyncOperationListener;
 import de.greenrobot.daotest.SimpleEntity;
 
 public class BasicAsyncTest extends AbstractAsyncTest {
 
     Thread txThread;
+    boolean testListenerMainThread_done;
 
     public void testWaitForCompletionNoOps() {
         assertTrue(asyncSession.isCompleted());
@@ -49,32 +51,32 @@ public class BasicAsyncTest extends AbstractAsyncTest {
         entity.setSimpleString("heho");
         daoSession.insert(entity);
         daoSession.clear();
-        
+
         AsyncOperation operation = asyncSession.load(SimpleEntity.class, entity.getId());
         SimpleEntity result = (SimpleEntity) operation.getResult();
         assertTrue(operation.isCompleted());
         assertTrue(operation.isCompletedSucessfully());
         assertNotNull(result);
         assertNotSame(entity, result);
-        assertEquals(entity.getId(),result.getId());
-        assertEquals(entity.getSimpleString(),result.getSimpleString());
+        assertEquals(entity.getId(), result.getId());
+        assertEquals(entity.getSimpleString(), result.getSimpleString());
     }
-    
+
     public void testOperationGetResultException() {
         SimpleEntity entity = new SimpleEntity();
         daoSession.insert(entity);
         AsyncOperation operation = asyncSession.insert(entity);
-        try{
+        try {
             operation.getResult();
             fail("getResult should have thrown");
-        } catch(AsyncDaoException expected) {
-            //OK
+        } catch (AsyncDaoException expected) {
+            // OK
         }
-        assertTrue( operation.isCompleted());
-        assertFalse( operation.isCompletedSucessfully());
+        assertTrue(operation.isCompleted());
+        assertFalse(operation.isCompletedSucessfully());
         assertTrue(operation.isFailed());
     }
-    
+
     public void testAsyncException() {
         SimpleEntity entity = new SimpleEntity();
         daoSession.insert(entity);
@@ -126,4 +128,22 @@ public class BasicAsyncTest extends AbstractAsyncTest {
         assertFalse(Thread.currentThread().equals(txThread));
     }
 
+    public void testListenerMainThread() throws InterruptedException {
+        AsyncOperationListener listener = new AsyncOperationListener() {
+            @Override
+            public synchronized void onAsyncOperationCompleted(AsyncOperation operation) {
+                assertEquals(Looper.getMainLooper(), Looper.myLooper());
+                testListenerMainThread_done = true;
+                notifyAll();
+            }
+        };
+        asyncSession.setListenerMainThread(listener);
+        asyncSession.insert(new SimpleEntity());
+        assertWaitForCompletion1Sec();
+        while (!testListenerMainThread_done) {
+            synchronized (listener) {
+                listener.wait();
+            }
+        }
+    }
 }
