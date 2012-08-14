@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package de.greenrobot.dao;
+package de.greenrobot.dao.async;
 
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoException;
 import android.database.sqlite.SQLiteDatabase;
 
 /**

@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import de.greenrobot.dao.async.AsyncSession;
+
 import android.database.sqlite.SQLiteDatabase;
 
 /**

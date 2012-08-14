@@ -2,8 +2,8 @@ package de.greenrobot.daotest.async;
 
 import java.util.concurrent.Callable;
 
-import de.greenrobot.dao.AsyncOperation;
 import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.async.AsyncOperation;
 import de.greenrobot.daotest.SimpleEntity;
 
 public class BasicAsyncTest extends AbstractAsyncTest {

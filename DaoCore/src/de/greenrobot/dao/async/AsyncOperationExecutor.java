@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.greenrobot.dao;
+package de.greenrobot.dao.async;
 
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -22,6 +22,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
+import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.Query;
 
 import android.database.sqlite.SQLiteDatabase;
 

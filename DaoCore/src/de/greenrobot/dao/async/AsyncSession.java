@@ -1,8 +1,12 @@
-package de.greenrobot.dao;
+package de.greenrobot.dao.async;
 
 import java.util.concurrent.Callable;
 
-import de.greenrobot.dao.AsyncOperation.OperationType;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.AbstractDaoSession;
+import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.Query;
+import de.greenrobot.dao.async.AsyncOperation.OperationType;
 
 /**
  * Asynchronous interface to entity operations. All operations will enqueued a @link {@link AsyncOperation} and return
@@ -19,7 +23,7 @@ public class AsyncSession {
     private final AbstractDaoSession daoSession;
     private final AsyncOperationExecutor executor;
 
-    AsyncSession(AbstractDaoSession daoSession) {
+    public AsyncSession(AbstractDaoSession daoSession) {
         this.daoSession = daoSession;
         this.executor = new AsyncOperationExecutor();
     }

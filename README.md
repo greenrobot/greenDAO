@@ -6,7 +6,7 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 Release History
 ---------------
-### V1.3.0 Preview (2012-??-??): New asynchronous API
+### VX.X.0 Preview (2012-??-??): New asynchronous API
 * AsyncSession (acquired from DaoSession.startAsyncSession()) provides most operations for DAOs, Queries, and transactions in a asynchronously variant
 * AsyncOperations are processed in order by a background thread
 * waitForCompletion methods for AsyncSession and AsyncOperations
