@@ -236,6 +236,7 @@ public class LazyList<E> implements List<E>, Closeable {
                     if (entity == null) {
                         entity = loadEntity(location);
                         entities.set(location, entity);
+                        // Ignore FindBugs: increment of volatile is fine here because we use a lock
                         loadedCount++;
                         if (loadedCount == size) {
                             cursor.close();
