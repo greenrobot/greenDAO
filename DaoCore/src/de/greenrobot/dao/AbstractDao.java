@@ -18,6 +18,7 @@ package de.greenrobot.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import android.database.CrossProcessCursor;
@@ -416,10 +417,15 @@ public abstract class AbstractDao<T, K> {
         return loadAllAndCloseCursor(cursor);
     }
 
-    /** @deprecated groupBy & having does not make sense for entities. Method will be removed. */
-    public List<T> query(String selection, String[] selectionArgs, String groupBy, String having, String orderby) {
-        Cursor cursor = db.query(config.tablename, getAllColumns(), selection, selectionArgs, groupBy, having, orderby);
-        return loadAllAndCloseCursor(cursor);
+    /** Creates a repeatable {@link Query} object based on the given raw SQL where you can pass any WHERE clause and arguments. */
+    public Query<T> queryRawCreate(String where, Object... selectionArg) {
+        List<Object> argList = Arrays.asList(selectionArg);
+        return queryRawCreateListArgs(where, argList);
+    }
+
+    /** Creates a repeatable {@link Query} object based on the given raw SQL where you can pass any WHERE clause and arguments. */
+    public Query<T> queryRawCreateListArgs(String where, Collection<Object> selectionArg) {
+        return new Query<T>(this, statements.getSelectAll() + where, selectionArg);
     }
 
     public void deleteAll() {
