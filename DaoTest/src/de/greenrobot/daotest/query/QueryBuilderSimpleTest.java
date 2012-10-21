@@ -193,4 +193,26 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         assertEquals(list1.get(0).getId(), list2.get(0).getId());
     }
 
+    public void testLike() {
+        TestEntity entity = insert(3).get(1);
+        entity.setSimpleString("greenrobot");
+        dao.update(entity);
+
+        Query<TestEntity> query = dao.queryBuilder().where(Properties.SimpleString.like("%robot")).build();
+        TestEntity entity2 = query.uniqueOrThrow();
+        assertEquals(entity.getId(), entity2.getId());
+        
+        query.setParameter(0, "green%");
+        entity2 = query.uniqueOrThrow();
+        assertEquals(entity.getId(), entity2.getId());
+        
+        query.setParameter(0, "%enrob%");
+        entity2 = query.uniqueOrThrow();
+        assertEquals(entity.getId(), entity2.getId());
+        
+        query.setParameter(0, "%nothere%");
+        entity2 = query.unique();
+        assertNull(entity2);
+    }
+
 }
