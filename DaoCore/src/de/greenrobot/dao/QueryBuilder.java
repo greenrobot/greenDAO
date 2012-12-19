@@ -299,20 +299,33 @@ public class QueryBuilder<T> {
      * QueryBuilder for each execution.
      */
     public DeleteQuery<T> buildDelete() {
-        String tablename = dao.getTablename();
-        String baseSql = SqlUtils.createSqlDelete(tablename, null);
-        StringBuilder builder = new StringBuilder(baseSql);
+    	
+    	String tablename = dao.getTablename();
+    	
+    	// the pk select query to allow removal from identity scope
+    	String selectSql = null;
+    	if (dao.identityScopeLong != null && dao.getPkProperty() != null) {
+	    	String baseSelectSql = SqlUtils.createSqlSelect(tablename, tablePrefix, new String[] { dao.getPkProperty().columnName });
+	    	StringBuilder selectBuilder = new StringBuilder(baseSelectSql);
+	    	appendWhereClause(selectBuilder, tablePrefix);
+	    	selectSql = selectBuilder.toString();
+    	}
+    	
+    	// the base deletion sql
+        String baseDeleteSql = SqlUtils.createSqlDelete(tablename, null);
+        StringBuilder builder = new StringBuilder(baseDeleteSql);
         appendWhereClause(builder, tablename);
-        String sql = builder.toString();
+        String deleteSql = builder.toString();
 
         if (LOG_SQL) {
-            DaoLog.d("Built SQL for delete query: " + sql);
+        	DaoLog.d("Built SQL for delect select query: " + selectSql);
+            DaoLog.d("Built SQL for delete query: " + deleteSql);
         }
         if (LOG_VALUES) {
             DaoLog.d("Values for delete query: " + values);
         }
 
-        return new DeleteQuery<T>(dao, sql, values);
+        return new DeleteQuery<T>(dao, deleteSql, selectSql, values);
     }
 
     /**
