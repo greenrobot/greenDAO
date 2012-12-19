@@ -15,8 +15,10 @@
  */
 package de.greenrobot.dao;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
 /**
@@ -30,13 +32,15 @@ import android.database.sqlite.SQLiteStatement;
  */
 public class DeleteQuery<T> extends AbstractQuery<T> {
 
+	private final String selectSql;
     private SQLiteStatement compiledStatement;
 
-    public DeleteQuery(AbstractDao<T, ?> dao, String sql, Collection<Object> valueList) {
-        super(dao, sql, valueList);
-    }
+    public DeleteQuery(AbstractDao<T, ?> dao, String deleteSql, String selectSql, List<Object> values) {
+    	super(dao, deleteSql, values);
+    	this.selectSql = selectSql;
+	}
 
-    /**
+	/**
      * Deletes all matching entities without detaching them from the identity scope (aka session/cache). Note that this
      * method may lead to stale entity objects in the session cache. Stale entities may be returned when loaded by their
      * primary key, but not using queries.
@@ -56,6 +60,36 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
             }
         }
         compiledStatement.execute();
+    }
+    
+    /**
+     * Deletes all matching entities and removes them from the identity scope (aka session/cache).
+     */
+    public synchronized void executeDelete() {
+    	
+    	if (dao.identityScopeLong == null) {
+    		throw new DaoException("IdentityScopeLong required for executeDelete().");
+    	}
+    	
+    	if (dao.getPkProperty() == null) {
+    		throw new DaoException("A single PkProperty is required for executeDelete()");
+    	}
+    	
+    	List<Long> ids = new ArrayList<Long>();
+    	
+    	Cursor cursor = dao.db.rawQuery(selectSql, parameters);
+    	if (cursor.moveToFirst()) {
+            try {
+                do {
+                	ids.add((Long) dao.readKey(cursor, 0));
+                } while (cursor.moveToNext());
+            } finally {
+                cursor.close();
+            }
+            
+            dao.queryBuilder().where(dao.getPkProperty().in(ids)).buildDelete().executeDeleteWithoutDetachingEntities();
+        	dao.identityScopeLong.remove(ids);
+        }
     }
 
 }
