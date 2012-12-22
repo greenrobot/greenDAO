@@ -11,6 +11,7 @@
 
     <modules>
         <module>DaoCore</module>
+        <module>DaoGenerator</module>
     </modules>
 
 </project>
