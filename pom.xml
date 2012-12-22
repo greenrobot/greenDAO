@@ -13,7 +13,7 @@
         <module>DaoCore</module>
         <module>DaoGenerator</module>
         <module>DaoExampleGenerator</module>
-        <!--module>DaoExample</module--> <!-- disabld until I figure out how to handle generated classes from DaoExampleGenerator -->
+        <module>DaoExample</module>
     </modules>
 
 </project>
