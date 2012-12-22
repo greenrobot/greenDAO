@@ -14,19 +14,6 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>android</artifactId>
-            <version>2.1.2</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>android-test</artifactId>
-            <version>2.1.2</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.freemarker</groupId>

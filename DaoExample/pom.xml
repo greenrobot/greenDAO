@@ -44,6 +44,7 @@
     </build>
 
     <dependencies>
+
         <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
@@ -54,12 +55,6 @@
         <dependency>
             <groupId>com.greendao-orm</groupId>
             <artifactId>greendao</artifactId>
-            <version>SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.greendao-orm</groupId>
-            <artifactId>DaoExampleGenerator</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
 
