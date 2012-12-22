@@ -5,9 +5,11 @@
     <name>DaoExampleGenerator</name>
     <version>SNAPSHOT</version>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <parent>
+        <groupId>com.greendao-orm</groupId>
+        <artifactId>greendao-aggregator</artifactId>
+        <version>SNAPSHOT</version>
+    </parent>
 
     <build>
         <sourceDirectory>src</sourceDirectory>
