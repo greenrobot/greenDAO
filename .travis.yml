@@ -1,4 +1,7 @@
 language: java
+branches:
+  except:
+    - mvn-repo
 
 
 # http://levi-wilson.blogspot.com/2012/06/maven-android-travis-ci-and-more.html
