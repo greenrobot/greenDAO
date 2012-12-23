@@ -73,14 +73,14 @@
         </repository>
     </distributionManagement>
 
-    <!--repositories>
+    <repositories>
         <repository>
-            <id>my.mvn.repo</id>
-            <url>https://github.com/emmby/greenDAO/mvn-repo/raw/master</url>
+            <id>greenDAO-mvn-repo</id>
+            <url>http://raw.github.com/emmby/greenDAO/mvn-repo/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
-    </repositories-->
+    </repositories>
 </project>
