@@ -14,30 +14,6 @@
 
     <build>
         <sourceDirectory>src</sourceDirectory>
-        <plugins>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.7</version>
-                <configuration>
-                    <message>Maven artifacts for ${project.version}</message>
-                    <noJekyll>true</noJekyll>
-                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
-                    <branch>refs/heads/mvn-repo</branch>
-                    <includes><include>**/*</include></includes>
-                    <repositoryName>greenDAO</repositoryName>
-                    <repositoryOwner>emmby</repositoryOwner>
-                </configuration>
-                <executions>
-                  <execution>
-                    <goals>
-                      <goal>site</goal>
-                    </goals>
-                    <phase>deploy</phase>
-                  </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
 
     <dependencies>
@@ -57,26 +33,4 @@
 
     </dependencies>
 
-    <properties>
-        <github.global.server>github</github.global.server>      <!-- github server corresponds to entry in ~/.m2/settings.xml -->
-    </properties>
-
-    <distributionManagement>
-        <repository>
-            <id>internal.repo</id>
-            <name>Temporary Staging Repository</name>
-            <url>file://${project.build.directory}/mvn-repo</url>
-        </repository>
-    </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>greenDAO-mvn-repo</id>
-            <url>http://raw.github.com/emmby/greenDAO/mvn-repo/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>
