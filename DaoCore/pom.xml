@@ -20,13 +20,11 @@
                 <artifactId>site-maven-plugin</artifactId>
                 <version>0.7</version>
                 <configuration>
-                    <message>Creating site for ${project.version}</message>
+                    <message>Maven artifacts for ${project.version}</message>
                     <noJekyll>true</noJekyll>
                     <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
                     <branch>refs/heads/mvn-repo</branch>
-                    <includes>
-                        <include>**/*</include>
-                    </includes>
+                    <includes><include>**/*</include></includes>
                     <repositoryName>greenDAO</repositoryName>
                     <repositoryOwner>emmby</repositoryOwner>
                 </configuration>
@@ -60,16 +58,14 @@
     </dependencies>
 
     <properties>
-        <github.global.server>github</github.global.server>
-        <!-- temporary maven repo -->
-        <internal.repo.path>file://${project.build.directory}/mvn-repo</internal.repo.path>
+        <github.global.server>github</github.global.server>      <!-- github server corresponds to entry in ~/.m2/settings.xml -->
     </properties>
 
     <distributionManagement>
         <repository>
             <id>internal.repo</id>
-            <name>Internal Repository</name>
-            <url>${internal.repo.path}</url>
+            <name>Temporary Staging Repository</name>
+            <url>file://${project.build.directory}/mvn-repo</url>
         </repository>
     </distributionManagement>
 
