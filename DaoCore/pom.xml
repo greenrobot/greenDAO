@@ -4,12 +4,12 @@
     <groupId>com.greendao-orm</groupId>
     <artifactId>greendao</artifactId>
     <name>DaoCore</name>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.3-emmby-SNAPSHOT</version>
 
     <parent>
         <groupId>com.greendao-orm</groupId>
         <artifactId>greendao-aggregator</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3-emmby-SNAPSHOT</version>
     </parent>
 
     <build>
