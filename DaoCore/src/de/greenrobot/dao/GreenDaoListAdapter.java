@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-public abstract class GreenDaoListAdapter<T extends DomainObject> extends BaseAdapter {
+public abstract class GreenDaoListAdapter<T extends HasId<Long>> extends BaseAdapter {
 	
     protected boolean dataValid;
     protected LazyList<T> lazyList;
