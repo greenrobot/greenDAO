@@ -72,7 +72,7 @@
     <repositories>
         <repository>
             <id>greenDAO-mvn-repo</id>
-            <url>http://raw.github.com/emmby/greenDAO/mvn-repo/</url>
+            <url>https://raw.github.com/emmby/greenDAO/mvn-repo/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
