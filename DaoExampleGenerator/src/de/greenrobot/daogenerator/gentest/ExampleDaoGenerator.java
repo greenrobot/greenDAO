@@ -36,7 +36,10 @@ public class ExampleDaoGenerator {
         addNote(schema);
         addCustomerOrder(schema);
 
-        new DaoGenerator().generateAll(schema, "../DaoExample/src-gen");
+        if(args.length==0)
+            throw new Exception("Must specify target directory on command line");
+
+        new DaoGenerator().generateAll(schema, args[0]);
     }
 
     private static void addNote(Schema schema) {
