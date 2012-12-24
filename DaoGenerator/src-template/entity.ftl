@@ -122,7 +122,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
         return ${property.propertyName};
     }
 
-<#if schema.isEnableDefaultValueGetters() >
+<#if schema.isEnableDefaultValueGetters() && !property.isPrimitive() >
     /** Not-null value. */
     public ${property.javaType} get${property.propertyName?cap_first}( ${property.javaType} defaultValue ) {
         final ${property.javaType} val = get${property.propertyName?cap_first}();

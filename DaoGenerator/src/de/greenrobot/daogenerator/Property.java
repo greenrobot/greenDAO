@@ -181,6 +181,14 @@ public class Property {
         return javaType;
     }
 
+    public boolean isPrimitive() {
+        final PropertyType[] primitives = { PropertyType.Byte, PropertyType.Short, PropertyType.Int, PropertyType.Long, PropertyType.Boolean, PropertyType.Float, PropertyType.Double };
+        for( PropertyType t : primitives )
+            if( propertyType == t )
+                return true;
+        return false;
+    }
+
     public int getOrdinal() {
         return ordinal;
     }
