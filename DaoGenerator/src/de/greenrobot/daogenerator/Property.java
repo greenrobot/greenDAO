@@ -182,9 +182,9 @@ public class Property {
     }
 
     public boolean isPrimitive() {
-        final PropertyType[] primitives = { PropertyType.Byte, PropertyType.Short, PropertyType.Int, PropertyType.Long, PropertyType.Boolean, PropertyType.Float, PropertyType.Double };
-        for( PropertyType t : primitives )
-            if( propertyType == t )
+        final String[] primitives = { "byte", "short", "int", "long", "boolean", "float", "double" };
+        for( String t : primitives )
+            if( javaType.equals(t) )
                 return true;
         return false;
     }
