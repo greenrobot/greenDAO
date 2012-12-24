@@ -181,6 +181,14 @@ public class Property {
         return javaType;
     }
 
+    public boolean isPrimitive() {
+        final String[] primitives = { "byte", "short", "int", "long", "boolean", "float", "double" };
+        for( String t : primitives )
+            if( javaType.equals(t) )
+                return true;
+        return false;
+    }
+
     public int getOrdinal() {
         return ordinal;
     }
