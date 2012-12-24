@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.greendao-orm</groupId>
     <artifactId>DaoExampleGenerator</artifactId>
@@ -15,15 +16,25 @@
         <sourceDirectory>src</sourceDirectory>
         <plugins>
 
-            <!-- add ability to run the generator by running "mvn exec:java" after it's been build -->
+            <!-- automatically run the generator after it's been built to update DaoExample -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
                 <configuration>
                     <mainClass>de.greenrobot.daogenerator.gentest.ExampleDaoGenerator</mainClass>
+                    <commandlineArgs>${project.build.directory}/../../DaoExample/src-gen/</commandlineArgs>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
         </plugins>
     </build>
 
