@@ -6,14 +6,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 public abstract class GreenDaoListAdapter<T extends HasId<Long>> extends BaseAdapter {
-
-    protected boolean dataValid;
+	
     protected LazyList<T> lazyList;
     protected Context context;
 
     public GreenDaoListAdapter(Context context, LazyList<T> lazyList) {
-        this.lazyList = lazyList;
-        this.dataValid = lazyList != null;
+    	this.lazyList = lazyList;
         this.context = context;
     }
 
@@ -31,7 +29,7 @@ public abstract class GreenDaoListAdapter<T extends HasId<Long>> extends BaseAda
      */
     @Override
     public int getCount() {
-        return dataValid && lazyList != null ? lazyList.size() : 0;
+        return lazyList != null ? lazyList.size() : 0;
     }
 
     /**
@@ -39,7 +37,7 @@ public abstract class GreenDaoListAdapter<T extends HasId<Long>> extends BaseAda
      */
     @Override
     public T getItem(int position) {
-        return dataValid && lazyList != null ? lazyList.get(position) : null;
+        return lazyList != null ? lazyList.get(position) : null;
     }
 
     /**
@@ -47,9 +45,9 @@ public abstract class GreenDaoListAdapter<T extends HasId<Long>> extends BaseAda
      */
     @Override
     public long getItemId(int position) {
-        if (dataValid && lazyList != null) {
-            T item = lazyList.get(position);
-            return item != null ? item.getId() : 0;
+        if (lazyList != null) {
+        	T item = lazyList.get(position);
+            return item!=null ? item.getId() : 0;
         } else {
             return 0;
         }
@@ -64,8 +62,8 @@ public abstract class GreenDaoListAdapter<T extends HasId<Long>> extends BaseAda
      * @see android.widget.ListAdapter#getView(int, View, ViewGroup)
      */
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (!dataValid) {
+    	
+        if (lazyList==null) {
             throw new IllegalStateException("this should only be called when lazylist is populated");
         }
 
@@ -81,9 +79,9 @@ public abstract class GreenDaoListAdapter<T extends HasId<Long>> extends BaseAda
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-
-        if (dataValid) {
-            T item = lazyList.get(position);
+    	
+        if (lazyList!=null) {
+        	T item = lazyList.get(position);
             View v = convertView == null ? newDropDownView(context, item, parent) : convertView;
             bindView(v, context, item);
             return v;
