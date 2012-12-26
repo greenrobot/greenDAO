@@ -93,6 +93,9 @@ public class Entity {
         additionalImportsDao = new TreeSet<String>();
         interfacesToImplement = new ArrayList<String>();
         constructors = true;
+
+        // Add Id interface to all entities
+        interfacesToImplement.add("HasId<Long>");
     }
 
     public PropertyBuilder addBooleanProperty(String propertyName) {
