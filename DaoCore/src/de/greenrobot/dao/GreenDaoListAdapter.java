@@ -24,6 +24,10 @@ public abstract class GreenDaoListAdapter<T extends HasId<Long>> extends BaseAda
         return lazyList;
     }
 
+    public void setLazyList( LazyList<T> lazyList ) {
+        this.lazyList = lazyList;
+    }
+
     /**
      * @see android.widget.ListAdapter#getCount()
      */
