@@ -59,10 +59,10 @@ public class Entity {
     private final Collection<String> additionalImportsEntity;
     private final Collection<String> additionalImportsDao;
     private final List<String> interfacesToImplement;
-	//annotation lists
-	private final List<Annotation> classAnnotations;
-	private final List<Annotation> emptyConstructorAnnotations;
-	private final List<Annotation> fullConstructorAnnotations;
+    //annotation lists
+    private final List<Annotation> classAnnotations;
+    private final List<Annotation> emptyConstructorAnnotations;
+    private final List<Annotation> fullConstructorAnnotations;
 
     private String tableName;
     private String classNameDao;
@@ -96,9 +96,9 @@ public class Entity {
         additionalImportsEntity = new TreeSet<String>();
         additionalImportsDao = new TreeSet<String>();
         interfacesToImplement = new ArrayList<String>();
-		classAnnotations = new ArrayList<Annotation>();
-		emptyConstructorAnnotations = new ArrayList<Annotation>();
-		fullConstructorAnnotations = new ArrayList<Annotation>();
+        classAnnotations = new ArrayList<Annotation>();
+        emptyConstructorAnnotations = new ArrayList<Annotation>();
+        fullConstructorAnnotations = new ArrayList<Annotation>();
 
         constructors = true;
 
@@ -630,25 +630,25 @@ public class Entity {
             checkAdditionalImportsEntityTargetEntity(targetEntity);
         }
 
-		addAnnotationImports(classAnnotations);
-		addAnnotationImports(emptyConstructorAnnotations);
-		addAnnotationImports(fullConstructorAnnotations);
+        addAnnotationImports(classAnnotations);
+        addAnnotationImports(emptyConstructorAnnotations);
+        addAnnotationImports(fullConstructorAnnotations);
 
-		for(Property property : properties) {
-			addAnnotationImports(property.getGetterAnnotations());
-			addAnnotationImports(property.getSetterAnnotations());
-			addAnnotationImports(property.getFieldAnnotations());
-		}
+        for (Property property : properties) {
+            addAnnotationImports(property.getGetterAnnotations());
+            addAnnotationImports(property.getSetterAnnotations());
+            addAnnotationImports(property.getFieldAnnotations());
+        }
 
     }
 
-	private void addAnnotationImports(List<Annotation> annotations) {
-		for(Annotation annotation : annotations) {
-			if(annotation.getPackage() != null) {
-				additionalImportsEntity.add(annotation.getPackage() + "." + annotation.getName());
-			}
-		}
-	}
+    private void addAnnotationImports(List<Annotation> annotations) {
+        for (Annotation annotation : annotations) {
+            if (annotation.getPackage() != null) {
+                additionalImportsEntity.add(annotation.getPackage() + "." + annotation.getName());
+            }
+        }
+    }
 
     private void checkAdditionalImportsEntityTargetEntity(Entity targetEntity) {
         if (!targetEntity.getJavaPackage().equals(javaPackage)) {
