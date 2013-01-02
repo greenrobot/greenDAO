@@ -1,30 +1,30 @@
 <!--
 
-Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)     
-                                                                           
-This file is part of greenDAO Generator.                                   
-                                                                           
-greenDAO Generator is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published by       
-the Free Software Foundation, either version 3 of the License, or          
-(at your option) any later version.                                        
-greenDAO Generator is distributed in the hope that it will be useful,      
-but WITHOUT ANY WARRANTY; without even the implied warranty of             
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              
-GNU General Public License for more details.                               
-                                                                           
-You should have received a copy of the GNU General Public License          
+Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+
+This file is part of greenDAO Generator.
+
+greenDAO Generator is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+greenDAO Generator is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
 along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
 <project name="DaoGenerator" default="build-generator">
 
 	<target name="build-generator" depends="delete-release, build-jar, build-javadoc"></target>
-	
+
 	<target name="delete-release">
 		<delete dir="release" />
 	</target>
-	
+
 	<target name="build-jar" description="Depends on Eclipse to have everthing compiled into bin/">
 		<mkdir dir="release" />
 		<jar jarfile="release/greenDAO-generator.jar" basedir="bin"/>
@@ -51,7 +51,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
         <copy file="release/greenDAO-generator.jar" todir="../DaoExampleGenerator/lib" ></copy>
         <copy file="release/greenDAO-generator-javadoc.jar" todir="../DaoExampleGenerator/lib" ></copy>
     </target>
-	
+
 	<target name="build-starter-package" description="Builds everything">
     	<delete dir="release/example"/>
         <antcall target="refresh-example-jars" />
@@ -73,6 +73,23 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
         <copy file="release/greenDAO-generator.jar" todir="release/example/" ></copy>
         <copy file="release/greenDAO-generator-javadoc.jar" todir="release/example/" ></copy>
     	<zip destfile="release/greenDAO.zip" basedir="release/example/"></zip>
+    </target>
+
+    <path id="build-classpath">
+        <fileset dir="lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="compile" description="compile the source ">
+        <javac srcdir="src" destdir="bin">
+            <classpath refid="build-classpath"/>
+        </javac>
+        <copy todir="bin">
+            <fileset dir="src-template">
+                <include name="*.ftl"/>
+            </fileset>
+        </copy>
     </target>
 
 </project>

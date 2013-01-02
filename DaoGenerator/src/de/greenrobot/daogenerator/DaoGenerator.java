@@ -2,7 +2,7 @@
  * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
- * 
+ *
  * greenDAO Generator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,7 +33,7 @@ import freemarker.template.Template;
 
 /**
  * Once you have your model created, use this class to generate entities and DAOs.
- * 
+ *
  * @author Markus
  */
 public class DaoGenerator {
@@ -137,6 +137,7 @@ public class DaoGenerator {
             Map<String, Object> root = new HashMap<String, Object>();
             root.put("schema", schema);
             root.put("entity", entity);
+			root.put("annotation_no_name", Annotation.NO_NAME);
 
             if (entity != null && entity.getHasKeepSections()) {
                 checkKeepSections(file, root);

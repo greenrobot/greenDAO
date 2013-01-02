@@ -2,7 +2,7 @@
  * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
- * 
+ *
  * greenDAO Generator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -40,7 +40,7 @@ import de.greenrobot.daogenerator.Property.PropertyBuilder;
  * <li>{@link #setSuperclass(String)} to specify a class of which the entity will extend from</li>
  * <li>Various setXXX methods</li>
  * </ul>
- * 
+ *
  * @see <a href="http://greendao-orm.com/documentation/modelling-entities/">Modelling Entities (Documentation page)</a>
  * @see <a href="http://greendao-orm.com/documentation/relations/">Relations (Documentation page)</a>
  */
@@ -59,6 +59,10 @@ public class Entity {
     private final Collection<String> additionalImportsEntity;
     private final Collection<String> additionalImportsDao;
     private final List<String> interfacesToImplement;
+    //annotation lists
+    private final List<Annotation> classAnnotations;
+    private final List<Annotation> emptyConstructorAnnotations;
+    private final List<Annotation> fullConstructorAnnotations;
 
     private String tableName;
     private String classNameDao;
@@ -92,8 +96,13 @@ public class Entity {
         additionalImportsEntity = new TreeSet<String>();
         additionalImportsDao = new TreeSet<String>();
         interfacesToImplement = new ArrayList<String>();
+        classAnnotations = new ArrayList<Annotation>();
+        emptyConstructorAnnotations = new ArrayList<Annotation>();
+        fullConstructorAnnotations = new ArrayList<Annotation>();
+
         constructors = true;
-    }
+
+	}
 
     public PropertyBuilder addBooleanProperty(String propertyName) {
         return addProperty(PropertyType.Boolean, propertyName);
@@ -364,7 +373,7 @@ public class Entity {
     public void setSkipTableCreation(boolean skipTableCreation) {
         this.skipTableCreation = skipTableCreation;
     }
-    
+
     public boolean isSkipTableCreation() {
         return skipTableCreation;
     }
@@ -389,7 +398,34 @@ public class Entity {
         return incomingToManyRelations;
     }
 
-    /**
+	public List<Annotation> getClassAnnotations() {
+		return classAnnotations;
+	}
+
+	public List<Annotation> getEmptyConstructorAnnotations() {
+		return emptyConstructorAnnotations;
+	}
+
+	public List<Annotation> getFullConstructorAnnotations() {
+		return fullConstructorAnnotations;
+	}
+
+	public Entity addClassAnnotation(Annotation annotation) {
+		classAnnotations.add(annotation);
+		return this;
+	}
+
+	public Entity addEmptyConstructorAnnotation(Annotation annotation) {
+		emptyConstructorAnnotations.add(annotation);
+		return this;
+	}
+
+	public Entity addFullConstructorAnnotation(Annotation annotation) {
+		fullConstructorAnnotations.add(annotation);
+		return this;
+	}
+
+	/**
      * Entities with relations are active, but this method allows to make the entities active even if it does not have
      * relations.
      */
@@ -592,6 +628,25 @@ public class Entity {
         for (ToMany toMany : toManyRelations) {
             Entity targetEntity = toMany.getTargetEntity();
             checkAdditionalImportsEntityTargetEntity(targetEntity);
+        }
+
+        addAnnotationImports(classAnnotations);
+        addAnnotationImports(emptyConstructorAnnotations);
+        addAnnotationImports(fullConstructorAnnotations);
+
+        for (Property property : properties) {
+            addAnnotationImports(property.getGetterAnnotations());
+            addAnnotationImports(property.getSetterAnnotations());
+            addAnnotationImports(property.getFieldAnnotations());
+        }
+
+    }
+
+    private void addAnnotationImports(List<Annotation> annotations) {
+        for (Annotation annotation : annotations) {
+            if (annotation.getPackage() != null) {
+                additionalImportsEntity.add(annotation.getPackage() + "." + annotation.getName());
+            }
         }
     }
 

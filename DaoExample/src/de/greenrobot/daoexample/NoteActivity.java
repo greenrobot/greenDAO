@@ -28,10 +28,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
+import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
 import de.greenrobot.daoexample.DaoMaster.DevOpenHelper;
 
@@ -117,6 +114,12 @@ public class NoteActivity extends ListActivity {
         final DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
         String comment = "Added on " + df.format(new Date());
         Note note = new Note(null, noteText, comment, new Date());
+        try {
+            note.validate();
+        } catch (Exception e) {
+            editText.setText(noteText);
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
         noteDao.insert(note);
         Log.d("DaoExample", "Inserted new note, ID: " + note.getId());
 
