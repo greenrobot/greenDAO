@@ -2,7 +2,7 @@
  * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
- * 
+ *
  * greenDAO Generator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,25 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.greenrobot.daogenerator.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 
+import de.greenrobot.daogenerator.*;
 import org.junit.Test;
 
-import de.greenrobot.daogenerator.DaoGenerator;
-import de.greenrobot.daogenerator.DaoUtil;
-import de.greenrobot.daogenerator.Entity;
-import de.greenrobot.daogenerator.Property;
-import de.greenrobot.daogenerator.Schema;
+import static org.junit.Assert.*;
 
 public class SimpleDaoGeneratorTest {
 
@@ -61,5 +54,67 @@ public class SimpleDaoGeneratorTest {
         assertEquals("CAMEL_CASE_THREE", DaoUtil.dbName("CamelCaseThree"));
         assertEquals("CAMEL_CASE_XXXX", DaoUtil.dbName("CamelCaseXXXX"));
     }
+
+
+	@Test
+	public void testAnnotations() throws Exception {
+		String annotationPackage = "de.greenrobot.testdao.annotations";
+		Annotation packagedAnnotation = new Annotation(annotationPackage + ".TestAnnotation");
+		assertEquals("TestAnnotation", packagedAnnotation.getName());
+		assertEquals(annotationPackage, packagedAnnotation.getPackage());
+		Annotation simpleAnnotation = new Annotation("SimpleAnnotation");
+		assertEquals("SimpleAnnotation", simpleAnnotation.getName());
+		assertNull(simpleAnnotation.getPackage());
+
+		Schema schema = new Schema(1, "de.greenrobot.testdao");
+		Entity userEntity = schema.addEntity("TestUser");
+		userEntity.addFullConstructorAnnotation(new CustomConstructorAnnotation("\"myName\"", 25));
+
+		Property idProperty = userEntity.addIdProperty().getProperty();
+		userEntity.addClassAnnotation(new Annotation(annotationPackage + ".ClassAnnotation"));
+		assertEquals(1, userEntity.getClassAnnotations().size());
+		userEntity.addEmptyConstructorAnnotation(new Annotation(annotationPackage + ".ConstructorAnnotation"));
+		assertEquals(1, userEntity.getEmptyConstructorAnnotations().size());
+		assertEquals(1, userEntity.getFullConstructorAnnotations().size());
+		Property nameProperty = userEntity.addStringProperty("name").addFieldAnnotation(new Annotation(annotationPackage + ".FieldAnnotation")).getProperty();
+		assertEquals(1, nameProperty.getFieldAnnotations().size());
+		JSonProperty ageAnnotation = new JSonProperty("years");
+		Property ageProperty = userEntity.addIntProperty("age")
+				.addSetterGetterAnnotation(new Annotation(annotationPackage + ".SetterGetterAnnotation"))
+				.addSetterAnnotation(ageAnnotation)
+				.getProperty();
+		assertEquals(2, ageProperty.getSetterAnnotations().size());
+		assertEquals(1, ageProperty.getGetterAnnotations().size());
+		new DaoGenerator().generateAll(schema, "test-out2");
+		assertTrue(userEntity.getAdditionalImportsEntity().contains(annotationPackage + ".ClassAnnotation"));
+		assertTrue(userEntity.getAdditionalImportsEntity().contains(annotationPackage + ".ConstructorAnnotation"));
+		System.out.println(userEntity.getAdditionalImportsEntity());
+		assertTrue(userEntity.getAdditionalImportsEntity().contains(ageAnnotation.getPackage() + ".JsonProperty"));
+		assertTrue(userEntity.getAdditionalImportsEntity().contains(CustomConstructorAnnotation.PACKAGE + ".CustomConstructorAnnotation"));
+	}
+
+	private static class JSonProperty extends Annotation {
+
+		public JSonProperty(String params) {
+			super("JsonProperty", "\"" + params + "\"");
+		}
+
+		@Override
+		public String getPackage() {
+			return "com.fasterxml.jackson.annotation";
+		}
+	}
+
+	private static class CustomConstructorAnnotation extends Annotation {
+		public static final String PACKAGE = "de.greenrobot.testdao.annotation2";
+		public CustomConstructorAnnotation(String name, int age) {
+			super("CustomConstructorAnnotation", "name", name, "age", Integer.toString(age));
+		}
+
+		@Override
+		public String getPackage() {
+			return PACKAGE;
+		}
+	}
 
 }
