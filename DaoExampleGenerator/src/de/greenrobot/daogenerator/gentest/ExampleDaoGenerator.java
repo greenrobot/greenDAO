@@ -15,24 +15,20 @@
  */
 package de.greenrobot.daogenerator.gentest;
 
-import de.greenrobot.daogenerator.DaoGenerator;
-import de.greenrobot.daogenerator.Entity;
-import de.greenrobot.daogenerator.Property;
-import de.greenrobot.daogenerator.Schema;
-import de.greenrobot.daogenerator.ToMany;
+import de.greenrobot.daogenerator.*;
 
 /**
  * Generates entities and DAOs for the example project DaoExample.
- * 
+ *
  * Run it as a Java application (not Android).
- * 
+ *
  * @author Markus
  */
 public class ExampleDaoGenerator {
 
     public static void main(String[] args) throws Exception {
         Schema schema = new Schema(3, "de.greenrobot.daoexample");
-
+        schema.enableKeepSectionsByDefault();
         addNote(schema);
         addCustomerOrder(schema);
 
@@ -42,8 +38,8 @@ public class ExampleDaoGenerator {
     private static void addNote(Schema schema) {
         Entity note = schema.addEntity("Note");
         note.addIdProperty();
-        note.addStringProperty("text").notNull();
-        note.addStringProperty("comment");
+        note.addStringProperty("text").notNull().addFieldAnnotation(new ValidationAnnotation("minLength", 5));;
+        note.addStringProperty("comment").addSetterGetterAnnotation(new Annotation("InnerAnnotation", "\"beautiful\""));
         note.addDateProperty("date");
     }
 
@@ -62,6 +58,17 @@ public class ExampleDaoGenerator {
         ToMany customerToOrders = customer.addToMany(order, customerId);
         customerToOrders.setName("orders");
         customerToOrders.orderAsc(orderDate);
+    }
+
+    private static class ValidationAnnotation extends Annotation {
+        public ValidationAnnotation(String key, int value) {
+            super("ValidationAnnotation", "key", "\"" + key + "\"", "val", Integer.toString(value));
+        }
+
+        @Override
+        public String getPackage() {
+            return "de.greenrobot.daoexample.annotations";
+        }
     }
 
 }
