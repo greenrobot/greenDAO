@@ -68,6 +68,9 @@ public interface WhereCondition {
     public static class PropertyCondition extends AbstractCondition {
 
         private static Object checkValueForType(Property property, Object value) {
+            if (value != null && value.getClass().isArray()) {
+                throw new DaoException("Illegal value: found array, but simple object required");
+            }
             Class<?> type = property.type;
             if (type == Date.class) {
                 if (value instanceof Date) {
