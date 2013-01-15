@@ -180,6 +180,26 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         }
     }
 
+    public void testDeleteByKeyInTx() {
+        List<T> entityList = new ArrayList<T>();
+        for (int i = 0; i < 10; i++) {
+            T entity = createEntityWithRandomPk();
+            entityList.add(entity);
+        }
+        dao.insertInTx(entityList);
+        List<K> keysToDelete = new ArrayList<K>();
+        keysToDelete.add(daoAccess.getKey(entityList.get(0)));
+        keysToDelete.add(daoAccess.getKey(entityList.get(3)));
+        keysToDelete.add(daoAccess.getKey(entityList.get(4)));
+        keysToDelete.add(daoAccess.getKey(entityList.get(8)));
+        dao.deleteByKeyInTx(keysToDelete);
+        assertEquals(entityList.size() - keysToDelete.size(), dao.count());
+        for (K key : keysToDelete) {
+            assertNotNull(key);
+            assertNull(dao.load(key));
+        }
+    }
+
     public void testRowId() {
         T entity1 = createEntityWithRandomPk();
         T entity2 = createEntityWithRandomPk();

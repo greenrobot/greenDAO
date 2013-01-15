@@ -417,13 +417,19 @@ public abstract class AbstractDao<T, K> {
         return loadAllAndCloseCursor(cursor);
     }
 
-    /** Creates a repeatable {@link Query} object based on the given raw SQL where you can pass any WHERE clause and arguments. */
+    /**
+     * Creates a repeatable {@link Query} object based on the given raw SQL where you can pass any WHERE clause and
+     * arguments.
+     */
     public Query<T> queryRawCreate(String where, Object... selectionArg) {
         List<Object> argList = Arrays.asList(selectionArg);
         return queryRawCreateListArgs(where, argList);
     }
 
-    /** Creates a repeatable {@link Query} object based on the given raw SQL where you can pass any WHERE clause and arguments. */
+    /**
+     * Creates a repeatable {@link Query} object based on the given raw SQL where you can pass any WHERE clause and
+     * arguments.
+     */
     public Query<T> queryRawCreateListArgs(String where, Collection<Object> selectionArg) {
         return new Query<T>(this, statements.getSelectAll() + where, selectionArg);
     }
@@ -469,13 +475,7 @@ public abstract class AbstractDao<T, K> {
         stmt.execute();
     }
 
-    /**
-     * Deletes the given entities in the database using a transaction.
-     * 
-     * @param entities
-     *            The entities to delete.
-     */
-    public void deleteInTx(Iterable<T> entities) {
+    private void deleteInTxInternal(Iterable<T> entities, Iterable<K> keys) {
         assertSinglePk();
         SQLiteStatement stmt = statements.getDeleteStatement();
         synchronized (stmt) {
@@ -487,11 +487,21 @@ public abstract class AbstractDao<T, K> {
                     keysToRemoveFromIdentityScope = new ArrayList<K>();
                 }
                 try {
-                    for (T entity : entities) {
-                        K key = getKeyVerified(entity);
-                        deleteByKeyInsideSynchronized(key, stmt);
-                        if (keysToRemoveFromIdentityScope != null) {
-                            keysToRemoveFromIdentityScope.add(key);
+                    if (entities != null) {
+                        for (T entity : entities) {
+                            K key = getKeyVerified(entity);
+                            deleteByKeyInsideSynchronized(key, stmt);
+                            if (keysToRemoveFromIdentityScope != null) {
+                                keysToRemoveFromIdentityScope.add(key);
+                            }
+                        }
+                    }
+                    if (keys != null) {
+                        for (K key : keys) {
+                            deleteByKeyInsideSynchronized(key, stmt);
+                            if (keysToRemoveFromIdentityScope != null) {
+                                keysToRemoveFromIdentityScope.add(key);
+                            }
                         }
                     }
                 } finally {
@@ -515,8 +525,38 @@ public abstract class AbstractDao<T, K> {
      * @param entities
      *            The entities to delete.
      */
+    public void deleteInTx(Iterable<T> entities) {
+        deleteInTxInternal(entities, null);
+    }
+
+    /**
+     * Deletes the given entities in the database using a transaction.
+     * 
+     * @param entities
+     *            The entities to delete.
+     */
     public void deleteInTx(T... entities) {
-        deleteInTx(Arrays.asList(entities));
+        deleteInTxInternal(Arrays.asList(entities), null);
+    }
+
+    /**
+     * Deletes all entities with the given keys in the database using a transaction.
+     * 
+     * @param entities
+     *            The entities to delete.
+     */
+    public void deleteByKeyInTx(Iterable<K> keys) {
+        deleteInTxInternal(null, keys);
+    }
+
+    /**
+     * Deletes all entities with the given keys in the database using a transaction.
+     * 
+     * @param entities
+     *            The entities to delete.
+     */
+    public void deleteByKeyInTx(K... keys) {
+        deleteInTxInternal(null, Arrays.asList(keys));
     }
 
     /** Resets all locally changed properties of the entity by reloading the values from the database. */
