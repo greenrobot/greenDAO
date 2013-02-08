@@ -10,6 +10,28 @@ import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 
 public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application, DaoMaster, DaoSession> {
+    abstract class TestThread extends Thread {
+        final CountDownLatch latchToCountDown;
+        final CountDownLatch latchToWaitFor;
+
+        public TestThread(CountDownLatch latchToCountDown, CountDownLatch latchToWaitFor) {
+            this.latchToCountDown = latchToCountDown;
+            this.latchToWaitFor = latchToWaitFor;
+        }
+
+        @Override
+        public void run() {
+            latchToCountDown.countDown();
+            try {
+                latchToWaitFor.await();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            run2();
+        }
+
+        abstract void run2();
+    }
 
     private final static int TIME_TO_WAIT_FOR_THREAD = 1000; // Use 1000 to be on the safe side, 100 once stable
 
@@ -26,36 +48,28 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
     }
 
     public void testConcurrentInsertDuringTx() throws InterruptedException {
-        final CountDownLatch latch = new CountDownLatch(1);
-        Thread thread = new Thread(new Runnable() {
+        CountDownLatch latchThreadsReady = new CountDownLatch(1);
+        CountDownLatch latchInsideTx = new CountDownLatch(1);
+        Thread thread = new TestThread(latchThreadsReady, latchInsideTx) {
             @Override
-            public void run() {
-                try {
-                    latch.await();
-                    dao.insert(createEntity(null));
-                    dao.insertInTx(createEntity(null));
-                    daoSession.runInTx(new Runnable() {
-                        @Override
-                        public void run() {
-                            dao.insert(createEntity(null));
-                        }
-                    });
-                } catch (InterruptedException e) {
-                }
+            public void run2() {
+                dao.insert(createEntity(null));
+                dao.insertInTx(createEntity(null));
+                daoSession.runInTx(new Runnable() {
+                    @Override
+                    public void run() {
+                        dao.insert(createEntity(null));
+                    }
+                });
             }
-        });
+        };
         thread.start();
         // Builds the statement so it is ready immediately in the thread
         dao.insert(createEntity(null));
-        daoSession.runInTx(new Runnable() {
+        latchThreadsReady.await();
+        doTx(latchInsideTx, new Runnable() {
             @Override
             public void run() {
-                latch.countDown();
-                // Give the concurrent thread time so it will try to acquire locks
-                try {
-                    Thread.sleep(TIME_TO_WAIT_FOR_THREAD);
-                } catch (InterruptedException e) {
-                }
                 dao.insert(createEntity(null));
             }
         });
@@ -65,36 +79,27 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
     public void testConcurrentUpdateDuringTx() throws InterruptedException {
         final TestEntity entity = createEntity(null);
         dao.insert(entity);
-        final CountDownLatch latch = new CountDownLatch(1);
-        Thread thread = new Thread(new Runnable() {
+        CountDownLatch latchThreadsReady = new CountDownLatch(1);
+        final CountDownLatch latchInsideTx = new CountDownLatch(1);
+        Thread thread = new TestThread(latchThreadsReady, latchInsideTx) {
             @Override
-            public void run() {
-                try {
-                    latch.await();
-                    dao.update(entity);
-                    dao.updateInTx(entity);
-                    daoSession.runInTx(new Runnable() {
-                        @Override
-                        public void run() {
-                            dao.update(entity);
-                        }
-                    });
-                } catch (InterruptedException e) {
-                }
+            public void run2() {
+                dao.update(entity);
+                dao.updateInTx(entity);
+                daoSession.runInTx(new Runnable() {
+                    @Override
+                    public void run() {
+                        dao.update(entity);
+                    }
+                });
             }
-        });
+        };
         thread.start();
         // Builds the statement so it is ready immediately in the thread
         dao.update(entity);
-        daoSession.runInTx(new Runnable() {
+        doTx(latchInsideTx, new Runnable() {
             @Override
             public void run() {
-                latch.countDown();
-                // Give the concurrent thread time so it will try to acquire locks
-                try {
-                    Thread.sleep(TIME_TO_WAIT_FOR_THREAD);
-                } catch (InterruptedException e) {
-                }
                 dao.update(entity);
             }
         });
@@ -123,6 +128,22 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         DaoLog.d("TIME: " + time + "ms");
         // Around 1ms on a S3
         assertTrue(time < 10);
+    }
+
+    private void doTx(final CountDownLatch latchInsideTx, final Runnable runnableInsideTx) {
+        daoSession.runInTx(new Runnable() {
+            @Override
+            public void run() {
+                latchInsideTx.countDown();
+                // Give the concurrent thread time so it will try to acquire locks
+                try {
+                    Thread.sleep(TIME_TO_WAIT_FOR_THREAD);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                runnableInsideTx.run();
+            }
+        });
     }
 
     protected TestEntity createEntity(Long key) {
