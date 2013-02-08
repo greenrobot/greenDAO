@@ -11,6 +11,8 @@ import de.greenrobot.dao.test.AbstractDaoSessionTest;
 
 public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application, DaoMaster, DaoSession> {
 
+    private final static int TIME_TO_WAIT_FOR_THREAD = 1000; // Use 1000 to be on the safe side, 100 once stable
+
     private TestEntityDao dao;
 
     public DaoSessionConcurrentTest() {
@@ -30,11 +32,8 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
             public void run() {
                 try {
                     latch.await();
-
                     dao.insert(createEntity(null));
-
                     dao.insertInTx(createEntity(null));
-
                     daoSession.runInTx(new Runnable() {
                         @Override
                         public void run() {
@@ -43,22 +42,60 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
                     });
                 } catch (InterruptedException e) {
                 }
-
             }
         });
         thread.start();
-        // This builds the insert statement so it is ready immediately in the thread
+        // Builds the statement so it is ready immediately in the thread
         dao.insert(createEntity(null));
         daoSession.runInTx(new Runnable() {
             @Override
             public void run() {
                 latch.countDown();
-                // Give the concurrent thread time to enter insert stmt lock
+                // Give the concurrent thread time so it will try to acquire locks
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(TIME_TO_WAIT_FOR_THREAD);
                 } catch (InterruptedException e) {
                 }
                 dao.insert(createEntity(null));
+            }
+        });
+        thread.join();
+    }
+
+    public void testConcurrentUpdateDuringTx() throws InterruptedException {
+        final TestEntity entity = createEntity(null);
+        dao.insert(entity);
+        final CountDownLatch latch = new CountDownLatch(1);
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    latch.await();
+                    dao.update(entity);
+                    dao.updateInTx(entity);
+                    daoSession.runInTx(new Runnable() {
+                        @Override
+                        public void run() {
+                            dao.update(entity);
+                        }
+                    });
+                } catch (InterruptedException e) {
+                }
+            }
+        });
+        thread.start();
+        // Builds the statement so it is ready immediately in the thread
+        dao.update(entity);
+        daoSession.runInTx(new Runnable() {
+            @Override
+            public void run() {
+                latch.countDown();
+                // Give the concurrent thread time so it will try to acquire locks
+                try {
+                    Thread.sleep(TIME_TO_WAIT_FOR_THREAD);
+                } catch (InterruptedException e) {
+                }
+                dao.update(entity);
             }
         });
         thread.join();

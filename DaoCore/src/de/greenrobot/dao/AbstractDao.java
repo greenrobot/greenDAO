@@ -40,6 +40,15 @@ import android.database.sqlite.SQLiteStatement;
  * @param <K>
  *            Primary key (PK) type; use Void if entity does not have exactly one PK
  */
+/*
+ * When operating on TX, statements, or identity scope the following locking order must be met to avoid deadlocks:
+ * 
+ * 1.) If not inside a TX already, begin a TX to acquire a DB connection (connection is to be handled like a lock)
+ * 
+ * 2.) The SQLiteStatement
+ * 
+ * 3.) identityScope
+ */
 public abstract class AbstractDao<T, K> {
     protected final SQLiteDatabase db;
     protected final DaoConfig config;
@@ -600,9 +609,24 @@ public abstract class AbstractDao<T, K> {
     public void update(T entity) {
         assertSinglePk();
         SQLiteStatement stmt = statements.getUpdateStatement();
-        synchronized (stmt) {
-            updateInsideSynchronized(entity, stmt, true);
+
+        if (db.isDbLockedByCurrentThread()) {
+            synchronized (stmt) {
+                updateInsideSynchronized(entity, stmt, true);
+            }
+        } else {
+            // Do TX to acquire a connection before locking the stmt to avoid deadlocks
+            db.beginTransaction();
+            try {
+                synchronized (stmt) {
+                    updateInsideSynchronized(entity, stmt, true);
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
         }
+
     }
 
     public QueryBuilder<T> queryBuilder() {
@@ -661,9 +685,9 @@ public abstract class AbstractDao<T, K> {
      */
     public void updateInTx(Iterable<T> entities) {
         SQLiteStatement stmt = statements.getUpdateStatement();
-        synchronized (stmt) {
-            db.beginTransaction();
-            try {
+        db.beginTransaction();
+        try {
+            synchronized (stmt) {
                 if (identityScope != null) {
                     identityScope.lock();
                 }
@@ -676,10 +700,10 @@ public abstract class AbstractDao<T, K> {
                         identityScope.unlock();
                     }
                 }
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
             }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
     }
 
