@@ -89,7 +89,13 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
                 dao.insertWithoutSettingPk(createEntity(null));
             }
         };
-        initThreads(runnable1, runnable2, runnable3, runnable4);
+        Runnable runnable5 = new Runnable() {
+            @Override
+            public void run() {
+                dao.insertOrReplace(createEntity(null));
+            }
+        };
+        initThreads(runnable1, runnable2, runnable3, runnable4, runnable5);
         // Builds the statement so it is ready immediately in the thread
         dao.insert(createEntity(null));
         doTx(new Runnable() {
@@ -99,7 +105,7 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
             }
         });
         latchThreadsDone.await();
-        assertEquals(6, dao.count());
+        assertEquals(7, dao.count());
     }
 
     public void testConcurrentUpdateDuringTx() throws InterruptedException {
