@@ -294,10 +294,26 @@ public abstract class AbstractDao<T, K> {
      */
     public long insertWithoutSettingPk(T entity) {
         SQLiteStatement stmt = statements.getInsertStatement();
-        synchronized (stmt) {
-            bindValues(stmt, entity);
-            return stmt.executeInsert();
+        long rowId;
+        if (db.isDbLockedByCurrentThread()) {
+            synchronized (stmt) {
+                bindValues(stmt, entity);
+                rowId = stmt.executeInsert();
+            }
+        } else {
+            // Do TX to acquire a connection before locking the stmt to avoid deadlocks
+            db.beginTransaction();
+            try {
+                synchronized (stmt) {
+                    bindValues(stmt, entity);
+                    rowId = stmt.executeInsert();
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
         }
+        return rowId;
     }
 
     /**
