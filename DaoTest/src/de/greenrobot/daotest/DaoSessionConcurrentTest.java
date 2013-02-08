@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.SystemClock;
 import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.Query;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 
 public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application, DaoMaster, DaoSession> {
@@ -31,7 +32,7 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
 
     }
 
-    private final static int TIME_TO_WAIT_FOR_THREAD = 1000; // Use 1000 to be on the safe side, 100 once stable
+    private final static int TIME_TO_WAIT_FOR_THREAD = 100; // Use 1000 to be on the safe side, 100 once stable
 
     private TestEntityDao dao;
 
@@ -145,7 +146,7 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         });
         latchThreadsDone.await();
     }
-    
+
     public void testConcurrentDeleteDuringTx() throws InterruptedException {
         final TestEntity entity = createEntity(null);
         dao.insert(entity);
@@ -179,6 +180,30 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
             @Override
             public void run() {
                 dao.delete(entity);
+            }
+        });
+        latchThreadsDone.await();
+    }
+
+    // Query doesn't involve any statement locking currently, but just to stay on the safe side...
+    public void testConcurrentQueryDuringTx() throws InterruptedException {
+        final TestEntity entity = createEntity(null);
+        dao.insert(entity);
+        final Query<TestEntity> query = dao.queryBuilder().build();
+        Runnable runnable1 = new Runnable() {
+            @Override
+            public void run() {
+                query.list();
+            }
+        };
+
+        initThreads(runnable1);
+        // Builds the statement so it is ready immediately in the thread
+        query.list();
+        doTx(new Runnable() {
+            @Override
+            public void run() {
+                query.list();
             }
         });
         latchThreadsDone.await();
