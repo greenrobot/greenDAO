@@ -483,6 +483,8 @@ public abstract class AbstractDao<T, K> {
     private void deleteByKeyInsideSynchronized(K key, SQLiteStatement stmt) {
         if (key instanceof Long) {
             stmt.bindLong(1, (Long) key);
+        } else if (key == null) {
+            throw new DaoException("Cannot delete entity, key is null");
         } else {
             stmt.bindString(1, key.toString());
         }
@@ -614,6 +616,8 @@ public abstract class AbstractDao<T, K> {
         K key = getKey(entity);
         if (key instanceof Long) {
             stmt.bindLong(index, (Long) key);
+        } else if (key == null) {
+            throw new DaoException("Cannot update entity without key - was it inserted before?");
         } else {
             stmt.bindString(index, key.toString());
         }
