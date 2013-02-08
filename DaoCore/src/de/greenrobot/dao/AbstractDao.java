@@ -240,9 +240,9 @@ public abstract class AbstractDao<T, K> {
     }
 
     private void executeInsertInTx(SQLiteStatement stmt, Iterable<T> entities, boolean setPrimaryKey) {
-        synchronized (stmt) {
-            db.beginTransaction();
-            try {
+        db.beginTransaction();
+        try {
+            synchronized (stmt) {
                 if (identityScope != null) {
                     identityScope.lock();
                 }
@@ -261,10 +261,10 @@ public abstract class AbstractDao<T, K> {
                         identityScope.unlock();
                     }
                 }
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
             }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
     }
 
