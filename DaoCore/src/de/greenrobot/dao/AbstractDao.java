@@ -472,9 +472,6 @@ public abstract class AbstractDao<T, K> {
         assertSinglePk();
         K key = getKeyVerified(entity);
         deleteByKey(key);
-        if (identityScope != null) {
-            identityScope.remove(key);
-        }
     }
 
     /** Deletes an entity with the given PK from the database. Currently, only single value PK entities are supported. */
