@@ -478,8 +478,21 @@ public abstract class AbstractDao<T, K> {
     public void deleteByKey(K key) {
         assertSinglePk();
         SQLiteStatement stmt = statements.getDeleteStatement();
-        synchronized (stmt) {
-            deleteByKeyInsideSynchronized(key, stmt);
+        if (db.isDbLockedByCurrentThread()) {
+            synchronized (stmt) {
+                deleteByKeyInsideSynchronized(key, stmt);
+            }
+        } else {
+            // Do TX to acquire a connection before locking the stmt to avoid deadlocks
+            db.beginTransaction();
+            try {
+                synchronized (stmt) {
+                    deleteByKeyInsideSynchronized(key, stmt);
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
         }
         if (identityScope != null) {
             identityScope.remove(key);
@@ -500,10 +513,10 @@ public abstract class AbstractDao<T, K> {
     private void deleteInTxInternal(Iterable<T> entities, Iterable<K> keys) {
         assertSinglePk();
         SQLiteStatement stmt = statements.getDeleteStatement();
-        synchronized (stmt) {
-            db.beginTransaction();
-            try {
-                List<K> keysToRemoveFromIdentityScope = null;
+        List<K> keysToRemoveFromIdentityScope = null;
+        db.beginTransaction();
+        try {
+            synchronized (stmt) {
                 if (identityScope != null) {
                     identityScope.lock();
                     keysToRemoveFromIdentityScope = new ArrayList<K>();
@@ -531,13 +544,13 @@ public abstract class AbstractDao<T, K> {
                         identityScope.unlock();
                     }
                 }
-                db.setTransactionSuccessful();
-                if (keysToRemoveFromIdentityScope != null && identityScope != null) {
-                    identityScope.remove(keysToRemoveFromIdentityScope);
-                }
-            } finally {
-                db.endTransaction();
             }
+            db.setTransactionSuccessful();
+            if (keysToRemoveFromIdentityScope != null && identityScope != null) {
+                identityScope.remove(keysToRemoveFromIdentityScope);
+            }
+        } finally {
+            db.endTransaction();
         }
     }
 
@@ -606,7 +619,6 @@ public abstract class AbstractDao<T, K> {
     public void update(T entity) {
         assertSinglePk();
         SQLiteStatement stmt = statements.getUpdateStatement();
-
         if (db.isDbLockedByCurrentThread()) {
             synchronized (stmt) {
                 updateInsideSynchronized(entity, stmt, true);
@@ -623,7 +635,6 @@ public abstract class AbstractDao<T, K> {
                 db.endTransaction();
             }
         }
-
     }
 
     public QueryBuilder<T> queryBuilder() {

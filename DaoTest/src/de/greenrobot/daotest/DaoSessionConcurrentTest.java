@@ -133,6 +133,44 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         });
         latchThreadsDone.await();
     }
+    
+    public void testConcurrentDeleteDuringTx() throws InterruptedException {
+        final TestEntity entity = createEntity(null);
+        dao.insert(entity);
+        Runnable runnable1 = new Runnable() {
+            @Override
+            public void run() {
+                dao.delete(entity);
+            }
+        };
+        Runnable runnable2 = new Runnable() {
+            @Override
+            public void run() {
+                dao.deleteInTx(entity);
+            }
+        };
+        Runnable runnable3 = new Runnable() {
+            @Override
+            public void run() {
+                daoSession.runInTx(new Runnable() {
+                    @Override
+                    public void run() {
+                        dao.delete(entity);
+                    }
+                });
+            }
+        };
+        initThreads(runnable1, runnable2, runnable3);
+        // Builds the statement so it is ready immediately in the thread
+        dao.delete(entity);
+        doTx(new Runnable() {
+            @Override
+            public void run() {
+                dao.delete(entity);
+            }
+        });
+        latchThreadsDone.await();
+    }
 
     /**
      * We could put the statements inside ThreadLocals (fast enough), but it comes with initialization penalty for new
