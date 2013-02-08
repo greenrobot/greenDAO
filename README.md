@@ -16,7 +16,9 @@ Release History
 
 ### V1.3.0 Preview (2013-??-??): Multithreading robustness
 * Reworked internal locking of insert/update/delete methods
-* Fixes potential deadlocks when transactions are executed concurrently to one of the various insert/update/delete calls
+* Fixed potential deadlocks when transactions are executed concurrently to one of the various insert/update/delete calls
+* Added new deleteByKeyInTx DAO method to efficiently delete multiple entities using their keys
+* Added some checks to throw exceptions with nicer messages telling what's wrong
 
 ### V1.2.0 (2012-06-08): Feature release
 * Limited support of String PKs (no relations using String FKs yet)
@@ -31,7 +33,7 @@ Release History
 
 ### V1.1.2 (2012-03-26): ADT 17 support for demo project
 * Demo projects works with ADT 17 (moved greendao.jar into libs)
-* CREATE/DROP TABLE may be skipped for entity types: This allows having multiple entity tapes operate on one table
+* CREATE/DROP TABLE may be skipped for entity types: This allows having multiple entity types operate on the same table
 * Minor improvements
 
 ### V1.1.1 (2012-02-14): Mini bugfix&feature release
