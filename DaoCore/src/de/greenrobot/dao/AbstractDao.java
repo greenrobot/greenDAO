@@ -302,9 +302,23 @@ public abstract class AbstractDao<T, K> {
 
     private long executeInsert(T entity, SQLiteStatement stmt) {
         long rowId;
-        synchronized (stmt) {
-            bindValues(stmt, entity);
-            rowId = stmt.executeInsert();
+        if (db.isDbLockedByCurrentThread()) {
+            synchronized (stmt) {
+                bindValues(stmt, entity);
+                rowId = stmt.executeInsert();
+            }
+        } else {
+            // Do TX to acquire a connection before locking the stmt to avoid deadlocks
+            db.beginTransaction();
+            try {
+                synchronized (stmt) {
+                    bindValues(stmt, entity);
+                    rowId = stmt.executeInsert();
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
         }
         updateKeyAfterInsertAndAttach(entity, rowId, true);
         return rowId;

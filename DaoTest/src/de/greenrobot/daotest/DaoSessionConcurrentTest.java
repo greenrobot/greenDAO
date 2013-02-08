@@ -30,8 +30,8 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
             public void run() {
                 try {
                     latch.await();
-                    // XXX Still deadlocking
-                    // dao.insert(createEntity(null));
+
+                    dao.insert(createEntity(null));
 
                     dao.insertInTx(createEntity(null));
 
