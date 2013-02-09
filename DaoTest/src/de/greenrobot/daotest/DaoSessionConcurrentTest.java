@@ -35,11 +35,11 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
 
     private final static int TIME_TO_WAIT_FOR_THREAD = 100; // Use 1000 to be on the safe side, 100 once stable
 
-    private TestEntityDao dao;
+    protected TestEntityDao dao;
 
-    private CountDownLatch latchThreadsReady;
-    private CountDownLatch latchInsideTx;
-    private CountDownLatch latchThreadsDone;
+    protected CountDownLatch latchThreadsReady;
+    protected CountDownLatch latchInsideTx;
+    protected CountDownLatch latchThreadsDone;
 
     public DaoSessionConcurrentTest() {
         super(DaoMaster.class);
@@ -51,7 +51,7 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         dao = daoSession.getTestEntityDao();
     }
 
-    void initThreads(Runnable... runnables) throws InterruptedException {
+    protected void initThreads(Runnable... runnables) throws InterruptedException {
         latchThreadsReady = new CountDownLatch(runnables.length);
         latchInsideTx = new CountDownLatch(1);
         latchThreadsDone = new CountDownLatch(runnables.length);
@@ -286,7 +286,7 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         assertTrue(time < 10);
     }
 
-    private void doTx(final Runnable runnableInsideTx) {
+    protected void doTx(final Runnable runnableInsideTx) {
         daoSession.runInTx(new Runnable() {
             @Override
             public void run() {
