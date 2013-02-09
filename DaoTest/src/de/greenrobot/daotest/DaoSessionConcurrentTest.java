@@ -209,6 +209,34 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         latchThreadsDone.await();
     }
 
+    // No connection for read can be acquired while TX is active; this will deadlock!
+    public void _testConcurrentLockAndQueryDuringTx() throws InterruptedException {
+        final TestEntity entity = createEntity(null);
+        dao.insert(entity);
+        final Query<TestEntity> query = dao.queryBuilder().build();
+        Runnable runnable1 = new Runnable() {
+            @Override
+            public void run() {
+                synchronized (query) {
+                    query.list();
+                }
+            }
+        };
+
+        initThreads(runnable1);
+        // Builds the statement so it is ready immediately in the thread
+        query.list();
+        doTx(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (query) {
+                    query.list();
+                }
+            }
+        });
+        latchThreadsDone.await();
+    }
+
     /**
      * We could put the statements inside ThreadLocals (fast enough), but it comes with initialization penalty for new
      * threads and costs more memory.
