@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.SystemClock;
 import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.DeleteQuery;
 import de.greenrobot.dao.Query;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 
@@ -236,6 +237,30 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         });
         latchThreadsDone.await();
     }
+    
+    public void testConcurrentDeleteQueryDuringTx() throws InterruptedException {
+        final TestEntity entity = createEntity(null);
+        dao.insert(entity);
+        final DeleteQuery<TestEntity> query = dao.queryBuilder().buildDelete();
+        Runnable runnable1 = new Runnable() {
+            @Override
+            public void run() {
+                query.executeDeleteWithoutDetachingEntities();
+            }
+        };
+
+        initThreads(runnable1);
+        // Builds the statement so it is ready immediately in the thread
+        query.executeDeleteWithoutDetachingEntities();
+        doTx(new Runnable() {
+            @Override
+            public void run() {
+                query.executeDeleteWithoutDetachingEntities();
+            }
+        });
+        latchThreadsDone.await();
+    }
+
 
     /**
      * We could put the statements inside ThreadLocals (fast enough), but it comes with initialization penalty for new

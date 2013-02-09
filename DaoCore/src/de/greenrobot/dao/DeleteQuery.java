@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2013 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package de.greenrobot.dao;
 
 import java.util.Collection;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 /**
@@ -41,7 +42,24 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
      * method may lead to stale entity objects in the session cache. Stale entities may be returned when loaded by their
      * primary key, but not using queries.
      */
-    public synchronized void executeDeleteWithoutDetachingEntities() {
+    public void executeDeleteWithoutDetachingEntities() {
+        SQLiteDatabase db = dao.db;
+        if (db.isDbLockedByCurrentThread()) {
+            executeDeleteWithoutDetachingEntitiesInsideTx();
+        } else {
+            // Do TX to acquire a connection before locking this to avoid deadlocks
+            // Locking order as described in AbstractDao
+            dao.db.beginTransaction();
+            try {
+                executeDeleteWithoutDetachingEntitiesInsideTx();
+                dao.db.setTransactionSuccessful();
+            } finally {
+                dao.db.endTransaction();
+            }
+        }
+    }
+
+    private synchronized void executeDeleteWithoutDetachingEntitiesInsideTx() {
         if (compiledStatement != null) {
             compiledStatement.clearBindings();
         } else {
