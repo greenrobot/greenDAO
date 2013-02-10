@@ -130,6 +130,42 @@ public class RelationSource2 {
         myDao.refresh(this);
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(RelationSource2 relationSource2) {
+		return new Builder(relationSource2);
+	}
+
+	public static class Builder {
+
+    	private RelationSource2 relationSource2;
+    	
+    	public Builder(){
+    		this.relationSource2 = new RelationSource2();
+    	}
+    	
+    	public Builder(RelationSource2 relationSource2){
+    		this.relationSource2 = relationSource2;
+    	}
+    	
+    	public Builder id(Long id) {
+    		relationSource2.setId(id);
+        	return this;
+    	}
+
+    	public Builder toOneId(Long toOneId) {
+    		relationSource2.setToOneId(toOneId);
+        	return this;
+    	}
+
+		public RelationSource2 build(){
+			return relationSource2;
+		}
+	}
+
     // KEEP METHODS - put your custom methods here
     // KEEP METHODS END
 

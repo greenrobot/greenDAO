@@ -126,6 +126,7 @@ public class Order {
     	private Order order;
     	
     	public Builder(){
+    		this.order = new Order();
     	}
     	
     	public Builder(Order order){

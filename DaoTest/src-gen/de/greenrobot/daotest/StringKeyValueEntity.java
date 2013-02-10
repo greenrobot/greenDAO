@@ -37,4 +37,40 @@ public class StringKeyValueEntity {
         this.value = value;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(StringKeyValueEntity stringKeyValueEntity) {
+		return new Builder(stringKeyValueEntity);
+	}
+
+	public static class Builder {
+
+    	private StringKeyValueEntity stringKeyValueEntity;
+    	
+    	public Builder(){
+    		this.stringKeyValueEntity = new StringKeyValueEntity();
+    	}
+    	
+    	public Builder(StringKeyValueEntity stringKeyValueEntity){
+    		this.stringKeyValueEntity = stringKeyValueEntity;
+    	}
+    	
+    	public Builder key(String key) {
+    		stringKeyValueEntity.setKey(key);
+        	return this;
+    	}
+
+    	public Builder value(String value) {
+    		stringKeyValueEntity.setValue(value);
+        	return this;
+    	}
+
+		public StringKeyValueEntity build(){
+			return stringKeyValueEntity;
+		}
+	}
+
 }

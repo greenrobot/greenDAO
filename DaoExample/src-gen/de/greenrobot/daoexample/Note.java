@@ -74,6 +74,7 @@ public class Note {
     	private Note note;
     	
     	public Builder(){
+    		this.note = new Note();
     	}
     	
     	public Builder(Note note){

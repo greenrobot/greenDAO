@@ -57,4 +57,50 @@ public class ToManyTargetEntity {
         this.targetJoinProperty = targetJoinProperty;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(ToManyTargetEntity toManyTargetEntity) {
+		return new Builder(toManyTargetEntity);
+	}
+
+	public static class Builder {
+
+    	private ToManyTargetEntity toManyTargetEntity;
+    	
+    	public Builder(){
+    		this.toManyTargetEntity = new ToManyTargetEntity();
+    	}
+    	
+    	public Builder(ToManyTargetEntity toManyTargetEntity){
+    		this.toManyTargetEntity = toManyTargetEntity;
+    	}
+    	
+    	public Builder toManyId(Long toManyId) {
+    		toManyTargetEntity.setToManyId(toManyId);
+        	return this;
+    	}
+
+    	public Builder toManyIdDesc(Long toManyIdDesc) {
+    		toManyTargetEntity.setToManyIdDesc(toManyIdDesc);
+        	return this;
+    	}
+
+    	public Builder id(Long id) {
+    		toManyTargetEntity.setId(id);
+        	return this;
+    	}
+
+    	public Builder targetJoinProperty(String targetJoinProperty) {
+    		toManyTargetEntity.setTargetJoinProperty(targetJoinProperty);
+        	return this;
+    	}
+
+		public ToManyTargetEntity build(){
+			return toManyTargetEntity;
+		}
+	}
+
 }

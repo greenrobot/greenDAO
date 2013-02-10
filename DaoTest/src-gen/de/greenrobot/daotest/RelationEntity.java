@@ -202,4 +202,55 @@ public class RelationEntity {
         myDao.refresh(this);
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(RelationEntity relationEntity) {
+		return new Builder(relationEntity);
+	}
+
+	public static class Builder {
+
+    	private RelationEntity relationEntity;
+    	
+    	public Builder(){
+    		this.relationEntity = new RelationEntity();
+    	}
+    	
+    	public Builder(RelationEntity relationEntity){
+    		this.relationEntity = relationEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		relationEntity.setId(id);
+        	return this;
+    	}
+
+    	public Builder parentId(Long parentId) {
+    		relationEntity.setParentId(parentId);
+        	return this;
+    	}
+
+    	public Builder testId(Long testId) {
+    		relationEntity.setTestId(testId);
+        	return this;
+    	}
+
+    	public Builder testIdNotNull(long testIdNotNull) {
+    		relationEntity.setTestIdNotNull(testIdNotNull);
+        	return this;
+    	}
+
+    	public Builder simpleString(String simpleString) {
+    		relationEntity.setSimpleString(simpleString);
+        	return this;
+    	}
+
+		public RelationEntity build(){
+			return relationEntity;
+		}
+	}
+
 }

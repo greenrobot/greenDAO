@@ -43,6 +43,42 @@ public class ToManyTarget2 {
         this.fkId = fkId;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(ToManyTarget2 toManyTarget2) {
+		return new Builder(toManyTarget2);
+	}
+
+	public static class Builder {
+
+    	private ToManyTarget2 toManyTarget2;
+    	
+    	public Builder(){
+    		this.toManyTarget2 = new ToManyTarget2();
+    	}
+    	
+    	public Builder(ToManyTarget2 toManyTarget2){
+    		this.toManyTarget2 = toManyTarget2;
+    	}
+    	
+    	public Builder id(Long id) {
+    		toManyTarget2.setId(id);
+        	return this;
+    	}
+
+    	public Builder fkId(Long fkId) {
+    		toManyTarget2.setFkId(fkId);
+        	return this;
+    	}
+
+		public ToManyTarget2 build(){
+			return toManyTarget2;
+		}
+	}
+
     // KEEP METHODS - put your custom methods here
     // KEEP METHODS END
 

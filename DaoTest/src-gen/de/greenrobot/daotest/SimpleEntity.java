@@ -117,4 +117,80 @@ public class SimpleEntity {
         this.simpleByteArray = simpleByteArray;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(SimpleEntity simpleEntity) {
+		return new Builder(simpleEntity);
+	}
+
+	public static class Builder {
+
+    	private SimpleEntity simpleEntity;
+    	
+    	public Builder(){
+    		this.simpleEntity = new SimpleEntity();
+    	}
+    	
+    	public Builder(SimpleEntity simpleEntity){
+    		this.simpleEntity = simpleEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		simpleEntity.setId(id);
+        	return this;
+    	}
+
+    	public Builder simpleBoolean(Boolean simpleBoolean) {
+    		simpleEntity.setSimpleBoolean(simpleBoolean);
+        	return this;
+    	}
+
+    	public Builder simpleByte(Byte simpleByte) {
+    		simpleEntity.setSimpleByte(simpleByte);
+        	return this;
+    	}
+
+    	public Builder simpleShort(Short simpleShort) {
+    		simpleEntity.setSimpleShort(simpleShort);
+        	return this;
+    	}
+
+    	public Builder simpleInt(Integer simpleInt) {
+    		simpleEntity.setSimpleInt(simpleInt);
+        	return this;
+    	}
+
+    	public Builder simpleLong(Long simpleLong) {
+    		simpleEntity.setSimpleLong(simpleLong);
+        	return this;
+    	}
+
+    	public Builder simpleFloat(Float simpleFloat) {
+    		simpleEntity.setSimpleFloat(simpleFloat);
+        	return this;
+    	}
+
+    	public Builder simpleDouble(Double simpleDouble) {
+    		simpleEntity.setSimpleDouble(simpleDouble);
+        	return this;
+    	}
+
+    	public Builder simpleString(String simpleString) {
+    		simpleEntity.setSimpleString(simpleString);
+        	return this;
+    	}
+
+    	public Builder simpleByteArray(byte[] simpleByteArray) {
+    		simpleEntity.setSimpleByteArray(simpleByteArray);
+        	return this;
+    	}
+
+		public SimpleEntity build(){
+			return simpleEntity;
+		}
+	}
+
 }

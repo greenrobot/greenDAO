@@ -23,4 +23,35 @@ public class AutoincrementEntity {
         this.id = id;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(AutoincrementEntity autoincrementEntity) {
+		return new Builder(autoincrementEntity);
+	}
+
+	public static class Builder {
+
+    	private AutoincrementEntity autoincrementEntity;
+    	
+    	public Builder(){
+    		this.autoincrementEntity = new AutoincrementEntity();
+    	}
+    	
+    	public Builder(AutoincrementEntity autoincrementEntity){
+    		this.autoincrementEntity = autoincrementEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		autoincrementEntity.setId(id);
+        	return this;
+    	}
+
+		public AutoincrementEntity build(){
+			return autoincrementEntity;
+		}
+	}
+
 }

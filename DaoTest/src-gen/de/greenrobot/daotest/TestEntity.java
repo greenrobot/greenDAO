@@ -110,4 +110,75 @@ public class TestEntity {
         this.simpleBoolean = simpleBoolean;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(TestEntity testEntity) {
+		return new Builder(testEntity);
+	}
+
+	public static class Builder {
+
+    	private TestEntity testEntity;
+    	
+    	public Builder(){
+    		this.testEntity = new TestEntity();
+    	}
+    	
+    	public Builder(TestEntity testEntity){
+    		this.testEntity = testEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		testEntity.setId(id);
+        	return this;
+    	}
+
+    	public Builder simpleInt(int simpleInt) {
+    		testEntity.setSimpleInt(simpleInt);
+        	return this;
+    	}
+
+    	public Builder simpleInteger(Integer simpleInteger) {
+    		testEntity.setSimpleInteger(simpleInteger);
+        	return this;
+    	}
+
+    	public Builder simpleStringNotNull(String simpleStringNotNull) {
+    		testEntity.setSimpleStringNotNull(simpleStringNotNull);
+        	return this;
+    	}
+
+    	public Builder simpleString(String simpleString) {
+    		testEntity.setSimpleString(simpleString);
+        	return this;
+    	}
+
+    	public Builder indexedString(String indexedString) {
+    		testEntity.setIndexedString(indexedString);
+        	return this;
+    	}
+
+    	public Builder indexedStringAscUnique(String indexedStringAscUnique) {
+    		testEntity.setIndexedStringAscUnique(indexedStringAscUnique);
+        	return this;
+    	}
+
+    	public Builder simpleDate(java.util.Date simpleDate) {
+    		testEntity.setSimpleDate(simpleDate);
+        	return this;
+    	}
+
+    	public Builder simpleBoolean(Boolean simpleBoolean) {
+    		testEntity.setSimpleBoolean(simpleBoolean);
+        	return this;
+    	}
+
+		public TestEntity build(){
+			return testEntity;
+		}
+	}
+
 }

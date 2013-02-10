@@ -50,4 +50,45 @@ public class DateEntity {
         this.dateNotNull = dateNotNull;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(DateEntity dateEntity) {
+		return new Builder(dateEntity);
+	}
+
+	public static class Builder {
+
+    	private DateEntity dateEntity;
+    	
+    	public Builder(){
+    		this.dateEntity = new DateEntity();
+    	}
+    	
+    	public Builder(DateEntity dateEntity){
+    		this.dateEntity = dateEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		dateEntity.setId(id);
+        	return this;
+    	}
+
+    	public Builder date(java.util.Date date) {
+    		dateEntity.setDate(date);
+        	return this;
+    	}
+
+    	public Builder dateNotNull(java.util.Date dateNotNull) {
+    		dateEntity.setDateNotNull(dateNotNull);
+        	return this;
+    	}
+
+		public DateEntity build(){
+			return dateEntity;
+		}
+	}
+
 }

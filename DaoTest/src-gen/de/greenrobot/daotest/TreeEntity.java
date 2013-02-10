@@ -118,4 +118,40 @@ public class TreeEntity {
         myDao.refresh(this);
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(TreeEntity treeEntity) {
+		return new Builder(treeEntity);
+	}
+
+	public static class Builder {
+
+    	private TreeEntity treeEntity;
+    	
+    	public Builder(){
+    		this.treeEntity = new TreeEntity();
+    	}
+    	
+    	public Builder(TreeEntity treeEntity){
+    		this.treeEntity = treeEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		treeEntity.setId(id);
+        	return this;
+    	}
+
+    	public Builder parentId(Long parentId) {
+    		treeEntity.setParentId(parentId);
+        	return this;
+    	}
+
+		public TreeEntity build(){
+			return treeEntity;
+		}
+	}
+
 }

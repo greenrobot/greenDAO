@@ -31,6 +31,37 @@ public class KeepEntity {
         this.id = id;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(KeepEntity keepEntity) {
+		return new Builder(keepEntity);
+	}
+
+	public static class Builder {
+
+    	private KeepEntity keepEntity;
+    	
+    	public Builder(){
+    		this.keepEntity = new KeepEntity();
+    	}
+    	
+    	public Builder(KeepEntity keepEntity){
+    		this.keepEntity = keepEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		keepEntity.setId(id);
+        	return this;
+    	}
+
+		public KeepEntity build(){
+			return keepEntity;
+		}
+	}
+
     // KEEP METHODS - put your custom methods here
     @Override
     public String toString() {

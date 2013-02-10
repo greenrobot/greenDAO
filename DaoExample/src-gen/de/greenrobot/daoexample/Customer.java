@@ -113,6 +113,7 @@ public class Customer {
     	private Customer customer;
     	
     	public Builder(){
+    		this.customer = new Customer();
     	}
     	
     	public Builder(Customer customer){

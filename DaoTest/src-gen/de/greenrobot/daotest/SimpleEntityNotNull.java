@@ -123,4 +123,80 @@ public class SimpleEntityNotNull {
         this.simpleByteArray = simpleByteArray;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(SimpleEntityNotNull simpleEntityNotNull) {
+		return new Builder(simpleEntityNotNull);
+	}
+
+	public static class Builder {
+
+    	private SimpleEntityNotNull simpleEntityNotNull;
+    	
+    	public Builder(){
+    		this.simpleEntityNotNull = new SimpleEntityNotNull();
+    	}
+    	
+    	public Builder(SimpleEntityNotNull simpleEntityNotNull){
+    		this.simpleEntityNotNull = simpleEntityNotNull;
+    	}
+    	
+    	public Builder id(long id) {
+    		simpleEntityNotNull.setId(id);
+        	return this;
+    	}
+
+    	public Builder simpleBoolean(boolean simpleBoolean) {
+    		simpleEntityNotNull.setSimpleBoolean(simpleBoolean);
+        	return this;
+    	}
+
+    	public Builder simpleByte(byte simpleByte) {
+    		simpleEntityNotNull.setSimpleByte(simpleByte);
+        	return this;
+    	}
+
+    	public Builder simpleShort(short simpleShort) {
+    		simpleEntityNotNull.setSimpleShort(simpleShort);
+        	return this;
+    	}
+
+    	public Builder simpleInt(int simpleInt) {
+    		simpleEntityNotNull.setSimpleInt(simpleInt);
+        	return this;
+    	}
+
+    	public Builder simpleLong(long simpleLong) {
+    		simpleEntityNotNull.setSimpleLong(simpleLong);
+        	return this;
+    	}
+
+    	public Builder simpleFloat(float simpleFloat) {
+    		simpleEntityNotNull.setSimpleFloat(simpleFloat);
+        	return this;
+    	}
+
+    	public Builder simpleDouble(double simpleDouble) {
+    		simpleEntityNotNull.setSimpleDouble(simpleDouble);
+        	return this;
+    	}
+
+    	public Builder simpleString(String simpleString) {
+    		simpleEntityNotNull.setSimpleString(simpleString);
+        	return this;
+    	}
+
+    	public Builder simpleByteArray(byte[] simpleByteArray) {
+    		simpleEntityNotNull.setSimpleByteArray(simpleByteArray);
+        	return this;
+    	}
+
+		public SimpleEntityNotNull build(){
+			return simpleEntityNotNull;
+		}
+	}
+
 }
