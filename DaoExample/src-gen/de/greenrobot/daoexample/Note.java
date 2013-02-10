@@ -60,4 +60,49 @@ public class Note {
         this.date = date;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(Note note) {
+		return new Builder(note);
+	}
+
+	public static class Builder {
+
+    	private Note note;
+    	
+    	public Builder(){
+    	}
+    	
+    	public Builder(Note note){
+    		this.note = note;
+    	}
+    	
+    	public Builder id(Long id) {
+    		note.setId(id);
+        	return this;
+    	}
+
+    	public Builder text(String text) {
+    		note.setText(text);
+        	return this;
+    	}
+
+    	public Builder comment(String comment) {
+    		note.setComment(comment);
+        	return this;
+    	}
+
+    	public Builder date(java.util.Date date) {
+    		note.setDate(date);
+        	return this;
+    	}
+
+		public Note build(){
+			return note;
+		}
+	}
+
 }
