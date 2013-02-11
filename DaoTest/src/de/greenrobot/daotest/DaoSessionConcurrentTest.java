@@ -194,7 +194,7 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         Runnable runnable1 = new Runnable() {
             @Override
             public void run() {
-                query.list();
+                query.forCurrentThread().list();
             }
         };
 
@@ -245,7 +245,7 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         Runnable runnable1 = new Runnable() {
             @Override
             public void run() {
-                query.executeDeleteWithoutDetachingEntities();
+                query.forCurrentThread().executeDeleteWithoutDetachingEntities();
             }
         };
 

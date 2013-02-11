@@ -31,9 +31,9 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
     private final static class ThreadLocalQuery<T2> extends ThreadLocal<DeleteQuery<T2>> {
         private final String sql;
         private final AbstractDao<T2, ?> dao;
-        private final Object[] initialValues;
+        private final String[] initialValues;
 
-        private ThreadLocalQuery(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
+        private ThreadLocalQuery(AbstractDao<T2, ?> dao, String sql, String[] initialValues) {
             this.dao = dao;
             this.sql = sql;
             this.initialValues = initialValues;
@@ -41,19 +41,28 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
 
         @Override
         protected DeleteQuery<T2> initialValue() {
-            return new DeleteQuery<T2>(this, dao, sql, initialValues);
+            return new DeleteQuery<T2>(this, dao, sql, initialValues.clone());
         }
     }
 
     static <T2> DeleteQuery<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
-        ThreadLocalQuery<T2> threadLocal = new ThreadLocalQuery<T2>(dao, sql, initialValues);
+        ThreadLocalQuery<T2> threadLocal = new ThreadLocalQuery<T2>(dao, sql, toStringArray(initialValues));
         return threadLocal.get();
     }
 
     private SQLiteStatement compiledStatement;
+    private final ThreadLocalQuery<T> threadLocalQuery;
 
-    private DeleteQuery(ThreadLocalQuery<T> threadLocalQuery, AbstractDao<T, ?> dao, String sql, Object[] initialValues) {
+    private DeleteQuery(ThreadLocalQuery<T> threadLocalQuery, AbstractDao<T, ?> dao, String sql, String[] initialValues) {
         super(dao, sql, initialValues);
+        this.threadLocalQuery = threadLocalQuery;
+    }
+
+    public DeleteQuery<T> forCurrentThread() {
+        DeleteQuery<T> query = threadLocalQuery.get();
+        String[] initialValues = threadLocalQuery.initialValues;
+        System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
+        return query;
     }
 
     /**
@@ -62,6 +71,7 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
      * primary key, but not using queries.
      */
     public void executeDeleteWithoutDetachingEntities() {
+        checkThread();
         SQLiteDatabase db = dao.db;
         if (db.isDbLockedByCurrentThread()) {
             executeDeleteWithoutDetachingEntitiesInsideTx();

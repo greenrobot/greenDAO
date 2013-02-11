@@ -40,7 +40,7 @@ public class DaoSessionConcurrentWALTest extends DaoSessionConcurrentTest {
             @Override
             public void run() {
                 synchronized (query) {
-                    query.list();
+                    query.forCurrentThread().list();
                 }
             }
         };
