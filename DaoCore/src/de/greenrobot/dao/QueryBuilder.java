@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2013 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -284,14 +284,7 @@ public class QueryBuilder<T> {
             DaoLog.d("Values for query: " + values);
         }
 
-        Query<T> query = new Query<T>(dao, sql, values);
-        if (limitPosition != -1) {
-            query.setLimitPosition(limitPosition);
-        }
-        if (offsetPosition != -1) {
-            query.setOffsetPosition(offsetPosition);
-        }
-        return query;
+        return Query.create(dao, sql, values.toArray(), limitPosition, offsetPosition);
     }
 
     /**
@@ -312,7 +305,7 @@ public class QueryBuilder<T> {
             DaoLog.d("Values for delete query: " + values);
         }
 
-        return new DeleteQuery<T>(dao, sql, values);
+        return DeleteQuery.create(dao, sql, values.toArray());
     }
 
     /**
@@ -333,7 +326,7 @@ public class QueryBuilder<T> {
             DaoLog.d("Values for count query: " + values);
         }
 
-        return new CountQuery<T>(dao, sql, values);
+        return CountQuery.create(dao, sql, values.toArray());
     }
 
     private void appendWhereClause(StringBuilder builder, String tablePrefixOrNull) {

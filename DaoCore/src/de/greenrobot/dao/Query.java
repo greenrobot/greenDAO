@@ -15,7 +15,6 @@
  */
 package de.greenrobot.dao;
 
-import java.util.Collection;
 import java.util.List;
 
 import android.database.Cursor;
@@ -32,18 +31,46 @@ import android.database.Cursor;
 // TODO Make parameters setable by Property (if unique in paramaters)
 // TODO Query for PKs/ROW IDs
 public class Query<T> extends AbstractQuery<T> {
-    private int limitPosition = -1;
-    private int offsetPosition = -1;
+    private final static class ThreadLocalQuery<T2> extends ThreadLocal<Query<T2>> {
+        private final String sql;
+        private final AbstractDao<T2, ?> dao;
+        private final Object[] initialValues;
+        private final int limitPosition;
+        private final int offsetPosition;
 
-    Query(AbstractDao<T, ?> dao, String sql, Collection<Object> valueList) {
-        super(dao, sql, valueList);
+        private ThreadLocalQuery(AbstractDao<T2, ?> dao, String sql, Object[] initialValues, int limitPosition,
+                int offsetPosition) {
+            this.dao = dao;
+            this.sql = sql;
+            this.initialValues = initialValues;
+            this.limitPosition = limitPosition;
+            this.offsetPosition = offsetPosition;
+        }
+
+        @Override
+        protected Query<T2> initialValue() {
+            return new Query<T2>(this, dao, sql, initialValues, limitPosition, offsetPosition);
+        }
+    }
+    
+    static <T2> Query<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
+        return create(dao, sql, initialValues, -1, -1);
     }
 
-    void setLimitPosition(int limitPosition) {
+    static <T2> Query<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues, int limitPosition,
+            int offsetPosition) {
+        ThreadLocalQuery<T2> threadLocal = new ThreadLocalQuery<T2>(dao, sql, initialValues, limitPosition,
+                offsetPosition);
+        return threadLocal.get();
+    }
+
+    private final int limitPosition;
+    private final int offsetPosition;
+
+    private Query(ThreadLocalQuery<T> threadLocalQuery, AbstractDao<T, ?> dao, String sql, Object[] initialValues,
+            int limitPosition, int offsetPosition) {
+        super(dao, sql, initialValues);
         this.limitPosition = limitPosition;
-    }
-
-    void setOffsetPosition(int offsetPosition) {
         this.offsetPosition = offsetPosition;
     }
 
@@ -58,11 +85,7 @@ public class Query<T> extends AbstractQuery<T> {
         if (index >= 0 && (index == limitPosition || index == offsetPosition)) {
             throw new IllegalArgumentException("Illegal parameter index: " + index);
         }
-        if (parameter != null) {
-            parameters[index] = parameter.toString();
-        } else {
-            parameters[index] = null;
-        }
+        super.setParameter(index, parameter);
     }
 
     /**

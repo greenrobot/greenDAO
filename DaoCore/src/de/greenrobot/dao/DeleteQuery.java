@@ -15,8 +15,6 @@
  */
 package de.greenrobot.dao;
 
-import java.util.Collection;
-
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
@@ -30,11 +28,32 @@ import android.database.sqlite.SQLiteStatement;
  *            The enitity class the query will delete from.
  */
 public class DeleteQuery<T> extends AbstractQuery<T> {
+    private final static class ThreadLocalQuery<T2> extends ThreadLocal<DeleteQuery<T2>> {
+        private final String sql;
+        private final AbstractDao<T2, ?> dao;
+        private final Object[] initialValues;
+
+        private ThreadLocalQuery(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
+            this.dao = dao;
+            this.sql = sql;
+            this.initialValues = initialValues;
+        }
+
+        @Override
+        protected DeleteQuery<T2> initialValue() {
+            return new DeleteQuery<T2>(this, dao, sql, initialValues);
+        }
+    }
+
+    static <T2> DeleteQuery<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
+        ThreadLocalQuery<T2> threadLocal = new ThreadLocalQuery<T2>(dao, sql, initialValues);
+        return threadLocal.get();
+    }
 
     private SQLiteStatement compiledStatement;
 
-    public DeleteQuery(AbstractDao<T, ?> dao, String sql, Collection<Object> valueList) {
-        super(dao, sql, valueList);
+    private DeleteQuery(ThreadLocalQuery<T> threadLocalQuery, AbstractDao<T, ?> dao, String sql, Object[] initialValues) {
+        super(dao, sql, initialValues);
     }
 
     /**

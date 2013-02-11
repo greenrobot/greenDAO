@@ -470,7 +470,7 @@ public abstract class AbstractDao<T, K> {
      * arguments.
      */
     public Query<T> queryRawCreateListArgs(String where, Collection<Object> selectionArg) {
-        return new Query<T>(this, statements.getSelectAll() + where, selectionArg);
+        return Query.create(this, statements.getSelectAll() + where, selectionArg.toArray());
     }
 
     public void deleteAll() {

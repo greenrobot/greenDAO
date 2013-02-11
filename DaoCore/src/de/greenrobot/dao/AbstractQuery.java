@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2013 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package de.greenrobot.dao;
 
-import java.util.Collection;
 
 /**
  * A repeatable query returning entities.
@@ -31,13 +30,13 @@ abstract class AbstractQuery<T> {
     protected final String sql;
     protected final String[] parameters;
 
-    protected AbstractQuery(AbstractDao<T, ?> dao, String sql, Collection<Object> valueList) {
+    protected AbstractQuery(AbstractDao<T, ?> dao, String sql, Object[] values) {
         this.dao = dao;
         this.sql = sql;
 
-        parameters = new String[valueList.size()];
+        parameters = new String[values.length];
         int idx = 0;
-        for (Object object : valueList) {
+        for (Object object : values) {
             if (object != null) {
                 parameters[idx] = object.toString();
             } else {
