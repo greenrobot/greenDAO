@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import de.greenrobot.dao.async.AsyncSession;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import android.database.sqlite.SQLiteDatabase;
 

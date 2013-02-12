@@ -21,6 +21,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import de.greenrobot.dao.query.InternalDaoQueryInterface;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
+
 import android.database.CrossProcessCursor;
 import android.database.Cursor;
 import android.database.CursorWindow;
@@ -58,6 +62,8 @@ public abstract class AbstractDao<T, K> {
 
     protected final AbstractDaoSession session;
     protected final int pkOrdinal;
+
+    private InternalDaoQueryInterface<T> internalDaoQueryInterface;
 
     public AbstractDao(DaoConfig config) {
         this(config, null);
@@ -470,7 +476,7 @@ public abstract class AbstractDao<T, K> {
      * arguments.
      */
     public Query<T> queryRawCreateListArgs(String where, Collection<Object> selectionArg) {
-        return Query.create(this, statements.getSelectAll() + where, selectionArg.toArray());
+        return Query.internalCreate(this, statements.getSelectAll() + where, selectionArg.toArray());
     }
 
     public void deleteAll() {
@@ -654,7 +660,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     public QueryBuilder<T> queryBuilder() {
-        return new QueryBuilder<T>(this);
+        return QueryBuilder.internalCreate(this);
     }
 
     protected void updateInsideSynchronized(T entity, SQLiteStatement stmt, boolean lock) {
@@ -768,6 +774,35 @@ public abstract class AbstractDao<T, K> {
     /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
     public SQLiteDatabase getDatabase() {
         return db;
+    }
+
+    /** For internal use by greenDAO only. */
+    public synchronized InternalDaoQueryInterface<T> internalDaoQueryInterface() {
+        if (internalDaoQueryInterface == null) {
+            internalDaoQueryInterface = new InternalDaoQueryInterface<T>() {
+
+                @Override
+                public T loadCurrent(Cursor cursor, int offset, boolean lock) {
+                    return AbstractDao.this.loadCurrent(cursor, offset, lock);
+                }
+
+                @Override
+                public List<T> loadAllAndCloseCursor(Cursor cursor) {
+                    return AbstractDao.this.loadAllAndCloseCursor(cursor);
+                }
+
+                @Override
+                public T loadUniqueAndCloseCursor(Cursor cursor) {
+                    return AbstractDao.this.loadUniqueAndCloseCursor(cursor);
+                }
+
+                @Override
+                public TableStatements getStatements() {
+                    return AbstractDao.this.getStatements();
+                }
+            };
+        }
+        return internalDaoQueryInterface;
     }
 
     /** Reads the values from the current position of the given cursor and returns a new entity. */

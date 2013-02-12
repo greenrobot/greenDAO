@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.greenrobot.dao;
+package de.greenrobot.dao.query;
 
 import java.util.List;
+
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoException;
 
 import android.database.Cursor;
 
@@ -53,7 +56,8 @@ public class Query<T> extends AbstractQuery<T> {
         }
     }
 
-    static <T2> Query<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
+    /** For internal use by greenDAO only. */
+    public static <T2> Query<T2> internalCreate(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
         return create(dao, sql, initialValues, -1, -1);
     }
 
@@ -124,8 +128,8 @@ public class Query<T> extends AbstractQuery<T> {
     /** Executes the query and returns the result as a list containing all entities loaded into memory. */
     public List<T> list() {
         checkThread();
-        Cursor cursor = dao.db.rawQuery(sql, parameters);
-        return dao.loadAllAndCloseCursor(cursor);
+        Cursor cursor = dao.getDatabase().rawQuery(sql, parameters);
+        return daoQueryInterface.loadAllAndCloseCursor(cursor);
     }
 
     /**
@@ -135,7 +139,7 @@ public class Query<T> extends AbstractQuery<T> {
      */
     public LazyList<T> listLazy() {
         checkThread();
-        Cursor cursor = dao.db.rawQuery(sql, parameters);
+        Cursor cursor = dao.getDatabase().rawQuery(sql, parameters);
         return new LazyList<T>(dao, cursor, true);
     }
 
@@ -145,7 +149,7 @@ public class Query<T> extends AbstractQuery<T> {
      */
     public LazyList<T> listLazyUncached() {
         checkThread();
-        Cursor cursor = dao.db.rawQuery(sql, parameters);
+        Cursor cursor = dao.getDatabase().rawQuery(sql, parameters);
         return new LazyList<T>(dao, cursor, false);
     }
 
@@ -166,8 +170,8 @@ public class Query<T> extends AbstractQuery<T> {
      */
     public T unique() {
         checkThread();
-        Cursor cursor = dao.db.rawQuery(sql, parameters);
-        return dao.loadUniqueAndCloseCursor(cursor);
+        Cursor cursor = dao.getDatabase().rawQuery(sql, parameters);
+        return daoQueryInterface.loadUniqueAndCloseCursor(cursor);
     }
 
     /**

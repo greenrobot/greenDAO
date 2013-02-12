@@ -5,8 +5,8 @@ import java.util.concurrent.Callable;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.AbstractDaoSession;
 import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.Query;
 import de.greenrobot.dao.async.AsyncOperation.OperationType;
+import de.greenrobot.dao.query.Query;
 
 /**
  * Asynchronous interface to entity operations. All operations will enqueued a @link {@link AsyncOperation} and return

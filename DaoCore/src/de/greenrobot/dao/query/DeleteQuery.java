@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.greenrobot.dao;
+package de.greenrobot.dao.query;
 
+import de.greenrobot.dao.AbstractDao;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
@@ -72,18 +73,18 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
      */
     public void executeDeleteWithoutDetachingEntities() {
         checkThread();
-        SQLiteDatabase db = dao.db;
+        SQLiteDatabase db = dao.getDatabase();
         if (db.isDbLockedByCurrentThread()) {
             executeDeleteWithoutDetachingEntitiesInsideTx();
         } else {
             // Do TX to acquire a connection before locking this to avoid deadlocks
             // Locking order as described in AbstractDao
-            dao.db.beginTransaction();
+            db.beginTransaction();
             try {
                 executeDeleteWithoutDetachingEntitiesInsideTx();
-                dao.db.setTransactionSuccessful();
+                db.setTransactionSuccessful();
             } finally {
-                dao.db.endTransaction();
+                db.endTransaction();
             }
         }
     }
@@ -92,7 +93,7 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
         if (compiledStatement != null) {
             compiledStatement.clearBindings();
         } else {
-            compiledStatement = dao.db.compileStatement(sql);
+            compiledStatement = dao.getDatabase().compileStatement(sql);
         }
         for (int i = 0; i < parameters.length; i++) {
             String value = parameters[i];

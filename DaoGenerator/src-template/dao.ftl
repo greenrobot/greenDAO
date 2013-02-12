@@ -38,8 +38,8 @@ import de.greenrobot.dao.Property;
 import de.greenrobot.dao.SqlUtils;
 </#if>
 <#if entity.incomingToManyRelations?has_content>
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 </#if>
 
 <#if entity.javaPackageDao != schema.defaultJavaPackageDao>

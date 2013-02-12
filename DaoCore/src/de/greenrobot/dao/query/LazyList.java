@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.greenrobot.dao;
+package de.greenrobot.dao.query;
 
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -25,6 +25,8 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.locks.ReentrantLock;
 
 import android.database.Cursor;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoException;
 
 /**
  * A thread-safe, unmodifiable list that reads entities once they are accessed from an underlying database cursor. Make
@@ -120,7 +122,7 @@ public class LazyList<E> implements List<E>, Closeable {
 
     }
 
-    private final AbstractDao<E, ?> dao;
+    private final InternalDaoQueryInterface<E> daoInterface;
     private final Cursor cursor;
     private final List<E> entities;
     private final int size;
@@ -128,8 +130,8 @@ public class LazyList<E> implements List<E>, Closeable {
     private volatile int loadedCount;
 
     LazyList(AbstractDao<E, ?> dao, Cursor cursor, boolean cacheEntities) {
-        this.dao = dao;
         this.cursor = cursor;
+        this.daoInterface=dao.internalDaoQueryInterface();
         size = cursor.getCount();
         if (cacheEntities) {
             entities = new ArrayList<E>(size);
@@ -254,7 +256,7 @@ public class LazyList<E> implements List<E>, Closeable {
 
     protected E loadEntity(int location) {
         cursor.moveToPosition(location);
-        E entity = dao.loadCurrent(cursor, 0, true);
+        E entity = daoInterface.loadCurrent(cursor, 0, true);
         if (entity == null) {
             throw new DaoException("Loading of entity failed (null) at position " + location);
         }

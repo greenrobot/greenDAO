@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.query.QueryBuilder;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;

@@ -13,12 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.greenrobot.dao;
+package de.greenrobot.dao.query;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.AbstractDaoSession;
+import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.Property;
+import de.greenrobot.dao.SqlUtils;
+import de.greenrobot.dao.WhereCondition;
 import de.greenrobot.dao.WhereCondition.PropertyCondition;
 
 /**
@@ -58,6 +65,11 @@ public class QueryBuilder<T> {
     private Integer limit;
 
     private Integer offset;
+    
+    /** For internal use by greenDAO only. */
+    public static <T2> QueryBuilder<T2> internalCreate(AbstractDao<T2, ?> dao) {
+        return new QueryBuilder<T2>(dao);
+    }
 
     protected QueryBuilder(AbstractDao<T, ?> dao) {
         this(dao, "T");
@@ -246,7 +258,7 @@ public class QueryBuilder<T> {
     public Query<T> build() {
         String select;
         if (joinBuilder == null || joinBuilder.length() == 0) {
-            select = dao.getStatements().getSelectAll();
+            select = dao.internalDaoQueryInterface().getStatements().getSelectAll();
         } else {
             select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
         }

@@ -19,7 +19,7 @@ package de.greenrobot.daotest.entity;
 
 import java.util.ArrayList;
 
-import de.greenrobot.dao.LazyList;
+import de.greenrobot.dao.query.LazyList;
 import de.greenrobot.dao.test.AbstractDaoTest;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao;

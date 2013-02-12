@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import de.greenrobot.daotest.ToManyTargetEntity;
 

@@ -74,7 +74,7 @@ public class TableStatements {
     }
 
     /** ends with an space to simplify appending to this string. */
-    protected String getSelectAll() {
+    public String getSelectAll() {
         if (selectAll == null) {
             selectAll = SqlUtils.createSqlSelect(tablename, "T", allColumns);
         }

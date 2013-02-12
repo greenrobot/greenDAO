@@ -18,8 +18,8 @@
 package de.greenrobot.daotest.query;
 
 import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.DeleteQuery;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.query.DeleteQuery;
+import de.greenrobot.dao.query.QueryBuilder;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;

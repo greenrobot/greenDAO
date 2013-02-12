@@ -29,7 +29,7 @@ import android.os.Looper;
 import android.os.Message;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.Query;
+import de.greenrobot.dao.query.Query;
 
 class AsyncOperationExecutor implements Runnable, Handler.Callback {
 

@@ -19,9 +19,9 @@ package de.greenrobot.daotest.query;
 
 import java.util.ArrayList;
 
-import de.greenrobot.dao.CountQuery;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.query.CountQuery;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;

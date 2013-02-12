@@ -20,7 +20,7 @@ package de.greenrobot.daotest.query;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.query.QueryBuilder;
 import de.greenrobot.dao.test.AbstractDaoTest;
 import de.greenrobot.daotest.AbcdefEntity;
 import de.greenrobot.daotest.AbcdefEntityDao;

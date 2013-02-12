@@ -5,8 +5,7 @@ import java.lang.reflect.Method;
 import android.content.Context;
 import android.os.Build;
 import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.Query;
-import de.greenrobot.daotest.TestEntity;
+import de.greenrobot.dao.query.Query;
 
 public class DaoSessionConcurrentWALTest extends DaoSessionConcurrentTest {
     @Override

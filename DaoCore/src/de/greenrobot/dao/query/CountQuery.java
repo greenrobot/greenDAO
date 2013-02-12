@@ -1,5 +1,7 @@
-package de.greenrobot.dao;
+package de.greenrobot.dao.query;
 
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoException;
 import android.database.Cursor;
 
 public class CountQuery<T> extends AbstractQuery<T> {
@@ -43,7 +45,7 @@ public class CountQuery<T> extends AbstractQuery<T> {
     /** Returns the count (number of results matching the query). Uses SELECT COUNT (*) sematics. */
     public long count() {
         checkThread();
-        Cursor cursor = dao.db.rawQuery(sql, parameters);
+        Cursor cursor = dao.getDatabase().rawQuery(sql, parameters);
         try {
             if (!cursor.moveToNext()) {
                 throw new DaoException("No result for count");
