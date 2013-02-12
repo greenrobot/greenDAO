@@ -241,6 +241,39 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
     }
 
 </#if>
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(${entity.className} ${entity.className?uncap_first}) {
+		return new Builder(${entity.className?uncap_first});
+	}
+
+	public static class Builder {
+
+    	private ${entity.className} ${entity.className?uncap_first};
+    	
+    	public Builder(){
+    		this.${entity.className?uncap_first} = new ${entity.className}();
+    	}
+    	
+    	public Builder(${entity.className} ${entity.className?uncap_first}){
+    		this.${entity.className?uncap_first} = ${entity.className?uncap_first};
+    	}
+    	
+		<#list entity.properties as property>
+    	public Builder ${property.propertyName}(${property.javaType} ${property.propertyName}) {
+    		${entity.className?uncap_first}.set${property.propertyName?cap_first}(${property.propertyName});
+        	return this;
+    	}
+
+		</#list>
+		public ${entity.className} build(){
+			return ${entity.className?uncap_first};
+		}
+	}
+
 <#if entity.hasKeepSections>
     // KEEP METHODS - put your custom methods here
 ${keepMethods!}    // KEEP METHODS END

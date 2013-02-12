@@ -112,4 +112,45 @@ public class Order {
         myDao.refresh(this);
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(Order order) {
+		return new Builder(order);
+	}
+
+	public static class Builder {
+
+    	private Order order;
+    	
+    	public Builder(){
+    		this.order = new Order();
+    	}
+    	
+    	public Builder(Order order){
+    		this.order = order;
+    	}
+    	
+    	public Builder id(Long id) {
+    		order.setId(id);
+        	return this;
+    	}
+
+    	public Builder date(java.util.Date date) {
+    		order.setDate(date);
+        	return this;
+    	}
+
+    	public Builder customerId(long customerId) {
+    		order.setCustomerId(customerId);
+        	return this;
+    	}
+
+		public Order build(){
+			return order;
+		}
+	}
+
 }

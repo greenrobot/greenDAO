@@ -69,11 +69,58 @@ public class SqliteMaster {
         this.sql = sql;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(SqliteMaster sqliteMaster) {
+		return new Builder(sqliteMaster);
+	}
+
+	public static class Builder {
+
+    	private SqliteMaster sqliteMaster;
+    	
+    	public Builder(){
+    		this.sqliteMaster = new SqliteMaster();
+    	}
+    	
+    	public Builder(SqliteMaster sqliteMaster){
+    		this.sqliteMaster = sqliteMaster;
+    	}
+    	
+    	public Builder type(String type) {
+    		sqliteMaster.setType(type);
+        	return this;
+    	}
+
+    	public Builder name(String name) {
+    		sqliteMaster.setName(name);
+        	return this;
+    	}
+
+    	public Builder tableName(String tableName) {
+    		sqliteMaster.setTableName(tableName);
+        	return this;
+    	}
+
+    	public Builder rootpage(Long rootpage) {
+    		sqliteMaster.setRootpage(rootpage);
+        	return this;
+    	}
+
+    	public Builder sql(String sql) {
+    		sqliteMaster.setSql(sql);
+        	return this;
+    	}
+
+		public SqliteMaster build(){
+			return sqliteMaster;
+		}
+	}
+
     // KEEP METHODS - put your custom methods here
-    @Override
-    public String toString() {
-        return "Type: " + type + ", name: " + name + ", table: " + tableName + ", SQL: " + sql;
-    }
     // KEEP METHODS END
 
 }

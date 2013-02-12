@@ -150,4 +150,40 @@ public class ToManyEntity {
         myDao.refresh(this);
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(ToManyEntity toManyEntity) {
+		return new Builder(toManyEntity);
+	}
+
+	public static class Builder {
+
+    	private ToManyEntity toManyEntity;
+    	
+    	public Builder(){
+    		this.toManyEntity = new ToManyEntity();
+    	}
+    	
+    	public Builder(ToManyEntity toManyEntity){
+    		this.toManyEntity = toManyEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		toManyEntity.setId(id);
+        	return this;
+    	}
+
+    	public Builder sourceJoinProperty(String sourceJoinProperty) {
+    		toManyEntity.setSourceJoinProperty(sourceJoinProperty);
+        	return this;
+    	}
+
+		public ToManyEntity build(){
+			return toManyEntity;
+		}
+	}
+
 }

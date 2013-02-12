@@ -77,4 +77,40 @@ public class AnActiveEntity {
         myDao.refresh(this);
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(AnActiveEntity anActiveEntity) {
+		return new Builder(anActiveEntity);
+	}
+
+	public static class Builder {
+
+    	private AnActiveEntity anActiveEntity;
+    	
+    	public Builder(){
+    		this.anActiveEntity = new AnActiveEntity();
+    	}
+    	
+    	public Builder(AnActiveEntity anActiveEntity){
+    		this.anActiveEntity = anActiveEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		anActiveEntity.setId(id);
+        	return this;
+    	}
+
+    	public Builder text(String text) {
+    		anActiveEntity.setText(text);
+        	return this;
+    	}
+
+		public AnActiveEntity build(){
+			return anActiveEntity;
+		}
+	}
+
 }

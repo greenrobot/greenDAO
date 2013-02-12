@@ -137,4 +137,90 @@ public class AbcdefEntity {
         this.k = k;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(AbcdefEntity abcdefEntity) {
+		return new Builder(abcdefEntity);
+	}
+
+	public static class Builder {
+
+    	private AbcdefEntity abcdefEntity;
+    	
+    	public Builder(){
+    		this.abcdefEntity = new AbcdefEntity();
+    	}
+    	
+    	public Builder(AbcdefEntity abcdefEntity){
+    		this.abcdefEntity = abcdefEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		abcdefEntity.setId(id);
+        	return this;
+    	}
+
+    	public Builder a(Integer a) {
+    		abcdefEntity.setA(a);
+        	return this;
+    	}
+
+    	public Builder b(Integer b) {
+    		abcdefEntity.setB(b);
+        	return this;
+    	}
+
+    	public Builder c(Integer c) {
+    		abcdefEntity.setC(c);
+        	return this;
+    	}
+
+    	public Builder d(Integer d) {
+    		abcdefEntity.setD(d);
+        	return this;
+    	}
+
+    	public Builder e(Integer e) {
+    		abcdefEntity.setE(e);
+        	return this;
+    	}
+
+    	public Builder f(Integer f) {
+    		abcdefEntity.setF(f);
+        	return this;
+    	}
+
+    	public Builder g(Integer g) {
+    		abcdefEntity.setG(g);
+        	return this;
+    	}
+
+    	public Builder h(Integer h) {
+    		abcdefEntity.setH(h);
+        	return this;
+    	}
+
+    	public Builder j(Integer j) {
+    		abcdefEntity.setJ(j);
+        	return this;
+    	}
+
+    	public Builder i(Integer i) {
+    		abcdefEntity.setI(i);
+        	return this;
+    	}
+
+    	public Builder k(Integer k) {
+    		abcdefEntity.setK(k);
+        	return this;
+    	}
+
+		public AbcdefEntity build(){
+			return abcdefEntity;
+		}
+	}
+
 }

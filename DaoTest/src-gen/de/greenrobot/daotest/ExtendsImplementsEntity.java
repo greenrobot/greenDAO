@@ -37,4 +37,40 @@ public class ExtendsImplementsEntity extends TestSuperclass  implements TestInte
         this.text = text;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(ExtendsImplementsEntity extendsImplementsEntity) {
+		return new Builder(extendsImplementsEntity);
+	}
+
+	public static class Builder {
+
+    	private ExtendsImplementsEntity extendsImplementsEntity;
+    	
+    	public Builder(){
+    		this.extendsImplementsEntity = new ExtendsImplementsEntity();
+    	}
+    	
+    	public Builder(ExtendsImplementsEntity extendsImplementsEntity){
+    		this.extendsImplementsEntity = extendsImplementsEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		extendsImplementsEntity.setId(id);
+        	return this;
+    	}
+
+    	public Builder text(String text) {
+    		extendsImplementsEntity.setText(text);
+        	return this;
+    	}
+
+		public ExtendsImplementsEntity build(){
+			return extendsImplementsEntity;
+		}
+	}
+
 }

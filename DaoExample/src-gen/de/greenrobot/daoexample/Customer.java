@@ -99,4 +99,40 @@ public class Customer {
         myDao.refresh(this);
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(Customer customer) {
+		return new Builder(customer);
+	}
+
+	public static class Builder {
+
+    	private Customer customer;
+    	
+    	public Builder(){
+    		this.customer = new Customer();
+    	}
+    	
+    	public Builder(Customer customer){
+    		this.customer = customer;
+    	}
+    	
+    	public Builder id(Long id) {
+    		customer.setId(id);
+        	return this;
+    	}
+
+    	public Builder name(String name) {
+    		customer.setName(name);
+        	return this;
+    	}
+
+		public Customer build(){
+			return customer;
+		}
+	}
+
 }

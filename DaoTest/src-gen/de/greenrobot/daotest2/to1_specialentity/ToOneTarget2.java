@@ -29,6 +29,37 @@ public class ToOneTarget2 {
         this.id = id;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(ToOneTarget2 toOneTarget2) {
+		return new Builder(toOneTarget2);
+	}
+
+	public static class Builder {
+
+    	private ToOneTarget2 toOneTarget2;
+    	
+    	public Builder(){
+    		this.toOneTarget2 = new ToOneTarget2();
+    	}
+    	
+    	public Builder(ToOneTarget2 toOneTarget2){
+    		this.toOneTarget2 = toOneTarget2;
+    	}
+    	
+    	public Builder id(Long id) {
+    		toOneTarget2.setId(id);
+        	return this;
+    	}
+
+		public ToOneTarget2 build(){
+			return toOneTarget2;
+		}
+	}
+
     // KEEP METHODS - put your custom methods here
     // KEEP METHODS END
 

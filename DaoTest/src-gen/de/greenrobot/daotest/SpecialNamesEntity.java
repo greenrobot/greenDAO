@@ -117,4 +117,80 @@ public class SpecialNamesEntity {
         this.order = order;
     }
 
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static Builder builder(SpecialNamesEntity specialNamesEntity) {
+		return new Builder(specialNamesEntity);
+	}
+
+	public static class Builder {
+
+    	private SpecialNamesEntity specialNamesEntity;
+    	
+    	public Builder(){
+    		this.specialNamesEntity = new SpecialNamesEntity();
+    	}
+    	
+    	public Builder(SpecialNamesEntity specialNamesEntity){
+    		this.specialNamesEntity = specialNamesEntity;
+    	}
+    	
+    	public Builder id(Long id) {
+    		specialNamesEntity.setId(id);
+        	return this;
+    	}
+
+    	public Builder count(String count) {
+    		specialNamesEntity.setCount(count);
+        	return this;
+    	}
+
+    	public Builder select(String select) {
+    		specialNamesEntity.setSelect(select);
+        	return this;
+    	}
+
+    	public Builder sum(String sum) {
+    		specialNamesEntity.setSum(sum);
+        	return this;
+    	}
+
+    	public Builder avg(String avg) {
+    		specialNamesEntity.setAvg(avg);
+        	return this;
+    	}
+
+    	public Builder join(String join) {
+    		specialNamesEntity.setJoin(join);
+        	return this;
+    	}
+
+    	public Builder distinct(String distinct) {
+    		specialNamesEntity.setDistinct(distinct);
+        	return this;
+    	}
+
+    	public Builder on(String on) {
+    		specialNamesEntity.setOn(on);
+        	return this;
+    	}
+
+    	public Builder index(String index) {
+    		specialNamesEntity.setIndex(index);
+        	return this;
+    	}
+
+    	public Builder order(Integer order) {
+    		specialNamesEntity.setOrder(order);
+        	return this;
+    	}
+
+		public SpecialNamesEntity build(){
+			return specialNamesEntity;
+		}
+	}
+
 }
