@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.greenrobot.dao.identityscope.IdentityScopeType;
+import de.greenrobot.dao.internal.DaoConfig;
 
 import android.database.sqlite.SQLiteDatabase;
 

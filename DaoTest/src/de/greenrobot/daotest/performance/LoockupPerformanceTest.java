@@ -24,7 +24,7 @@ import java.util.Random;
 
 import junit.framework.TestCase;
 import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.LongHashMap;
+import de.greenrobot.dao.internal.LongHashMap;
 import de.greenrobot.daotest.performance.target.LongHashMapAmarena2DZechner;
 import de.greenrobot.daotest.performance.target.LongHashMapJDBM;
 import de.greenrobot.daotest.performance.target.LongSparseArray;

@@ -19,6 +19,7 @@ package de.greenrobot.dao;
 import java.lang.reflect.Constructor;
 
 import de.greenrobot.dao.identityscope.IdentityScope;
+import de.greenrobot.dao.internal.DaoConfig;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

@@ -24,7 +24,7 @@ import de.greenrobot.dao.AbstractDaoSession;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
+import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.query.WhereCondition.PropertyCondition;
 
 /**

@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.greenrobot.dao;
+package de.greenrobot.dao.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.Property;
 import de.greenrobot.dao.identityscope.IdentityScope;
 import de.greenrobot.dao.identityscope.IdentityScopeLong;
 import de.greenrobot.dao.identityscope.IdentityScopeObject;
@@ -33,24 +36,22 @@ import android.database.sqlite.SQLiteDatabase;
  */
 public final class DaoConfig implements Cloneable {
 
-    final SQLiteDatabase db;
-    final String tablename;
-    final Property[] properties;
+    public final SQLiteDatabase db;
+    public final String tablename;
+    public final Property[] properties;
 
-    final String[] allColumns;
-    final String[] pkColumns;
-    final String[] nonPkColumns;
+    public final String[] allColumns;
+    public final String[] pkColumns;
+    public final String[] nonPkColumns;
 
     /** Single property PK or null if there's no PK or a multi property PK. */
-    final Property pkProperty;
-
-    final boolean keyIsNumeric;
-
-    final TableStatements statements;
+    public final Property pkProperty;
+    public final boolean keyIsNumeric;
+    public final TableStatements statements;
 
     private IdentityScope<?, ?> identityScope;
 
-    DaoConfig(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>> daoClass) {
+    public DaoConfig(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>> daoClass) {
         this.db = db;
         try {
             this.tablename = (String) daoClass.getField("TABLENAME").get(null);
@@ -123,7 +124,7 @@ public final class DaoConfig implements Cloneable {
     }
 
     /** Does not copy identity scope. */
-    DaoConfig(DaoConfig source) {
+    public DaoConfig(DaoConfig source) {
         db = source.db;
         tablename = source.tablename;
         properties = source.properties;
@@ -145,7 +146,7 @@ public final class DaoConfig implements Cloneable {
         return identityScope;
     }
 
-    void setIdentityScope(IdentityScope<?, ?> identityScope) {
+    public void setIdentityScope(IdentityScope<?, ?> identityScope) {
         this.identityScope = identityScope;
     }
 

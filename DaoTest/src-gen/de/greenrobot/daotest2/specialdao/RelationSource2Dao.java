@@ -7,9 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
+import de.greenrobot.dao.internal.SqlUtils;
+import de.greenrobot.dao.internal.DaoConfig;
 
 import de.greenrobot.daotest2.dao.DaoSession;
 

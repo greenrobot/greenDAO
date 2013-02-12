@@ -20,7 +20,7 @@ package de.greenrobot.daotest;
 import java.util.Random;
 
 import junit.framework.TestCase;
-import de.greenrobot.dao.LongHashMap;
+import de.greenrobot.dao.internal.LongHashMap;
 
 public class LongHashMapTest extends TestCase {
 

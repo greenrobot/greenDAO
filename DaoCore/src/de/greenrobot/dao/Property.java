@@ -18,6 +18,7 @@ package de.greenrobot.dao;
 
 import java.util.Collection;
 
+import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.query.WhereCondition;
 import de.greenrobot.dao.query.WhereCondition.PropertyCondition;
 

@@ -3,7 +3,7 @@ package de.greenrobot.dao.query;
 import java.util.List;
 
 import android.database.Cursor;
-import de.greenrobot.dao.TableStatements;
+import de.greenrobot.dao.internal.TableStatements;
 
 /** For internal use by greenDAO only. */
 public interface InternalDaoQueryInterface<T> {

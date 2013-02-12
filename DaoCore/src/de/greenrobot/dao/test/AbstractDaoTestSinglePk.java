@@ -26,7 +26,7 @@ import android.database.DatabaseUtils;
 import android.database.SQLException;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
+import de.greenrobot.dao.internal.SqlUtils;
 
 /**
  * Default tests for single-PK entities.

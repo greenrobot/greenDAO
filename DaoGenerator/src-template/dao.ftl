@@ -32,11 +32,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
 <#if entity.toOneRelations?has_content>
-import de.greenrobot.dao.SqlUtils;
+import de.greenrobot.dao.internal.SqlUtils;
 </#if>
+import de.greenrobot.dao.internal.DaoConfig;
 <#if entity.incomingToManyRelations?has_content>
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;

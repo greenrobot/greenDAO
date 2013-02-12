@@ -19,7 +19,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
 
-import de.greenrobot.dao.LongHashMap;
+import de.greenrobot.dao.internal.LongHashMap;
 
 /**
  * The context for entity identities. Provides the scope in which entities will be tracked and managed.

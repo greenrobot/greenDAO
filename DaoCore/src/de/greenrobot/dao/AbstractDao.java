@@ -23,6 +23,9 @@ import java.util.List;
 
 import de.greenrobot.dao.identityscope.IdentityScope;
 import de.greenrobot.dao.identityscope.IdentityScopeLong;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.internal.FastCursor;
+import de.greenrobot.dao.internal.TableStatements;
 import de.greenrobot.dao.query.InternalDaoQueryInterface;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
