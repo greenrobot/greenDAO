@@ -25,10 +25,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 /** Reserved for internal unit tests that want to access some non-public methods. Don't use for anything else. */
-public class UnitTestDaoAccess<T, K> {
+public class InternalUnitTestDaoAccess<T, K> {
     private final AbstractDao<T, K> dao;
 
-    public UnitTestDaoAccess(SQLiteDatabase db, Class<AbstractDao<T, K>> daoClass, IdentityScope<?, ?> identityScope)
+    public InternalUnitTestDaoAccess(SQLiteDatabase db, Class<AbstractDao<T, K>> daoClass, IdentityScope<?, ?> identityScope)
             throws Exception {
         DaoConfig daoConfig = new DaoConfig(db, daoClass);
         daoConfig.setIdentityScope(identityScope);

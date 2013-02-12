@@ -17,6 +17,7 @@ package de.greenrobot.dao.query;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.InternalQueryDaoAccess;
 
 /**
  * A repeatable query returning entities.
@@ -29,7 +30,7 @@ import de.greenrobot.dao.DaoException;
 // TODO support long, double, blob types directly
 abstract class AbstractQuery<T> {
     protected final AbstractDao<T, ?> dao;
-    protected final InternalDaoQueryInterface<T> daoQueryInterface;
+    protected final InternalQueryDaoAccess<T> daoAccess;
     protected final String sql;
     protected final String[] parameters;
     protected final Thread ownerThread;
@@ -50,7 +51,7 @@ abstract class AbstractQuery<T> {
 
     protected AbstractQuery(AbstractDao<T, ?> dao, String sql, String[] parameters) {
         this.dao = dao;
-        this.daoQueryInterface = dao.internalDaoQueryInterface();
+        this.daoAccess = new InternalQueryDaoAccess<T>(dao);
         this.sql = sql;
         this.parameters = parameters;
         ownerThread = Thread.currentThread();

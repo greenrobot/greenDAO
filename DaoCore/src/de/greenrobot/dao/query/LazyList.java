@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import android.database.Cursor;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.InternalQueryDaoAccess;
 
 /**
  * A thread-safe, unmodifiable list that reads entities once they are accessed from an underlying database cursor. Make
@@ -122,16 +123,16 @@ public class LazyList<E> implements List<E>, Closeable {
 
     }
 
-    private final InternalDaoQueryInterface<E> daoInterface;
+    private final InternalQueryDaoAccess<E> daoAccess;
     private final Cursor cursor;
     private final List<E> entities;
     private final int size;
     private final ReentrantLock lock;
     private volatile int loadedCount;
 
-    LazyList(AbstractDao<E, ?> dao, Cursor cursor, boolean cacheEntities) {
+    LazyList(InternalQueryDaoAccess<E> daoAccess, Cursor cursor, boolean cacheEntities) {
         this.cursor = cursor;
-        this.daoInterface=dao.internalDaoQueryInterface();
+        this.daoAccess = daoAccess;
         size = cursor.getCount();
         if (cacheEntities) {
             entities = new ArrayList<E>(size);
@@ -256,7 +257,7 @@ public class LazyList<E> implements List<E>, Closeable {
 
     protected E loadEntity(int location) {
         cursor.moveToPosition(location);
-        E entity = daoInterface.loadCurrent(cursor, 0, true);
+        E entity = daoAccess.loadCurrent(cursor, 0, true);
         if (entity == null) {
             throw new DaoException("Loading of entity failed (null) at position " + location);
         }

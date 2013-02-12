@@ -128,7 +128,7 @@ public class Query<T> extends AbstractQuery<T> {
     public List<T> list() {
         checkThread();
         Cursor cursor = dao.getDatabase().rawQuery(sql, parameters);
-        return daoQueryInterface.loadAllAndCloseCursor(cursor);
+        return daoAccess.loadAllAndCloseCursor(cursor);
     }
 
     /**
@@ -139,7 +139,7 @@ public class Query<T> extends AbstractQuery<T> {
     public LazyList<T> listLazy() {
         checkThread();
         Cursor cursor = dao.getDatabase().rawQuery(sql, parameters);
-        return new LazyList<T>(dao, cursor, true);
+        return new LazyList<T>(daoAccess, cursor, true);
     }
 
     /**
@@ -149,7 +149,7 @@ public class Query<T> extends AbstractQuery<T> {
     public LazyList<T> listLazyUncached() {
         checkThread();
         Cursor cursor = dao.getDatabase().rawQuery(sql, parameters);
-        return new LazyList<T>(dao, cursor, false);
+        return new LazyList<T>(daoAccess, cursor, false);
     }
 
     /**
@@ -170,7 +170,7 @@ public class Query<T> extends AbstractQuery<T> {
     public T unique() {
         checkThread();
         Cursor cursor = dao.getDatabase().rawQuery(sql, parameters);
-        return daoQueryInterface.loadUniqueAndCloseCursor(cursor);
+        return daoAccess.loadUniqueAndCloseCursor(cursor);
     }
 
     /**

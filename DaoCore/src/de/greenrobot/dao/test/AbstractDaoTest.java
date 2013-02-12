@@ -23,7 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.UnitTestDaoAccess;
+import de.greenrobot.dao.InternalUnitTestDaoAccess;
 import de.greenrobot.dao.identityscope.IdentityScope;
 
 /**
@@ -42,7 +42,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
 
     protected final Class<D> daoClass;
     protected D dao;
-    protected UnitTestDaoAccess<T, K> daoAccess;
+    protected InternalUnitTestDaoAccess<T, K> daoAccess;
     protected Property pkColumn;
     protected IdentityScope<K, T> identityScopeForDao;
 
@@ -65,7 +65,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
         super.setUp();
         try {
             setUpTableForDao();
-            daoAccess = new UnitTestDaoAccess<T, K>(db, (Class<AbstractDao<T, K>>) daoClass, identityScopeForDao);
+            daoAccess = new InternalUnitTestDaoAccess<T, K>(db, (Class<AbstractDao<T, K>>) daoClass, identityScopeForDao);
             dao = (D) daoAccess.getDao();
         } catch (Exception e) {
             throw new RuntimeException("Could not prepare DAO Test", e);

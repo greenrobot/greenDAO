@@ -23,6 +23,7 @@ import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.AbstractDaoSession;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.InternalQueryDaoAccess;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.query.WhereCondition.PropertyCondition;
@@ -257,7 +258,7 @@ public class QueryBuilder<T> {
     public Query<T> build() {
         String select;
         if (joinBuilder == null || joinBuilder.length() == 0) {
-            select = dao.internalDaoQueryInterface().getStatements().getSelectAll();
+            select = InternalQueryDaoAccess.getStatements(dao).getSelectAll();
         } else {
             select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
         }
