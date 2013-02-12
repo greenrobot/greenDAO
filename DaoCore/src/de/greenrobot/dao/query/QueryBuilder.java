@@ -25,8 +25,7 @@ import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.SqlUtils;
-import de.greenrobot.dao.WhereCondition;
-import de.greenrobot.dao.WhereCondition.PropertyCondition;
+import de.greenrobot.dao.query.WhereCondition.PropertyCondition;
 
 /**
  * Builds custom entity queries using constraints and parameters and without SQL (QueryBuilder creates SQL for you). To

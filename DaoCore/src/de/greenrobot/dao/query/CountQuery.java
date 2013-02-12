@@ -1,8 +1,8 @@
 package de.greenrobot.dao.query;
 
+import android.database.Cursor;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
-import android.database.Cursor;
 
 public class CountQuery<T> extends AbstractQuery<T> {
 

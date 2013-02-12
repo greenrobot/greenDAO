@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.greenrobot.dao;
+package de.greenrobot.dao.query;
 
 import java.util.Date;
 import java.util.List;
+
+import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.Property;
 
 /**
  * Internal interface to model WHERE conditions used in queries. Use the {@link Property} objects in the DAO classes to

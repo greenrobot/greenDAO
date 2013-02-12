@@ -19,7 +19,7 @@ package de.greenrobot.daotest.entity;
 
 import java.util.List;
 
-import de.greenrobot.dao.IdentityScopeType;
+import de.greenrobot.dao.identityscope.IdentityScopeType;
 import de.greenrobot.dao.test.AbstractDaoTestLongPk;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;

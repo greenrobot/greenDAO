@@ -26,7 +26,7 @@ import java.util.Map;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.AbstractDaoSession;
-import de.greenrobot.dao.IdentityScopeType;
+import de.greenrobot.dao.identityscope.IdentityScopeType;
 
 <#list schema.entities as entity>
 import ${entity.javaPackage}.${entity.className};

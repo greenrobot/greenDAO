@@ -7,7 +7,7 @@ import java.util.Map;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.AbstractDaoSession;
-import de.greenrobot.dao.IdentityScopeType;
+import de.greenrobot.dao.identityscope.IdentityScopeType;
 
 import de.greenrobot.daotest2.KeepEntity;
 import de.greenrobot.daotest2.ToManyTarget2;

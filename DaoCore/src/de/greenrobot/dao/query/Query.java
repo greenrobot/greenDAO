@@ -17,10 +17,9 @@ package de.greenrobot.dao.query;
 
 import java.util.List;
 
+import android.database.Cursor;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
-
-import android.database.Cursor;
 
 /**
  * A repeatable query returning entities.

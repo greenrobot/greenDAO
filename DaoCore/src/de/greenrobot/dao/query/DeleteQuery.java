@@ -15,9 +15,9 @@
  */
 package de.greenrobot.dao.query;
 
-import de.greenrobot.dao.AbstractDao;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import de.greenrobot.dao.AbstractDao;
 
 /**
  * A repeatable query for deleting entities.<br/>

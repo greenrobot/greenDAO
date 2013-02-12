@@ -18,7 +18,8 @@ package de.greenrobot.dao;
 
 import java.util.Collection;
 
-import de.greenrobot.dao.WhereCondition.PropertyCondition;
+import de.greenrobot.dao.query.WhereCondition;
+import de.greenrobot.dao.query.WhereCondition.PropertyCondition;
 
 /**
  * Meta data describing a property mapped to a database column; used to create WhereCondition object used by the query builder.

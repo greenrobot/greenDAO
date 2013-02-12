@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Application;
-
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
