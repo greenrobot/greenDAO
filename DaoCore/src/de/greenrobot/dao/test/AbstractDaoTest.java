@@ -22,9 +22,9 @@ import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.IdentityScope;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.UnitTestDaoAccess;
+import de.greenrobot.dao.identityscope.IdentityScope;
 
 /**
  * Base class for DAO related testing. Prepares an in-memory DB and DAO.

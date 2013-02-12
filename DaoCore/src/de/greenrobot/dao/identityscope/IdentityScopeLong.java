@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.greenrobot.dao;
+package de.greenrobot.dao.identityscope;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
+
+import de.greenrobot.dao.LongHashMap;
 
 /**
  * The context for entity identities. Provides the scope in which entities will be tracked and managed.

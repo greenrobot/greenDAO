@@ -20,6 +20,11 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.dao.identityscope.IdentityScope;
+import de.greenrobot.dao.identityscope.IdentityScopeLong;
+import de.greenrobot.dao.identityscope.IdentityScopeObject;
+import de.greenrobot.dao.identityscope.IdentityScopeType;
+
 import android.database.sqlite.SQLiteDatabase;
 
 /**
