@@ -17,12 +17,15 @@
  */
 package de.greenrobot.daotest.query;
 
+import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.Query;
+import de.greenrobot.dao.QueryBuilder;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
 
 public class QueryThreadLocalTest extends TestEntityTestBase {
+    private Query<TestEntity> queryFromOtherThread;
 
     public void testGetForCurrentThread_SameInstance() {
         Query<TestEntity> query = dao.queryBuilder().build();
@@ -41,5 +44,81 @@ public class QueryThreadLocalTest extends TestEntityTestBase {
         assertEquals(value, (int) entityFor1.getSimpleInteger());
     }
 
-    // TODO more tests
+    public void testGetForCurrentThread_TwoThreads() throws InterruptedException {
+        insert(3);
+        createQueryFromOtherThread();
+        Query<TestEntity> query = queryFromOtherThread.forCurrentThread();
+        assertNotSame(queryFromOtherThread, query);
+        query.setLimit(10);
+        query.setOffset(0);
+        assertEquals(getSimpleInteger(1), (int) query.uniqueOrThrow().getSimpleInteger());
+        int expected = getSimpleInteger(2);
+        query.setParameter(0, expected);
+        assertEquals(expected, (int) query.list().get(0).getSimpleInteger());
+        assertEquals(expected, (int) query.listLazy().get(0).getSimpleInteger());
+        assertEquals(expected, (int) query.listLazyUncached().get(0).getSimpleInteger());
+        assertEquals(expected, (int) query.unique().getSimpleInteger());
+        assertEquals(expected, (int) query.uniqueOrThrow().getSimpleInteger());
+    }
+
+    public void testThrowOutsideOwnerThread() throws InterruptedException {
+        createQueryFromOtherThread();
+        try {
+            queryFromOtherThread.list();
+            fail("Did not throw");
+        } catch (DaoException expected) {
+        }
+        try {
+            queryFromOtherThread.listIterator();
+            fail("Did not throw");
+        } catch (DaoException expected) {
+        }
+        try {
+            queryFromOtherThread.listLazyUncached();
+            fail("Did not throw");
+        } catch (DaoException expected) {
+        }
+        try {
+            queryFromOtherThread.setLimit(2);
+            fail("Did not throw");
+        } catch (DaoException expected) {
+        }
+        try {
+            queryFromOtherThread.setOffset(2);
+            fail("Did not throw");
+        } catch (DaoException expected) {
+        }
+        try {
+            queryFromOtherThread.setParameter(0, 42);
+            fail("Did not throw");
+        } catch (DaoException expected) {
+        }
+        try {
+            queryFromOtherThread.unique();
+            fail("Did not throw");
+        } catch (DaoException expected) {
+        }
+        try {
+            queryFromOtherThread.uniqueOrThrow();
+            fail("Did not throw");
+        } catch (DaoException expected) {
+        }
+    }
+
+    private void createQueryFromOtherThread() throws InterruptedException {
+        Thread thread = new Thread() {
+
+            @Override
+            public void run() {
+                QueryBuilder<TestEntity> builder = dao.queryBuilder();
+                builder.where(Properties.SimpleInteger.eq(getSimpleInteger(1)));
+                builder.limit(10).offset(20);
+                queryFromOtherThread = builder.build();
+            }
+        };
+        thread.start();
+        thread.join();
+        assertNotNull(queryFromOtherThread);
+    }
+
 }
