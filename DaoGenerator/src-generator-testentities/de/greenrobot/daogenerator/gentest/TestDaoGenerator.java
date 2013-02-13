@@ -137,18 +137,18 @@ public class TestDaoGenerator {
         toMany.orderAsc(targetIdProperty);
 
         ToMany toManyDesc = toManyEntity.addToMany(toManyTargetEntity, toManyIdDescProperty);
-        toManyDesc.setName("ToManyDescList");
+        toManyDesc.setName("toManyDescList");
         toManyDesc.orderDesc(targetIdProperty);
 
         ToMany toManyByJoinProperty = toManyEntity
                 .addToMany(sourceJoinProperty, toManyTargetEntity, targetJoinProperty);
-        toManyByJoinProperty.setName("ToManyByJoinProperty");
+        toManyByJoinProperty.setName("toManyByJoinProperty");
         toManyByJoinProperty.orderAsc(targetIdProperty);
 
         Property[] sourceProperties = { sourceIdProperty, sourceJoinProperty };
         Property[] targetProperties = { toManyIdProperty, targetJoinProperty };
         ToMany toManyJoinTwo = toManyEntity.addToMany(sourceProperties, toManyTargetEntity, targetProperties);
-        toManyJoinTwo.setName("ToManyJoinTwo");
+        toManyJoinTwo.setName("toManyJoinTwo");
         toManyJoinTwo.orderDesc(targetJoinProperty);
         toManyJoinTwo.orderDesc(targetIdProperty);
     }

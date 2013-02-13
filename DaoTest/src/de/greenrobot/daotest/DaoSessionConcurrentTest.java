@@ -262,6 +262,29 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
     }
 
 
+    public void testConcurrentResolveToMany() throws InterruptedException {
+        final ToManyEntity entity = new ToManyEntity();
+        ToManyEntityDao toManyDao = daoSession.getToManyEntityDao();
+        toManyDao.insert(entity);
+        
+        Runnable runnable1 = new Runnable() {
+            @Override
+            public void run() {
+                entity.getToManyTargetEntityList();
+            }
+        };
+
+        initThreads(runnable1);
+        doTx(new Runnable() {
+            @Override
+            public void run() {
+                entity.getToManyTargetEntityList();
+            }
+        });
+        latchThreadsDone.await();
+    }
+
+
     /**
      * We could put the statements inside ThreadLocals (fast enough), but it comes with initialization penalty for new
      * threads and costs more memory.

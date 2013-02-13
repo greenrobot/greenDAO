@@ -78,13 +78,18 @@ public class TreeEntity {
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
-    public synchronized List<TreeEntity> getChildren() {
+    public List<TreeEntity> getChildren() {
         if (children == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             TreeEntityDao targetDao = daoSession.getTreeEntityDao();
-            children = targetDao._queryTreeEntity_Children(id);
+            List<TreeEntity> childrenNew = targetDao._queryTreeEntity_Children(id);
+            synchronized (this) {
+                if(children == null) {
+                    children = childrenNew;
+                }
+            }
         }
         return children;
     }

@@ -90,13 +90,18 @@ public class RelationSource2 {
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
-    public synchronized List<ToManyTarget2> getToManyTarget2List() {
+    public List<ToManyTarget2> getToManyTarget2List() {
         if (toManyTarget2List == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             ToManyTarget2Dao targetDao = daoSession.getToManyTarget2Dao();
-            toManyTarget2List = targetDao._queryRelationSource2_ToManyTarget2List(id);
+            List<ToManyTarget2> toManyTarget2ListNew = targetDao._queryRelationSource2_ToManyTarget2List(id);
+            synchronized (this) {
+                if(toManyTarget2List == null) {
+                    toManyTarget2List = toManyTarget2ListNew;
+                }
+            }
         }
         return toManyTarget2List;
     }

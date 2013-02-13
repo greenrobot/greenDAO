@@ -117,15 +117,17 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
     }
     
     /** Internal query to resolve the "toManyTarget2List" to-many relationship of RelationSource2. */
-    public synchronized List<ToManyTarget2> _queryRelationSource2_ToManyTarget2List(Long fkId) {
-        if (relationSource2_ToManyTarget2ListQuery == null) {
-            QueryBuilder<ToManyTarget2> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.FkId.eq(fkId));
-            relationSource2_ToManyTarget2ListQuery = queryBuilder.build();
-        } else {
-            relationSource2_ToManyTarget2ListQuery.setParameter(0, fkId);
+    public List<ToManyTarget2> _queryRelationSource2_ToManyTarget2List(Long fkId) {
+        synchronized (this) {
+            if (relationSource2_ToManyTarget2ListQuery == null) {
+                QueryBuilder<ToManyTarget2> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.FkId.eq(null));
+                relationSource2_ToManyTarget2ListQuery = queryBuilder.build();
+            }
         }
-        return relationSource2_ToManyTarget2ListQuery.list();
+        Query<ToManyTarget2> query = relationSource2_ToManyTarget2ListQuery.forCurrentThread();
+        query.setParameter(0, fkId);
+        return query.list();
     }
 
 }

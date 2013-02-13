@@ -138,57 +138,65 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
     }
     
     /** Internal query to resolve the "toManyTargetEntityList" to-many relationship of ToManyEntity. */
-    public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyTargetEntityList(Long toManyId) {
-        if (toManyEntity_ToManyTargetEntityListQuery == null) {
-            QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.ToManyId.eq(toManyId));
-            queryBuilder.orderRaw("_id ASC");
-            toManyEntity_ToManyTargetEntityListQuery = queryBuilder.build();
-        } else {
-            toManyEntity_ToManyTargetEntityListQuery.setParameter(0, toManyId);
+    public List<ToManyTargetEntity> _queryToManyEntity_ToManyTargetEntityList(Long toManyId) {
+        synchronized (this) {
+            if (toManyEntity_ToManyTargetEntityListQuery == null) {
+                QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.ToManyId.eq(null));
+                queryBuilder.orderRaw("_id ASC");
+                toManyEntity_ToManyTargetEntityListQuery = queryBuilder.build();
+            }
         }
-        return toManyEntity_ToManyTargetEntityListQuery.list();
+        Query<ToManyTargetEntity> query = toManyEntity_ToManyTargetEntityListQuery.forCurrentThread();
+        query.setParameter(0, toManyId);
+        return query.list();
     }
 
-    /** Internal query to resolve the "ToManyDescList" to-many relationship of ToManyEntity. */
-    public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyDescList(Long toManyIdDesc) {
-        if (toManyEntity_ToManyDescListQuery == null) {
-            QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.ToManyIdDesc.eq(toManyIdDesc));
-            queryBuilder.orderRaw("_id DESC");
-            toManyEntity_ToManyDescListQuery = queryBuilder.build();
-        } else {
-            toManyEntity_ToManyDescListQuery.setParameter(0, toManyIdDesc);
+    /** Internal query to resolve the "toManyDescList" to-many relationship of ToManyEntity. */
+    public List<ToManyTargetEntity> _queryToManyEntity_ToManyDescList(Long toManyIdDesc) {
+        synchronized (this) {
+            if (toManyEntity_ToManyDescListQuery == null) {
+                QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.ToManyIdDesc.eq(null));
+                queryBuilder.orderRaw("_id DESC");
+                toManyEntity_ToManyDescListQuery = queryBuilder.build();
+            }
         }
-        return toManyEntity_ToManyDescListQuery.list();
+        Query<ToManyTargetEntity> query = toManyEntity_ToManyDescListQuery.forCurrentThread();
+        query.setParameter(0, toManyIdDesc);
+        return query.list();
     }
 
-    /** Internal query to resolve the "ToManyByJoinProperty" to-many relationship of ToManyEntity. */
-    public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyByJoinProperty(String targetJoinProperty) {
-        if (toManyEntity_ToManyByJoinPropertyQuery == null) {
-            QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.TargetJoinProperty.eq(targetJoinProperty));
-            queryBuilder.orderRaw("_id ASC");
-            toManyEntity_ToManyByJoinPropertyQuery = queryBuilder.build();
-        } else {
-            toManyEntity_ToManyByJoinPropertyQuery.setParameter(0, targetJoinProperty);
+    /** Internal query to resolve the "toManyByJoinProperty" to-many relationship of ToManyEntity. */
+    public List<ToManyTargetEntity> _queryToManyEntity_ToManyByJoinProperty(String targetJoinProperty) {
+        synchronized (this) {
+            if (toManyEntity_ToManyByJoinPropertyQuery == null) {
+                QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.TargetJoinProperty.eq(null));
+                queryBuilder.orderRaw("_id ASC");
+                toManyEntity_ToManyByJoinPropertyQuery = queryBuilder.build();
+            }
         }
-        return toManyEntity_ToManyByJoinPropertyQuery.list();
+        Query<ToManyTargetEntity> query = toManyEntity_ToManyByJoinPropertyQuery.forCurrentThread();
+        query.setParameter(0, targetJoinProperty);
+        return query.list();
     }
 
-    /** Internal query to resolve the "ToManyJoinTwo" to-many relationship of ToManyEntity. */
-    public synchronized List<ToManyTargetEntity> _queryToManyEntity_ToManyJoinTwo(Long toManyId, String targetJoinProperty) {
-        if (toManyEntity_ToManyJoinTwoQuery == null) {
-            QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.ToManyId.eq(toManyId));
-            queryBuilder.where(Properties.TargetJoinProperty.eq(targetJoinProperty));
-            queryBuilder.orderRaw("TARGET_JOIN_PROPERTY DESC,_id DESC");
-            toManyEntity_ToManyJoinTwoQuery = queryBuilder.build();
-        } else {
-            toManyEntity_ToManyJoinTwoQuery.setParameter(0, toManyId);
-            toManyEntity_ToManyJoinTwoQuery.setParameter(1, targetJoinProperty);
+    /** Internal query to resolve the "toManyJoinTwo" to-many relationship of ToManyEntity. */
+    public List<ToManyTargetEntity> _queryToManyEntity_ToManyJoinTwo(Long toManyId, String targetJoinProperty) {
+        synchronized (this) {
+            if (toManyEntity_ToManyJoinTwoQuery == null) {
+                QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.ToManyId.eq(null));
+                queryBuilder.where(Properties.TargetJoinProperty.eq(null));
+                queryBuilder.orderRaw("TARGET_JOIN_PROPERTY DESC,_id DESC");
+                toManyEntity_ToManyJoinTwoQuery = queryBuilder.build();
+            }
         }
-        return toManyEntity_ToManyJoinTwoQuery.list();
+        Query<ToManyTargetEntity> query = toManyEntity_ToManyJoinTwoQuery.forCurrentThread();
+        query.setParameter(0, toManyId);
+        query.setParameter(1, targetJoinProperty);
+        return query.list();
     }
 
 }
