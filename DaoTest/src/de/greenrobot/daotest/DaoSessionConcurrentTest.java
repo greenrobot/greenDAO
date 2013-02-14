@@ -237,7 +237,7 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         });
         latchThreadsDone.await();
     }
-    
+
     public void testConcurrentDeleteQueryDuringTx() throws InterruptedException {
         final TestEntity entity = createEntity(null);
         dao.insert(entity);
@@ -261,12 +261,11 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         latchThreadsDone.await();
     }
 
-
     public void testConcurrentResolveToMany() throws InterruptedException {
         final ToManyEntity entity = new ToManyEntity();
         ToManyEntityDao toManyDao = daoSession.getToManyEntityDao();
         toManyDao.insert(entity);
-        
+
         Runnable runnable1 = new Runnable() {
             @Override
             public void run() {
@@ -284,6 +283,27 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
         latchThreadsDone.await();
     }
 
+    public void testConcurrentResolveToOne() throws InterruptedException {
+        final TreeEntity entity = new TreeEntity();
+        TreeEntityDao toOneDao = daoSession.getTreeEntityDao();
+        toOneDao.insert(entity);
+
+        Runnable runnable1 = new Runnable() {
+            @Override
+            public void run() {
+                entity.getParent();
+            }
+        };
+
+        initThreads(runnable1);
+        doTx(new Runnable() {
+            @Override
+            public void run() {
+                entity.getParent();
+            }
+        });
+        latchThreadsDone.await();
+    }
 
     /**
      * We could put the statements inside ThreadLocals (fast enough), but it comes with initialization penalty for new

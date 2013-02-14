@@ -97,51 +97,67 @@ public class RelationEntity {
 
     /** To-one relationship, resolved on first access. */
     public RelationEntity getParent() {
-        if (parent__resolvedKey == null || !parent__resolvedKey.equals(parentId)) {
+        Long __key = this.parentId;
+        if (parent__resolvedKey == null || !parent__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             RelationEntityDao targetDao = daoSession.getRelationEntityDao();
-            parent = targetDao.load(parentId);
-            parent__resolvedKey = parentId;
+            RelationEntity parentNew = targetDao.load(__key);
+            synchronized (this) {
+                parent = parentNew;
+            	parent__resolvedKey = __key;
+            }
         }
         return parent;
     }
 
     public void setParent(RelationEntity parent) {
-        this.parent = parent;
-        parentId = parent == null ? null : parent.getId();
-        parent__resolvedKey = parentId;
+        synchronized (this) {
+            this.parent = parent;
+            parentId = parent == null ? null : parent.getId();
+            parent__resolvedKey = parentId;
+        }
     }
 
     /** To-one relationship, resolved on first access. */
     public TestEntity getTestEntity() {
-        if (testEntity__resolvedKey == null || !testEntity__resolvedKey.equals(testId)) {
+        Long __key = this.testId;
+        if (testEntity__resolvedKey == null || !testEntity__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             TestEntityDao targetDao = daoSession.getTestEntityDao();
-            testEntity = targetDao.load(testId);
-            testEntity__resolvedKey = testId;
+            TestEntity testEntityNew = targetDao.load(__key);
+            synchronized (this) {
+                testEntity = testEntityNew;
+            	testEntity__resolvedKey = __key;
+            }
         }
         return testEntity;
     }
 
     public void setTestEntity(TestEntity testEntity) {
-        this.testEntity = testEntity;
-        testId = testEntity == null ? null : testEntity.getId();
-        testEntity__resolvedKey = testId;
+        synchronized (this) {
+            this.testEntity = testEntity;
+            testId = testEntity == null ? null : testEntity.getId();
+            testEntity__resolvedKey = testId;
+        }
     }
 
     /** To-one relationship, resolved on first access. */
     public TestEntity getTestNotNull() {
-        if (testNotNull__resolvedKey == null || !testNotNull__resolvedKey.equals(testIdNotNull)) {
+        long __key = this.testIdNotNull;
+        if (testNotNull__resolvedKey == null || !testNotNull__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             TestEntityDao targetDao = daoSession.getTestEntityDao();
-            testNotNull = targetDao.load(testIdNotNull);
-            testNotNull__resolvedKey = testIdNotNull;
+            TestEntity testNotNullNew = targetDao.load(__key);
+            synchronized (this) {
+                testNotNull = testNotNullNew;
+            	testNotNull__resolvedKey = __key;
+            }
         }
         return testNotNull;
     }
@@ -150,9 +166,11 @@ public class RelationEntity {
         if (testNotNull == null) {
             throw new DaoException("To-one property 'testIdNotNull' has not-null constraint; cannot set to-one to null");
         }
-        this.testNotNull = testNotNull;
-        testIdNotNull = testNotNull.getId();
-        testNotNull__resolvedKey = testIdNotNull;
+        synchronized (this) {
+            this.testNotNull = testNotNull;
+            testIdNotNull = testNotNull.getId();
+            testNotNull__resolvedKey = testIdNotNull;
+        }
     }
 
     /** To-one relationship, resolved on first access. */
@@ -174,8 +192,10 @@ public class RelationEntity {
     }
 
     public void setTestWithoutProperty(TestEntity testWithoutProperty) {
-        this.testWithoutProperty = testWithoutProperty;
-        testWithoutProperty__refreshed = true;
+        synchronized (this) {
+            this.testWithoutProperty = testWithoutProperty;
+            testWithoutProperty__refreshed = true;
+        }
     }
 
     /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */

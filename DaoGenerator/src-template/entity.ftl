@@ -138,16 +138,20 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 <#list entity.toOneRelations as toOne>
     /** To-one relationship, resolved on first access. */
     public ${toOne.targetEntity.className} get${toOne.name?cap_first}() {
-<#if toOne.useFkProperty>    
+<#if toOne.useFkProperty>
+        ${toOne.fkProperties[0].javaType} __key = this.${toOne.fkProperties[0].propertyName};
         if (${toOne.name}__resolvedKey == null || <#--
-        --><#if toOne.resolvedKeyUseEquals[0]>!${toOne.name}__resolvedKey.equals(${toOne.fkProperties[0].propertyName})<#--
-        --><#else>${toOne.name}__resolvedKey != ${toOne.fkProperties[0].propertyName}</#if>) {
+        --><#if toOne.resolvedKeyUseEquals[0]>!${toOne.name}__resolvedKey.equals(__key)<#--
+        --><#else>${toOne.name}__resolvedKey != __key</#if>) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             ${toOne.targetEntity.classNameDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
-            ${toOne.name} = targetDao.load(${toOne.fkProperties[0].propertyName});
-            ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
+            ${toOne.targetEntity.className} ${toOne.name}New = targetDao.load(__key);
+            synchronized (this) {
+                ${toOne.name} = ${toOne.name}New;
+            	${toOne.name}__resolvedKey = __key;
+            }
         }
 <#else>
         if (${toOne.name} != null || !${toOne.name}__refreshed) {
@@ -175,13 +179,15 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
             throw new DaoException("To-one property '${toOne.fkProperties[0].propertyName}' has not-null constraint; cannot set to-one to null");
         }
 </#if>
-        this.${toOne.name} = ${toOne.name};
+        synchronized (this) {
+            this.${toOne.name} = ${toOne.name};
 <#if toOne.useFkProperty>        
-        ${toOne.fkProperties[0].propertyName} = <#if !toOne.fkProperties[0].notNull>${toOne.name} == null ? null : </#if>${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}();
-        ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
+            ${toOne.fkProperties[0].propertyName} = <#if !toOne.fkProperties[0].notNull>${toOne.name} == null ? null : </#if>${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}();
+            ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
 <#else>
-        ${toOne.name}__refreshed = true;
+            ${toOne.name}__refreshed = true;
 </#if>
+        }
     }
 
 </#list>

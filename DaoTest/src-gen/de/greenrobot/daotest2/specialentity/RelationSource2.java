@@ -72,21 +72,27 @@ public class RelationSource2 {
 
     /** To-one relationship, resolved on first access. */
     public ToOneTarget2 getToOneTarget2() {
-        if (toOneTarget2__resolvedKey == null || !toOneTarget2__resolvedKey.equals(toOneId)) {
+        Long __key = this.toOneId;
+        if (toOneTarget2__resolvedKey == null || !toOneTarget2__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             ToOneTarget2Dao targetDao = daoSession.getToOneTarget2Dao();
-            toOneTarget2 = targetDao.load(toOneId);
-            toOneTarget2__resolvedKey = toOneId;
+            ToOneTarget2 toOneTarget2New = targetDao.load(__key);
+            synchronized (this) {
+                toOneTarget2 = toOneTarget2New;
+            	toOneTarget2__resolvedKey = __key;
+            }
         }
         return toOneTarget2;
     }
 
     public void setToOneTarget2(ToOneTarget2 toOneTarget2) {
-        this.toOneTarget2 = toOneTarget2;
-        toOneId = toOneTarget2 == null ? null : toOneTarget2.getId();
-        toOneTarget2__resolvedKey = toOneId;
+        synchronized (this) {
+            this.toOneTarget2 = toOneTarget2;
+            toOneId = toOneTarget2 == null ? null : toOneTarget2.getId();
+            toOneTarget2__resolvedKey = toOneId;
+        }
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */

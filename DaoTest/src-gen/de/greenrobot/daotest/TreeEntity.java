@@ -60,21 +60,27 @@ public class TreeEntity {
 
     /** To-one relationship, resolved on first access. */
     public TreeEntity getParent() {
-        if (parent__resolvedKey == null || !parent__resolvedKey.equals(parentId)) {
+        Long __key = this.parentId;
+        if (parent__resolvedKey == null || !parent__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             TreeEntityDao targetDao = daoSession.getTreeEntityDao();
-            parent = targetDao.load(parentId);
-            parent__resolvedKey = parentId;
+            TreeEntity parentNew = targetDao.load(__key);
+            synchronized (this) {
+                parent = parentNew;
+            	parent__resolvedKey = __key;
+            }
         }
         return parent;
     }
 
     public void setParent(TreeEntity parent) {
-        this.parent = parent;
-        parentId = parent == null ? null : parent.getId();
-        parent__resolvedKey = parentId;
+        synchronized (this) {
+            this.parent = parent;
+            parentId = parent == null ? null : parent.getId();
+            parent__resolvedKey = parentId;
+        }
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
