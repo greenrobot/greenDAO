@@ -18,11 +18,10 @@ package de.greenrobot.dao;
 
 import java.lang.reflect.Constructor;
 
-import de.greenrobot.dao.identityscope.IdentityScope;
-import de.greenrobot.dao.internal.DaoConfig;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import de.greenrobot.dao.identityscope.IdentityScope;
+import de.greenrobot.dao.internal.DaoConfig;
 
 /** Reserved for internal unit tests that want to access some non-public methods. Don't use for anything else. */
 public class InternalUnitTestDaoAccess<T, K> {
