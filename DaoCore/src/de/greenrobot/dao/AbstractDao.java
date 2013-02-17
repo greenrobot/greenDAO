@@ -600,8 +600,8 @@ public abstract class AbstractDao<T, K> {
     /**
      * Deletes all entities with the given keys in the database using a transaction.
      * 
-     * @param entities
-     *            The entities to delete.
+     * @param keys
+     *            Keys of the entities to delete.
      */
     public void deleteByKeyInTx(Iterable<K> keys) {
         deleteInTxInternal(null, keys);
@@ -610,8 +610,8 @@ public abstract class AbstractDao<T, K> {
     /**
      * Deletes all entities with the given keys in the database using a transaction.
      * 
-     * @param entities
-     *            The entities to delete.
+     * @param keys
+     *            Keys of the entities to delete.
      */
     public void deleteByKeyInTx(K... keys) {
         deleteInTxInternal(null, Arrays.asList(keys));

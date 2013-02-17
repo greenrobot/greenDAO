@@ -21,7 +21,8 @@ package de.greenrobot.dao.identityscope;
  * 
  * @author Markus
  * 
- * @param<K> Key
+ * @param <K>
+ *            Key
  * @param <T>
  *            Entity
  */

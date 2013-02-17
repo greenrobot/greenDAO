@@ -101,7 +101,7 @@ public class Query<T> extends AbstractQuery<T> {
     }
 
     /**
-     * Sets the limit of the maximum number of results returned by this Query. {@link QueryBuilder#limit(int) must have
+     * Sets the limit of the maximum number of results returned by this Query. {@link QueryBuilder#limit(int)} must have
      * been called on the QueryBuilder that created this Query object.
      */
     public void setLimit(int limit) {
@@ -113,7 +113,7 @@ public class Query<T> extends AbstractQuery<T> {
     }
 
     /**
-     * Sets the offset for results returned by this Query. {@link QueryBuilder#offset(int) must have been called on the
+     * Sets the offset for results returned by this Query. {@link QueryBuilder#offset(int)} must have been called on the
      * QueryBuilder that created this Query object.
      */
     public void setOffset(int offset) {

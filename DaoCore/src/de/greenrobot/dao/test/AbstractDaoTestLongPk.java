@@ -36,7 +36,7 @@ public abstract class AbstractDaoTestLongPk<D extends AbstractDao<T, Long>, T> e
         super(daoClass);
     }
 
-    /** @inheritdoc */
+    /** {@inheritDoc} */
     protected Long createRandomPk() {
         return random.nextLong();
     }

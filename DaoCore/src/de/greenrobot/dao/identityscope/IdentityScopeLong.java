@@ -25,8 +25,8 @@ import de.greenrobot.dao.internal.LongHashMap;
  * The context for entity identities. Provides the scope in which entities will be tracked and managed.
  * 
  * @author Markus
- * @param <K>
  * @param <T>
+ *            Entity
  */
 public class IdentityScopeLong<T> implements IdentityScope<Long, T> {
     private final LongHashMap<Reference<T>> map;
