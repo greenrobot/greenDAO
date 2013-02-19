@@ -1,0 +1,112 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+group = 'de.greenrobot'
+version = '1.3.0-beta-1'
+sourceCompatibility = 1.6
+
+def isSnapshot = version.endsWith('-SNAPSHOT')
+def sonatypeRepositoryUrl
+if(isSnapshot) {
+	sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+} else {
+	sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // TODO switch to repo some day
+    compile fileTree(dir: 'lib', include: '*.jar')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+            srcDir 'src-template'
+        }
+    }
+}
+
+javadoc {
+    title = "greenDAO Generator ${version} API"
+    // Unfinished APIs:
+    excludes = ['de/greenrobot/daogenerator/Query*']
+	options.bottom = 'Available under the GPLv3 - <i>Copyright &#169; 2011-2013 <a href="http://greenrobot.de/">greenrobot.de</a>. All Rights Reserved.</i>'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            // if(! isSnapshot) {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            // }
+
+            repository(url: sonatypeRepositoryUrl) {
+              authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            pom.project {
+               name 'greenDAO Generator'
+               packaging 'jar'
+               description 'Code generator for greenDAO, the light and fast ORM for Android'
+               url 'http://greendao-orm.com'
+
+               scm {
+                   url 'https://github.com/greenrobot/greenDAO'
+                   connection 'scm:git@github.com:greenrobot/greenDAO.git'
+                   developerConnection 'scm:git@github.com:greenrobot/greenDAO.git'
+               }
+
+               licenses {
+                   license {
+                       name 'GNU General Public License, Version 3'
+                       url 'http://www.gnu.org/licenses/gpl.txt'
+                       distribution 'repo'
+                   }
+               }
+
+               developers {
+                   developer {
+                       id 'greenrobot'
+                       name 'greenrobot'
+                   }
+               }
+               
+               issueManagement {
+                   system 'GitHub Issues'
+                   url 'https://github.com/greenrobot/greenDAO/issues'
+               }
+               
+               organization {
+                   name 'greenrobot'
+                   url 'http://greenrobot.de'
+               }
+           }
+        }
+    }
+}
