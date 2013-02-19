@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'de.greenrobot'
-version = '1.3.0-SNAPSHOT'
+version = '1.3.0-beta-1'
 sourceCompatibility = 1.6
 
 def isSnapshot = version.endsWith('-SNAPSHOT')
@@ -13,8 +13,6 @@ if(isSnapshot) {
 } else {
 	sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 }
-
-sonatypeRepositoryUrl ="file:///s:/testrepo"
 
 repositories {
     mavenCentral()
