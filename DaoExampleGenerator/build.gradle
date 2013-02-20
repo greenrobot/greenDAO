@@ -1,0 +1,30 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin:'application'
+
+group = 'de.greenrobot'
+version = '1.3.0-beta-2'
+sourceCompatibility = 1.6
+mainClassName = "de.greenrobot.daogenerator.gentest.ExampleDaoGenerator"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile('de.greenrobot:greendao-generator:1.3.0-beta-2')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+            srcDir 'src-gen'
+        }
+    }
+}
+
+artifacts {
+    archives jar
+}
