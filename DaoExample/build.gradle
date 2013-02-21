@@ -1,3 +1,4 @@
+// Just a dummy script building a useless jar file. Waiting for version 0.3 of Android's new build system. 
 apply plugin: 'java'
 apply plugin: 'maven'
 

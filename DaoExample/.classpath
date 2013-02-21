@@ -4,11 +4,6 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="src-gen"/>
 	<classpathentry kind="src" path="src-test"/>
-	<classpathentry kind="lib" path="libs/greenDAO.jar">
-        <attributes>
-            <attribute name="javadoc_location" value="jar:platform:/resource/DaoExample/docs/greenDAO-javadoc.jar!/"/>
-        </attributes>
-    </classpathentry>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="output" path="bin/classes"/>

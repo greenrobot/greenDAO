@@ -59,13 +59,18 @@ public class Customer {
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
-    public synchronized List<Order> getOrders() {
+    public List<Order> getOrders() {
         if (orders == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             OrderDao targetDao = daoSession.getOrderDao();
-            orders = targetDao._queryCustomer_Orders(id);
+            List<Order> ordersNew = targetDao._queryCustomer_Orders(id);
+            synchronized (this) {
+                if(orders == null) {
+                    orders = ordersNew;
+                }
+            }
         }
         return orders;
     }

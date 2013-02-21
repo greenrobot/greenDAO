@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
-import de.greenrobot.dao.SqlUtils;
-import de.greenrobot.dao.Query;
-import de.greenrobot.dao.QueryBuilder;
+import de.greenrobot.dao.internal.SqlUtils;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import de.greenrobot.daoexample.Order;
 
@@ -133,16 +133,18 @@ public class OrderDao extends AbstractDao<Order, Long> {
     }
     
     /** Internal query to resolve the "orders" to-many relationship of Customer. */
-    public synchronized List<Order> _queryCustomer_Orders(long customerId) {
-        if (customer_OrdersQuery == null) {
-            QueryBuilder<Order> queryBuilder = queryBuilder();
-            queryBuilder.where(Properties.CustomerId.eq(customerId));
-            queryBuilder.orderRaw("DATE ASC");
-            customer_OrdersQuery = queryBuilder.build();
-        } else {
-            customer_OrdersQuery.setParameter(0, customerId);
+    public List<Order> _queryCustomer_Orders(long customerId) {
+        synchronized (this) {
+            if (customer_OrdersQuery == null) {
+                QueryBuilder<Order> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.CustomerId.eq(null));
+                queryBuilder.orderRaw("DATE ASC");
+                customer_OrdersQuery = queryBuilder.build();
+            }
         }
-        return customer_OrdersQuery.list();
+        Query<Order> query = customer_OrdersQuery.forCurrentThread();
+        query.setParameter(0, customerId);
+        return query.list();
     }
 
     private String selectDeep;
