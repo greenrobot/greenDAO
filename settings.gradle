@@ -1,1 +1,1 @@
-include 'DaoCore', 'DaoGenerator', 'DaoExampleGenerator', 'DaoExample'
+include 'DaoCore', 'DaoGenerator', 'DaoExampleGenerator'
