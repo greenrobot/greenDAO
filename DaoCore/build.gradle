@@ -66,8 +66,13 @@ uploadArchives {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
             // }
 
-            repository(url: sonatypeRepositoryUrl) {
-              authentication(userName: sonatypeUsername, password: sonatypePassword)
+            // We must check if authentication info is available
+            if(project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')) {
+                repository(url: sonatypeRepositoryUrl) {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+            } else {
+                println 'No settings for sonatypeUsername/sonatypePassword'
             }
 
             pom.project {
