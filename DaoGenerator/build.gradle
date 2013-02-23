@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     compile ('org.freemarker:freemarker:2.3.19')
+    testCompile 'junit:junit:4.11'
 }
 
 sourceSets {
@@ -30,6 +31,20 @@ sourceSets {
         resources {
             srcDir 'src-template'
         }
+    }
+    test {
+        java {
+            srcDir 'src-test'
+        }
+    }
+}
+
+test {
+    doFirst {
+        mkdir 'test-out'
+    }
+    doLast{
+        delete 'test-out'
     }
 }
 
