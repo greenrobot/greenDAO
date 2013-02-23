@@ -9,9 +9,9 @@ sourceCompatibility = 1.6
 def isSnapshot = version.endsWith('-SNAPSHOT')
 def sonatypeRepositoryUrl
 if(isSnapshot) {
-	sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+    sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
 } else {
-	sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+    sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 }
 
 repositories {
@@ -52,7 +52,7 @@ javadoc {
     title = "greenDAO Generator ${version} API"
     // Unfinished APIs:
     excludes = ['de/greenrobot/daogenerator/Query*']
-	options.bottom = 'Available under the GPLv3 - <i>Copyright &#169; 2011-2013 <a href="http://greenrobot.de/">greenrobot.de</a>. All Rights Reserved.</i>'
+    options.bottom = 'Available under the GPLv3 - <i>Copyright &#169; 2011-2013 <a href="http://greenrobot.de/">greenrobot.de</a>. All Rights Reserved.</i>'
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -72,23 +72,25 @@ artifacts {
 }
 
 signing {
-    sign configurations.archives
+    if(project.hasProperty('signing.keyId') && project.hasProperty('signing.password') &&
+    project.hasProperty('signing.secretKeyRingFile')) {
+        sign configurations.archives
+    } else {
+        println "Signing information missing/incomplete for ${project.name}"
+    }
 }
 
 uploadArchives {
     repositories {
         mavenDeployer {
-            // if(! isSnapshot) {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-            // }
-
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
             // We must check if authentication info is available
             if(project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')) {
                 repository(url: sonatypeRepositoryUrl) {
                     authentication(userName: sonatypeUsername, password: sonatypePassword)
                 }
             } else {
-                println 'No settings for sonatypeUsername/sonatypePassword'
+                println "Settings sonatypeUsername/sonatypePassword missing/incomplete for ${project.name}"
             }
 
             pom.project {
