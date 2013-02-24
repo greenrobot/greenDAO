@@ -149,23 +149,21 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
                             }
                         }
                     }
-                    if (operation != null) {
-                        if (operation.isMergeTx()) {
-                            // Wait some ms for another operation to merge because a TX is expensive
-                            AsyncOperation operation2 = queue.poll(waitForMergeMillis, TimeUnit.MILLISECONDS);
-                            if (operation2 != null) {
-                                if (operation.isMergeableWith(operation2)) {
-                                    mergeTxAndExecute(operation, operation2);
-                                } else {
-                                    // Cannot merge, execute both
-                                    executeOperationAndPostCompleted(operation);
-                                    executeOperationAndPostCompleted(operation2);
-                                }
-                                continue;
+                    if (operation.isMergeTx()) {
+                        // Wait some ms for another operation to merge because a TX is expensive
+                        AsyncOperation operation2 = queue.poll(waitForMergeMillis, TimeUnit.MILLISECONDS);
+                        if (operation2 != null) {
+                            if (operation.isMergeableWith(operation2)) {
+                                mergeTxAndExecute(operation, operation2);
+                            } else {
+                                // Cannot merge, execute both
+                                executeOperationAndPostCompleted(operation);
+                                executeOperationAndPostCompleted(operation2);
                             }
+                            continue;
                         }
-                        executeOperationAndPostCompleted(operation);
                     }
+                    executeOperationAndPostCompleted(operation);
                 }
             } catch (InterruptedException e) {
                 DaoLog.w(Thread.currentThread().getName() + " was interruppted", e);
