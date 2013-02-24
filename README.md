@@ -4,9 +4,9 @@ greenDAO is a light & fast ORM solution for Android that maps objects to SQLite 
 
 Home page, documentation, and support links: http://greendao-orm.com/
 
-Release History
----------------
-### VX.X.0 Preview (2013-??-??): New asynchronous API
+Work in progress
+----------------
+### New asynchronous API
 * New AsyncSession (acquired from DaoSession.startAsyncSession()) provides most operations for DAOs, Queries, and transactions in a asynchronously variant
 * AsyncOperations are processed in order by a background thread
 * waitForCompletion methods for AsyncSession and AsyncOperations
@@ -14,14 +14,20 @@ Release History
 * Asynchronous operations can be merged in single transactions (details follow)
 * Added raw SQL queries returning a Query object (LazyList support etc.)
 
-### V1.3.0 (2013-02-??): Multithreading robustness and refactoring (breaking changes!)
+Release History
+---------------
+### V1.3.0 (2013-02-24): Multithreading robustness and refactoring (breaking changes!)
 * Reworked internal locking of insert/update/delete methods
 * Fixed potential deadlocks when transactions are executed concurrently to one of the various insert/update/delete calls
 * Reworked queries to be used without locking, query instances are now bound to their owner thread (breaking change!)
+* Relations use the new lock-free query API
 * Query classes were moved into the new query subpackage (breaking change!)
+* Introduced Gradle build scripts for DaoCore and DaoGenerator projects
+* Maven artifacts are pushed to Maven Central starting with this version
 * Added two packages for classes used internally (identityscope and internal)
 * Added new deleteByKeyInTx DAO method to efficiently delete multiple entities using their keys
 * Added some checks to throw exceptions with nicer messages telling what's wrong
+* Added Travis CI
 
 ### V1.2.0 (2012-06-08): Feature release
 * Limited support of String PKs (no relations using String FKs yet)
