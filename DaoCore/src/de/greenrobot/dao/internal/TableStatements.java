@@ -15,6 +15,7 @@
  */
 package de.greenrobot.dao.internal;
 
+import de.greenrobot.dao.Property;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
@@ -30,6 +31,7 @@ public class TableStatements {
     private SQLiteStatement updateStatement;
     private SQLiteStatement deleteStatement;
 
+    private volatile String selectPk;
     private volatile String selectAll;
     private volatile String selectByKey;
     private volatile String selectByRowId;
@@ -73,6 +75,14 @@ public class TableStatements {
         return updateStatement;
     }
 
+
+	public String getSelectKey(Property pkProperty) {
+		if (selectPk == null) {
+			selectPk = SqlUtils.createSqlSelect(tablename, "T", new String[] { pkProperty.columnName });
+        }
+        return selectPk;
+	}
+    
     /** ends with an space to simplify appending to this string. */
     public String getSelectAll() {
         if (selectAll == null) {

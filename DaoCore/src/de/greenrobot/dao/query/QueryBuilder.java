@@ -257,13 +257,21 @@ public class QueryBuilder<T> {
      */
     public Query<T> build() {
         String select;
+        String selectKeys = null;
         if (joinBuilder == null || joinBuilder.length() == 0) {
             select = InternalQueryDaoAccess.getStatements(dao).getSelectAll();
+            if (dao.getPkProperty() != null) {
+            	selectKeys = InternalQueryDaoAccess.getStatements(dao).getSelectKey(dao.getPkProperty());
+            }
         } else {
             select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
+            if (dao.getPkProperty() != null) {
+            	selectKeys = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, new String[] { dao.getPkProperty().columnName });
+            }
         }
-        StringBuilder builder = new StringBuilder(select);
-
+        
+        StringBuilder builder = new StringBuilder();
+        
         appendWhereClause(builder, tablePrefix);
 
         if (orderBuilder != null && orderBuilder.length() > 0) {
@@ -287,16 +295,27 @@ public class QueryBuilder<T> {
             offsetPosition = values.size() - 1;
         }
 
-        String sql = builder.toString();
+        String params = builder.toString();
+        
+        String sql = select + params;
+        String keySql = null;
+        if (selectKeys != null) {
+        	keySql = selectKeys + params;
+        }
+
+        
         if (LOG_SQL) {
             DaoLog.d("Built SQL for query: " + sql);
+            if (keySql != null) {
+            	DaoLog.d("Built SQL for pk query: " + keySql);
+            }
         }
 
         if (LOG_VALUES) {
             DaoLog.d("Values for query: " + values);
         }
 
-        return Query.create(dao, sql, values.toArray(), limitPosition, offsetPosition);
+        return Query.create(dao, sql, keySql, values.toArray(), limitPosition, offsetPosition);
     }
 
     /**
@@ -418,6 +437,15 @@ public class QueryBuilder<T> {
      */
     public long count() {
         return buildCount().count();
+    }
+    
+    /**
+     * Shorthand for {@link QueryBuilder#listKeys() listKeys()}.{@link Query#listKeys() listKeys()}; see {@link Query#listKeys()} for
+     * details. To execute a query more than once, you should build the query and keep the {@link Query} object for
+     * efficiency reasons.
+     */
+    public <K> List<K> listKeys() {
+        return build().listKeys();
     }
 
 }

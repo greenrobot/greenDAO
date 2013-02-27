@@ -29,8 +29,13 @@ public final class InternalQueryDaoAccess<T> {
         return dao.getStatements();
     }
 
-    public static <T2> TableStatements getStatements(AbstractDao<T2, ?> dao) {
+    public static <T2, K2> TableStatements getStatements(AbstractDao<T2, K2> dao) {
         return dao.getStatements();
     }
+    
+	@SuppressWarnings("unchecked")
+	public <K> List<K> readKeys(Cursor cursor, boolean close) {
+		return (List<K>) dao.readKeys(cursor, close);
+	}
 
 }
