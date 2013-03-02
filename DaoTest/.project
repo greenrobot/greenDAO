@@ -27,7 +27,8 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
+		<nature>org.springsource.ide.eclipse.gradle.core.nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 	</natures>
 </projectDescription>
