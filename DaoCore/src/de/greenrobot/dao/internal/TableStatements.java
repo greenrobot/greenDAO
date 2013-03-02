@@ -33,6 +33,7 @@ public class TableStatements {
     private volatile String selectAll;
     private volatile String selectByKey;
     private volatile String selectByRowId;
+    private volatile String selectKeys;
 
     public TableStatements(SQLiteDatabase db, String tablename, String[] allColumns, String[] pkColumns) {
         this.db = db;
@@ -79,6 +80,14 @@ public class TableStatements {
             selectAll = SqlUtils.createSqlSelect(tablename, "T", allColumns);
         }
         return selectAll;
+    }
+
+    /** ends with an space to simplify appending to this string. */
+    public String getSelectKeys() {
+        if (selectKeys == null) {
+            selectKeys = SqlUtils.createSqlSelect(tablename, "T", pkColumns);
+        }
+        return selectKeys;
     }
 
     // TODO precompile
