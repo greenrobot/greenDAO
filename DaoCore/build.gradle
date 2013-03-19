@@ -37,6 +37,7 @@ sourceSets {
         compileClasspath += configurations.provided
         java {
             srcDir 'src'
+            exclude 'de/greenrobot/dao/test/**'
         }
     }
 }
