@@ -65,7 +65,7 @@ public class QueryBuilder<T> {
     private Integer limit;
 
     private Integer offset;
-    
+
     /** For internal use by greenDAO only. */
     public static <T2> QueryBuilder<T2> internalCreate(AbstractDao<T2, ?> dao) {
         return new QueryBuilder<T2>(dao);
@@ -160,9 +160,28 @@ public class QueryBuilder<T> {
     }
 
     /** Not supported yet. */
-    public <J> QueryBuilder<J> join(Class<J> entityClass, Property toOneProperty) {
+    public <J> QueryBuilder<T> joinRaw(String rawJoin) {
         throw new UnsupportedOperationException();
+    }
+    
+    /** Not supported yet. */
+    public <J> QueryBuilder<T> joinLeftRaw(String rawJoin) {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** Not supported yet. */
+    public <J> QueryBuilder<T> join(Class<J> entityClass, Property toOneProperty) {
+        AbstractDao<?, ?> dao2 = dao.getSession().getDao(entityClass);
+        Property pkProperty = dao2.getPkProperty();
+        return join(entityClass, toOneProperty, pkProperty);
+    }
+
+    /** Not supported yet. */
+    public <J> QueryBuilder<T> join(Class<J> entityClass, Property sourceProperty, Property targetProperty) {
+        AbstractDao<?, ?> dao2 = dao.getSession().getDao(entityClass);
+        // new Join(dao2, )
         // return new QueryBuilder<J>();
+        throw new UnsupportedOperationException();
     }
 
     /** Not supported yet. */
