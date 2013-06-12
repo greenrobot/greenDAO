@@ -3,6 +3,11 @@
 		<resource path="src-template/dao-master.ftl">
 			<value key="schema" object-class="de.greenrobot.daogenerator.Schema"/>
 		</resource>
+		<resource path="src-template/content-provider.ftl">
+			<value key="entity" object-class="de.greenrobot.daogenerator.Entity"/>
+			<value key="contentProvider" object-class="de.greenrobot.daogenerator.ContentProvider"/>
+			<value key="schema" object-class="de.greenrobot.daogenerator.Schema"/>
+		</resource>
 		<resource path="src-template/dao.ftl">
 			<value key="entity" object-class="de.greenrobot.daogenerator.Entity"/>
 			<value key="schema" object-class="de.greenrobot.daogenerator.Schema"/>

@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="de.greenrobot.daotest"
-      android:versionCode="1"
-      android:versionName="1.0">
+    package="de.greenrobot.daotest"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
     <uses-sdk android:minSdkVersion="4" />
-    <instrumentation android:targetPackage="de.greenrobot.daotest" android:name="android.test.InstrumentationTestRunner" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="de.greenrobot.daotest" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" >
+    </uses-permission>
+
     <application>
         <uses-library android:name="android.test.runner" />
+
+        <provider
+            android:name="de.greenrobot.daotest.SimpleEntityContentProvider"
+            android:authorities="de.greenrobot.daotest" />
     </application>
+
 </manifest>
