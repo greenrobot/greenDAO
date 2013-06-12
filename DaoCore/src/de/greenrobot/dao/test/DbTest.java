@@ -35,6 +35,7 @@ public abstract class DbTest<T extends Application> extends ApplicationTestCase<
     protected SQLiteDatabase db;
     protected Random random;
     protected final boolean inMemory;
+    private boolean dontCreateApp;
 
     public DbTest() {
         this(true);
@@ -51,6 +52,10 @@ public abstract class DbTest<T extends Application> extends ApplicationTestCase<
         random = new Random();
     }
 
+    protected void dontCreateApplicationDuringSetUp() {
+        dontCreateApp = true;
+    }
+
     @Override
     protected void setUp() {
         try {
@@ -58,7 +63,9 @@ public abstract class DbTest<T extends Application> extends ApplicationTestCase<
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        createApplication();
+        if (!dontCreateApp) {
+            createApplication();
+        }
         setUpDb();
     }
 
