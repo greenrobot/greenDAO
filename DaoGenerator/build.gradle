@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'de.greenrobot'
-version = '1.4.0-SNAPSHOT'
+version = '0.0.0-SNAPSHOT'
 sourceCompatibility = 1.6
 
 def isSnapshot = version.endsWith('-SNAPSHOT')
@@ -18,9 +18,18 @@ repositories {
     mavenCentral()
 }
 
+// provided is not supported in Gradle 1.4, see http://issues.gradle.org/browse/GRADLE-784
+// Like this, it won't appear at all in the POM
+configurations {
+    provided
+    deployerJars
+}
+
 dependencies {
     compile ('org.freemarker:freemarker:2.3.19')
     testCompile 'junit:junit:4.11'
+    // deployerJars 'org.apache.maven.wagon:wagon-webdav-jackrabbit:2.4'
+    deployerJars 'org.apache.maven.wagon:wagon-webdav:1.0-beta-2'
 }
 
 sourceSets {
@@ -83,9 +92,14 @@ signing {
 uploadArchives {
     repositories {
         mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-            // We must check if authentication info is available
-            if(project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')) {
+            if(project.hasProperty('preferedRepo') && project.hasProperty('preferedUsername') 
+                && project.hasProperty('preferedPassword')) {
+                configuration = configurations.deployerJars
+                repository(url: preferedRepo) {
+                    authentication(userName: preferedUsername, password: preferedPassword)
+                }
+            } else if(project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')) {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
                 repository(url: sonatypeRepositoryUrl) {
                     authentication(userName: sonatypeUsername, password: sonatypePassword)
                 }
