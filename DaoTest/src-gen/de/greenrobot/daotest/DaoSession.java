@@ -21,6 +21,7 @@ import de.greenrobot.daotest.ToManyEntity;
 import de.greenrobot.daotest.TreeEntity;
 import de.greenrobot.daotest.AnActiveEntity;
 import de.greenrobot.daotest.ExtendsImplementsEntity;
+import de.greenrobot.daotest.TestChildclass;
 import de.greenrobot.daotest.StringKeyValueEntity;
 import de.greenrobot.daotest.AutoincrementEntity;
 import de.greenrobot.daotest.SqliteMaster;
@@ -37,6 +38,7 @@ import de.greenrobot.daotest.ToManyEntityDao;
 import de.greenrobot.daotest.TreeEntityDao;
 import de.greenrobot.daotest.AnActiveEntityDao;
 import de.greenrobot.daotest.ExtendsImplementsEntityDao;
+import de.greenrobot.daotest.ChildclassEntityDao;
 import de.greenrobot.daotest.StringKeyValueEntityDao;
 import de.greenrobot.daotest.AutoincrementEntityDao;
 import de.greenrobot.daotest.SqliteMasterDao;
@@ -62,6 +64,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig treeEntityDaoConfig;
     private final DaoConfig anActiveEntityDaoConfig;
     private final DaoConfig extendsImplementsEntityDaoConfig;
+    private final DaoConfig childclassEntityDaoConfig;
     private final DaoConfig stringKeyValueEntityDaoConfig;
     private final DaoConfig autoincrementEntityDaoConfig;
     private final DaoConfig sqliteMasterDaoConfig;
@@ -78,6 +81,7 @@ public class DaoSession extends AbstractDaoSession {
     private final TreeEntityDao treeEntityDao;
     private final AnActiveEntityDao anActiveEntityDao;
     private final ExtendsImplementsEntityDao extendsImplementsEntityDao;
+    private final ChildclassEntityDao childclassEntityDao;
     private final StringKeyValueEntityDao stringKeyValueEntityDao;
     private final AutoincrementEntityDao autoincrementEntityDao;
     private final SqliteMasterDao sqliteMasterDao;
@@ -122,6 +126,9 @@ public class DaoSession extends AbstractDaoSession {
         extendsImplementsEntityDaoConfig = daoConfigMap.get(ExtendsImplementsEntityDao.class).clone();
         extendsImplementsEntityDaoConfig.initIdentityScope(type);
 
+        childclassEntityDaoConfig = daoConfigMap.get(ChildclassEntityDao.class).clone();
+        childclassEntityDaoConfig.initIdentityScope(type);
+
         stringKeyValueEntityDaoConfig = daoConfigMap.get(StringKeyValueEntityDao.class).clone();
         stringKeyValueEntityDaoConfig.initIdentityScope(type);
 
@@ -143,6 +150,7 @@ public class DaoSession extends AbstractDaoSession {
         treeEntityDao = new TreeEntityDao(treeEntityDaoConfig, this);
         anActiveEntityDao = new AnActiveEntityDao(anActiveEntityDaoConfig, this);
         extendsImplementsEntityDao = new ExtendsImplementsEntityDao(extendsImplementsEntityDaoConfig, this);
+        childclassEntityDao = new ChildclassEntityDao(childclassEntityDaoConfig, this);
         stringKeyValueEntityDao = new StringKeyValueEntityDao(stringKeyValueEntityDaoConfig, this);
         autoincrementEntityDao = new AutoincrementEntityDao(autoincrementEntityDaoConfig, this);
         sqliteMasterDao = new SqliteMasterDao(sqliteMasterDaoConfig, this);
@@ -159,6 +167,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(TreeEntity.class, treeEntityDao);
         registerDao(AnActiveEntity.class, anActiveEntityDao);
         registerDao(ExtendsImplementsEntity.class, extendsImplementsEntityDao);
+        registerDao(TestChildclass.class, childclassEntityDao);
         registerDao(StringKeyValueEntity.class, stringKeyValueEntityDao);
         registerDao(AutoincrementEntity.class, autoincrementEntityDao);
         registerDao(SqliteMaster.class, sqliteMasterDao);
@@ -177,6 +186,7 @@ public class DaoSession extends AbstractDaoSession {
         treeEntityDaoConfig.getIdentityScope().clear();
         anActiveEntityDaoConfig.getIdentityScope().clear();
         extendsImplementsEntityDaoConfig.getIdentityScope().clear();
+        childclassEntityDaoConfig.getIdentityScope().clear();
         stringKeyValueEntityDaoConfig.getIdentityScope().clear();
         autoincrementEntityDaoConfig.getIdentityScope().clear();
         sqliteMasterDaoConfig.getIdentityScope().clear();
@@ -228,6 +238,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public ExtendsImplementsEntityDao getExtendsImplementsEntityDao() {
         return extendsImplementsEntityDao;
+    }
+
+    public ChildclassEntityDao getChildclassEntityDao() {
+        return childclassEntityDao;
     }
 
     public StringKeyValueEntityDao getStringKeyValueEntityDao() {

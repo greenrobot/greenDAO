@@ -26,19 +26,25 @@ import de.greenrobot.dao.test.AbstractDaoTestStringPk;
 import de.greenrobot.dao.test.AbstractDaoTestLongPk;
 </#if>
 
+<#if entity.hasChildclassWithPackage>
+import ${entity.childclass};
+<#elseif entity.hasChildclassInEntityPackage>
+import ${entity.javaPackage}.${entity.childclass};
+<#else>
 import ${entity.javaPackage}.${entity.className};
+</#if>
 import ${entity.javaPackageDao}.${entity.classNameDao};
 
 public class ${entity.classNameTest} extends <#if
-isStringPK>AbstractDaoTestStringPk<${entity.classNameDao}, ${entity.className}><#else>AbstractDaoTestLongPk<${entity.classNameDao}, ${entity.className}></#if> {
+isStringPK>AbstractDaoTestStringPk<${entity.classNameDao}, ${entity.referencedClassName}><#else>AbstractDaoTestLongPk<${entity.classNameDao}, ${entity.referencedClassName}></#if> {
 
     public ${entity.classNameTest}() {
         super(${entity.classNameDao}.class);
     }
 
     @Override
-    protected ${entity.className} createEntity(<#if isStringPK>String<#else>Long</#if> key) {
-        ${entity.className} entity = new ${entity.className}();
+    protected ${entity.referencedClassName} createEntity(<#if isStringPK>String<#else>Long</#if> key) {
+        ${entity.referencedClassName} entity = new ${entity.referencedClassName}();
 <#if entity.pkProperty??>
         entity.set${entity.pkProperty.propertyName?cap_first}(key);
 </#if>

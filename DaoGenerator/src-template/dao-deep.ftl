@@ -42,12 +42,12 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
         return selectDeep;
     }
     
-    protected ${entity.className} loadCurrentDeep(Cursor cursor, boolean lock) {
-        ${entity.className} entity = loadCurrent(cursor, 0, lock);
+    protected ${entity.referencedClassName} loadCurrentDeep(Cursor cursor, boolean lock) {
+        ${entity.referencedClassName} entity = loadCurrent(cursor, 0, lock);
         int offset = getAllColumns().length;
 
 <#list entity.toOneRelations as toOne>
-        ${toOne.targetEntity.className} ${toOne.name} = loadCurrentOther(daoSession.get${toOne.targetEntity.classNameDao}(), cursor, offset);
+        ${toOne.targetEntity.referencedClassName} ${toOne.name} = loadCurrentOther(daoSession.get${toOne.targetEntity.classNameDao}(), cursor, offset);
 <#if toOne.fkProperties[0].notNull>         if(${toOne.name} != null) {
     </#if>        entity.set${toOne.name?cap_first}(${toOne.name});
 <#if toOne.fkProperties[0].notNull>
@@ -61,7 +61,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
         return entity;    
     }
 
-    public ${entity.className} loadDeep(Long key) {
+    public ${entity.referencedClassName} loadDeep(Long key) {
         assertSinglePk();
         if (key == null) {
             return null;
@@ -89,9 +89,9 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
     }
     
     /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
-    public List<${entity.className}> loadAllDeepFromCursor(Cursor cursor) {
+    public List<${entity.referencedClassName}> loadAllDeepFromCursor(Cursor cursor) {
         int count = cursor.getCount();
-        List<${entity.className}> list = new ArrayList<${entity.className}>(count);
+        List<${entity.referencedClassName}> list = new ArrayList<${entity.referencedClassName}>(count);
         
         if (cursor.moveToFirst()) {
             if (identityScope != null) {
@@ -111,7 +111,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
         return list;
     }
     
-    protected List<${entity.className}> loadDeepAllAndCloseCursor(Cursor cursor) {
+    protected List<${entity.referencedClassName}> loadDeepAllAndCloseCursor(Cursor cursor) {
         try {
             return loadAllDeepFromCursor(cursor);
         } finally {
@@ -121,7 +121,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
     
 
     /** A raw-style query where you can pass any WHERE clause and arguments. */
-    public List<${entity.className}> queryDeep(String where, String... selectionArg) {
+    public List<${entity.referencedClassName}> queryDeep(String where, String... selectionArg) {
         Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
         return loadDeepAllAndCloseCursor(cursor);
     }
