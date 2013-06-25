@@ -280,6 +280,7 @@ public class TestDaoGenerator {
     Entity entity = this.schema.addEntity("EntityQueryBuilderEntity");
     entity.addIdProperty();
     entity.addStringProperty("text");
+    entity.addStringProperty("text2");
     entity.setEntityQueryBuilder(true);
   }
 

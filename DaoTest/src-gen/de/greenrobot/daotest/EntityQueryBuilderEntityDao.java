@@ -29,6 +29,7 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Text = new Property(1, String.class, "text", false, "TEXT");
+        public final static Property Text2 = new Property(2, String.class, "text2", false, "TEXT2");
     };
 
 
@@ -45,7 +46,8 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'ENTITY_QUERY_BUILDER_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
-                "'TEXT' TEXT);"); // 1: text
+                "'TEXT' TEXT," + // 1: text
+                "'TEXT2' TEXT);"); // 2: text2
     }
 
     /** Drops the underlying database table. */
@@ -68,6 +70,11 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
         if (text != null) {
             stmt.bindString(2, text);
         }
+ 
+        String text2 = entity.getText2();
+        if (text2 != null) {
+            stmt.bindString(3, text2);
+        }
     }
 
     /** @inheritdoc */
@@ -81,7 +88,8 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
     public EntityQueryBuilderEntity readEntity(Cursor cursor, int offset) {
         EntityQueryBuilderEntity entity = new EntityQueryBuilderEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1) // text
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // text
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // text2
         );
         return entity;
     }
@@ -91,6 +99,7 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
     public void readEntity(Cursor cursor, EntityQueryBuilderEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setText(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setText2(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
     
     /** @inheritdoc */
@@ -143,6 +152,9 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
 
             if (example.getText() != null) {
                 conditions.add(Properties.Text.eq(example.getText()));
+            }
+            if (example.getText2() != null) {
+                conditions.add(Properties.Text2.eq(example.getText2()));
             }
 
 
