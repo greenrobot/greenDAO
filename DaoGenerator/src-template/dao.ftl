@@ -24,7 +24,7 @@ package ${entity.javaPackageDao};
 <#if entity.toOneRelations?has_content || entity.incomingToManyRelations?has_content>
 import java.util.List;
 </#if>
-<#if entity.toOneRelations?has_content>
+<#if entity.toOneRelations?has_content || entity.hasEntityQueryBuilder>
 import java.util.ArrayList;
 </#if>
 import android.database.Cursor;
@@ -37,11 +37,13 @@ import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.SqlUtils;
 </#if>
 import de.greenrobot.dao.internal.DaoConfig;
-<#if entity.incomingToManyRelations?has_content>
+<#if entity.incomingToManyRelations?has_content || entity.hasEntityQueryBuilder>
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
 </#if>
-
+<#if entity.hasEntityQueryBuilder>
+import de.greenrobot.dao.query.WhereCondition;
+</#if>
 <#if entity.javaPackageDao != schema.defaultJavaPackageDao>
 import ${schema.defaultJavaPackageDao}.DaoSession;
 
@@ -50,8 +52,8 @@ import ${schema.defaultJavaPackageDao}.DaoSession;
 <#list entity.additionalImportsDao as additionalImport>
 import ${additionalImport};
 </#list>
-
 </#if>
+
 <#if entity.hasChildclassWithPackage>
 import ${entity.childclass};
 <#elseif entity.hasChildclassInEntityPackage>
@@ -304,5 +306,53 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#list>   
 <#if entity.toOneRelations?has_content>
     <#include "dao-deep.ftl">
+</#if>
+<#if entity.hasEntityQueryBuilder>
+    public ${entity.referencedClassName}QueryBuilder queryBuilder() {
+      return new ${entity.referencedClassName}QueryBuilder(this);
+    }
+
+    public static class ${entity.referencedClassName}QueryBuilder extends QueryBuilder<${entity.referencedClassName}> {
+        ${entity.referencedClassName}QueryBuilder(AbstractDao<${entity.referencedClassName}, ?> dao) {
+            super(dao);
+        }
+        
+        public Query<${entity.referencedClassName}> findByPrimaryKey(${entity.pkProperty.propertyType} pk) {
+            this.where(Properties.${entity.pkProperty.propertyName?cap_first}.eq(pk));
+            return this.build();
+        }
+        
+        public Query<${entity.referencedClassName}> findAll() {
+            return this.build();
+        }
+        
+        public Query<${entity.referencedClassName}> findByExample(${entity.referencedClassName} example) { 
+            if(example.get${entity.pkProperty.propertyName?cap_first}() != null) {
+                return findByPrimaryKey(example.get${entity.pkProperty.propertyName?cap_first}());
+            }
+        	
+            ArrayList<WhereCondition> conditions = new ArrayList<WhereCondition>();
+
+<#list entity.properties as property>
+  <#if !property.primaryKey>
+            if (example.get${property.propertyName?cap_first}() != null) {
+                conditions.add(Properties.${property.propertyName?cap_first}.eq(example.get${property.propertyName?cap_first}()));
+            }
+  </#if>
+</#list>
+
+
+           
+            if (conditions.isEmpty()) {
+                throw new IllegalArgumentException("No example values given. Please provide at least one value!");
+            }
+
+            WhereCondition firstCondition = conditions.get(0);
+            conditions.remove(0);
+            this.where(firstCondition, conditions.toArray(new WhereCondition[0]));
+
+        	return this.build();
+        }
+    }
 </#if>
 }

@@ -58,6 +58,7 @@ public class TestDaoGenerator {
     this.createStringKeyValue();
     this.createAutoincrement();
     this.createSqliteMaster();
+    this.createEntityQueryBuilder();
 
     this.createSchema2();
   }
@@ -273,6 +274,13 @@ public class TestDaoGenerator {
     entity.addStringProperty("tableName").columnName("tbl_name");
     entity.addLongProperty("rootpage");
     entity.addStringProperty("sql");
+  }
+
+  protected void createEntityQueryBuilder() {
+    Entity entity = this.schema.addEntity("EntityQueryBuilderEntity");
+    entity.addIdProperty();
+    entity.addStringProperty("text");
+    entity.setEntityQueryBuilder(true);
   }
 
 }

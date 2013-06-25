@@ -85,6 +85,7 @@ public class Entity {
   private boolean skipTableCreation;
   private Boolean active;
   private Boolean hasKeepSections;
+  private boolean entityQueryBuilder;
 
   Entity(Schema schema, String className) {
     this.schema = schema;
@@ -485,6 +486,14 @@ public class Entity {
 
   public boolean getHasChildclassInEntityPackage() {
     return this.getHasChildclass() && !this.childclass.contains(".");
+  }
+
+  public boolean getHasEntityQueryBuilder() {
+    return this.entityQueryBuilder;
+  }
+
+  public void setEntityQueryBuilder(boolean entityQueryBuilder) {
+    this.entityQueryBuilder = entityQueryBuilder;
   }
 
   void init2ndPass() {
