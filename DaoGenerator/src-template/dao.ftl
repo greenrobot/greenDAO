@@ -326,6 +326,22 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
             return this.build();
         }
         
+        /**
+         * <p>creates a {@link Query} for {@link ${entity.referencedClassName}} to find one by example.
+         * <p>Just nullable fields can be used. Just set one of these properties:
+         * <ul>
+<#list entity.properties as property>
+  <#if !property.primaryKey && property.complexJavaType>
+         * <li><code>${property.javaType} ${property.propertyName}</code></li>
+  </#if>
+</#list>
+         * </ul>
+         *
+         * @param example
+         *          the entity filled with example values
+         * 
+         * @return a {@link Query} to find the example entity
+         */
         public Query<${entity.referencedClassName}> findByExample(${entity.referencedClassName} example) { 
             if(example.get${entity.pkProperty.propertyName?cap_first}() != null) {
                 return findByPrimaryKey(example.get${entity.pkProperty.propertyName?cap_first}());
@@ -334,14 +350,12 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
             ArrayList<WhereCondition> conditions = new ArrayList<WhereCondition>();
 
 <#list entity.properties as property>
-  <#if !property.primaryKey>
+  <#if !property.primaryKey && property.complexJavaType>
             if (example.get${property.propertyName?cap_first}() != null) {
                 conditions.add(Properties.${property.propertyName?cap_first}.eq(example.get${property.propertyName?cap_first}()));
             }
   </#if>
 </#list>
-
-
            
             if (conditions.isEmpty()) {
                 throw new IllegalArgumentException("No example values given. Please provide at least one value!");

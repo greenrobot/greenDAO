@@ -281,6 +281,10 @@ public class TestDaoGenerator {
     entity.addIdProperty();
     entity.addStringProperty("text");
     entity.addStringProperty("text2");
+    entity.addIntProperty("intprop").complexJavaType();
+    entity.addIntProperty("intprop2").notNull();
+    entity.addIntProperty("intprop3").notNull().complexJavaType();
+    entity.addIntProperty("intprop4");
     entity.setEntityQueryBuilder(true);
   }
 

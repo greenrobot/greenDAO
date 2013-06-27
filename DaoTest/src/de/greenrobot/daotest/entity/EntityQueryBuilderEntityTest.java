@@ -18,6 +18,8 @@ public class EntityQueryBuilderEntityTest extends AbstractDaoTestLongPk<EntityQu
     EntityQueryBuilderEntity entity = new EntityQueryBuilderEntity();
     entity.setId(key);
     entity.setText("Entity " + key);
+    entity.setIntprop2(2);
+    entity.setIntprop3(3);
     return entity;
   }
 
@@ -64,6 +66,8 @@ public class EntityQueryBuilderEntityTest extends AbstractDaoTestLongPk<EntityQu
 
     EntityQueryBuilderEntity example = new EntityQueryBuilderEntity();
     example.setText2("text");
+    example.setIntprop2(3);
+    example.setIntprop3(3);
     List<EntityQueryBuilderEntity> loaded = this.dao.queryBuilder().findByExample(example).list();
     assertEquals(list.size(), loaded.size());
   }

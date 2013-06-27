@@ -30,6 +30,10 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Text = new Property(1, String.class, "text", false, "TEXT");
         public final static Property Text2 = new Property(2, String.class, "text2", false, "TEXT2");
+        public final static Property Intprop = new Property(3, Integer.class, "intprop", false, "INTPROP");
+        public final static Property Intprop2 = new Property(4, int.class, "intprop2", false, "INTPROP2");
+        public final static Property Intprop3 = new Property(5, Integer.class, "intprop3", false, "INTPROP3");
+        public final static Property Intprop4 = new Property(6, Integer.class, "intprop4", false, "INTPROP4");
     };
 
 
@@ -47,7 +51,11 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
         db.execSQL("CREATE TABLE " + constraint + "'ENTITY_QUERY_BUILDER_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'TEXT' TEXT," + // 1: text
-                "'TEXT2' TEXT);"); // 2: text2
+                "'TEXT2' TEXT," + // 2: text2
+                "'INTPROP' INTEGER," + // 3: intprop
+                "'INTPROP2' INTEGER NOT NULL ," + // 4: intprop2
+                "'INTPROP3' INTEGER NOT NULL ," + // 5: intprop3
+                "'INTPROP4' INTEGER);"); // 6: intprop4
     }
 
     /** Drops the underlying database table. */
@@ -75,6 +83,18 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
         if (text2 != null) {
             stmt.bindString(3, text2);
         }
+ 
+        Integer intprop = entity.getIntprop();
+        if (intprop != null) {
+            stmt.bindLong(4, intprop);
+        }
+        stmt.bindLong(5, entity.getIntprop2());
+        stmt.bindLong(6, entity.getIntprop3());
+ 
+        Integer intprop4 = entity.getIntprop4();
+        if (intprop4 != null) {
+            stmt.bindLong(7, intprop4);
+        }
     }
 
     /** @inheritdoc */
@@ -89,7 +109,11 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
         EntityQueryBuilderEntity entity = new EntityQueryBuilderEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // text
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // text2
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // text2
+            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // intprop
+            cursor.getInt(offset + 4), // intprop2
+            cursor.getInt(offset + 5), // intprop3
+            cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6) // intprop4
         );
         return entity;
     }
@@ -100,6 +124,10 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setText(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setText2(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setIntprop(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
+        entity.setIntprop2(cursor.getInt(offset + 4));
+        entity.setIntprop3(cursor.getInt(offset + 5));
+        entity.setIntprop4(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
      }
     
     /** @inheritdoc */
@@ -143,6 +171,22 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
             return this.build();
         }
         
+        /**
+         * <p>creates a {@link Query} for {@link EntityQueryBuilderEntity} to find one by example.
+         * <p>Just nullable fields can be used. Just set one of these properties:
+         * <ul>
+         * <li><code>String text</code></li>
+         * <li><code>String text2</code></li>
+         * <li><code>Integer intprop</code></li>
+         * <li><code>Integer intprop3</code></li>
+         * <li><code>Integer intprop4</code></li>
+         * </ul>
+         *
+         * @param example
+         *          the entity filled with example values
+         * 
+         * @return a {@link Query} to find the example entity
+         */
         public Query<EntityQueryBuilderEntity> findByExample(EntityQueryBuilderEntity example) { 
             if(example.getId() != null) {
                 return findByPrimaryKey(example.getId());
@@ -156,8 +200,15 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
             if (example.getText2() != null) {
                 conditions.add(Properties.Text2.eq(example.getText2()));
             }
-
-
+            if (example.getIntprop() != null) {
+                conditions.add(Properties.Intprop.eq(example.getIntprop()));
+            }
+            if (example.getIntprop3() != null) {
+                conditions.add(Properties.Intprop3.eq(example.getIntprop3()));
+            }
+            if (example.getIntprop4() != null) {
+                conditions.add(Properties.Intprop4.eq(example.getIntprop4()));
+            }
            
             if (conditions.isEmpty()) {
                 throw new IllegalArgumentException("No example values given. Please provide at least one value!");
