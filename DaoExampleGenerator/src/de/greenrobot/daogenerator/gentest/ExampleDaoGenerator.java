@@ -35,6 +35,7 @@ public class ExampleDaoGenerator {
 
         addNote(schema);
         addCustomerOrder(schema);
+        addContact(schema);
 
         new DaoGenerator().generateAll(schema, "../DaoExample/src-gen");
     }
@@ -64,4 +65,11 @@ public class ExampleDaoGenerator {
         customerToOrders.orderAsc(orderDate);
     }
 
+    private static void addContact(Schema schema) {
+        Entity contact = schema.addEntity("Contact");
+        contact.addIdProperty();
+        contact.addStringProperty("name");
+        contact.addSerializedProperty("java.security.PublicKey", "publicKey");
+    }
+    
 }

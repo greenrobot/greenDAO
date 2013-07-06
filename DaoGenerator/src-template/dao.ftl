@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<#assign toBindType = {"Boolean":"Long", "Byte":"Long", "Short":"Long", "Int":"Long", "Long":"Long", "Float":"Double", "Double":"Double", "String":"String", "ByteArray":"Blob", "Date": "Long" } />
-<#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob", "Date": "Long"  } />
+<#assign toBindType = {"Boolean":"Long", "Byte":"Long", "Short":"Long", "Int":"Long", "Long":"Long", "Float":"Double", "Double":"Double", "String":"String", "ByteArray":"Blob", "Date": "Long", "Serialized":"Blob" } />
+<#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob", "Date": "Long", "Serialized":"Blob" } />
 package ${entity.javaPackageDao};
 
 <#if entity.toOneRelations?has_content || entity.incomingToManyRelations?has_content>
@@ -127,16 +127,18 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 <#if property.notNull || entity.protobuf>
 <#if entity.protobuf>
         if(entity.has${property.propertyName?cap_first}()) {
-    </#if>        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, entity.get${property.propertyName?cap_first}()<#if
-     property.propertyType == "Boolean"> ? 1l: 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
+    </#if>        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, <#if
+property.propertyType == "Serialized">serializeObject(entity.get${property.propertyName?cap_first}())<#else>entity.get${property.propertyName?cap_first}()</#if><#if
+property.propertyType == "Boolean"> ? 1l: 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
 <#if entity.protobuf>
         }
 </#if>
 <#else> <#-- nullable, non-protobuff -->
         ${property.javaType} ${property.propertyName} = entity.get${property.propertyName?cap_first}();
         if (${property.propertyName} != null) {
-            stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, ${property.propertyName}<#if
- property.propertyType == "Boolean"> ? 1l: 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
+            stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, <#if
+property.propertyType == "Serialized">serializeObject(${property.propertyName})<#else>${property.propertyName}</#if><#if
+property.propertyType == "Boolean"> ? 1l: 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
         }
 </#if>
 </#list>
@@ -202,9 +204,11 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 <#list entity.properties as property>
             <#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#if
             property.propertyType == "Byte">(byte) </#if><#if
-            property.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})<#if
+            property.propertyType == "Date">new java.util.Date(</#if><#if
+            property.propertyType == "Serialized">(${property.javaType}) deserializeObject(</#if>cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})<#if
             property.propertyType == "Boolean"> != 0</#if><#if
-            property.propertyType == "Date">)</#if><#if property_has_next>,</#if> // ${property.propertyName}
+            property.propertyType == "Date">)</#if><#if
+            property.propertyType == "Serialized">)</#if><#if property_has_next>,</#if> // ${property.propertyName}
 </#list>        
         );
         return entity;
@@ -227,9 +231,11 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 <#list entity.properties as property>
         entity.set${property.propertyName?cap_first}(<#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#if
             property.propertyType == "Byte">(byte) </#if><#if
-            property.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})<#if
+            property.propertyType == "Date">new java.util.Date(</#if><#if
+            property.propertyType == "Serialized">(${property.javaType}) deserializeObject(</#if>cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})<#if
             property.propertyType == "Boolean"> != 0</#if><#if
-            property.propertyType == "Date">)</#if>);
+            property.propertyType == "Date">)</#if><#if
+            property.propertyType == "Serialized">)</#if>);
 </#list>
 </#if>
      }

@@ -34,6 +34,11 @@ import de.greenrobot.dao.internal.FastCursor;
 import de.greenrobot.dao.internal.TableStatements;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * Base class for all DAOs: Implements entity operations like insert, load, delete, and query.
@@ -114,7 +119,31 @@ public abstract class AbstractDao<T, K> {
     public String[] getNonPkColumns() {
         return config.nonPkColumns;
     }
+    
+    protected byte[] serializeObject(Object obj) {
+      try {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeUnshared(obj);
+        oos.flush();
+        return baos.toByteArray();
+      }
+      catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
 
+    protected Object deserializeObject(byte[] byteArray) {
+      try {
+        ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        return ois.readUnshared();
+      }
+      catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
+    
     /**
      * Loads and entity for the given PK.
      * 

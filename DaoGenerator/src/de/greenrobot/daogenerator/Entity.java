@@ -96,50 +96,54 @@ public class Entity {
     }
 
     public PropertyBuilder addBooleanProperty(String propertyName) {
-        return addProperty(PropertyType.Boolean, propertyName);
+        return addProperty(PropertyType.Boolean, null, propertyName);
     }
 
     public PropertyBuilder addByteProperty(String propertyName) {
-        return addProperty(PropertyType.Byte, propertyName);
+        return addProperty(PropertyType.Byte, null, propertyName);
     }
 
     public PropertyBuilder addShortProperty(String propertyName) {
-        return addProperty(PropertyType.Short, propertyName);
+        return addProperty(PropertyType.Short, null, propertyName);
     }
 
     public PropertyBuilder addIntProperty(String propertyName) {
-        return addProperty(PropertyType.Int, propertyName);
+        return addProperty(PropertyType.Int, null, propertyName);
     }
 
     public PropertyBuilder addLongProperty(String propertyName) {
-        return addProperty(PropertyType.Long, propertyName);
+        return addProperty(PropertyType.Long, null, propertyName);
     }
 
     public PropertyBuilder addFloatProperty(String propertyName) {
-        return addProperty(PropertyType.Float, propertyName);
+        return addProperty(PropertyType.Float, null, propertyName);
     }
 
     public PropertyBuilder addDoubleProperty(String propertyName) {
-        return addProperty(PropertyType.Double, propertyName);
+        return addProperty(PropertyType.Double, null, propertyName);
     }
 
     public PropertyBuilder addByteArrayProperty(String propertyName) {
-        return addProperty(PropertyType.ByteArray, propertyName);
+        return addProperty(PropertyType.ByteArray, null, propertyName);
     }
 
     public PropertyBuilder addStringProperty(String propertyName) {
-        return addProperty(PropertyType.String, propertyName);
+        return addProperty(PropertyType.String, null, propertyName);
     }
 
     public PropertyBuilder addDateProperty(String propertyName) {
-        return addProperty(PropertyType.Date, propertyName);
+        return addProperty(PropertyType.Date, null, propertyName);
     }
 
-    public PropertyBuilder addProperty(PropertyType propertyType, String propertyName) {
+    public PropertyBuilder addSerializedProperty(String javaType, String propertyName) {
+        return addProperty(PropertyType.Serialized, javaType, propertyName);
+    }
+
+    public PropertyBuilder addProperty(PropertyType propertyType, String javaType, String propertyName) {
         if (!propertyNames.add(propertyName)) {
             throw new RuntimeException("Property already defined: " + propertyName);
         }
-        PropertyBuilder builder = new Property.PropertyBuilder(schema, this, propertyType, propertyName);
+        PropertyBuilder builder = new Property.PropertyBuilder(schema, this, propertyType, javaType, propertyName);
         properties.add(builder.getProperty());
         return builder;
     }
@@ -216,7 +220,7 @@ public class Entity {
 
     public ToOne addToOneWithoutProperty(String name, Entity target, String fkColumnName, boolean notNull,
             boolean unique) {
-        PropertyBuilder propertyBuilder = new PropertyBuilder(schema, this, null, name);
+        PropertyBuilder propertyBuilder = new PropertyBuilder(schema, this, null, null, name);
         if (notNull) {
             propertyBuilder.notNull();
         }

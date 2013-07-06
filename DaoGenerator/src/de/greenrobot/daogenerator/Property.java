@@ -23,8 +23,8 @@ public class Property {
     public static class PropertyBuilder {
         private final Property property;
 
-        public PropertyBuilder(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
-            property = new Property(schema, entity, propertyType, propertyName);
+        public PropertyBuilder(Schema schema, Entity entity, PropertyType propertyType, String javaType, String propertyName) {
+            property = new Property(schema, entity, propertyType, javaType, propertyName);
         }
 
         public PropertyBuilder columnName(String columnName) {
@@ -110,6 +110,7 @@ public class Property {
     private final Schema schema;
     private final Entity entity;
     private PropertyType propertyType;
+    private String javaType;
     private final String propertyName;
 
     private String columnName;
@@ -128,12 +129,11 @@ public class Property {
 
     private int ordinal;
 
-    private String javaType;
-
-    public Property(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
+    public Property(Schema schema, Entity entity, PropertyType propertyType, String javaType, String propertyName) {
         this.schema = schema;
         this.entity = entity;
         this.propertyName = propertyName;
+        this.javaType = javaType;
         this.propertyType = propertyType;
     }
 
@@ -201,10 +201,12 @@ public class Property {
         if (columnName == null) {
             columnName = DaoUtil.dbName(propertyName);
         }
-        if (notNull) {
-            javaType = schema.mapToJavaTypeNotNull(propertyType);
-        } else {
-            javaType = schema.mapToJavaTypeNullable(propertyType);
+        if (javaType == null) {
+            if (notNull) {
+                javaType = schema.mapToJavaTypeNotNull(propertyType);
+            } else {
+                javaType = schema.mapToJavaTypeNullable(propertyType);
+            }
         }
     }
 
