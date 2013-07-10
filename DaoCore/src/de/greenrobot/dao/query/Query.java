@@ -35,15 +35,17 @@ import de.greenrobot.dao.DaoException;
 public class Query<T> extends AbstractQuery<T> {
     private final static class ThreadLocalQuery<T2> extends ThreadLocal<Query<T2>> {
         private final String sql;
+        private final String keySql;
         private final AbstractDao<T2, ?> dao;
         private final String[] initialValues;
         private final int limitPosition;
         private final int offsetPosition;
 
-        private ThreadLocalQuery(AbstractDao<T2, ?> dao, String sql, String[] initialValues, int limitPosition,
+        private ThreadLocalQuery(AbstractDao<T2, ?> dao, String sql, String keySql, String[] initialValues, int limitPosition,
                 int offsetPosition) {
             this.dao = dao;
             this.sql = sql;
+            this.keySql = keySql;
             this.initialValues = initialValues;
             this.limitPosition = limitPosition;
             this.offsetPosition = offsetPosition;
@@ -51,29 +53,31 @@ public class Query<T> extends AbstractQuery<T> {
 
         @Override
         protected Query<T2> initialValue() {
-            return new Query<T2>(this, dao, sql, initialValues.clone(), limitPosition, offsetPosition);
+            return new Query<T2>(this, dao, sql, keySql, initialValues.clone(), limitPosition, offsetPosition);
         }
     }
 
     /** For internal use by greenDAO only. */
-    public static <T2> Query<T2> internalCreate(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
-        return create(dao, sql, initialValues, -1, -1);
+    public static <T2> Query<T2> internalCreate(AbstractDao<T2, ?> dao, String sql, String keySql, Object[] initialValues) {
+        return create(dao, sql, keySql, initialValues, -1, -1);
     }
 
-    static <T2> Query<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues, int limitPosition,
+    static <T2> Query<T2> create(AbstractDao<T2, ?> dao, String sql, String keySql, Object[] initialValues, int limitPosition,
             int offsetPosition) {
-        ThreadLocalQuery<T2> threadLocal = new ThreadLocalQuery<T2>(dao, sql, toStringArray(initialValues),
+        ThreadLocalQuery<T2> threadLocal = new ThreadLocalQuery<T2>(dao, sql, keySql, toStringArray(initialValues),
                 limitPosition, offsetPosition);
         return threadLocal.get();
     }
 
+    private final String keySql;
     private final int limitPosition;
     private final int offsetPosition;
     private final ThreadLocalQuery<T> threadLocalQuery;
 
-    private Query(ThreadLocalQuery<T> threadLocalQuery, AbstractDao<T, ?> dao, String sql, String[] initialValues,
+    private Query(ThreadLocalQuery<T> threadLocalQuery, AbstractDao<T, ?> dao, String sql, String keysSql, String[] initialValues,
             int limitPosition, int offsetPosition) {
         super(dao, sql, initialValues);
+        this.keySql = keysSql;
         this.threadLocalQuery = threadLocalQuery;
         this.limitPosition = limitPosition;
         this.offsetPosition = offsetPosition;
@@ -186,6 +190,17 @@ public class Query<T> extends AbstractQuery<T> {
             throw new DaoException("No entity found for query");
         }
         return entity;
+    }
+    
+    /**
+     * Executes an optimized query that returns the keys of the selected rows.
+     * 
+     * @return List containing the keys of the selected rows or an empty list if no rows are found.
+     */
+    public <K> List<K> listKeys() {
+    	checkThread();
+    	Cursor cursor = dao.getDatabase().rawQuery(keySql, parameters);
+    	return daoAccess.readKeys(cursor, true);
     }
 
 }

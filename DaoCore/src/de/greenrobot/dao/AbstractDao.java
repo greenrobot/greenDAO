@@ -477,7 +477,7 @@ public abstract class AbstractDao<T, K> {
      * arguments.
      */
     public Query<T> queryRawCreateListArgs(String where, Collection<Object> selectionArg) {
-        return Query.internalCreate(this, statements.getSelectAll() + where, selectionArg.toArray());
+        return Query.internalCreate(this, statements.getSelectAll() + where, statements.getSelectKey(getPkProperty()), selectionArg.toArray());
     }
 
     public void deleteAll() {
@@ -803,5 +803,27 @@ public abstract class AbstractDao<T, K> {
 
     /** Returns true if the Entity class can be updated, e.g. for setting the PK after insert. */
     abstract protected boolean isEntityUpdateable();
+    
+    /**
+     * Returns the primary keys from the given cursor 
+     * @param cursor the cursor to read keys from
+     * @param close if the cursor should be closed after reading the keys
+     * @return a list of primary keys or empty list
+     */
+	protected List<K> readKeys(Cursor cursor, boolean close) {
+		List<K> keys = new ArrayList<K>();
+    	if (cursor.moveToFirst()) {
+            try {
+                do {
+                	keys.add(readKey(cursor, 0));
+                } while (cursor.moveToNext());
+            } finally {
+            	if (close) {
+            		cursor.close();
+            	}
+            }
+        }
+    	return keys;
+	}
 
 }
