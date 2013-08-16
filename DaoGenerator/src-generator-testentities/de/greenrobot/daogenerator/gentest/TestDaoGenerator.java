@@ -59,6 +59,7 @@ public class TestDaoGenerator {
     this.createAutoincrement();
     this.createSqliteMaster();
     this.createEntityQueryBuilder();
+    this.createSave();
 
     this.createSchema2();
   }
@@ -285,6 +286,13 @@ public class TestDaoGenerator {
     entity.addIntProperty("intprop2").notNull();
     entity.addIntProperty("intprop3").notNull().complexJavaType();
     entity.addIntProperty("intprop4");
+    entity.setEntityQueryBuilder(true);
+  }
+
+  protected void createSave() {
+    Entity entity = this.schema.addEntity("SaveEntity");
+    entity.addIdProperty();
+    entity.addStringProperty("text");
     entity.setEntityQueryBuilder(true);
   }
 

@@ -112,4 +112,5 @@ public class ExtendsImplementsEntityDao extends AbstractDao<ExtendsImplementsEnt
         return true;
     }
     
+ 
 }

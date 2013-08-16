@@ -105,4 +105,5 @@ public class ToOneTarget2Dao extends AbstractDao<ToOneTarget2, Long> {
         return true;
     }
     
+ 
 }

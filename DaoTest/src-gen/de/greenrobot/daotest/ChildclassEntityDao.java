@@ -110,4 +110,5 @@ public class ChildclassEntityDao extends AbstractDao<TestChildclass, Long> {
         return true;
     }
     
+ 
 }

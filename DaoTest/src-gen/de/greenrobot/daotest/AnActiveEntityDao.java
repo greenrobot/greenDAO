@@ -121,4 +121,5 @@ public class AnActiveEntityDao extends AbstractDao<AnActiveEntity, Long> {
         return true;
     }
     
+ 
 }

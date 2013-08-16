@@ -184,4 +184,5 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
         return true;
     }
     
+ 
 }

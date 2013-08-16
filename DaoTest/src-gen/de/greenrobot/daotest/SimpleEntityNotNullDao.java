@@ -144,4 +144,5 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
         return true;
     }
     
+ 
 }

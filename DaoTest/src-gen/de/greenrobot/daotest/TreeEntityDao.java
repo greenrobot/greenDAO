@@ -141,6 +141,7 @@ public class TreeEntityDao extends AbstractDao<TreeEntity, Long> {
         return query.list();
     }
 
+ 
     private String selectDeep;
 
     protected String getSelectDeep() {

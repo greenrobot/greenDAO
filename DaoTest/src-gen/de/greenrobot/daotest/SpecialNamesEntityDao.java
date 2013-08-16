@@ -184,4 +184,5 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
         return true;
     }
     
+ 
 }

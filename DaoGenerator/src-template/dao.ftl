@@ -26,6 +26,7 @@ import java.util.List;
 </#if>
 <#if entity.toOneRelations?has_content || entity.hasEntityQueryBuilder>
 import java.util.ArrayList;
+import de.greenrobot.dao.query.AbstractEntityQueryBuilder;
 </#if>
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -303,7 +304,8 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
         return query.list();
     }
 
-</#list>   
+</#list>  
+ 
 <#if entity.toOneRelations?has_content>
     <#include "dao-deep.ftl">
 </#if>
@@ -312,7 +314,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
       return new ${entity.referencedClassName}QueryBuilder(this);
     }
 
-    public static class ${entity.referencedClassName}QueryBuilder extends QueryBuilder<${entity.referencedClassName}> {
+    public static class ${entity.referencedClassName}QueryBuilder extends AbstractEntityQueryBuilder<${entity.referencedClassName}> {
         ${entity.referencedClassName}QueryBuilder(AbstractDao<${entity.referencedClassName}, ?> dao) {
             super(dao);
         }

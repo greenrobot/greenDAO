@@ -153,6 +153,7 @@ public class EntityQueryBuilderEntityDao extends AbstractDao<EntityQueryBuilderE
         return true;
     }
     
+ 
     public EntityQueryBuilderEntityQueryBuilder queryBuilder() {
       return new EntityQueryBuilderEntityQueryBuilder(this);
     }

@@ -127,6 +127,7 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
         return true;
     }
     
+ 
     private String selectDeep;
 
     protected String getSelectDeep() {
