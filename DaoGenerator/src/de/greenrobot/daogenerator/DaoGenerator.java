@@ -123,7 +123,7 @@ public class DaoGenerator {
         File file = new File(filename);
         if (!file.exists()) {
             throw new IOException(filename
-                    + " does not exist. This check is to prevent accidential file generation into a wrong path.");
+                    + " does not exist. This check is to prevent accidental file generation into a wrong path.");
         }
         return file;
     }
