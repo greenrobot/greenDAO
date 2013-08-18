@@ -17,30 +17,19 @@
  */
 package de.greenrobot.daogenerator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import de.greenrobot.daogenerator.Property.PropertyBuilder;
+
+import java.util.*;
 
 /**
  * Model class for an entity: a Java data object mapped to a data base table. A new entity is added to a {@link Schema}
  * by the method {@link Schema#addEntity(String)} (there is no public constructor for {@link Entity} itself). <br/>
- * <br/>
- * Use the various addXXX methods to add entity properties, indexes, and relations to other entities (addToOne,
- * addToMany).<br/>
- * <br/>
- * There are further configuration possibilities:
- * <ul>
- * <li>{@link Entity#implementsInterface(String...)} and {@link #implementsSerializable()} to specify interfaces the
- * entity will implement</li>
- * <li>{@link #setSuperclass(String)} to specify a class of which the entity will extend from</li>
- * <li>Various setXXX methods</li>
- * </ul>
- * 
+ * <br/> Use the various addXXX methods to add entity properties, indexes, and relations to other entities (addToOne,
+ * addToMany).<br/> <br/> There are further configuration possibilities: <ul> <li>{@link
+ * Entity#implementsInterface(String...)} and {@link #implementsSerializable()} to specify interfaces the entity will
+ * implement</li> <li>{@link #setSuperclass(String)} to specify a class of which the entity will extend from</li>
+ * <li>Various setXXX methods</li> </ul>
+ *
  * @see <a href="http://greendao-orm.com/documentation/modelling-entities/">Modelling Entities (Documentation page)</a>
  * @see <a href="http://greendao-orm.com/documentation/relations/">Relations (Documentation page)</a>
  */
@@ -155,13 +144,13 @@ public class Entity {
 
     /** Adds a to-many relationship; the target entity is joined to the PK property of this entity (typically the ID). */
     public ToMany addToMany(Entity target, Property targetProperty) {
-        Property[] targetProperties = { targetProperty };
+        Property[] targetProperties = {targetProperty};
         return addToMany(null, target, targetProperties);
     }
 
     /**
-     * Convenience method for {@link Entity#addToMany(Entity, Property)} with a subsequent call to
-     * {@link ToMany#setName(String)}.
+     * Convenience method for {@link Entity#addToMany(Entity, Property)} with a subsequent call to {@link
+     * ToMany#setName(String)}.
      */
     public ToMany addToMany(Entity target, Property targetProperty, String name) {
         ToMany toMany = addToMany(target, targetProperty);
@@ -174,8 +163,8 @@ public class Entity {
      * and given source property (of this entity).
      */
     public ToMany addToMany(Property sourceProperty, Entity target, Property targetProperty) {
-        Property[] sourceProperties = { sourceProperty };
-        Property[] targetProperties = { targetProperty };
+        Property[] sourceProperties = {sourceProperty};
+        Property[] targetProperties = {targetProperty};
         return addToMany(sourceProperties, target, targetProperties);
     }
 
@@ -199,7 +188,7 @@ public class Entity {
             throw new IllegalStateException("Protobuf entities do not support realtions, currently");
         }
 
-        Property[] fkProperties = { fkProperty };
+        Property[] fkProperties = {fkProperty};
         ToOne toOne = new ToOne(schema, this, target, fkProperties, true);
         toOneRelations.add(toOne);
         return toOne;
@@ -217,7 +206,7 @@ public class Entity {
     }
 
     public ToOne addToOneWithoutProperty(String name, Entity target, String fkColumnName, boolean notNull,
-            boolean unique) {
+                                         boolean unique) {
         PropertyBuilder propertyBuilder = new PropertyBuilder(schema, this, null, name);
         if (notNull) {
             propertyBuilder.notNull();
@@ -227,7 +216,7 @@ public class Entity {
         }
         propertyBuilder.columnName(fkColumnName);
         Property column = propertyBuilder.getProperty();
-        Property[] fkColumns = { column };
+        Property[] fkColumns = {column};
         ToOne toOne = new ToOne(schema, this, target, fkColumns, false);
         toOne.setName(name);
         toOneRelations.add(toOne);
@@ -239,14 +228,13 @@ public class Entity {
     }
 
     public ContentProvider addContentProvider() {
-        ContentProvider contentProvider = new ContentProvider(this);
+        List<Entity> entities = new ArrayList<Entity>();
+        ContentProvider contentProvider = new ContentProvider(schema, entities);
         contentProviders.add(contentProvider);
         return contentProvider;
     }
 
-    /**
-     * Adds a new index to the entity.
-     */
+    /** Adds a new index to the entity. */
     public Entity addIndex(Index index) {
         indexes.add(index);
         return this;
@@ -366,9 +354,7 @@ public class Entity {
         this.skipGeneration = skipGeneration;
     }
 
-    /**
-     * Flag if CREATE & DROP TABLE scripts should be skipped in Dao.
-     */
+    /** Flag if CREATE & DROP TABLE scripts should be skipped in Dao. */
     public void setSkipTableCreation(boolean skipTableCreation) {
         this.skipTableCreation = skipTableCreation;
     }
@@ -503,7 +489,7 @@ public class Entity {
         }
 
         init2ndPassIndexNamesWithDefaults();
-        
+
         for (ContentProvider contentProvider : contentProviders) {
             contentProvider.init2ndPass();
         }

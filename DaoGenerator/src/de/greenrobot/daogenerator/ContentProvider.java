@@ -1,15 +1,19 @@
 package de.greenrobot.daogenerator;
 
+import java.util.List;
+
 public class ContentProvider {
-    private final Entity entity;
+    private final List<Entity> entities;
     private String authority;
     private String basePath;
     private String className;
     private String javaPackage;
     private boolean readOnly;
+    private Schema schema;
 
-    public ContentProvider(Entity entity) {
-        this.entity = entity;
+    public ContentProvider(Schema schema, List<Entity> entities) {
+        this.schema = schema;
+        this.entities = entities;
     }
 
     public String getAuthority() {
@@ -52,18 +56,22 @@ public class ContentProvider {
         this.readOnly = true;
     }
 
+    public List<Entity> getEntities() {
+        return entities;
+    }
+
     public void init2ndPass() {
         if (authority == null) {
-            authority = entity.getJavaPackage();
+            authority = schema.getDefaultJavaPackage() + ".provider";
         }
         if (basePath == null) {
-            basePath = entity.getClassName();
+            basePath = "";
         }
         if (className == null) {
-            className = entity.getClassName() + "ContentProvider";
+            className = "EntityContentProvider";
         }
         if (javaPackage == null) {
-            javaPackage = entity.getJavaPackageDao();
+            javaPackage = schema.getDefaultJavaPackage();
         }
 
     }
