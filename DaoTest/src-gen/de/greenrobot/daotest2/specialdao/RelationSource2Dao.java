@@ -10,7 +10,6 @@ import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.internal.DaoConfig;
-
 import de.greenrobot.daotest2.dao.DaoSession;
 
 import de.greenrobot.daotest2.to1_specialentity.ToOneTarget2;
@@ -128,6 +127,7 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
         return true;
     }
     
+ 
     private String selectDeep;
 
     protected String getSelectDeep() {

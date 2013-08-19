@@ -202,4 +202,5 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
         return true;
     }
     
+ 
 }

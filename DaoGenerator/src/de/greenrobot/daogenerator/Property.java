@@ -17,232 +17,254 @@
  */
 package de.greenrobot.daogenerator;
 
-/** Model class for an entity's property: a Java property mapped to a data base column. */
+/**
+ * Model class for an entity's property: a Java property mapped to a data base
+ * column.
+ */
 public class Property {
 
-    public static class PropertyBuilder {
-        private final Property property;
+  public static class PropertyBuilder {
+    private final Property property;
 
-        public PropertyBuilder(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
-            property = new Property(schema, entity, propertyType, propertyName);
-        }
-
-        public PropertyBuilder columnName(String columnName) {
-            property.columnName = columnName;
-            return this;
-        }
-
-        public PropertyBuilder columnType(String columnType) {
-            property.columnType = columnType;
-            return this;
-        }
-
-        public PropertyBuilder primaryKey() {
-            property.primaryKey = true;
-            return this;
-        }
-
-        public PropertyBuilder primaryKeyAsc() {
-            property.primaryKey = true;
-            property.pkAsc = true;
-            return this;
-        }
-
-        public PropertyBuilder primaryKeyDesc() {
-            property.primaryKey = true;
-            property.pkDesc = true;
-            return this;
-        }
-
-        public PropertyBuilder autoincrement() {
-            if (!property.primaryKey || property.propertyType != PropertyType.Long) {
-                throw new RuntimeException(
-                        "AUTOINCREMENT is only available to primary key properties of type long/Long");
-            }
-            property.pkAutoincrement = true;
-            return this;
-        }
-
-        public PropertyBuilder unique() {
-            property.unique = true;
-            return this;
-        }
-
-        public PropertyBuilder notNull() {
-            property.notNull = true;
-            return this;
-        }
-
-        public PropertyBuilder index() {
-            Index index = new Index();
-            index.addProperty(property);
-            property.entity.addIndex(index);
-            return this;
-        }
-
-        public PropertyBuilder indexAsc(String indexNameOrNull, boolean isUnique) {
-            Index index = new Index();
-            index.addPropertyAsc(property);
-            if (isUnique) {
-                index.makeUnique();
-            }
-            index.setName(indexNameOrNull);
-            property.entity.addIndex(index);
-            return this;
-        }
-
-        public PropertyBuilder indexDesc(String indexNameOrNull, boolean isUnique) {
-            Index index = new Index();
-            index.addPropertyDesc(property);
-            if (isUnique) {
-                index.makeUnique();
-            }
-            index.setName(indexNameOrNull);
-            property.entity.addIndex(index);
-            return this;
-        }
-
-        public Property getProperty() {
-            return property;
-        }
+    public PropertyBuilder(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
+      this.property = new Property(schema, entity, propertyType, propertyName);
     }
 
-    private final Schema schema;
-    private final Entity entity;
-    private PropertyType propertyType;
-    private final String propertyName;
-
-    private String columnName;
-    private String columnType;
-
-    private boolean primaryKey;
-    private boolean pkAsc;
-    private boolean pkDesc;
-    private boolean pkAutoincrement;
-
-    private boolean unique;
-    private boolean notNull;
-
-    /** Initialized in 2nd pass */
-    private String constraints;
-
-    private int ordinal;
-
-    private String javaType;
-
-    public Property(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
-        this.schema = schema;
-        this.entity = entity;
-        this.propertyName = propertyName;
-        this.propertyType = propertyType;
+    public PropertyBuilder columnName(String columnName) {
+      this.property.columnName = columnName;
+      return this;
     }
 
-    public String getPropertyName() {
-        return propertyName;
+    public PropertyBuilder columnType(String columnType) {
+      this.property.columnType = columnType;
+      return this;
     }
 
-    public PropertyType getPropertyType() {
-        return propertyType;
+    public PropertyBuilder primaryKey() {
+      this.property.primaryKey = true;
+      return this;
     }
 
-    public void setPropertyType(PropertyType propertyType) {
-        this.propertyType = propertyType;
+    public PropertyBuilder primaryKeyAsc() {
+      this.property.primaryKey = true;
+      this.property.pkAsc = true;
+      return this;
     }
 
-    public String getColumnName() {
-        return columnName;
+    public PropertyBuilder primaryKeyDesc() {
+      this.property.primaryKey = true;
+      this.property.pkDesc = true;
+      return this;
     }
 
-    public String getColumnType() {
-        return columnType;
+    public PropertyBuilder autoincrement() {
+      if (!this.property.primaryKey || (this.property.propertyType != PropertyType.Long)) {
+        throw new RuntimeException("AUTOINCREMENT is only available to primary key properties of type long/Long");
+      }
+      this.property.pkAutoincrement = true;
+      return this;
     }
 
-    public boolean isPrimaryKey() {
-        return primaryKey;
+    public PropertyBuilder unique() {
+      this.property.unique = true;
+      return this;
     }
 
-    public boolean isAutoincrement() {
-        return pkAutoincrement;
+    public PropertyBuilder notNull() {
+      this.property.notNull = true;
+      return this;
     }
 
-    public String getConstraints() {
-        return constraints;
+    public PropertyBuilder complexJavaType() {
+      this.property.complexJavaType = true;
+      return this;
     }
 
-    public boolean isUnique() {
-        return unique;
+    public PropertyBuilder index() {
+      Index index = new Index();
+      index.addProperty(this.property);
+      this.property.entity.addIndex(index);
+      return this;
     }
 
-    public boolean isNotNull() {
-        return notNull;
+    public PropertyBuilder indexAsc(String indexNameOrNull, boolean isUnique) {
+      Index index = new Index();
+      index.addPropertyAsc(this.property);
+      if (isUnique) {
+        index.makeUnique();
+      }
+      index.setName(indexNameOrNull);
+      this.property.entity.addIndex(index);
+      return this;
     }
 
-    public String getJavaType() {
-        return javaType;
+    public PropertyBuilder indexDesc(String indexNameOrNull, boolean isUnique) {
+      Index index = new Index();
+      index.addPropertyDesc(this.property);
+      if (isUnique) {
+        index.makeUnique();
+      }
+      index.setName(indexNameOrNull);
+      this.property.entity.addIndex(index);
+      return this;
     }
 
-    public int getOrdinal() {
-        return ordinal;
+    public Property getProperty() {
+      return this.property;
     }
+  }
 
-    public void setOrdinal(int ordinal) {
-        this.ordinal = ordinal;
-    }
+  private final Schema schema;
+  private final Entity entity;
+  private PropertyType propertyType;
+  private final String propertyName;
 
-    public Entity getEntity() {
-        return entity;
-    }
+  private String columnName;
+  private String columnType;
 
-    void init2ndPass() {
-        initConstraint();
-        if (columnType == null) {
-            columnType = schema.mapToDbType(propertyType);
-        }
-        if (columnName == null) {
-            columnName = DaoUtil.dbName(propertyName);
-        }
-        if (notNull) {
-            javaType = schema.mapToJavaTypeNotNull(propertyType);
-        } else {
-            javaType = schema.mapToJavaTypeNullable(propertyType);
-        }
-    }
+  private boolean primaryKey;
+  private boolean pkAsc;
+  private boolean pkDesc;
+  private boolean pkAutoincrement;
 
-    private void initConstraint() {
-        StringBuilder constraintBuilder = new StringBuilder();
-        if (primaryKey) {
-            constraintBuilder.append("PRIMARY KEY");
-            if (pkAsc) {
-                constraintBuilder.append(" ASC");
-            }
-            if (pkDesc) {
-                constraintBuilder.append(" DESC");
-            }
-            if (pkAutoincrement) {
-                constraintBuilder.append(" AUTOINCREMENT");
-            }
-        }
-        // Always have String PKs NOT NULL because SQLite is pretty strange in this respect:
-        // One could insert multiple rows with NULL PKs
-        if (notNull || (primaryKey && propertyType == PropertyType.String)) {
-            constraintBuilder.append(" NOT NULL");
-        }
-        if (unique) {
-            constraintBuilder.append(" UNIQUE");
-        }
-        String newContraints = constraintBuilder.toString().trim();
-        if (constraintBuilder.length() > 0) {
-            constraints = newContraints;
-        }
-    }
+  private boolean unique;
+  private boolean notNull;
+  private boolean complexJavaType;
 
-    void init3ndPass() {
-        // Nothing to do so far
-    }
+  /** Initialized in 2nd pass */
+  private String constraints;
 
-    @Override
-    public String toString() {
-        return "Property " + propertyName + " of " + entity.getClassName();
+  private int ordinal;
+
+  private String javaType;
+
+  public Property(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
+    this.schema = schema;
+    this.entity = entity;
+    this.propertyName = propertyName;
+    this.propertyType = propertyType;
+  }
+
+  public String getPropertyName() {
+    return this.propertyName;
+  }
+
+  public PropertyType getPropertyType() {
+    return this.propertyType;
+  }
+
+  public void setPropertyType(PropertyType propertyType) {
+    this.propertyType = propertyType;
+  }
+
+  public String getColumnName() {
+    return this.columnName;
+  }
+
+  public String getColumnType() {
+    return this.columnType;
+  }
+
+  public boolean isPrimaryKey() {
+    return this.primaryKey;
+  }
+
+  public boolean isAutoincrement() {
+    return this.pkAutoincrement;
+  }
+
+  public String getConstraints() {
+    return this.constraints;
+  }
+
+  public boolean isUnique() {
+    return this.unique;
+  }
+
+  public boolean isNotNull() {
+    return this.notNull;
+  }
+
+  public boolean isComplexJavaType() {
+    return this.complexJavaType;
+  }
+
+  public String getJavaType() {
+    return this.javaType;
+  }
+
+  public int getOrdinal() {
+    return this.ordinal;
+  }
+
+  public void setOrdinal(int ordinal) {
+    this.ordinal = ordinal;
+  }
+
+  public Entity getEntity() {
+    return this.entity;
+  }
+
+  void init2ndPass() {
+    this.initConstraint();
+    if (this.columnType == null) {
+      this.columnType = this.schema.mapToDbType(this.propertyType);
     }
+    if (this.columnName == null) {
+      this.columnName = DaoUtil.dbName(this.propertyName);
+    }
+    if (this.notNull && !this.complexJavaType) {
+      this.javaType = this.schema.mapToJavaTypeNotNull(this.propertyType);
+    } else {
+      this.javaType = this.schema.mapToJavaTypeNullable(this.propertyType);
+      this.complexJavaType = true; // we deal with a complex data type
+    }
+    switch (this.propertyType) {
+    case ByteArray: // can be null everytime
+    case Date: // can be null everytime
+    case String: // can be null everytime
+      this.complexJavaType = true;
+    default:
+      break;
+    }
+  }
+
+  private void initConstraint() {
+    StringBuilder constraintBuilder = new StringBuilder();
+    if (this.primaryKey) {
+      constraintBuilder.append("PRIMARY KEY");
+      if (this.pkAsc) {
+        constraintBuilder.append(" ASC");
+      }
+      if (this.pkDesc) {
+        constraintBuilder.append(" DESC");
+      }
+      if (this.pkAutoincrement) {
+        constraintBuilder.append(" AUTOINCREMENT");
+      }
+    }
+    // Always have String PKs NOT NULL because SQLite is pretty strange in this
+    // respect:
+    // One could insert multiple rows with NULL PKs
+    if (this.notNull || (this.primaryKey && (this.propertyType == PropertyType.String))) {
+      constraintBuilder.append(" NOT NULL");
+    }
+    if (this.unique) {
+      constraintBuilder.append(" UNIQUE");
+    }
+    String newContraints = constraintBuilder.toString().trim();
+    if (constraintBuilder.length() > 0) {
+      this.constraints = newContraints;
+    }
+  }
+
+  void init3ndPass() {
+    // Nothing to do so far
+  }
+
+  @Override
+  public String toString() {
+    return "Property " + this.propertyName + " of " + this.entity.getClassName();
+  }
 
 }

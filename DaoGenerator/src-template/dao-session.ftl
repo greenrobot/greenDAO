@@ -29,7 +29,13 @@ import de.greenrobot.dao.identityscope.IdentityScopeType;
 import de.greenrobot.dao.internal.DaoConfig;
 
 <#list schema.entities as entity>
+<#if entity.hasChildclassWithPackage>
+import ${entity.childclass};
+<#elseif entity.hasChildclassInEntityPackage>
+import ${entity.javaPackage}.${entity.childclass};
+<#else>
 import ${entity.javaPackage}.${entity.className};
+</#if>
 </#list>
 
 <#list schema.entities as entity>
@@ -68,7 +74,7 @@ public class DaoSession extends AbstractDaoSession {
 </#list>        
 
 <#list schema.entities as entity>
-        registerDao(${entity.className}.class, ${entity.classNameDao?uncap_first});
+        registerDao(${entity.referencedClassName}.class, ${entity.classNameDao?uncap_first});
 </#list>        
     }
     

@@ -118,4 +118,5 @@ public class SqliteMasterDao extends AbstractDao<SqliteMaster, Void> {
         return true;
     }
     
+ 
 }

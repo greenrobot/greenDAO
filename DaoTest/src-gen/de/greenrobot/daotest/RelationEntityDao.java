@@ -149,6 +149,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         return true;
     }
     
+ 
     private String selectDeep;
 
     protected String getSelectDeep() {

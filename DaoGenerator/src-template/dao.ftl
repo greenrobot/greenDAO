@@ -24,8 +24,9 @@ package ${entity.javaPackageDao};
 <#if entity.toOneRelations?has_content || entity.incomingToManyRelations?has_content>
 import java.util.List;
 </#if>
-<#if entity.toOneRelations?has_content>
+<#if entity.toOneRelations?has_content || entity.hasEntityQueryBuilder>
 import java.util.ArrayList;
+import de.greenrobot.dao.query.AbstractEntityQueryBuilder;
 </#if>
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -37,11 +38,13 @@ import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.SqlUtils;
 </#if>
 import de.greenrobot.dao.internal.DaoConfig;
-<#if entity.incomingToManyRelations?has_content>
+<#if entity.incomingToManyRelations?has_content || entity.hasEntityQueryBuilder>
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
 </#if>
-
+<#if entity.hasEntityQueryBuilder>
+import de.greenrobot.dao.query.WhereCondition;
+</#if>
 <#if entity.javaPackageDao != schema.defaultJavaPackageDao>
 import ${schema.defaultJavaPackageDao}.DaoSession;
 
@@ -50,9 +53,15 @@ import ${schema.defaultJavaPackageDao}.DaoSession;
 <#list entity.additionalImportsDao as additionalImport>
 import ${additionalImport};
 </#list>
-
 </#if>
+
+<#if entity.hasChildclassWithPackage>
+import ${entity.childclass};
+<#elseif entity.hasChildclassInEntityPackage>
+import ${entity.javaPackage}.${entity.childclass};
+<#else>
 import ${entity.javaPackage}.${entity.className};
+</#if>
 <#if entity.protobuf>
 import ${entity.javaPackage}.${entity.className}.Builder;
 </#if>
@@ -61,7 +70,7 @@ import ${entity.javaPackage}.${entity.className}.Builder;
 /** 
  * DAO for table ${entity.tableName}.
 */
-public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${entity.pkType}> {
+public class ${entity.classNameDao} extends AbstractDao<${entity.referencedClassName}, ${entity.pkType}> {
 
     public static final String TABLENAME = "${entity.tableName}";
 
@@ -80,7 +89,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 
 </#if>
 <#list entity.incomingToManyRelations as toMany>
-    private Query<${toMany.targetEntity.className}> ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query;
+    private Query<${toMany.targetEntity.referencedClassName}> ${toMany.sourceEntity.referencedClassName?uncap_first}_${toMany.name?cap_first}Query;
 </#list>
 
     public ${entity.classNameDao}(DaoConfig config) {
@@ -121,7 +130,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#if>
     /** @inheritdoc */
     @Override
-    protected void bindValues(SQLiteStatement stmt, ${entity.className} entity) {
+    protected void bindValues(SQLiteStatement stmt, ${entity.referencedClassName} entity) {
         stmt.clearBindings();
 <#list entity.properties as property>
 <#if property.notNull || entity.protobuf>
@@ -143,7 +152,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 <#list entity.toOneRelations as toOne>
 <#if !toOne.fkProperties?has_content>
 
-        ${toOne.targetEntity.className} ${toOne.name} = entity.peak${toOne.name?cap_first}();
+        ${toOne.targetEntity.referencedClassName} ${toOne.name} = entity.peak${toOne.name?cap_first}();
         if(${toOne.name} != null) {
             ${toOne.targetEntity.pkProperty.javaType} ${toOne.name}__targetKey = ${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}();
 <#if !toOne.targetEntity.pkProperty.notNull>
@@ -160,7 +169,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 
 <#if entity.active>
     @Override
-    protected void attachEntity(${entity.className} entity) {
+    protected void attachEntity(${entity.referencedClassName} entity) {
         super.attachEntity(entity);
         entity.__setDaoSession(daoSession);
     }
@@ -182,9 +191,9 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 
     /** @inheritdoc */
     @Override
-    public ${entity.className} readEntity(Cursor cursor, int offset) {
+    public ${entity.referencedClassName} readEntity(Cursor cursor, int offset) {
 <#if entity.protobuf>
-        Builder builder = ${entity.className}.newBuilder();
+        Builder builder = ${entity.referencedClassName}.newBuilder();
 <#list entity.properties as property>
 <#if !property.notNull>
         if (!cursor.isNull(offset + ${property_index})) {
@@ -194,11 +203,11 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#if>        
 </#list>        
         return builder.build();
-<#elseif entity.constructors>
+<#elseif entity.constructors && !entity.hasChildclass>
 <#--
 ############################## readEntity non-protobuff, constructor ############################## 
 -->
-        ${entity.className} entity = new ${entity.className}( //
+        ${entity.referencedClassName} entity = new ${entity.referencedClassName}( //
 <#list entity.properties as property>
             <#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#if
             property.propertyType == "Byte">(byte) </#if><#if
@@ -212,7 +221,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 <#--
 ############################## readEntity non-protobuff, setters ############################## 
 -->
-        ${entity.className} entity = new ${entity.className}();
+        ${entity.referencedClassName} entity = new ${entity.referencedClassName}();
         readEntity(cursor, entity, offset);
         return entity;
 </#if>
@@ -220,7 +229,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
      
     /** @inheritdoc */
     @Override
-    public void readEntity(Cursor cursor, ${entity.className} entity, int offset) {
+    public void readEntity(Cursor cursor, ${entity.referencedClassName} entity, int offset) {
 <#if entity.protobuf>
         throw new UnsupportedOperationException("Protobuf objects cannot be modified");
 <#else> 
@@ -236,7 +245,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
     
     /** @inheritdoc */
     @Override
-    protected ${entity.pkType} updateKeyAfterInsert(${entity.className} entity, long rowId) {
+    protected ${entity.pkType} updateKeyAfterInsert(${entity.referencedClassName} entity, long rowId) {
 <#if entity.pkProperty??>
 <#if entity.pkProperty.propertyType == "Long">
 <#if !entity.protobuf>
@@ -254,7 +263,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
     
     /** @inheritdoc */
     @Override
-    public ${entity.pkType} getKey(${entity.className} entity) {
+    public ${entity.pkType} getKey(${entity.referencedClassName} entity) {
 <#if entity.pkProperty??>
         if(entity != null) {
             return entity.get${entity.pkProperty.propertyName?cap_first}();
@@ -273,30 +282,93 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
     }
     
 <#list entity.incomingToManyRelations as toMany>
-    /** Internal query to resolve the "${toMany.name}" to-many relationship of ${toMany.sourceEntity.className}. */
-    public List<${toMany.targetEntity.className}> _query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
+    /** Internal query to resolve the "${toMany.name}" to-many relationship of ${toMany.sourceEntity.referencedClassName}. */
+    public List<${toMany.targetEntity.referencedClassName}> _query${toMany.sourceEntity.referencedClassName?cap_first}_${toMany.name?cap_first}(<#--
     --><#list toMany.targetProperties as property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
         synchronized (this) {
-            if (${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query == null) {
-                QueryBuilder<${toMany.targetEntity.className}> queryBuilder = queryBuilder();
+            if (${toMany.sourceEntity.referencedClassName?uncap_first}_${toMany.name?cap_first}Query == null) {
+                QueryBuilder<${toMany.targetEntity.referencedClassName}> queryBuilder = queryBuilder();
 <#list toMany.targetProperties as property>
                 queryBuilder.where(Properties.${property.propertyName?cap_first}.eq(null));
 </#list>
 <#if toMany.order?has_content>
                 queryBuilder.orderRaw("${toMany.order}");
 </#if>
-                ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query = queryBuilder.build();
+                ${toMany.sourceEntity.referencedClassName?uncap_first}_${toMany.name?cap_first}Query = queryBuilder.build();
             }
         }
-        Query<${toMany.targetEntity.className}> query = ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query.forCurrentThread();
+        Query<${toMany.targetEntity.referencedClassName}> query = ${toMany.sourceEntity.referencedClassName?uncap_first}_${toMany.name?cap_first}Query.forCurrentThread();
 <#list toMany.targetProperties as property>
         query.setParameter(${property_index}, ${property.propertyName});
 </#list>
         return query.list();
     }
 
-</#list>   
+</#list>  
+ 
 <#if entity.toOneRelations?has_content>
     <#include "dao-deep.ftl">
+</#if>
+<#if entity.hasEntityQueryBuilder>
+    public ${entity.referencedClassName}QueryBuilder queryBuilder() {
+      return new ${entity.referencedClassName}QueryBuilder(this);
+    }
+
+    public static class ${entity.referencedClassName}QueryBuilder extends AbstractEntityQueryBuilder<${entity.referencedClassName}> {
+        ${entity.referencedClassName}QueryBuilder(AbstractDao<${entity.referencedClassName}, ?> dao) {
+            super(dao);
+        }
+        
+        public Query<${entity.referencedClassName}> findByPrimaryKey(${entity.pkProperty.propertyType} pk) {
+            this.where(Properties.${entity.pkProperty.propertyName?cap_first}.eq(pk));
+            return this.build();
+        }
+        
+        public Query<${entity.referencedClassName}> findAll() {
+            return this.build();
+        }
+        
+        /**
+         * <p>creates a {@link Query} for {@link ${entity.referencedClassName}} to find one by example.
+         * <p>Just nullable fields can be used. Just set one of these properties:
+         * <ul>
+<#list entity.properties as property>
+  <#if !property.primaryKey && property.complexJavaType>
+         * <li><code>${property.javaType} ${property.propertyName}</code></li>
+  </#if>
+</#list>
+         * </ul>
+         *
+         * @param example
+         *          the entity filled with example values
+         * 
+         * @return a {@link Query} to find the example entity
+         */
+        public Query<${entity.referencedClassName}> findByExample(${entity.referencedClassName} example) { 
+            if(example.get${entity.pkProperty.propertyName?cap_first}() != null) {
+                return findByPrimaryKey(example.get${entity.pkProperty.propertyName?cap_first}());
+            }
+        	
+            ArrayList<WhereCondition> conditions = new ArrayList<WhereCondition>();
+
+<#list entity.properties as property>
+  <#if !property.primaryKey && property.complexJavaType>
+            if (example.get${property.propertyName?cap_first}() != null) {
+                conditions.add(Properties.${property.propertyName?cap_first}.eq(example.get${property.propertyName?cap_first}()));
+            }
+  </#if>
+</#list>
+           
+            if (conditions.isEmpty()) {
+                throw new IllegalArgumentException("No example values given. Please provide at least one value!");
+            }
+
+            WhereCondition firstCondition = conditions.get(0);
+            conditions.remove(0);
+            this.where(firstCondition, conditions.toArray(new WhereCondition[0]));
+
+        	return this.build();
+        }
+    }
 </#if>
 }
