@@ -16,6 +16,13 @@ Work in progress
 
 Release History
 ---------------
+### V1.3.2 (2013-08-28): Bugfix
+* Fixed building CountQueries with combined AND/OR conditions
+* Some secret inoffical work in progress
+
+### V1.3.1 (2013-03-02): Fixed Gradle dependencies
+* Don't use Gradle's "compile" dependency scope
+
 ### V1.3.0 (2013-02-24): Multithreading robustness and refactoring (breaking changes!)
 * Reworked internal locking of insert/update/delete methods
 * Fixed potential deadlocks when transactions are executed concurrently to one of the various insert/update/delete calls
