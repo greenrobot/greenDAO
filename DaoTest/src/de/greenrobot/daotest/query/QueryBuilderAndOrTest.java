@@ -72,7 +72,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
         assertEquals(1, (int) result.get(0).getA());
         assertEquals(101, (int) result.get(1).getA());
 
-        // TODO queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
+        queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
     }
 
     public void testOr3() {
@@ -88,7 +88,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
         assertEquals(101, (int) result.get(1).getA());
         assertEquals(301, (int) result.get(2).getA());
 
-        // TODO queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
+        queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
     }
 
     public void testOrNested() {
@@ -105,7 +105,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
         assertEquals(301, (int) result.get(1).getA());
         assertEquals(601, (int) result.get(2).getA());
 
-        // TODO queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
+        queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
     }
 
     public void testOrNestedNested() {
@@ -124,7 +124,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
         assertEquals(501, (int) result.get(2).getA());
         assertEquals(801, (int) result.get(3).getA());
 
-        // TODO queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
+        queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
     }
 
     public void testAnd() {
@@ -155,7 +155,7 @@ public class QueryBuilderAndOrTest extends AbstractDaoTest<AbcdefEntityDao, Abcd
         assertEquals(501, (int) result.get(1).getA());
         assertEquals(601, (int) result.get(2).getA());
 
-        // TODO queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
+        queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
     }
 
 }

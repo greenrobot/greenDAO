@@ -310,6 +310,10 @@ public class QueryBuilder<T> {
         appendWhereClause(builder, tablename);
         String sql = builder.toString();
 
+        // Remove table aliases, not supported for DELETE queries.
+        // TODO(?): don't create table aliases in the first place.
+        sql = sql.replace(tablePrefix + ".'", tablename + ".'");
+
         if (LOG_SQL) {
             DaoLog.d("Built SQL for delete query: " + sql);
         }
