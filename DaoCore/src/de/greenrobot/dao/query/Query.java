@@ -15,9 +15,13 @@
  */
 package de.greenrobot.dao.query;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import android.database.Cursor;
+import android.os.Process;
+import android.util.SparseArray;
+
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 
@@ -33,26 +37,55 @@ import de.greenrobot.dao.DaoException;
 // TODO Make parameters setable by Property (if unique in paramaters)
 // TODO Query for PKs/ROW IDs
 public class Query<T> extends AbstractQuery<T> {
-    private final static class ThreadLocalQuery<T2> extends ThreadLocal<Query<T2>> {
+    private final static class QueryData<T2> {
         private final String sql;
         private final AbstractDao<T2, ?> dao;
         private final String[] initialValues;
         private final int limitPosition;
         private final int offsetPosition;
 
-        private ThreadLocalQuery(AbstractDao<T2, ?> dao, String sql, String[] initialValues, int limitPosition,
-                int offsetPosition) {
+        private final SparseArray<WeakReference<Query<T2>>> queriesForThreads;
+
+        // WeakHashMap with Thread did not seem to work
+        // private final Map<Thread, Query<T2>> queriesForThreads = new WeakHashMap<Thread, Query<T2>>();
+
+        QueryData(AbstractDao<T2, ?> dao, String sql, String[] initialValues, int limitPosition, int offsetPosition) {
             this.dao = dao;
             this.sql = sql;
             this.initialValues = initialValues;
             this.limitPosition = limitPosition;
             this.offsetPosition = offsetPosition;
+            queriesForThreads = new SparseArray<WeakReference<Query<T2>>>();
         }
 
-        @Override
-        protected Query<T2> initialValue() {
-            return new Query<T2>(this, dao, sql, initialValues.clone(), limitPosition, offsetPosition);
+        /** Just gets the instance, won't reset anything like initial parameters. */
+        Query<T2> forCurrentThread() {
+            int threadId = Process.myTid();
+            Query<T2> query;
+            synchronized (queriesForThreads) {
+                WeakReference<Query<T2>> queryRef = queriesForThreads.get(threadId);
+                query = queryRef != null ? queryRef.get() : null;
+                if (query == null) {
+                    cleanup();
+                    query = new Query<T2>(this, dao, sql, initialValues.clone(), limitPosition, offsetPosition);
+                    queriesForThreads.put(threadId, new WeakReference<Query<T2>>(query));
+                }
+            }
+
+            return query;
         }
+
+        void cleanup() {
+            synchronized (queriesForThreads) {
+                int size = queriesForThreads.size();
+                for (int i = 0; i < size; i++) {
+                    if (queriesForThreads.valueAt(i).get() == null) {
+                        queriesForThreads.remove(queriesForThreads.keyAt(i));
+                    }
+                }
+            }
+        }
+
     }
 
     /** For internal use by greenDAO only. */
@@ -62,21 +95,23 @@ public class Query<T> extends AbstractQuery<T> {
 
     static <T2> Query<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues, int limitPosition,
             int offsetPosition) {
-        ThreadLocalQuery<T2> threadLocal = new ThreadLocalQuery<T2>(dao, sql, toStringArray(initialValues),
-                limitPosition, offsetPosition);
-        return threadLocal.get();
+        QueryData<T2> queryData = new QueryData<T2>(dao, sql, toStringArray(initialValues), limitPosition,
+                offsetPosition);
+        return queryData.forCurrentThread();
     }
 
     private final int limitPosition;
     private final int offsetPosition;
-    private final ThreadLocalQuery<T> threadLocalQuery;
+    private final QueryData<T> queryData;
+    private int myThreadId;
 
-    private Query(ThreadLocalQuery<T> threadLocalQuery, AbstractDao<T, ?> dao, String sql, String[] initialValues,
-            int limitPosition, int offsetPosition) {
+    private Query(QueryData<T> queryData, AbstractDao<T, ?> dao, String sql, String[] initialValues, int limitPosition,
+            int offsetPosition) {
         super(dao, sql, initialValues);
-        this.threadLocalQuery = threadLocalQuery;
+        this.queryData = queryData;
         this.limitPosition = limitPosition;
         this.offsetPosition = offsetPosition;
+        myThreadId = Process.myTid();
     }
 
     // public void compile() {
@@ -84,9 +119,8 @@ public class Query<T> extends AbstractQuery<T> {
     // }
 
     public Query<T> forCurrentThread() {
-        Query<T> query = threadLocalQuery.get();
-        String[] initialValues = threadLocalQuery.initialValues;
-        System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
+        Query<T> query = myThreadId == Process.myTid() ? this : queryData.forCurrentThread();
+        System.arraycopy(queryData.initialValues, 0, query.parameters, 0, queryData.initialValues.length);
         return query;
     }
 
