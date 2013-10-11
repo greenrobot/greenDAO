@@ -33,6 +33,7 @@ import de.greenrobot.dao.DaoException;
 // TODO support long, double and other types, not just Strings, for parameters
 // TODO Make parameters setable by Property (if unique in paramaters)
 // TODO Query for PKs/ROW IDs
+// TODO Make query compilable
 public class Query<T> extends AbstractQuery<T> {
     private final static class QueryData<T2> extends AbstractQueryData<T2, Query<T2>> {
         private final int limitPosition;
@@ -66,7 +67,6 @@ public class Query<T> extends AbstractQuery<T> {
     private final int limitPosition;
     private final int offsetPosition;
     private final QueryData<T> queryData;
-    private int myThreadId;
 
     private Query(QueryData<T> queryData, AbstractDao<T, ?> dao, String sql, String[] initialValues, int limitPosition,
             int offsetPosition) {
@@ -74,16 +74,10 @@ public class Query<T> extends AbstractQuery<T> {
         this.queryData = queryData;
         this.limitPosition = limitPosition;
         this.offsetPosition = offsetPosition;
-        myThreadId = Process.myTid();
     }
 
-    // public void compile() {
-    // // TODO implement compile
-    // }
-
     public Query<T> forCurrentThread() {
-        Query<T> query = myThreadId == Process.myTid() ? this : queryData.forCurrentThread();
-        return query;
+        return queryData.forCurrentThread(this);
     }
 
     /**

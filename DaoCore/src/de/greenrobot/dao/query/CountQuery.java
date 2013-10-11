@@ -19,8 +19,8 @@ public class CountQuery<T> extends AbstractQuery<T> {
     }
 
     static <T2> CountQuery<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
-        QueryData<T2> threadLocal = new QueryData<T2>(dao, sql, toStringArray(initialValues));
-        return threadLocal.forCurrentThread();
+        QueryData<T2> queryData = new QueryData<T2>(dao, sql, toStringArray(initialValues));
+        return queryData.forCurrentThread();
     }
 
     private final QueryData<T> queryData;
@@ -31,7 +31,7 @@ public class CountQuery<T> extends AbstractQuery<T> {
     }
 
     public CountQuery<T> forCurrentThread() {
-        return queryData.forCurrentThread();
+        return queryData.forCurrentThread(this);
     }
 
     /** Returns the count (number of results matching the query). Uses SELECT COUNT (*) sematics. */

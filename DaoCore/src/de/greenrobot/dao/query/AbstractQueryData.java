@@ -19,13 +19,21 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
         queriesForThreads = new SparseArray<WeakReference<Q>>();
     }
 
-    /** Just gets the instance, won't reset anything like initial parameters. */
+    /** Just an optimized version, which performs faster if the current thread is already the query's owner thread. */
+    Q forCurrentThread(Q query) {
+        if (Thread.currentThread() == query.ownerThread) {
+            System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
+            return query;
+        } else {
+            return forCurrentThread();
+        }
+    }
+
     Q forCurrentThread() {
         int threadId = Process.myTid();
-        Q query;
         synchronized (queriesForThreads) {
             WeakReference<Q> queryRef = queriesForThreads.get(threadId);
-            query = queryRef != null ? queryRef.get() : null;
+            Q query = queryRef != null ? queryRef.get() : null;
             if (query == null) {
                 gc();
                 query = createQuery();
@@ -33,9 +41,8 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
             } else {
                 System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
             }
+            return query;
         }
-
-        return query;
     }
 
     abstract protected Q createQuery();
