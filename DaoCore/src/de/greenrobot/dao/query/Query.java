@@ -15,13 +15,10 @@
  */
 package de.greenrobot.dao.query;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import android.database.Cursor;
 import android.os.Process;
-import android.util.SparseArray;
-
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 
@@ -37,53 +34,19 @@ import de.greenrobot.dao.DaoException;
 // TODO Make parameters setable by Property (if unique in paramaters)
 // TODO Query for PKs/ROW IDs
 public class Query<T> extends AbstractQuery<T> {
-    private final static class QueryData<T2> {
-        private final String sql;
-        private final AbstractDao<T2, ?> dao;
-        private final String[] initialValues;
+    private final static class QueryData<T2> extends AbstractQueryData<T2> {
         private final int limitPosition;
         private final int offsetPosition;
 
-        private final SparseArray<WeakReference<Query<T2>>> queriesForThreads;
-
-        // WeakHashMap with Thread did not seem to work
-        // private final Map<Thread, Query<T2>> queriesForThreads = new WeakHashMap<Thread, Query<T2>>();
-
         QueryData(AbstractDao<T2, ?> dao, String sql, String[] initialValues, int limitPosition, int offsetPosition) {
-            this.dao = dao;
-            this.sql = sql;
-            this.initialValues = initialValues;
+            super(dao,sql,initialValues);
             this.limitPosition = limitPosition;
             this.offsetPosition = offsetPosition;
-            queriesForThreads = new SparseArray<WeakReference<Query<T2>>>();
         }
 
-        /** Just gets the instance, won't reset anything like initial parameters. */
-        Query<T2> forCurrentThread() {
-            int threadId = Process.myTid();
-            Query<T2> query;
-            synchronized (queriesForThreads) {
-                WeakReference<Query<T2>> queryRef = queriesForThreads.get(threadId);
-                query = queryRef != null ? queryRef.get() : null;
-                if (query == null) {
-                    cleanup();
-                    query = new Query<T2>(this, dao, sql, initialValues.clone(), limitPosition, offsetPosition);
-                    queriesForThreads.put(threadId, new WeakReference<Query<T2>>(query));
-                }
-            }
-
-            return query;
-        }
-
-        void cleanup() {
-            synchronized (queriesForThreads) {
-                int size = queriesForThreads.size();
-                for (int i = 0; i < size; i++) {
-                    if (queriesForThreads.valueAt(i).get() == null) {
-                        queriesForThreads.remove(queriesForThreads.keyAt(i));
-                    }
-                }
-            }
+        @Override
+        protected Query<T2> createQuery() {
+            return new Query<T2>(this, dao, sql, initialValues.clone(), limitPosition, offsetPosition);
         }
 
     }

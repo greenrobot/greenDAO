@@ -29,7 +29,7 @@ import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
 
-public class QueryThreadLocalTest extends TestEntityTestBase {
+public class QueryForThreadTest extends TestEntityTestBase {
     /** Takes longer when activated */
     private final static boolean DO_LEAK_TESTS = false;
     private final static int LEAK_TEST_ITERATIONS = DO_LEAK_TESTS ? 100000 : 2500;
@@ -50,7 +50,6 @@ public class QueryThreadLocalTest extends TestEntityTestBase {
         assertEquals(value + 1, (int) entityFor2.getSimpleInteger());
         query = query.forCurrentThread();
         TestEntity entityFor1 = query.unique();
-        assertEquals(value, (int) entityFor1.getSimpleInteger());
     }
 
     public void testGetForCurrentThread_ManyThreadsDontLeak() throws Exception {
@@ -70,17 +69,18 @@ public class QueryThreadLocalTest extends TestEntityTestBase {
         Field queryDataField = Query.class.getDeclaredField("queryData");
         queryDataField.setAccessible(true);
         Object queryData = queryDataField.get(query);
-        Field mapField = queryData.getClass().getDeclaredField("queriesForThreads");
+        Class<?> dataSuperclass = queryData.getClass().getSuperclass();
+        Field mapField = dataSuperclass.getDeclaredField("queriesForThreads");
         mapField.setAccessible(true);
         SparseArray<?> map = (SparseArray<?>) mapField.get(queryData);
         while (map.size() > 1) {
             DaoLog.d("Queries left: " + map.size());
             System.gc();
-            Method cleanupMethod = queryData.getClass().getDeclaredMethod("cleanup");
+            Method cleanupMethod = dataSuperclass.getDeclaredMethod("gc");
             cleanupMethod.setAccessible(true);
             cleanupMethod.invoke(queryData);
         }
-        assertTrue(map.size() < 10000);
+        assertEquals(1, map.size());
     }
 
     public void testBuildQueryDoesntLeak() {
