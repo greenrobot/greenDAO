@@ -29,41 +29,33 @@ import de.greenrobot.dao.AbstractDao;
  *            The enitity class the query will delete from.
  */
 public class DeleteQuery<T> extends AbstractQuery<T> {
-    private final static class ThreadLocalQuery<T2> extends ThreadLocal<DeleteQuery<T2>> {
-        private final String sql;
-        private final AbstractDao<T2, ?> dao;
-        private final String[] initialValues;
+    private final static class QueryData<T2> extends AbstractQueryData<T2, DeleteQuery<T2>> {
 
-        private ThreadLocalQuery(AbstractDao<T2, ?> dao, String sql, String[] initialValues) {
-            this.dao = dao;
-            this.sql = sql;
-            this.initialValues = initialValues;
+        private QueryData(AbstractDao<T2, ?> dao, String sql, String[] initialValues) {
+            super(dao, sql, initialValues);
         }
 
         @Override
-        protected DeleteQuery<T2> initialValue() {
+        protected DeleteQuery<T2> createQuery() {
             return new DeleteQuery<T2>(this, dao, sql, initialValues.clone());
         }
     }
 
     static <T2> DeleteQuery<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
-        ThreadLocalQuery<T2> threadLocal = new ThreadLocalQuery<T2>(dao, sql, toStringArray(initialValues));
-        return threadLocal.get();
+        QueryData<T2> queryData = new QueryData<T2>(dao, sql, toStringArray(initialValues));
+        return queryData.forCurrentThread();
     }
 
+    private final QueryData<T> queryData;
     private SQLiteStatement compiledStatement;
-    private final ThreadLocalQuery<T> threadLocalQuery;
 
-    private DeleteQuery(ThreadLocalQuery<T> threadLocalQuery, AbstractDao<T, ?> dao, String sql, String[] initialValues) {
+    private DeleteQuery(QueryData<T> queryData, AbstractDao<T, ?> dao, String sql, String[] initialValues) {
         super(dao, sql, initialValues);
-        this.threadLocalQuery = threadLocalQuery;
+        this.queryData = queryData;
     }
 
     public DeleteQuery<T> forCurrentThread() {
-        DeleteQuery<T> query = threadLocalQuery.get();
-        String[] initialValues = threadLocalQuery.initialValues;
-        System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
-        return query;
+        return queryData.forCurrentThread(this);
     }
 
     /**
@@ -89,7 +81,7 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
         }
     }
 
-    private synchronized void executeDeleteWithoutDetachingEntitiesInsideTx() {
+    private void executeDeleteWithoutDetachingEntitiesInsideTx() {
         if (compiledStatement != null) {
             compiledStatement.clearBindings();
         } else {
