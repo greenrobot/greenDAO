@@ -72,13 +72,14 @@ public class QueryForThreadTest extends TestEntityTestBase {
         Class<?> dataSuperclass = queryData.getClass().getSuperclass();
         Field mapField = dataSuperclass.getDeclaredField("queriesForThreads");
         mapField.setAccessible(true);
+
+        Method gcMethod = dataSuperclass.getDeclaredMethod("gc");
+        gcMethod.setAccessible(true);
         SparseArray<?> map = (SparseArray<?>) mapField.get(queryData);
-        while (map.size() > 1) {
-            DaoLog.d("Queries left: " + map.size());
+        for (int i = 0; map.size() > 1 && i < 1000; i++) {
+            DaoLog.d("Queries left after " + i + ". GC: " + map.size());
             System.gc();
-            Method cleanupMethod = dataSuperclass.getDeclaredMethod("gc");
-            cleanupMethod.setAccessible(true);
-            cleanupMethod.invoke(queryData);
+            gcMethod.invoke(queryData);
         }
         assertEquals(1, map.size());
     }
