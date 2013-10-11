@@ -19,7 +19,8 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <#assign toBindType = {"Boolean":"Long", "Byte":"Long", "Short":"Long", "Int":"Long", "Long":"Long", "Float":"Double", "Double":"Double", "String":"String", "ByteArray":"Blob" }/>
 <#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob" }/>
-<#assign complexTypes = ["String", "ByteArray", "Date"]/>
+<#assign complexTypes = ["String", "ByteArray", "Date", "java.util.Date"]/>
+<#assign primitiveWrappers = ["Byte", "Short", "Integer", "Long", "Boolean", "Float", "Double"]/>
 package ${entity.javaPackage};
 
 <#if entity.toManyRelations?has_content>
@@ -52,6 +53,12 @@ entity.superclass?has_content> extends ${entity.superclass} </#if><#if
 entity.interfacesToImplement?has_content> implements <#list entity.interfacesToImplement
 as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 
+<#list entity.properties as property>
+    <#assign isDefault = property.javaDefaultValue??/>
+    <#if isDefault>
+    private static ${property.javaType} default${property.propertyName?cap_first} = ${property.javaDefaultValue};
+    </#if>
+</#list>
 <#list entity.properties as property>
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
     /** Not-null value. */
@@ -95,13 +102,25 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 <#list entity.propertiesPk as property>
         this.${property.propertyName} = ${property.propertyName};
 </#list>
+<#list entity.properties as property>
+    <#assign isDefault = property.javaDefaultValue?? && property.javaDefaultValue?has_content/>
+    <#if isDefault>
+        this.${property.propertyName} = default${property.propertyName?cap_first};
+    </#if>
+</#list>
     }
 </#if>
 
     public ${entity.className}(<#list entity.properties as
 property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
 <#list entity.properties as property>
+    <#assign isDefault = property.javaDefaultValue?? && property.javaDefaultValue?has_content/>
+    <#if isDefault && ((!property.notNull && primitiveWrappers?seq_contains(property.javaType))
+                   || (property.notNull && complexTypes?seq_contains(property.javaType)))>
+        this.${property.propertyName} = ${property.propertyName} == null ? ${entity.className}.default${property.propertyName?cap_first} : ${property.propertyName};
+    <#else>
         this.${property.propertyName} = ${property.propertyName};
+    </#if>
 </#list>
     }
 </#if>
@@ -122,6 +141,13 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
         return ${property.propertyName};
     }
 
+<#assign isDefault = property.javaDefaultValue?exists && property.javaDefaultValue?has_content/>
+<#if isDefault>
+    /** Get default value for ${property.propertyName}. */
+    public static ${property.javaType} getDefault${property.propertyName?cap_first}(){
+        return default${property.propertyName?cap_first};
+    }
+</#if>
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
     /** Not-null value; ensure this value is available before it is saved to the database. */
 </#if>

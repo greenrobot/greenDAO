@@ -11,6 +11,7 @@ import de.greenrobot.dao.internal.DaoConfig;
 
 import de.greenrobot.daotest.SimpleEntity;
 import de.greenrobot.daotest.SimpleEntityNotNull;
+import de.greenrobot.daotest.SimpleEntityDefaultValues;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.RelationEntity;
 import de.greenrobot.daotest.DateEntity;
@@ -27,6 +28,7 @@ import de.greenrobot.daotest.SqliteMaster;
 
 import de.greenrobot.daotest.SimpleEntityDao;
 import de.greenrobot.daotest.SimpleEntityNotNullDao;
+import de.greenrobot.daotest.SimpleEntityDefaultValuesDao;
 import de.greenrobot.daotest.TestEntityDao;
 import de.greenrobot.daotest.RelationEntityDao;
 import de.greenrobot.daotest.DateEntityDao;
@@ -52,6 +54,7 @@ public class DaoSession extends AbstractDaoSession {
 
     private final DaoConfig simpleEntityDaoConfig;
     private final DaoConfig simpleEntityNotNullDaoConfig;
+    private final DaoConfig simpleEntityDefaultValuesDaoConfig;
     private final DaoConfig testEntityDaoConfig;
     private final DaoConfig relationEntityDaoConfig;
     private final DaoConfig dateEntityDaoConfig;
@@ -68,6 +71,7 @@ public class DaoSession extends AbstractDaoSession {
 
     private final SimpleEntityDao simpleEntityDao;
     private final SimpleEntityNotNullDao simpleEntityNotNullDao;
+    private final SimpleEntityDefaultValuesDao simpleEntityDefaultValuesDao;
     private final TestEntityDao testEntityDao;
     private final RelationEntityDao relationEntityDao;
     private final DateEntityDao dateEntityDao;
@@ -91,6 +95,9 @@ public class DaoSession extends AbstractDaoSession {
 
         simpleEntityNotNullDaoConfig = daoConfigMap.get(SimpleEntityNotNullDao.class).clone();
         simpleEntityNotNullDaoConfig.initIdentityScope(type);
+
+        simpleEntityDefaultValuesDaoConfig = daoConfigMap.get(SimpleEntityDefaultValuesDao.class).clone();
+        simpleEntityDefaultValuesDaoConfig.initIdentityScope(type);
 
         testEntityDaoConfig = daoConfigMap.get(TestEntityDao.class).clone();
         testEntityDaoConfig.initIdentityScope(type);
@@ -133,6 +140,7 @@ public class DaoSession extends AbstractDaoSession {
 
         simpleEntityDao = new SimpleEntityDao(simpleEntityDaoConfig, this);
         simpleEntityNotNullDao = new SimpleEntityNotNullDao(simpleEntityNotNullDaoConfig, this);
+        simpleEntityDefaultValuesDao = new SimpleEntityDefaultValuesDao(simpleEntityDefaultValuesDaoConfig, this);
         testEntityDao = new TestEntityDao(testEntityDaoConfig, this);
         relationEntityDao = new RelationEntityDao(relationEntityDaoConfig, this);
         dateEntityDao = new DateEntityDao(dateEntityDaoConfig, this);
@@ -149,6 +157,7 @@ public class DaoSession extends AbstractDaoSession {
 
         registerDao(SimpleEntity.class, simpleEntityDao);
         registerDao(SimpleEntityNotNull.class, simpleEntityNotNullDao);
+        registerDao(SimpleEntityDefaultValues.class, simpleEntityDefaultValuesDao);
         registerDao(TestEntity.class, testEntityDao);
         registerDao(RelationEntity.class, relationEntityDao);
         registerDao(DateEntity.class, dateEntityDao);
@@ -167,6 +176,7 @@ public class DaoSession extends AbstractDaoSession {
     public void clear() {
         simpleEntityDaoConfig.getIdentityScope().clear();
         simpleEntityNotNullDaoConfig.getIdentityScope().clear();
+        simpleEntityDefaultValuesDaoConfig.getIdentityScope().clear();
         testEntityDaoConfig.getIdentityScope().clear();
         relationEntityDaoConfig.getIdentityScope().clear();
         dateEntityDaoConfig.getIdentityScope().clear();
@@ -188,6 +198,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public SimpleEntityNotNullDao getSimpleEntityNotNullDao() {
         return simpleEntityNotNullDao;
+    }
+
+    public SimpleEntityDefaultValuesDao getSimpleEntityDefaultValuesDao() {
+        return simpleEntityDefaultValuesDao;
     }
 
     public TestEntityDao getTestEntityDao() {

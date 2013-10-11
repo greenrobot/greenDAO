@@ -43,9 +43,10 @@ isStringPK>AbstractDaoTestStringPk<${entity.classNameDao}, ${entity.className}><
         entity.set${entity.pkProperty.propertyName?cap_first}(key);
 </#if>
 <#list entity.properties as property>
-<#if property.notNull>
+<#assign isDefault = !property.defaultValue??/>
+<#if property.notNull && !isDefault>
         entity.set${property.propertyName?cap_first}();
-</#if> 
+</#if>
 </#list>
         return entity;
     }

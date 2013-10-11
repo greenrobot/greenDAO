@@ -17,6 +17,9 @@
  */
 package de.greenrobot.daogenerator;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /** Model class for an entity's property: a Java property mapped to a data base column. */
 public class Property {
 
@@ -80,6 +83,171 @@ public class Property {
             return this;
         }
 
+        /**
+         * Assign a default value to this property.
+         * @param defaultValue to be assigned to this property.
+         * @return the property builder.
+         */
+        public PropertyBuilder addDefaultValue(Byte defaultValue) {
+            if (property.propertyType != PropertyType.Byte) {
+                throw new RuntimeException(
+                        "Cannot apply default value of type byte to entity of type "+property.propertyType);
+            }
+            if (property.primaryKey ) {
+                throw new RuntimeException("Cannot apply DEFAULT constraint to a primary key.");
+            }
+            property.javaDefaultValue = "new Byte(\""+String.valueOf(defaultValue)+"\")";
+            property.sqlDefaultValue = String.valueOf(defaultValue);
+            return this;
+        }
+
+        /**
+         * Assign a default value to this property.
+         * @param defaultValue to be assigned to this property.
+         * @return the property builder.
+         */
+        public PropertyBuilder addDefaultValue(Short defaultValue) {
+            if (property.propertyType != PropertyType.Short) {
+                throw new RuntimeException(
+                        "Cannot apply default value of type short to entity of type "+property.propertyType);
+            }
+            if (property.primaryKey ) {
+                throw new RuntimeException("Cannot apply DEFAULT constraint to a primary key.");
+            }
+            property.javaDefaultValue = "new Short(\"" + String.valueOf(defaultValue) + "\")";
+            property.sqlDefaultValue = String.valueOf(defaultValue);
+            return this;
+        }
+
+        /**
+         * Assign a default value to this property.
+         * @param defaultValue to be assigned to this property.
+         * @return the property builder.
+         */
+        public PropertyBuilder addDefaultValue(Integer defaultValue) {
+            if (property.propertyType != PropertyType.Int) {
+                throw new RuntimeException(
+                        "Cannot apply default value of type int to entity of type "+property.propertyType);
+            }
+            if (property.primaryKey ) {
+                throw new RuntimeException("Cannot apply DEFAULT constraint to a primary key.");
+            }
+            property.javaDefaultValue = "new Integer(\"" + String.valueOf(defaultValue) + "\")";
+            property.sqlDefaultValue = String.valueOf(defaultValue);
+            return this;
+        }
+
+        /**
+         * Assign a default value to this property.
+         * @param defaultValue to be assigned to this property.
+         * @return the property builder.
+         */
+        public PropertyBuilder addDefaultValue(Long defaultValue) {
+            if (property.propertyType != PropertyType.Long) {
+                throw new RuntimeException(
+                        "Cannot apply default value of type long to entity of type "+property.propertyType);
+            }
+            if (property.primaryKey ) {
+                throw new RuntimeException("Cannot apply DEFAULT constraint to a primary key.");
+            }
+            property.javaDefaultValue = "new Long(\"" + String.valueOf(defaultValue) + "\")";
+            property.sqlDefaultValue = String.valueOf(defaultValue);
+            return this;
+        }
+
+        /**
+         * Assigns a default value of 1 (true) or 0 (false) to this property.
+         * @param defaultValue to be assigned to this property.
+         * @return the property builder.
+         */
+        public PropertyBuilder addDefaultValue(Boolean defaultValue) {
+            if (property.propertyType != PropertyType.Boolean) {
+                throw new RuntimeException(
+                        "Cannot apply default value of type boolean to entity of type "+property.propertyType);
+            }
+            if (property.primaryKey ) {
+                throw new RuntimeException("Cannot apply DEFAULT constraint to a primary key.");
+            }
+            property.javaDefaultValue = (defaultValue ? "true" : "false");
+            property.sqlDefaultValue = defaultValue ? "1" : "0";
+            return this;
+        }
+
+        /**
+         * Assign a default value to this property.
+         * @param defaultValue to be assigned to this property.
+         * @return the property builder.
+         */
+        public PropertyBuilder addDefaultValue(Float defaultValue) {
+            if (property.propertyType != PropertyType.Float) {
+                throw new RuntimeException(
+                        "Cannot apply default value of type float to entity of type "+property.propertyType);
+            }
+            if (property.primaryKey ) {
+                throw new RuntimeException("Cannot apply DEFAULT constraint to a primary key.");
+            }
+            property.javaDefaultValue = "new Float(\"" + String.valueOf(defaultValue) + "\")";
+            property.sqlDefaultValue = String.valueOf(defaultValue);
+            return this;
+        }
+
+        /**
+         * Assign a default value to this property.
+         * @param defaultValue to be assigned to this property.
+         * @return the property builder.
+         */
+        public PropertyBuilder addDefaultValue(Double defaultValue) {
+            if (property.propertyType != PropertyType.Double) {
+                throw new RuntimeException(
+                        "Cannot apply default value of type double to entity of type "+property.propertyType);
+            }
+            if (property.primaryKey ) {
+                throw new RuntimeException("Cannot apply DEFAULT constraint to a primary key.");
+            }
+            property.javaDefaultValue = "new Double(\"" + String.valueOf(defaultValue) + "\")";
+            property.sqlDefaultValue = String.valueOf(defaultValue);
+            return this;
+        }
+
+        /**
+         * Assign a default value to this property.
+         * @param defaultValue to be assigned to this property.
+         * @return the property builder.
+         */
+        public PropertyBuilder addDefaultValue(String defaultValue) {
+            if (property.propertyType != PropertyType.String) {
+                throw new RuntimeException(
+                        "Cannot apply default value of type string to entity of type "+property.propertyType);
+            }
+            if (property.primaryKey ) {
+                throw new RuntimeException("Cannot apply DEFAULT constraint to a primary key.");
+            }
+            property.javaDefaultValue = "\""+defaultValue+"\"";
+            property.sqlDefaultValue = "\'" + String.valueOf(defaultValue) + "\'";
+            return this;
+        }
+
+        /**
+         * Assign a default value to this property. The date is stored in unix time format.
+         * @param defaultValue to be assigned to this property.
+         * @return the property builder.
+         */
+        public PropertyBuilder addDefaultValue(Date defaultValue) {
+            if (property.propertyType != PropertyType.Date) {
+                throw new RuntimeException(
+                        "Cannot apply default value of type java.util.Date to entity of type "+property.propertyType);
+            }
+            if (property.primaryKey ) {
+                throw new RuntimeException("Cannot apply DEFAULT constraint to a primary key.");
+            }
+            Calendar time = Calendar.getInstance();
+            time.setTime(defaultValue);
+            property.javaDefaultValue = "new java.util.Date(" + time.getTimeInMillis()+ "L)";
+            //store date in unix time
+            property.sqlDefaultValue = String.valueOf(time.getTimeInMillis()/1000);
+            return this;
+        }
+
         public PropertyBuilder indexAsc(String indexNameOrNull, boolean isUnique) {
             Index index = new Index();
             index.addPropertyAsc(property);
@@ -122,6 +290,10 @@ public class Property {
 
     private boolean unique;
     private boolean notNull;
+
+    //Value to be assigned in the sqlite DEFAULT column constraint
+    private String sqlDefaultValue;
+    private String javaDefaultValue;
 
     /** Initialized in 2nd pass */
     private String constraints;
@@ -167,6 +339,22 @@ public class Property {
 
     public String getConstraints() {
         return constraints;
+    }
+
+    /**
+     * Returns the default value in the format expected by the sql DEFAULT constraint
+     * @return the default value
+     */
+    public String getSqlDefaultValue() {
+        return sqlDefaultValue;
+    }
+
+    /**
+     * Returns the default value in the from 'new [Type]("value)'. Ex, 'new Short("0")'.
+     * @return the default value
+     */
+    public String getJavaDefaultValue() {
+        return javaDefaultValue;
     }
 
     public boolean isUnique() {
@@ -229,6 +417,9 @@ public class Property {
         }
         if (unique) {
             constraintBuilder.append(" UNIQUE");
+        }
+        if (sqlDefaultValue != null) {
+            constraintBuilder.append(" DEFAULT "+sqlDefaultValue);
         }
         String newContraints = constraintBuilder.toString().trim();
         if (constraintBuilder.length() > 0) {
