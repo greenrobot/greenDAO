@@ -34,7 +34,7 @@ import de.greenrobot.dao.DaoException;
 // TODO Make parameters setable by Property (if unique in paramaters)
 // TODO Query for PKs/ROW IDs
 public class Query<T> extends AbstractQuery<T> {
-    private final static class QueryData<T2> extends AbstractQueryData<T2> {
+    private final static class QueryData<T2> extends AbstractQueryData<T2, Query<T2>> {
         private final int limitPosition;
         private final int offsetPosition;
 
@@ -83,7 +83,6 @@ public class Query<T> extends AbstractQuery<T> {
 
     public Query<T> forCurrentThread() {
         Query<T> query = myThreadId == Process.myTid() ? this : queryData.forCurrentThread();
-        System.arraycopy(queryData.initialValues, 0, query.parameters, 0, queryData.initialValues.length);
         return query;
     }
 

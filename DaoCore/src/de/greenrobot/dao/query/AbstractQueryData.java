@@ -6,37 +6,39 @@ import android.os.Process;
 import android.util.SparseArray;
 import de.greenrobot.dao.AbstractDao;
 
-abstract class AbstractQueryData<T> {
+abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
     final String sql;
     final AbstractDao<T, ?> dao;
     final String[] initialValues;
-    final SparseArray<WeakReference<Query<T>>> queriesForThreads;
+    final SparseArray<WeakReference<Q>> queriesForThreads;
 
     AbstractQueryData(AbstractDao<T, ?> dao, String sql, String[] initialValues) {
         this.dao = dao;
         this.sql = sql;
         this.initialValues = initialValues;
-        queriesForThreads = new SparseArray<WeakReference<Query<T>>>();
+        queriesForThreads = new SparseArray<WeakReference<Q>>();
     }
 
     /** Just gets the instance, won't reset anything like initial parameters. */
-    Query<T> forCurrentThread() {
+    Q forCurrentThread() {
         int threadId = Process.myTid();
-        Query<T> query;
+        Q query;
         synchronized (queriesForThreads) {
-            WeakReference<Query<T>> queryRef = queriesForThreads.get(threadId);
+            WeakReference<Q> queryRef = queriesForThreads.get(threadId);
             query = queryRef != null ? queryRef.get() : null;
             if (query == null) {
                 gc();
                 query = createQuery();
-                queriesForThreads.put(threadId, new WeakReference<Query<T>>(query));
+                queriesForThreads.put(threadId, new WeakReference<Q>(query));
+            } else {
+                System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
             }
         }
 
         return query;
     }
 
-    abstract protected Query<T> createQuery();
+    abstract protected Q createQuery();
 
     void gc() {
         synchronized (queriesForThreads) {
