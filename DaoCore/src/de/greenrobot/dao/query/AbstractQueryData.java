@@ -49,8 +49,7 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
 
     void gc() {
         synchronized (queriesForThreads) {
-            int size = queriesForThreads.size();
-            for (int i = 0; i < size; i++) {
+            for (int i = queriesForThreads.size() - 1; i >= 0; i--) {
                 if (queriesForThreads.valueAt(i).get() == null) {
                     queriesForThreads.remove(queriesForThreads.keyAt(i));
                 }
