@@ -415,12 +415,12 @@ public abstract class AbstractDao<T, K> {
                 return entity;
             } else {
                 entity = readEntity(cursor, offset);
+                attachEntity(entity);
                 if (lock) {
                     identityScopeLong.put2(key, entity);
                 } else {
                     identityScopeLong.put2NoLock(key, entity);
                 }
-                attachEntity(entity);
                 return entity;
             }
         } else if (identityScope != null) {
@@ -689,6 +689,7 @@ public abstract class AbstractDao<T, K> {
      *            The entitiy to attach
      * */
     protected final void attachEntity(K key, T entity, boolean lock) {
+        attachEntity(entity);
         if (identityScope != null && key != null) {
             if (lock) {
                 identityScope.put(key, entity);
@@ -696,11 +697,11 @@ public abstract class AbstractDao<T, K> {
                 identityScope.putNoLock(key, entity);
             }
         }
-        attachEntity(entity);
     }
 
     /**
-     * Sub classes with relations additionally set the DaoMaster here.
+     * Sub classes with relations additionally set the DaoMaster here. Must be called before the entity is attached to
+     * the identity scope.
      * 
      * @param entity
      *            The entitiy to attach
