@@ -16,6 +16,10 @@ Work in progress
 
 Release History
 ---------------
+### V1.3.3 (2013-10-18): Bugfix
+* Fixed a memory leak affecting Query class that was introduced in 1.3.0 (#93)
+* Fixed a rare race condition that can lead to "Entity is detached from DAO context" DaoException (#101)
+
 ### V1.3.2 (2013-08-28): Bugfix
 * Fixed building CountQueries with combined AND/OR conditions
 * Some secret inoffical work in progress
