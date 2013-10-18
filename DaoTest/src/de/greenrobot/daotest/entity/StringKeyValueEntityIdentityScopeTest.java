@@ -37,6 +37,17 @@ public class StringKeyValueEntityIdentityScopeTest extends StringKeyValueEntityT
         assertSame(entity2, entity3);
     }
 
+    public void testLoadIdScope_load() {
+        StringKeyValueEntity entity = createEntityWithRandomPk();
+        dao.insert(entity);
+        dao.detach(entity);
+        StringKeyValueEntity entity2 = dao.load(entity.getKey());
+        StringKeyValueEntity entity3 = dao.load(entity.getKey());
+
+        assertNotSame(entity, entity2);
+        assertSame(entity2, entity3);
+    }
+
     public void testDetach() {
         StringKeyValueEntity entity = createEntityWithRandomPk();
         dao.insert(entity);
