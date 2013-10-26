@@ -6,21 +6,23 @@ import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.query.LazyList;
 import de.greenrobot.dao.query.Query;
 
-public class AbstractLazyListLoader<T> extends AsyncTaskLoader<LazyList<T>> {
+public class LazyListLoader<T> extends AsyncTaskLoader<LazyList<T>> {
 	
 	private LazyList<T> list;
 	private boolean cache;
 	private AbstractDao<T, Long> dao;
 	private Query<T> query;
 	
-	public AbstractLazyListLoader(Context context, boolean cache, Query<T> query, AbstractDao<T, Long> dao) {
+	public LazyListLoader(Context context, boolean cache, Query<T> query, AbstractDao<T, Long> dao) {
 		super(context);
 		this.cache = cache;
 		this.dao = dao;
+		this.query = query;
 	}
 
 	@Override
 	public LazyList<T> loadInBackground() {
+		query = query.forCurrentThread();
 		if (cache) {
 			list = query.listLazy();
 		} else {
@@ -76,12 +78,10 @@ public class AbstractLazyListLoader<T> extends AsyncTaskLoader<LazyList<T>> {
 	protected void onReset() {
 		super.onReset();
 		onStopLoading();
-		
 		if (list != null && !list.isClosed()) {
 			list.close();
 			list = null;
 		}
-		
 	}
 
 	public void insert(T... entities) {
@@ -136,7 +136,7 @@ public class AbstractLazyListLoader<T> extends AsyncTaskLoader<LazyList<T>> {
 		InsertTaskCallback<T> callback;
 		
 		InsertTask(InsertTaskCallback<T> callback) {
-			super(AbstractLazyListLoader.this);
+			super(LazyListLoader.this);
 			this.callback = callback;
 		}
 
@@ -152,6 +152,7 @@ public class AbstractLazyListLoader<T> extends AsyncTaskLoader<LazyList<T>> {
 		
 		@Override
 		protected void onPostExecute(T[] param) {
+			super.onPostExecute(param);
 			if (callback != null) {
 				callback.entitiesInserted(param);
 			}
@@ -162,7 +163,7 @@ public class AbstractLazyListLoader<T> extends AsyncTaskLoader<LazyList<T>> {
 		private UpdateTaskCallback<T> callback;
 		
 		UpdateTask(UpdateTaskCallback<T> callback) {
-			super(AbstractLazyListLoader.this);
+			super(LazyListLoader.this);
 			this.callback = callback;
 		}
 
@@ -178,6 +179,7 @@ public class AbstractLazyListLoader<T> extends AsyncTaskLoader<LazyList<T>> {
 		
 		@Override
 		protected void onPostExecute(T[] param) {
+			super.onPostExecute(param);
 			if (callback != null) {
 				callback.entitiesUpdated(param);
 			}
@@ -188,7 +190,7 @@ public class AbstractLazyListLoader<T> extends AsyncTaskLoader<LazyList<T>> {
 		InsertOrUpdateTaskCallback<T> callback;
 		
 		InsertOrUpdateTask(InsertOrUpdateTaskCallback<T> callback) {
-			super(AbstractLazyListLoader.this);
+			super(LazyListLoader.this);
 			this.callback = callback;
 		}
 
@@ -204,6 +206,7 @@ public class AbstractLazyListLoader<T> extends AsyncTaskLoader<LazyList<T>> {
 		
 		@Override
 		protected void onPostExecute(T[] param) {
+			super.onPostExecute(param);
 			if (callback != null) {
 				callback.entitiesInsertedOrUpdated(param);
 			}
@@ -214,7 +217,7 @@ public class AbstractLazyListLoader<T> extends AsyncTaskLoader<LazyList<T>> {
 		private DeleteTaskCallback<T> callback;
 		
 		DeleteTask(DeleteTaskCallback<T> callback) {
-			super(AbstractLazyListLoader.this);
+			super(LazyListLoader.this);
 			this.callback = callback;
 		}
 
@@ -230,6 +233,7 @@ public class AbstractLazyListLoader<T> extends AsyncTaskLoader<LazyList<T>> {
 		
 		@Override
 		protected void onPostExecute(T[] param) {
+			super.onPostExecute(param);
 			if (callback != null) {
 				callback.entitiesDeleted(param);
 			}
