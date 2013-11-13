@@ -21,7 +21,6 @@ import java.lang.reflect.Field;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import android.app.Application;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.AnActiveEntity;
@@ -29,7 +28,7 @@ import de.greenrobot.daotest.AnActiveEntityDao;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
 
-public class AnActiveEntityMultithreadingTest extends AbstractDaoSessionTest<Application, DaoMaster, DaoSession> {
+public class AnActiveEntityMultithreadingTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
 
     /** Serious multithreading tests require this set to true. */
     private static final boolean LONG_RUNNING = false;
@@ -44,7 +43,7 @@ public class AnActiveEntityMultithreadingTest extends AbstractDaoSessionTest<App
     }
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         dao = daoSession.getAnActiveEntityDao();
     }

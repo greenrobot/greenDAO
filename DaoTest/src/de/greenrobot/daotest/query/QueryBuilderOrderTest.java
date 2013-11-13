@@ -28,7 +28,7 @@ import de.greenrobot.daotest.entity.TestEntityTestBase;
 
 public class QueryBuilderOrderTest extends TestEntityTestBase {
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         QueryBuilder.LOG_SQL = true;
         QueryBuilder.LOG_VALUES = true;
@@ -81,8 +81,8 @@ public class QueryBuilderOrderTest extends TestEntityTestBase {
         List<TestEntity> list = new ArrayList<TestEntity>();
         TestEntity entityV = addEntity(list, "V");
         TestEntity entityB = addEntity(list, "B");
-        TestEntity entityUE = addEntity(list, "Ü");
-        TestEntity entityAE = addEntity(list, "Ä");
+        TestEntity entityUE = addEntity(list, "Ãœ");
+        TestEntity entityAE = addEntity(list, "Ã„");
         dao.insertInTx(list);
 
         List<TestEntity> result = dao.queryBuilder().orderAsc(Properties.SimpleString).list();

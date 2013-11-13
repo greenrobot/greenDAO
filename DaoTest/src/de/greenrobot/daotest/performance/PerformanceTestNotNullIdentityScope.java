@@ -23,7 +23,7 @@ import de.greenrobot.daotest.SimpleEntityNotNull;
 public class PerformanceTestNotNullIdentityScope extends PerformanceTestNotNull {
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         IdentityScopeLong<SimpleEntityNotNull> identityScope = new IdentityScopeLong< SimpleEntityNotNull>();
         setIdentityScopeBeforeSetUp(identityScope);
         super.setUp();

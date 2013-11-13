@@ -1,13 +1,12 @@
 package de.greenrobot.daotest.entity;
 
-import android.app.Application;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
 import de.greenrobot.daotest.TreeEntity;
 import de.greenrobot.daotest.TreeEntityDao;
 
-public class TreeEntityTest extends AbstractDaoSessionTest<Application,DaoMaster, DaoSession> {
+public class TreeEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
 
     private TreeEntityDao treeEntityDao;
 
@@ -16,7 +15,7 @@ public class TreeEntityTest extends AbstractDaoSessionTest<Application,DaoMaster
     }
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         treeEntityDao = daoSession.getTreeEntityDao();
     }

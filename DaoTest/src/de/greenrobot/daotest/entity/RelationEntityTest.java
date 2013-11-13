@@ -41,7 +41,7 @@ public class RelationEntityTest extends AbstractDaoTestLongPk<RelationEntityDao,
     }
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         TestEntityDao.createTable(db, false);
         daoMaster = new DaoMaster(db);

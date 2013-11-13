@@ -22,7 +22,7 @@ import de.greenrobot.daotest.StringKeyValueEntity;
 
 public class StringKeyValueEntityIdentityScopeTest extends StringKeyValueEntityTest {
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         setIdentityScopeBeforeSetUp(new IdentityScopeObject<String, StringKeyValueEntity>());
         super.setUp();
     }

@@ -29,7 +29,7 @@ import de.greenrobot.daotest.entity.TestEntityTestBase;
 // TODO more tests
 public class CountQueryTest extends TestEntityTestBase {
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         QueryBuilder.LOG_SQL = true;
         QueryBuilder.LOG_VALUES = true;

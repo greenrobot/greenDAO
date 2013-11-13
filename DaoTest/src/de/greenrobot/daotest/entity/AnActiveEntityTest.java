@@ -17,7 +17,6 @@
  */
 package de.greenrobot.daotest.entity;
 
-import android.app.Application;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.AnActiveEntity;
@@ -25,8 +24,7 @@ import de.greenrobot.daotest.AnActiveEntityDao;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
 
-public class AnActiveEntityTest extends  AbstractDaoSessionTest<Application,DaoMaster, DaoSession> {
-
+public class AnActiveEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
 
     private AnActiveEntityDao dao;
 
@@ -35,7 +33,7 @@ public class AnActiveEntityTest extends  AbstractDaoSessionTest<Application,DaoM
     }
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         dao = daoSession.getAnActiveEntityDao();
     }
@@ -61,29 +59,28 @@ public class AnActiveEntityTest extends  AbstractDaoSessionTest<Application,DaoM
             // OK, expected
         }
     }
-    
+
     public void testActiveUpdate() {
         AnActiveEntity entity = new AnActiveEntity(1l);
         long rowId = dao.insert(entity);
-        
+
         entity.setText("NEW");
         entity.update();
-        
+
         daoSession.clear();
         AnActiveEntity entity2 = dao.load(rowId);
         assertNotSame(entity, entity2);
         assertEquals("NEW", entity2.getText());
     }
 
-
     public void testActiveRefresh() {
         AnActiveEntity entity = new AnActiveEntity(1l);
         dao.insert(entity);
-        
+
         AnActiveEntity entity2 = new AnActiveEntity(1l);
         entity2.setText("NEW");
         dao.update(entity2);
-        
+
         entity.refresh();
         assertEquals("NEW", entity.getText());
     }
@@ -91,9 +88,9 @@ public class AnActiveEntityTest extends  AbstractDaoSessionTest<Application,DaoM
     public void testActiveDelete() {
         AnActiveEntity entity = new AnActiveEntity(1l);
         dao.insert(entity);
-        
+
         entity.delete();
-        assertNull( dao.load(1l));
+        assertNull(dao.load(1l));
     }
 
 }

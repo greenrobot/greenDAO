@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2013 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,66 +16,47 @@
 
 package de.greenrobot.dao.test;
 
-import java.util.Random;
-
-import android.app.Application;
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.test.ApplicationTestCase;
+import android.test.AndroidTestCase;
 import de.greenrobot.dao.DbUtils;
+
+import java.util.Random;
 
 /**
  * Base class for database related testing. Prepares an in-memory or an file-based DB.
- * 
+ *
  * @author Markus
- * 
  */
-public abstract class DbTest<T extends Application> extends ApplicationTestCase<T> {
+public abstract class DbTest extends AndroidTestCase {
 
-    protected SQLiteDatabase db;
-    protected Random random;
+    public static final String DB_NAME = "greendao-unittest-db.temp";
+
+    protected final Random random;
     protected final boolean inMemory;
-    private boolean dontCreateApp;
+    protected SQLiteDatabase db;
 
     public DbTest() {
         this(true);
     }
 
-    @SuppressWarnings("unchecked")
     public DbTest(boolean inMemory) {
-        this((Class<T>) Application.class, inMemory);
-    }
-
-    public DbTest(Class<T> appClass, boolean inMemory) {
-        super(appClass);
         this.inMemory = inMemory;
         random = new Random();
     }
 
-    protected void dontCreateApplicationDuringSetUp() {
-        dontCreateApp = true;
-    }
-
     @Override
-    protected void setUp() {
-        try {
-            super.setUp();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        if (!dontCreateApp) {
-            createApplication();
-        }
-        setUpDb();
+    protected void setUp() throws Exception {
+        super.setUp();
+        db = createDatabase();
     }
 
-    /** Override if you create your own DB */
-    protected void setUpDb() {
+    /** May be overriden by sub classes to set up a different db. */
+    protected SQLiteDatabase createDatabase() {
         if (inMemory) {
-            db = SQLiteDatabase.create(null);
+            return SQLiteDatabase.create(null);
         } else {
-            getApplication().deleteDatabase("test-db");
-            db = getApplication().openOrCreateDatabase("test-db", Context.MODE_PRIVATE, null);
+            getContext().deleteDatabase(DB_NAME);
+            return getContext().openOrCreateDatabase(DB_NAME, 0, null);
         }
     }
 
@@ -83,7 +64,7 @@ public abstract class DbTest<T extends Application> extends ApplicationTestCase<
     protected void tearDown() throws Exception {
         db.close();
         if (!inMemory) {
-            getApplication().deleteDatabase("test-db");
+            getContext().deleteDatabase(DB_NAME);
         }
         super.tearDown();
     }

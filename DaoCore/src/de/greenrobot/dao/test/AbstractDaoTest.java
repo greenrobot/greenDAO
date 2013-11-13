@@ -18,7 +18,6 @@ package de.greenrobot.dao.test;
 
 import java.lang.reflect.Method;
 
-import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoLog;
@@ -38,7 +37,7 @@ import de.greenrobot.dao.identityscope.IdentityScope;
  * @param <K>
  *            Key type of the DAO
  */
-public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends DbTest<Application> {
+public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends DbTest {
 
     protected final Class<D> daoClass;
     protected D dao;
@@ -61,7 +60,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         try {
             setUpTableForDao();

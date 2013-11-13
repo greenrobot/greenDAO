@@ -1,13 +1,12 @@
 package de.greenrobot.daotest.entity;
 
-import android.app.Application;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.AutoincrementEntity;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
 import de.greenrobot.daotest.SimpleEntity;
 
-public class AutoincrementEntityTest extends AbstractDaoSessionTest<Application, DaoMaster, DaoSession> {
+public class AutoincrementEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
 
     public AutoincrementEntityTest() {
         super(DaoMaster.class);

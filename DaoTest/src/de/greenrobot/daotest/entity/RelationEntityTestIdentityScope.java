@@ -29,7 +29,7 @@ import de.greenrobot.daotest.RelationEntityDao;
 public class RelationEntityTestIdentityScope extends RelationEntityTest {
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         identityScopeTypeForSession = IdentityScopeType.Session;
         super.setUp();
     }
