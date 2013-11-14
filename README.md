@@ -16,6 +16,13 @@ Work in progress
 
 Release History
 ---------------
+### V1.3.5 (2013-11-??): Bugfix
+* Because of an issue with ApplicationTestCase, the base test class DbTest does not extend this class anymore.
+Note: This refactoring may require you to adjust some test classes if your tests depend on DbTest or its subclasses.
+
+### V1.3.4 (2013-10-28): Bugfix
+* Redeployment of 1.3.3 artifacts without some old class leftovers
+
 ### V1.3.3 (2013-10-18): Bugfix
 * Fixed a memory leak affecting Query class that was introduced in 1.3.0 (#93)
 * Fixed a rare race condition that can lead to "Entity is detached from DAO context" DaoException (#101)
