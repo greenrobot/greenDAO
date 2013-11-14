@@ -16,6 +16,8 @@
 
 package de.greenrobot.dao.test;
 
+import android.app.Application;
+import android.app.Instrumentation;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import de.greenrobot.dao.DbUtils;
@@ -23,7 +25,13 @@ import de.greenrobot.dao.DbUtils;
 import java.util.Random;
 
 /**
- * Base class for database related testing. Prepares an in-memory or an file-based DB.
+ * Base class for database related testing, which prepares an in-memory or an file-based DB (using the test {@link
+ * android.content.Context}). Also, offers some convenience methods to create new {@link Application} objects similar to
+ * {@link android.test.ApplicationTestCase}.
+ * <p/>
+ * Unlike ApplicationTestCase, this class should behave more correctly when you call {@link #createApplication(Class)}
+ * during {@link #setUp()}: {@link android.test.ApplicationTestCase#testApplicationTestCaseSetUpProperly()} leaves
+ * Application objects un-terminated.
  *
  * @author Markus
  */
@@ -34,6 +42,8 @@ public abstract class DbTest extends AndroidTestCase {
     protected final Random random;
     protected final boolean inMemory;
     protected SQLiteDatabase db;
+
+    private Application application;
 
     public DbTest() {
         this(true);
@@ -50,6 +60,33 @@ public abstract class DbTest extends AndroidTestCase {
         db = createDatabase();
     }
 
+    /** Returns a prepared application with the onCreate method already called. */
+    public <T extends Application> T createApplication(Class<T> appClass) {
+        assertNull("Application already created", application);
+        T app;
+        try {
+            app = (T) Instrumentation.newApplication(appClass, getContext());
+        } catch (Exception e) {
+            throw new RuntimeException("Could not create application " + appClass, e);
+        }
+        app.onCreate();
+        application = app;
+        return app;
+    }
+
+    /** Terminates a previously created application. Also called by {@link #tearDown()} if needed. */
+    public void terminateApplication() {
+        assertNotNull("Application not yet created", application);
+        application.onTerminate();
+        application = null;
+    }
+
+    /** Gets the previously created application. */
+    public <T extends Application> T getApplication() {
+        assertNotNull("Application not yet created", application);
+        return (T) application;
+    }
+
     /** May be overriden by sub classes to set up a different db. */
     protected SQLiteDatabase createDatabase() {
         if (inMemory) {
@@ -61,7 +98,11 @@ public abstract class DbTest extends AndroidTestCase {
     }
 
     @Override
+    /** Closes the db, and terminates an application, if one was created before. */
     protected void tearDown() throws Exception {
+        if (application != null) {
+            terminateApplication();
+        }
         db.close();
         if (!inMemory) {
             getContext().deleteDatabase(DB_NAME);
