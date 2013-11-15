@@ -16,7 +16,6 @@
 package de.greenrobot.dao.query;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
 
 /**
@@ -47,7 +46,6 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
     }
 
     private final QueryData<T> queryData;
-    private SQLiteStatement compiledStatement;
 
     private DeleteQuery(QueryData<T> queryData, AbstractDao<T, ?> dao, String sql, String[] initialValues) {
         super(dao, sql, initialValues);
@@ -67,35 +65,18 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
         checkThread();
         SQLiteDatabase db = dao.getDatabase();
         if (db.isDbLockedByCurrentThread()) {
-            executeDeleteWithoutDetachingEntitiesInsideTx();
+            dao.getDatabase().execSQL(sql, parameters);
         } else {
             // Do TX to acquire a connection before locking this to avoid deadlocks
             // Locking order as described in AbstractDao
             db.beginTransaction();
             try {
-                executeDeleteWithoutDetachingEntitiesInsideTx();
+                dao.getDatabase().execSQL(sql, parameters);
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
             }
         }
-    }
-
-    private void executeDeleteWithoutDetachingEntitiesInsideTx() {
-        if (compiledStatement != null) {
-            compiledStatement.clearBindings();
-        } else {
-            compiledStatement = dao.getDatabase().compileStatement(sql);
-        }
-        for (int i = 0; i < parameters.length; i++) {
-            String value = parameters[i];
-            if (value != null) {
-                compiledStatement.bindString(i + 1, value);
-            } else {
-                compiledStatement.bindNull(i + 1);
-            }
-        }
-        compiledStatement.execute();
     }
 
 }

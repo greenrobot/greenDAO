@@ -16,7 +16,10 @@ Work in progress
 
 Release History
 ---------------
-### V1.3.5 (2013-11-??): Bugfix
+### V1.3.5 (2013-11-14): Bugfix
+* Fixed leaked statement in DeleteQuery
+
+### V1.3.5 (2013-11-14): Bugfix
 * Because of an issue with ApplicationTestCase, the base test class DbTest does not extend this class anymore.
 Note: This refactoring may require you to adjust some test classes if your tests depend on DbTest or its subclasses.
 
