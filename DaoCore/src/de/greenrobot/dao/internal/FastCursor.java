@@ -252,4 +252,9 @@ final public class FastCursor implements Cursor {
         throw new UnsupportedOperationException();
     }
 
+    /** Since API level 19 */
+    public Uri getNotificationUri() {
+        return null;
+    }
+
 }
