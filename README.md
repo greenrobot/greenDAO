@@ -16,7 +16,11 @@ Work in progress
 
 Release History
 ---------------
-### V1.3.5 (2013-11-14): Bugfix
+### V1.3.7 (2013-11-27): Bugfix
+* Fixed building defect DeleteQuery for tables ending with character 'T' (bug introduced in 1.3.3)
+* Prepared Fast Cursor for API level 19
+
+### V1.3.6 (2013-11-15): Bugfix
 * Fixed leaked statement in DeleteQuery
 
 ### V1.3.5 (2013-11-14): Bugfix
