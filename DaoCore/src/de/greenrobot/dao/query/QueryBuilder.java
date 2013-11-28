@@ -55,6 +55,7 @@ public class QueryBuilder<T> {
 
     private StringBuilder orderBuilder;
     private StringBuilder joinBuilder;
+    private StringBuilder groupByBuilder;
 
     private final List<WhereCondition> whereConditions;
 
@@ -214,6 +215,29 @@ public class QueryBuilder<T> {
         return this;
     }
 
+    public QueryBuilder<T> groupBy(Property... properties){
+        if (groupByBuilder == null){
+            groupByBuilder = new StringBuilder();
+        }
+        List<Property> list = new ArrayList<Property>();
+        for (Property property : properties){
+            list.add(property);
+        }
+        groupByBuilder.append(" GROUP BY ");
+        ListIterator<Property> iter = list.listIterator();
+        while (iter.hasNext()) {
+            if (iter.hasPrevious()) {
+                groupByBuilder.append(", ");
+            }
+            Property property = iter.next();
+            if (tablePrefix != null) {
+                groupByBuilder.append(tablePrefix + ".");
+            }
+            groupByBuilder.append("\'" + property.columnName + "\'");
+        }
+        return this;
+    }
+
     protected StringBuilder append(StringBuilder builder, Property property) {
         checkProperty(property);
         builder.append(tablePrefix).append('.').append('\'').append(property.columnName).append('\'');
@@ -265,6 +289,10 @@ public class QueryBuilder<T> {
         StringBuilder builder = new StringBuilder(select);
 
         appendWhereClause(builder, tablePrefix);
+
+        if (groupByBuilder != null && groupByBuilder.length() > 0){
+            builder.append(groupByBuilder);
+        }
 
         if (orderBuilder != null && orderBuilder.length() > 0) {
             builder.append(" ORDER BY ").append(orderBuilder);
