@@ -16,11 +16,11 @@
 
 package de.greenrobot.dao;
 
-import java.util.Collection;
-
 import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.query.WhereCondition;
 import de.greenrobot.dao.query.WhereCondition.PropertyCondition;
+
+import java.util.Collection;
 
 /**
  * Meta data describing a property mapped to a database column; used to create WhereCondition object used by the query builder.
@@ -47,14 +47,41 @@ public class Property {
         return new PropertyCondition(this, "=?", value);
     }
 
+    /** Creates an "equal ('=')" condition  for this property with boolean ignoreCase option (works only for String). */
+    public WhereCondition eq(Object value, boolean ignoreCase) {
+        if (ignoreCase && value instanceof String){
+            return new PropertyCondition(this, "=?", ((String) value).toLowerCase(), ignoreCase);
+        }else{
+            return new PropertyCondition(this, "=?", value, ignoreCase);
+        }
+    }
+
     /** Creates an "not equal ('<>')" condition  for this property. */
     public WhereCondition notEq(Object value) {
         return new PropertyCondition(this, "<>?", value);
     }
 
+    /** Creates an "not equal ('<>')" condition  for this property with boolean ignoreCase option (works only for String). */
+    public WhereCondition notEq(Object value, boolean ignoreCase) {
+        if (ignoreCase && value instanceof String){
+            return new PropertyCondition(this, "<>?", ((String) value).toLowerCase(), ignoreCase);
+        }else{
+            return new PropertyCondition(this, "<>?", value, ignoreCase);
+        }
+    }
+
     /** Creates an "LIKE" condition  for this property. */
     public WhereCondition like(String value) {
         return new PropertyCondition(this, " LIKE ?", value);
+    }
+
+    /** Creates an "LIKE" condition  for this property with boolean ignoreCase option (works only for String). */
+    public WhereCondition like(String value, boolean ignoreCase) {
+        if (ignoreCase && value instanceof String){
+            return new PropertyCondition(this, "LIKE ?", ((String) value).toLowerCase(), ignoreCase);
+        }else{
+            return new PropertyCondition(this, "LIKE ?", value, ignoreCase);
+        }
     }
 
     /** Creates an "BETWEEN ... AND ..." condition  for this property. */

@@ -116,6 +116,7 @@ public interface WhereCondition {
 
         public final Property property;
         public final String op;
+        private boolean ignoreCase = false;
 
         public PropertyCondition(Property property, String op) {
             this.property = property;
@@ -128,18 +129,39 @@ public interface WhereCondition {
             this.op = op;
         }
 
+        public PropertyCondition(Property property, String op, Object value, boolean ignoreCase) {
+            super(checkValueForType(property, value));
+            this.property = property;
+            this.op = op;
+            this.ignoreCase = ignoreCase;
+        }
+
         public PropertyCondition(Property property, String op, Object[] values) {
             super(checkValuesForType(property, values));
             this.property = property;
             this.op = op;
         }
 
+        public PropertyCondition(Property property, String op, Object[] values, boolean ignoreCase) {
+            super(checkValuesForType(property, values));
+            this.property = property;
+            this.op = op;
+            this.ignoreCase = ignoreCase;
+        }
+
         @Override
         public void appendTo(StringBuilder builder, String tableAlias) {
+            if (ignoreCase){
+              builder.append("LOWER(");
+            }
             if (tableAlias != null) {
                 builder.append(tableAlias).append('.');
             }
-            builder.append('\'').append(property.columnName).append('\'').append(op);
+            builder.append('\'').append(property.columnName).append('\'');
+            if (ignoreCase){
+              builder.append(")");
+            }
+            builder.append(op);
         }
     }
 
