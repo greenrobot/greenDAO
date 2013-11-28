@@ -15,8 +15,6 @@
  */
 package de.greenrobot.dao.internal;
 
-import de.greenrobot.dao.DaoException;
-
 /** Helper class to create SQL statements as used by greenDAO internally. */
 public class SqlUtils {
 
@@ -25,15 +23,15 @@ public class SqlUtils {
         return builder;
     }
 
-    public static StringBuilder appendColumn(StringBuilder builder, String tableAlias, String column) {
-        builder.append(tableAlias).append(".'").append(column).append('\'');
+    public static StringBuilder appendColumn(StringBuilder builder, String tableName, String column) {
+        builder.append(tableName).append(".'").append(column).append('\'');
         return builder;
     }
 
-    public static StringBuilder appendColumns(StringBuilder builder, String tableAlias, String[] columns) {
+    public static StringBuilder appendColumns(StringBuilder builder, String tableName, String[] columns) {
         int length = columns.length;
         for (int i = 0; i < length; i++) {
-            appendColumn(builder, tableAlias, columns[i]);
+            appendColumn(builder, tableName, columns[i]);
             if (i < length - 1) {
                 builder.append(',');
             }
@@ -73,9 +71,9 @@ public class SqlUtils {
         return builder;
     }
 
-    public static StringBuilder appendColumnsEqValue(StringBuilder builder, String tableAlias, String[] columns) {
+    public static StringBuilder appendColumnsEqValue(StringBuilder builder, String tableName, String[] columns) {
         for (int i = 0; i < columns.length; i++) {
-            appendColumn(builder, tableAlias, columns[i]).append("=?");
+            appendColumn(builder, tableName, columns[i]).append("=?");
             if (i < columns.length - 1) {
                 builder.append(',');
             }
@@ -94,25 +92,17 @@ public class SqlUtils {
     }
 
     /** Creates an select for given columns with a trailing space */
-    public static String createSqlSelect(String tablename, String tableAlias, String[] columns) {
+    public static String createSqlSelect(String tablename, String[] columns) {
         StringBuilder builder = new StringBuilder("SELECT ");
-        if (tableAlias == null || tableAlias.length() < 0) {
-            throw new DaoException("Table alias required");
-        }
-
-        SqlUtils.appendColumns(builder, tableAlias, columns).append(" FROM ");
-        builder.append(tablename).append(' ').append(tableAlias).append(' ');
+        SqlUtils.appendColumns(builder, tablename, columns).append(" FROM ");
+        builder.append(tablename).append(' ').append(' ');
         return builder.toString();
     }
 
     /** Creates SELECT COUNT(*) with a trailing space. */
-    public static String createSqlSelectCountStar(String tablename, String tableAliasOrNull) {
+    public static String createSqlSelectCountStar(String tablename) {
         StringBuilder builder = new StringBuilder("SELECT COUNT(*) FROM ");
-        builder.append(tablename).append(' ');
-        if(tableAliasOrNull != null) {
-            builder.append(tableAliasOrNull).append(' ');
-        }
-        return builder.toString();
+        return builder.append(tablename).append(' ').toString();
     }
 
     /** Remember: SQLite does not support joins nor table alias for DELETE. */
