@@ -36,6 +36,7 @@ import java.util.*;
 public class Entity {
     private final Schema schema;
     private final String className;
+    private String classNameBase;
     private final List<Property> properties;
     private List<Property> propertiesColumns;
     private final List<Property> propertiesPk;
@@ -45,6 +46,7 @@ public class Entity {
     private final List<ToOne> toOneRelations;
     private final List<ToMany> toManyRelations;
     private final List<ToMany> incomingToManyRelations;
+    private final Collection<String> additionalImportsEntityBase;
     private final Collection<String> additionalImportsEntity;
     private final Collection<String> additionalImportsDao;
     private final List<String> interfacesToImplement;
@@ -71,6 +73,8 @@ public class Entity {
     Entity(Schema schema, String className) {
         this.schema = schema;
         this.className = className;
+        this.classNameBase = className + "Base";
+        this.classNameDao = className + "Dao";
         properties = new ArrayList<Property>();
         propertiesPk = new ArrayList<Property>();
         propertiesNonPk = new ArrayList<Property>();
@@ -80,6 +84,7 @@ public class Entity {
         toManyRelations = new ArrayList<ToMany>();
         incomingToManyRelations = new ArrayList<ToMany>();
         additionalImportsEntity = new TreeSet<String>();
+        additionalImportsEntityBase = new TreeSet<String>();
         additionalImportsDao = new TreeSet<String>();
         interfacesToImplement = new ArrayList<String>();
         contentProviders = new ArrayList<ContentProvider>();
@@ -266,6 +271,14 @@ public class Entity {
         return className;
     }
 
+    public String getClassNameBase() {
+        return classNameBase;
+    }
+
+    public void setClassNameBase(String classNameBase) {
+        this.classNameBase = classNameBase;
+    }
+
     public List<Property> getProperties() {
         return properties;
     }
@@ -399,12 +412,28 @@ public class Entity {
         return hasKeepSections;
     }
 
-    public Collection<String> getAdditionalImportsEntity() {
-        return additionalImportsEntity;
+    public Collection<String> getAdditionalImportsEntityBase() {
+        return additionalImportsEntityBase;
+    }
+
+    public void addAdditionalImportsEntityBase(String clazz) {
+    	additionalImportsEntityBase.add(clazz);
     }
 
     public Collection<String> getAdditionalImportsDao() {
         return additionalImportsDao;
+    }
+
+    public void addAdditionalImportsDao(String clazz) {
+        additionalImportsDao.add(clazz);
+    }
+
+    public Collection<String> getAdditionalImportsEntity() {
+    	return additionalImportsEntity;
+    }
+
+    public void addAdditionalImportsEntity(String clazz) {
+    	additionalImportsEntity.add(clazz);
     }
 
     public void setHasKeepSections(Boolean hasKeepSections) {
