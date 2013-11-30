@@ -17,6 +17,10 @@
  */
 package de.greenrobot.daogenerator;
 
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.Template;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,10 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.Template;
 
 /**
  * Once you have your model created, use this class to generate entities and DAOs.
@@ -46,6 +46,7 @@ public class DaoGenerator {
     private Template templateDaoMaster;
     private Template templateDaoSession;
     private Template templateEntity;
+    private Template templateEntityBase;
     private Template templateDaoUnitTest;
     private Template templateContentProvider;
 
@@ -66,6 +67,7 @@ public class DaoGenerator {
         templateDaoMaster = config.getTemplate("dao-master.ftl");
         templateDaoSession = config.getTemplate("dao-session.ftl");
         templateEntity = config.getTemplate("entity.ftl");
+        templateEntityBase = config.getTemplate("entity-base.ftl");
         templateDaoUnitTest = config.getTemplate("dao-unit-test.ftl");
         templateContentProvider = config.getTemplate("content-provider.ftl");
     }
@@ -102,6 +104,7 @@ public class DaoGenerator {
             generate(templateDao, outDirFile, entity.getJavaPackageDao(), entity.getClassNameDao(), schema, entity);
             if (!entity.isProtobuf() && !entity.isSkipGeneration()) {
                 generate(templateEntity, outDirFile, entity.getJavaPackage(), entity.getClassName(), schema, entity);
+                generate(templateEntityBase, outDirFile, entity.getJavaPackage(), entity.getClassNameBase(), schema, entity);
             }
             if (outDirTestFile != null && !entity.isSkipGenerationTest()) {
                 String javaPackageTest = entity.getJavaPackageTest();

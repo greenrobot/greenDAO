@@ -55,6 +55,7 @@ public class QueryBuilder<T> {
 
     private StringBuilder orderBuilder;
     private StringBuilder joinBuilder;
+    private StringBuilder groupByBuilder;
 
     private final List<WhereCondition> whereConditions;
 
@@ -72,7 +73,7 @@ public class QueryBuilder<T> {
     }
 
     protected QueryBuilder(AbstractDao<T, ?> dao) {
-        this(dao, "T");
+        this(dao, dao.getTablename());
     }
 
     protected QueryBuilder(AbstractDao<T, ?> dao, String tablePrefix) {
@@ -159,6 +160,20 @@ public class QueryBuilder<T> {
         }
     }
 
+    public <J> QueryBuilder<T> join(Property parentProperty, Property toOneProperty) {
+        if (joinBuilder == null){
+           joinBuilder = new StringBuilder();
+        }
+        joinBuilder.append("JOIN ");
+        joinBuilder.append(toOneProperty.tableName);
+        joinBuilder.append(" ON ");
+        joinBuilder.append(parentProperty.tableName + ".'" + parentProperty.columnName + "'");
+        joinBuilder.append("=");
+        joinBuilder.append(toOneProperty.tableName + ".'" + toOneProperty.columnName + "' ");
+
+        return this;
+    }
+
     /** Not supported yet. */
     public <J> QueryBuilder<J> join(Class<J> entityClass, Property toOneProperty) {
         throw new UnsupportedOperationException();
@@ -214,6 +229,29 @@ public class QueryBuilder<T> {
         return this;
     }
 
+    public QueryBuilder<T> groupBy(Property... properties){
+        if (groupByBuilder == null){
+            groupByBuilder = new StringBuilder();
+        }
+        List<Property> list = new ArrayList<Property>();
+        for (Property property : properties){
+            list.add(property);
+        }
+        groupByBuilder.append(" GROUP BY ");
+        ListIterator<Property> iter = list.listIterator();
+        while (iter.hasNext()) {
+            if (iter.hasPrevious()) {
+                groupByBuilder.append(", ");
+            }
+            Property property = iter.next();
+            if (tablePrefix != null) {
+                groupByBuilder.append(tablePrefix + ".");
+            }
+            groupByBuilder.append("\'" + property.columnName + "\'");
+        }
+        return this;
+    }
+
     protected StringBuilder append(StringBuilder builder, Property property) {
         checkProperty(property);
         builder.append(tablePrefix).append('.').append('\'').append(property.columnName).append('\'');
@@ -260,11 +298,18 @@ public class QueryBuilder<T> {
         if (joinBuilder == null || joinBuilder.length() == 0) {
             select = InternalQueryDaoAccess.getStatements(dao).getSelectAll();
         } else {
-            select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
+            select = SqlUtils.createSqlSelect(dao.getTablename(), dao.getAllColumns());
         }
         StringBuilder builder = new StringBuilder(select);
 
+        if (joinBuilder != null){
+          builder.append(joinBuilder);
+        }
         appendWhereClause(builder, tablePrefix);
+
+        if (groupByBuilder != null && groupByBuilder.length() > 0){
+            builder.append(groupByBuilder);
+        }
 
         if (orderBuilder != null && orderBuilder.length() > 0) {
             builder.append(" ORDER BY ").append(orderBuilder);
@@ -304,19 +349,10 @@ public class QueryBuilder<T> {
      * QueryBuilder for each execution.
      */
     public DeleteQuery<T> buildDelete() {
-        String tablename = dao.getTablename();
-        String baseSql = SqlUtils.createSqlDelete(tablename, null);
+        String baseSql = SqlUtils.createSqlDelete(dao.getTablename(), null);
         StringBuilder builder = new StringBuilder(baseSql);
-
-        // tablePrefix gets replaced by table name below. Don't use tableName here because it causes trouble when
-        // table name ends with tablePrefix.
-        appendWhereClause(builder, tablePrefix);
-
+        appendWhereClause(builder, null);
         String sql = builder.toString();
-
-        // Remove table aliases, not supported for DELETE queries.
-        // TODO(?): don't create table aliases in the first place.
-        sql = sql.replace(tablePrefix + ".'", tablename + ".'");
 
         if (LOG_SQL) {
             DaoLog.d("Built SQL for delete query: " + sql);
@@ -334,9 +370,9 @@ public class QueryBuilder<T> {
      */
     public CountQuery<T> buildCount() {
         String tablename = dao.getTablename();
-        String baseSql = SqlUtils.createSqlSelectCountStar(tablename, tablePrefix);
+        String baseSql = SqlUtils.createSqlSelectCountStar(tablename);
         StringBuilder builder = new StringBuilder(baseSql);
-        appendWhereClause(builder, tablePrefix);
+        appendWhereClause(builder, null);
         String sql = builder.toString();
 
         if (LOG_SQL) {

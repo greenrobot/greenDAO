@@ -77,7 +77,7 @@ public class TableStatements {
     /** ends with an space to simplify appending to this string. */
     public String getSelectAll() {
         if (selectAll == null) {
-            selectAll = SqlUtils.createSqlSelect(tablename, "T", allColumns);
+            selectAll = SqlUtils.createSqlSelect(tablename, allColumns);
         }
         return selectAll;
     }
@@ -85,7 +85,7 @@ public class TableStatements {
     /** ends with an space to simplify appending to this string. */
     public String getSelectKeys() {
         if (selectKeys == null) {
-            selectKeys = SqlUtils.createSqlSelect(tablename, "T", pkColumns);
+            selectKeys = SqlUtils.createSqlSelect(tablename, pkColumns);
         }
         return selectKeys;
     }
@@ -95,7 +95,7 @@ public class TableStatements {
         if (selectByKey == null) {
             StringBuilder builder = new StringBuilder(getSelectAll());
             builder.append("WHERE ");
-            SqlUtils.appendColumnsEqValue(builder, "T", pkColumns);
+            SqlUtils.appendColumnsEqValue(builder, tablename, pkColumns);
             selectByKey = builder.toString();
         }
         return selectByKey;
