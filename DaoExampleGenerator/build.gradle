@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin:'application'
 
 group = 'de.greenrobot'
-version = '1.3.0'
+version = '1.3.1-SNAPSHOT'
 sourceCompatibility = 1.6
 mainClassName = "de.greenrobot.daogenerator.gentest.ExampleDaoGenerator"
 
@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile('de.greenrobot:greendao-generator:1.3.0')
+    compile('de.greenrobot:greendao-generator:1.3.1-SNAPSHOT')
 }
 
 sourceSets {
