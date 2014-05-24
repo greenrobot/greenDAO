@@ -5,3 +5,5 @@ jdk:
 android:
   components:
     - build-tools-19.1.0
+before_script:
+  chmod +x gradlew
