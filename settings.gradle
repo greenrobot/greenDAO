@@ -1,2 +1,2 @@
 include 'DaoCore', 'DaoGenerator', 'DaoExampleGenerator'
-// include 'DaoTest' // Travis needs some Android setup for this
+include 'DaoTest' // Travis needs some Android setup for this
