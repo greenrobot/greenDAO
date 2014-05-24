@@ -4,9 +4,10 @@ greenDAO is a light & fast ORM solution for Android that maps objects to SQLite 
 
 Home page, documentation, and support links: http://greendao-orm.com/
 
-Work in progress
-----------------
-### New asynchronous API
+Upcoming features
+-----------------
+New features ahead for the brave: documentation and test coverage may be lacking. Give it a shot if you dare. API may change in the future. 
+### Asynchronous API
 * New AsyncSession (acquired from DaoSession.startAsyncSession()) provides most operations for DAOs, Queries, and transactions in a asynchronously variant
 * AsyncOperations are processed in order by a background thread
 * waitForCompletion methods for AsyncSession and AsyncOperations
@@ -16,6 +17,9 @@ Work in progress
 
 Release History
 ---------------
+### Generator V1.3.1 (2015-05-24): Bugfix
+* Fix schema version >= 1000
+
 ### V1.3.7 (2013-11-27): Bugfix
 * Fixed building defect DeleteQuery for tables ending with character 'T' (bug introduced in 1.3.3)
 * Prepared Fast Cursor for API level 19
