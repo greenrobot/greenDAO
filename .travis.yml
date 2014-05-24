@@ -1,6 +1,5 @@
 language: android
 jdk:
-  - openjdk6
   - oraclejdk7
 env:
   matrix:
