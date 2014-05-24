@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'android'
 
 dependencies {
-    instrumentTestCompile project(':DaoCore')
+    androidTestCompile project(':DaoCore')
 }
 
 android {
