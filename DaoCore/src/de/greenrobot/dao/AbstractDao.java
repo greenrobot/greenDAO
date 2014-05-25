@@ -37,11 +37,11 @@ import de.greenrobot.dao.query.QueryBuilder;
 
 /**
  * Base class for all DAOs: Implements entity operations like insert, load, delete, and query.
- * 
+ *
  * This class is thread-safe.
- * 
+ *
  * @author Markus
- * 
+ *
  * @param <T>
  *            Entity type
  * @param <K>
@@ -117,7 +117,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Loads and entity for the given PK.
-     * 
+     *
      * @param key
      *            a PK value or null
      * @return The entity or null, if no entity matched the PK value
@@ -189,7 +189,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Inserts the given entities in the database using a transaction.
-     * 
+     *
      * @param entities
      *            The entities to insert.
      */
@@ -199,7 +199,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Inserts the given entities in the database using a transaction.
-     * 
+     *
      * @param entities
      *            The entities to insert.
      */
@@ -210,7 +210,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Inserts the given entities in the database using a transaction. The given entities will become tracked if the PK
      * is set.
-     * 
+     *
      * @param entities
      *            The entities to insert.
      * @param setPrimaryKey
@@ -224,7 +224,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Inserts or replaces the given entities in the database using a transaction. The given entities will become
      * tracked if the PK is set.
-     * 
+     *
      * @param entities
      *            The entities to insert.
      * @param setPrimaryKey
@@ -237,7 +237,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Inserts or replaces the given entities in the database using a transaction.
-     * 
+     *
      * @param entities
      *            The entities to insert.
      */
@@ -247,7 +247,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Inserts or replaces the given entities in the database using a transaction.
-     * 
+     *
      * @param entities
      *            The entities to insert.
      */
@@ -286,7 +286,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Insert an entity into the table associated with a concrete DAO.
-     * 
+     *
      * @return row ID of newly inserted entity
      */
     public long insert(T entity) {
@@ -296,7 +296,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Insert an entity into the table associated with a concrete DAO <b>without</b> setting key property. Warning: This
      * may be faster, but the entity should not be used anymore. The entity also won't be attached to identy scope.
-     * 
+     *
      * @return row ID of newly inserted entity
      */
     public long insertWithoutSettingPk(T entity) {
@@ -325,7 +325,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Insert an entity into the table associated with a concrete DAO.
-     * 
+     *
      * @return row ID of newly inserted entity
      */
     public long insertOrReplace(T entity) {
@@ -579,7 +579,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Deletes the given entities in the database using a transaction.
-     * 
+     *
      * @param entities
      *            The entities to delete.
      */
@@ -589,7 +589,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Deletes the given entities in the database using a transaction.
-     * 
+     *
      * @param entities
      *            The entities to delete.
      */
@@ -599,7 +599,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Deletes all entities with the given keys in the database using a transaction.
-     * 
+     *
      * @param keys
      *            Keys of the entities to delete.
      */
@@ -609,7 +609,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Deletes all entities with the given keys in the database using a transaction.
-     * 
+     *
      * @param keys
      *            Keys of the entities to delete.
      */
@@ -682,7 +682,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Attaches the entity to the identity scope. Calls attachEntity(T entity).
-     * 
+     *
      * @param key
      *            Needed only for identity scope, pass null if there's none.
      * @param entity
@@ -702,7 +702,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Sub classes with relations additionally set the DaoMaster here. Must be called before the entity is attached to
      * the identity scope.
-     * 
+     *
      * @param entity
      *            The entitiy to attach
      * */
@@ -711,13 +711,14 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Updates the given entities in the database using a transaction.
-     * 
+     *
      * @param entities
      *            The entities to insert.
      */
     public void updateInTx(Iterable<T> entities) {
         SQLiteStatement stmt = statements.getUpdateStatement();
         db.beginTransaction();
+        RuntimeException txEx = null;
         try {
             synchronized (stmt) {
                 if (identityScope != null) {
@@ -734,14 +735,25 @@ public abstract class AbstractDao<T, K> {
                 }
             }
             db.setTransactionSuccessful();
+        } catch (RuntimeException e) {
+            txEx = e;
         } finally {
-            db.endTransaction();
+            try {
+                db.endTransaction();
+            } catch (RuntimeException e) {
+                if (txEx != null) {
+                    DaoLog.w("Could not end transaction (rethrowing initial exception)", e);
+                    throw txEx;
+                } else {
+                    throw e;
+                }
+            }
         }
     }
 
     /**
      * Updates the given entities in the database using a transaction.
-     * 
+     *
      * @param entities
      *            The entities to update.
      */
