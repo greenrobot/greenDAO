@@ -6,8 +6,8 @@ Home page, documentation, and support links: http://greendao-orm.com/
 
 [![Build Status](https://travis-ci.org/greenrobot/greenDAO.svg?branch=master)](https://travis-ci.org/greenrobot/greenDAO)
 
-Upcoming features
------------------
+Upcoming features (already available in beta quality)
+-----------------------------------------------------
 New features ahead for the brave: documentation and test coverage may be lacking. Give it a shot if you dare. API may change in the future. 
 ### Asynchronous API
 * New AsyncSession (acquired from DaoSession.startAsyncSession()) provides most operations for DAOs, Queries, and transactions in a asynchronously variant
@@ -19,7 +19,7 @@ New features ahead for the brave: documentation and test coverage may be lacking
 
 Release History
 ---------------
-### Generator V1.3.1 (2015-05-24): Bugfix
+### Generator V1.3.1 (2014-05-24): Bugfix
 * Fix schema version >= 1000
 
 ### V1.3.7 (2013-11-27): Bugfix
