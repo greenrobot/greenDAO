@@ -19,7 +19,7 @@ New features ahead for the brave: documentation and test coverage may be lacking
 
 Release History
 ---------------
-### Generator V1.3.1 (2015-05-24): Bugfix
+### Generator V1.3.1 (2014-05-24): Bugfix
 * Fix schema version >= 1000
 
 ### V1.3.7 (2013-11-27): Bugfix
