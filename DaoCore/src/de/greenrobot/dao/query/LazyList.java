@@ -250,12 +250,21 @@ public class LazyList<E> implements List<E>, Closeable {
             }
             return entity;
         } else {
-            return loadEntity(location);
+            lock.lock();
+            try {
+                return loadEntity(location);
+            } finally {
+                lock.unlock();
+            }
         }
     }
 
+    /** Lock must be locked when entering this method. */
     protected E loadEntity(int location) {
-        cursor.moveToPosition(location);
+        boolean ok = cursor.moveToPosition(location);
+        if(!ok) {
+            throw new DaoException("Could not move to cursor location " + location);
+        }
         E entity = daoAccess.loadCurrent(cursor, 0, true);
         if (entity == null) {
             throw new DaoException("Loading of entity failed (null) at position " + location);
