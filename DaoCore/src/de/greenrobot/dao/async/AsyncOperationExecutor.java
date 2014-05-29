@@ -15,14 +15,6 @@
  */
 package de.greenrobot.dao.async;
 
-import java.util.ArrayList;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,6 +22,14 @@ import android.os.Message;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.query.Query;
+
+import java.util.ArrayList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 class AsyncOperationExecutor implements Runnable, Handler.Callback {
 
@@ -119,7 +119,7 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
     /**
      * Waits until all enqueued operations are complete, but at most the given amount of milliseconds. If the thread
      * gets interrupted, any {@link InterruptedException} will be rethrown as a {@link DaoException}.
-     * 
+     *
      * @return true if operations completed in the given time frame.
      */
     public synchronized boolean waitForCompletion(int maxMillis) {
@@ -141,9 +141,10 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
                     AsyncOperation operation = queue.poll(1, TimeUnit.SECONDS);
                     if (operation == null) {
                         synchronized (this) {
-                            // Check again, this time in synchronized
+                            // Check again, this time in synchronized to be in sync with enqueue(AsyncOperation)
                             operation = queue.poll();
                             if (operation == null) {
+                                // set flag while still inside synchronized
                                 executorRunning = false;
                                 return;
                             }
@@ -173,6 +174,8 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
         }
     }
 
+
+    /** Also checks for other operations in the queue that can be merged into the transaction. */
     private void mergeTxAndExecute(AsyncOperation operation1, AsyncOperation operation2) {
         ArrayList<AsyncOperation> mergedOps = new ArrayList<AsyncOperation>();
         mergedOps.add(operation1);
@@ -180,14 +183,13 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
 
         SQLiteDatabase db = operation1.getDatabase();
         db.beginTransaction();
-        boolean failed = false;
+        boolean success = false;
         try {
             for (int i = 0; i < mergedOps.size(); i++) {
                 AsyncOperation operation = mergedOps.get(i);
                 executeOperation(operation);
                 if (operation.isFailed()) {
                     // Operation may still have changed the DB, roll back everything
-                    failed = true;
                     break;
                 }
                 if (i == mergedOps.size() - 1) {
@@ -202,23 +204,31 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
                     } else {
                         // No more ops in the queue to merge, finish it
                         db.setTransactionSuccessful();
+                        success = true;
+                        break;
                     }
                 }
             }
         } finally {
-            db.endTransaction();
-        }
-        if (failed) {
-            DaoLog.i("Revered merged transaction because one of the operations failed. Executing operations one by one instead...");
-            for (AsyncOperation asyncOperation : mergedOps) {
-                asyncOperation.reset();
-                executeOperationAndPostCompleted(asyncOperation);
+            try {
+                db.endTransaction();
+            } catch (RuntimeException e) {
+                DaoLog.i("Async transaction could not be ended, success so far was: " + success, e);
+                success = false;
             }
-        } else {
+        }
+        if (success) {
             int mergedCount = mergedOps.size();
             for (AsyncOperation asyncOperation : mergedOps) {
                 asyncOperation.mergedOperationsCount = mergedCount;
                 handleOperationCompleted(asyncOperation);
+            }
+        } else {
+            DaoLog.i("Reverted merged transaction because one of the operations failed. Executing operations one by " +
+                    "one instead...");
+            for (AsyncOperation asyncOperation : mergedOps) {
+                asyncOperation.reset();
+                executeOperationAndPostCompleted(asyncOperation);
             }
         }
     }
@@ -250,79 +260,79 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
         handleOperationCompleted(operation);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void executeOperation(AsyncOperation operation) {
         operation.timeStarted = System.currentTimeMillis();
         try {
             switch (operation.type) {
-            case Delete:
-                operation.dao.delete(operation.parameter);
-                break;
-            case DeleteInTxIterable:
-                operation.dao.deleteInTx((Iterable<Object>) operation.parameter);
-                break;
-            case DeleteInTxArray:
-                operation.dao.deleteInTx((Object[]) operation.parameter);
-                break;
-            case Insert:
-                operation.dao.insert(operation.parameter);
-                break;
-            case InsertInTxIterable:
-                operation.dao.insertInTx((Iterable<Object>) operation.parameter);
-                break;
-            case InsertInTxArray:
-                operation.dao.insertInTx((Object[]) operation.parameter);
-                break;
-            case InsertOrReplace:
-                operation.dao.insertOrReplace(operation.parameter);
-                break;
-            case InsertOrReplaceInTxIterable:
-                operation.dao.insertOrReplaceInTx((Iterable<Object>) operation.parameter);
-                break;
-            case InsertOrReplaceInTxArray:
-                operation.dao.insertOrReplaceInTx((Object[]) operation.parameter);
-                break;
-            case Update:
-                operation.dao.update(operation.parameter);
-                break;
-            case UpdateInTxIterable:
-                operation.dao.updateInTx((Iterable<Object>) operation.parameter);
-                break;
-            case UpdateInTxArray:
-                operation.dao.updateInTx((Object[]) operation.parameter);
-                break;
-            case TransactionRunnable:
-                executeTransactionRunnable(operation);
-                break;
-            case TransactionCallable:
-                executeTransactionCallable(operation);
-                break;
-            case QueryList:
-                operation.result = ((Query) operation.parameter).list();
-                break;
-            case QueryUnique:
-                operation.result = ((Query) operation.parameter).unique();
-                break;
-            case DeleteByKey:
-                operation.dao.deleteByKey(operation.parameter);
-                break;
-            case DeleteAll:
-                operation.dao.deleteAll();
-                break;
-            case Load:
-                operation.result = operation.dao.load(operation.parameter);
-                break;
-            case LoadAll:
-                operation.result = operation.dao.loadAll();
-                break;
-            case Count:
-                operation.result = operation.dao.count();
-                break;
-            case Refresh:
-                operation.dao.refresh(operation.parameter);
-                break;
-            default:
-                throw new DaoException("Unsupported operation: " + operation.type);
+                case Delete:
+                    operation.dao.delete(operation.parameter);
+                    break;
+                case DeleteInTxIterable:
+                    operation.dao.deleteInTx((Iterable<Object>) operation.parameter);
+                    break;
+                case DeleteInTxArray:
+                    operation.dao.deleteInTx((Object[]) operation.parameter);
+                    break;
+                case Insert:
+                    operation.dao.insert(operation.parameter);
+                    break;
+                case InsertInTxIterable:
+                    operation.dao.insertInTx((Iterable<Object>) operation.parameter);
+                    break;
+                case InsertInTxArray:
+                    operation.dao.insertInTx((Object[]) operation.parameter);
+                    break;
+                case InsertOrReplace:
+                    operation.dao.insertOrReplace(operation.parameter);
+                    break;
+                case InsertOrReplaceInTxIterable:
+                    operation.dao.insertOrReplaceInTx((Iterable<Object>) operation.parameter);
+                    break;
+                case InsertOrReplaceInTxArray:
+                    operation.dao.insertOrReplaceInTx((Object[]) operation.parameter);
+                    break;
+                case Update:
+                    operation.dao.update(operation.parameter);
+                    break;
+                case UpdateInTxIterable:
+                    operation.dao.updateInTx((Iterable<Object>) operation.parameter);
+                    break;
+                case UpdateInTxArray:
+                    operation.dao.updateInTx((Object[]) operation.parameter);
+                    break;
+                case TransactionRunnable:
+                    executeTransactionRunnable(operation);
+                    break;
+                case TransactionCallable:
+                    executeTransactionCallable(operation);
+                    break;
+                case QueryList:
+                    operation.result = ((Query) operation.parameter).list();
+                    break;
+                case QueryUnique:
+                    operation.result = ((Query) operation.parameter).unique();
+                    break;
+                case DeleteByKey:
+                    operation.dao.deleteByKey(operation.parameter);
+                    break;
+                case DeleteAll:
+                    operation.dao.deleteAll();
+                    break;
+                case Load:
+                    operation.result = operation.dao.load(operation.parameter);
+                    break;
+                case LoadAll:
+                    operation.result = operation.dao.loadAll();
+                    break;
+                case Count:
+                    operation.result = operation.dao.count();
+                    break;
+                case Refresh:
+                    operation.dao.refresh(operation.parameter);
+                    break;
+                default:
+                    throw new DaoException("Unsupported operation: " + operation.type);
             }
         } catch (Throwable th) {
             operation.throwable = th;
