@@ -64,7 +64,7 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 <#if property.annotationGson??>
     @SerializedName("${property.annotationGson}")
 </#if>
-    public ${property.javaType} ${property.propertyName};
+    private ${property.javaType} ${property.propertyName};
 </#list>
 
 <#if entity.active>
