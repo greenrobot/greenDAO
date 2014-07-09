@@ -25,6 +25,11 @@ package ${entity.javaPackage};
 <#if entity.toManyRelations?has_content>
 import java.util.List;
 </#if>
+<#list entity.properties as property>
+<#if property.annotationGson??>
+import com.google.gson.annotations.SerializedName;
+</#if>
+</#list>
 <#if entity.active>
 import ${schema.defaultJavaPackageDao}.DaoSession;
 import de.greenrobot.dao.DaoException;
@@ -55,6 +60,9 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 <#list entity.properties as property>
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
     /** Not-null value. */
+</#if>
+<#if property.annotationGson??>
+    @SerializedName("${property.annotationGson}")
 </#if>
     private ${property.javaType} ${property.propertyName};
 </#list>
