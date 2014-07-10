@@ -59,7 +59,6 @@ public class Entity {
     private Property pkProperty;
     private String pkType;
     private String superclass;
-    private String superclassDao;
 
     private boolean protobuf;
     private boolean constructors;
@@ -72,7 +71,6 @@ public class Entity {
     Entity(Schema schema, String className) {
         this.schema = schema;
         this.className = className;
-        this.superclassDao = "AbstractDao";
         properties = new ArrayList<Property>();
         propertiesPk = new ArrayList<Property>();
         propertiesNonPk = new ArrayList<Property>();
@@ -437,14 +435,6 @@ public class Entity {
 
     public void setSuperclass(String classToExtend) {
         this.superclass = classToExtend;
-    }
-
-    public String getSuperclassDao() {
-        return superclassDao;
-    }
-
-    public void setSuperclassDao(String classToExtend) {
-        this.superclassDao = classToExtend;
     }
 
     void init2ndPass() {

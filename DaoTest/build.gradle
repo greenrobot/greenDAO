@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.11.+'
+        classpath 'com.android.tools.build:gradle:0.10.2'
     }
 }
 
@@ -32,7 +32,7 @@ android {
     }
 
     defaultConfig {
-        testApplicationId "de.greenrobot.daotest"
+        testPackageName "de.greenrobot.daotest"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 }
