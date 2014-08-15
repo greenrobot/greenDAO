@@ -17,6 +17,9 @@
  */
 package de.greenrobot.daogenerator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** Model class for an entity's property: a Java property mapped to a data base column. */
 public class Property {
 
@@ -106,8 +109,24 @@ public class Property {
             return property;
         }
 
-        public PropertyBuilder annotationGson(String annotationGson) {
-            property.annotationGson = annotationGson;
+        public PropertyBuilder addFieldAnnotation(Annotation annotation) {
+            property.fieldAnnotations.add(annotation);
+            return this;
+        }
+
+        public PropertyBuilder addSetterAnnotation(Annotation annotation) {
+            property.setterAnnotations.add(annotation);
+            return this;
+        }
+
+        public PropertyBuilder addGetterAnnotation(Annotation annotation) {
+            property.getterAnnotations.add(annotation);
+            return this;
+        }
+
+        public PropertyBuilder addSetterGetterAnnotation(Annotation annotation) {
+            addSetterAnnotation(annotation);
+            addGetterAnnotation(annotation);
             return this;
         }
     }
@@ -128,7 +147,9 @@ public class Property {
     private boolean unique;
     private boolean notNull;
 
-    private String annotationGson;
+    private final List<Annotation> fieldAnnotations;
+    private final List<Annotation> setterAnnotations;
+    private final List<Annotation> getterAnnotations;
 
     /** Initialized in 2nd pass */
     private String constraints;
@@ -142,6 +163,9 @@ public class Property {
         this.entity = entity;
         this.propertyName = propertyName;
         this.propertyType = propertyType;
+        this.fieldAnnotations = new ArrayList<Annotation>();
+        this.getterAnnotations = new ArrayList<Annotation>();
+        this.setterAnnotations = new ArrayList<Annotation>();
     }
 
     public String getPropertyName() {
@@ -182,10 +206,6 @@ public class Property {
 
     public boolean isNotNull() {
         return notNull;
-    }
-
-    public String getAnnotationGson(){
-        return annotationGson;
     }
 
     public String getJavaType() {
@@ -245,6 +265,18 @@ public class Property {
         if (constraintBuilder.length() > 0) {
             constraints = newContraints;
         }
+    }
+
+    public List<Annotation> getFieldAnnotations() {
+        return fieldAnnotations;
+    }
+
+    public List<Annotation> getSetterAnnotations() {
+        return setterAnnotations;
+    }
+
+    public List<Annotation> getGetterAnnotations() {
+        return getterAnnotations;
     }
 
     void init3ndPass() {
