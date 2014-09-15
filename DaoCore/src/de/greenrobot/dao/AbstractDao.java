@@ -255,6 +255,40 @@ public abstract class AbstractDao<T, K> {
         insertOrReplaceInTx(Arrays.asList(entities), isEntityUpdateable());
     }
 
+    /**
+     * Inserts or ignores the given entities in the database using a transaction. The given entities will become
+     * tracked if the PK is set.
+     *
+     * @param entities
+     *            The entities to insert.
+     * @param setPrimaryKey
+     *            if true, the PKs of the given will be set after the insert; pass false to improve performance.
+     */
+    public void insertOrIgnoreInTx(Iterable<T> entities, boolean setPrimaryKey) {
+        SQLiteStatement stmt = statements.getInsertOrIgnoreStatement();
+        executeInsertInTx(stmt, entities, setPrimaryKey);
+    }
+
+    /**
+     * Inserts or ignores the given entities in the database using a transaction.
+     *
+     * @param entities
+     *            The entities to insert.
+     */
+    public void insertOrIgnoreInTx(Iterable<T> entities) {
+        insertOrIgnoreInTx(entities, isEntityUpdateable());
+    }
+
+    /**
+     * Inserts or ignores the given entities in the database using a transaction.
+     *
+     * @param entities
+     *            The entities to insert.
+     */
+    public void insertOrIgnoreInTx(T... entities) {
+        insertOrIgnoreInTx(Arrays.asList(entities), isEntityUpdateable());
+    }
+
     private void executeInsertInTx(SQLiteStatement stmt, Iterable<T> entities, boolean setPrimaryKey) {
         db.beginTransaction();
         try {

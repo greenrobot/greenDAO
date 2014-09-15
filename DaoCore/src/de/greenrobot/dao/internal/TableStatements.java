@@ -27,6 +27,7 @@ public class TableStatements {
 
     private SQLiteStatement insertStatement;
     private SQLiteStatement insertOrReplaceStatement;
+    private SQLiteStatement insertOrIgnoreStatement;
     private SQLiteStatement updateStatement;
     private SQLiteStatement deleteStatement;
 
@@ -56,6 +57,14 @@ public class TableStatements {
             insertOrReplaceStatement = db.compileStatement(sql);
         }
         return insertOrReplaceStatement;
+    }
+
+    public SQLiteStatement getInsertOrIgnoreStatement() {
+        if (insertOrIgnoreStatement == null) {
+            String sql = SqlUtils.createSqlInsert("INSERT OR IGNORE INTO ", tablename, allColumns);
+            insertOrIgnoreStatement = db.compileStatement(sql);
+        }
+        return insertOrIgnoreStatement;
     }
 
     public SQLiteStatement getDeleteStatement() {
