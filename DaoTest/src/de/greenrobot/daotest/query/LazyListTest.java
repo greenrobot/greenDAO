@@ -18,6 +18,7 @@
 package de.greenrobot.daotest.query;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
@@ -182,6 +183,24 @@ public class LazyListTest extends TestEntityTestBase {
             iterator.next();
         }
         assertTrue(lazyList.isClosed());
+    }
+
+    public void testSubList() {
+        insert(10);
+        LazyList<TestEntity> listLazy = dao.queryBuilder().orderAsc(Properties.SimpleInteger).build().listLazy();
+        List<TestEntity> subList = listLazy.subList(0, 5);
+        assertEquals(5, subList.size());
+        assertNoneNull(subList);
+        for (int i = 5; i < 10; i++) {
+            assertNull(listLazy.peak(i));
+        }
+        listLazy.close();
+    }
+
+    void assertNoneNull(List<?> list) {
+        for (Object item : list) {
+            assertNotNull(item);
+        }
     }
     
 }
