@@ -334,7 +334,7 @@ public class LazyList<E> implements List<E>, Closeable {
     public List<E> subList(int start, int end) {
         checkCached();
         for (int i = start; i < end; i++) {
-            entities.get(i);
+            get(i);
         }
         return entities.subList(start, end);
     }
