@@ -349,6 +349,42 @@ public class QueryBuilder<T> {
         return CountQuery.create(dao, sql, values.toArray());
     }
 
+    public CountQuery<T> buildCount(Property property) {
+        String tablename = dao.getTablename();
+        String column = property.columnName;
+        String baseSql = SqlUtils.createSqlSelectCountColumn(tablename, column,tablePrefix);
+        StringBuilder builder = new StringBuilder(baseSql);
+        appendWhereClause(builder, tablePrefix);
+        String sql = builder.toString();
+
+        if (LOG_SQL) {
+            DaoLog.d("Built SQL for count query: " + sql);
+        }
+        if (LOG_VALUES) {
+            DaoLog.d("Values for count query: " + values);
+        }
+
+        return CountQuery.create(dao, sql, values.toArray());
+    }
+
+    public SumQuery<T> buildSum(Property property) {
+        String tablename = dao.getTablename();
+        String column = property.columnName;
+        String baseSql = SqlUtils.createSqlSelectSumColumn(tablename, column,tablePrefix);
+        StringBuilder builder = new StringBuilder(baseSql);
+        appendWhereClause(builder, tablePrefix);
+        String sql = builder.toString();
+
+        if (LOG_SQL) {
+            DaoLog.d("Built SQL for count query: " + sql);
+        }
+        if (LOG_VALUES) {
+            DaoLog.d("Values for count query: " + values);
+        }
+
+        return SumQuery.create(dao, sql, values.toArray());
+    }
+
     private void appendWhereClause(StringBuilder builder, String tablePrefixOrNull) {
         values.clear();
         if (!whereConditions.isEmpty()) {
@@ -426,6 +462,14 @@ public class QueryBuilder<T> {
      */
     public long count() {
         return buildCount().count();
+    }
+    
+    public long count(Property property) {
+        return buildCount(property).count();
+    }
+
+    public long sum(Property property) {
+        return buildSum(property).sum();
     }
 
 }

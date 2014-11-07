@@ -115,6 +115,24 @@ public class SqlUtils {
         return builder.toString();
     }
 
+    public static String createSqlSelectCountColumn(String tablename, String column,String tableAliasOrNull) {
+        StringBuilder builder = new StringBuilder("SELECT COUNT("+column+") FROM ");
+        builder.append(tablename).append(' ');
+        if(tableAliasOrNull != null) {
+            builder.append(tableAliasOrNull).append(' ');
+        }
+        return builder.toString();
+    }
+
+    public static String createSqlSelectSumColumn(String tablename, String column,String tableAliasOrNull) {
+        StringBuilder builder = new StringBuilder("SELECT SUM("+column+") FROM ");
+        builder.append(tablename).append(' ');
+        if(tableAliasOrNull != null) {
+            builder.append(tableAliasOrNull).append(' ');
+        }
+        return builder.toString();
+    }
+
     /** Remember: SQLite does not support joins nor table alias for DELETE. */
     public static String createSqlDelete(String tablename, String[] columns) {
         StringBuilder builder = new StringBuilder("DELETE FROM ");
