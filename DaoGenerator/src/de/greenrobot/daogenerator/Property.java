@@ -105,11 +105,6 @@ public class Property {
         public Property getProperty() {
             return property;
         }
-        
-        public PropertyBuilder annotationGson(String annotationGson) {
-            property.annotationGson = annotationGson;
-            return this;
-        }
     }
 
     private final Schema schema;
@@ -127,8 +122,6 @@ public class Property {
 
     private boolean unique;
     private boolean notNull;
-    
-    private String annotationGson;
 
     /** Initialized in 2nd pass */
     private String constraints;
@@ -184,10 +177,6 @@ public class Property {
         return notNull;
     }
 
-    public String getAnnotationGson(){
-    	return annotationGson;
-    }
-    
     public String getJavaType() {
         return javaType;
     }
