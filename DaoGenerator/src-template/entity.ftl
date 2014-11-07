@@ -56,9 +56,6 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
     /** Not-null value. */
 </#if>
-	<#if property.annotationGson??>
-	@SerializedName("${property.annotationGson}")
-	</#if>
     private ${property.javaType} ${property.propertyName};
 </#list>
 
