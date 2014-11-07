@@ -1,6 +1,7 @@
 package de.greenrobot.dao.query;
 
 import android.database.Cursor;
+
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 
@@ -35,16 +36,16 @@ public class SumQuery<T> extends AbstractQuery<T> {
     }
 
     /** Returns the count (number of results matching the query). Uses SELECT COUNT (*) sematics. */
-    public long count() {
+    public long sum() {
         checkThread();
         Cursor cursor = dao.getDatabase().rawQuery(sql, parameters);
         try {
             if (!cursor.moveToNext()) {
-                throw new DaoException("No result for count");
+                throw new DaoException("No result for sum");
             } else if (!cursor.isLast()) {
-                throw new DaoException("Unexpected row count: " + cursor.getCount());
+                throw new DaoException("Unexpected row sum: " + cursor.getCount());
             } else if (cursor.getColumnCount() != 1) {
-                throw new DaoException("Unexpected column count: " + cursor.getColumnCount());
+                throw new DaoException("Unexpected column sum: " + cursor.getColumnCount());
             }
             return cursor.getLong(0);
         } finally {
