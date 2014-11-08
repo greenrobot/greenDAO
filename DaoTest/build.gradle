@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.10.2'
+        classpath 'com.android.tools.build:gradle:0.13.3'
     }
 }
 
@@ -15,7 +15,7 @@ dependencies {
 }
 
 android {
-    buildToolsVersion '19.1.0'
+    buildToolsVersion '20.0.0'
     compileSdkVersion 19
 
     sourceSets {
@@ -32,7 +32,7 @@ android {
     }
 
     defaultConfig {
-        testPackageName "de.greenrobot.daotest"
+        testApplicationId "de.greenrobot.daotest"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 }
