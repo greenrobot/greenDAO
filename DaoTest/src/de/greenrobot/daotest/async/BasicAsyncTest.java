@@ -95,6 +95,29 @@ public class BasicAsyncTest extends AbstractAsyncTest {
         assertNotNull(operation.getThrowable());
     }
 
+    public void testAsyncExceptionCreator() {
+        SimpleEntity entity = new SimpleEntity();
+        daoSession.insert(entity);
+        AsyncOperation operation = asyncSession.insert(entity);
+        assertWaitForCompletion1Sec();
+        assertNull(operation.getCreatorStacktrace());
+
+        operation = asyncSession.insert(entity, AsyncOperation.FLAG_TRACK_CREATOR_STACKTRACE);
+        assertWaitForCompletion1Sec();
+        assertNotNull(operation.getCreatorStacktrace());
+
+        asyncSession.setSessionFlags(AsyncOperation.FLAG_TRACK_CREATOR_STACKTRACE);
+        operation = asyncSession.insert(entity);
+        assertWaitForCompletion1Sec();
+        assertNotNull(operation.getCreatorStacktrace());
+        StackTraceElement[] stack = operation.getCreatorStacktrace().getStackTrace();
+        boolean found = false;
+        for (StackTraceElement stackTraceElement : stack) {
+            found |= stackTraceElement.getClassName().equals(getClass().getName());
+        }
+        assertTrue(found);
+    }
+
     public void testAsyncOperationWaitMillis() {
         AsyncOperation operation = asyncSession.insert(new SimpleEntity());
         assertTrue(asyncSession.waitForCompletion(1000));
@@ -153,4 +176,6 @@ public class BasicAsyncTest extends AbstractAsyncTest {
             }
         }
     }
+
+
 }
