@@ -118,9 +118,15 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
     /** Not-null value. */
 </#if>
+<#if property.notNull && property.javaType = 'boolean'>
+    public ${property.javaType} is${property.propertyName?cap_first}() {
+        return ${property.propertyName};
+    }
+<#else>
     public ${property.javaType} get${property.propertyName?cap_first}() {
         return ${property.propertyName};
     }
+</#if>
 
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
     /** Not-null value; ensure this value is available before it is saved to the database. */
