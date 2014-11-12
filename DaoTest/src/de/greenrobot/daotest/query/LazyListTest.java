@@ -18,6 +18,7 @@
 package de.greenrobot.daotest.query;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
@@ -66,7 +67,7 @@ public class LazyListTest extends TestEntityTestBase {
     public void testIterator() {
         ArrayList<TestEntity> list = insert(100);
         LazyList<TestEntity> listLazy = dao.queryBuilder().orderAsc(Properties.SimpleInteger).build().listLazy();
-        testIerator(list, listLazy, false);
+        testIterator(list, listLazy, false);
         assertTrue(listLazy.isClosed());
     }
 
@@ -74,12 +75,12 @@ public class LazyListTest extends TestEntityTestBase {
         ArrayList<TestEntity> list = insert(100);
         LazyList<TestEntity> listLazy = dao.queryBuilder().orderAsc(Properties.SimpleInteger).build()
                 .listLazyUncached();
-        testIerator(list, listLazy, true);
+        testIterator(list, listLazy, true);
         assertFalse(listLazy.isClosed());
         listLazy.close();
     }
 
-    protected void testIerator(ArrayList<TestEntity> list, LazyList<TestEntity> listLazy, boolean uncached) {
+    protected void testIterator(ArrayList<TestEntity> list, LazyList<TestEntity> listLazy, boolean uncached) {
         ListIterator<TestEntity> iterator = listLazy.listIterator();
         try {
             iterator.previous();
@@ -182,6 +183,24 @@ public class LazyListTest extends TestEntityTestBase {
             iterator.next();
         }
         assertTrue(lazyList.isClosed());
+    }
+
+    public void testSubList() {
+        insert(10);
+        LazyList<TestEntity> listLazy = dao.queryBuilder().orderAsc(Properties.SimpleInteger).build().listLazy();
+        List<TestEntity> subList = listLazy.subList(0, 5);
+        assertEquals(5, subList.size());
+        assertNoneNull(subList);
+        for (int i = 5; i < 10; i++) {
+            assertNull(listLazy.peak(i));
+        }
+        listLazy.close();
+    }
+
+    void assertNoneNull(List<?> list) {
+        for (Object item : list) {
+            assertNotNull(item);
+        }
     }
     
 }
