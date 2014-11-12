@@ -97,7 +97,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 <#if !entity.skipTableCreation>
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        String constraint = ifNotExists ? "IF NOT EXISTS " : "";
         db.execSQL("CREATE TABLE " + constraint + "'${entity.tableName}' (" + //
 <#list entity.propertiesColumns as property>
                 "'${property.columnName}' ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>);");</#if> // ${property_index}: ${property.propertyName}
@@ -127,8 +127,9 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 <#if property.notNull || entity.protobuf>
 <#if entity.protobuf>
         if(entity.has${property.propertyName?cap_first}()) {
-    </#if>        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, entity.get${property.propertyName?cap_first}()<#if
-     property.propertyType == "Boolean"> ? 1l: 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
+    </#if>        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, <#if
+property.javaType = 'boolean'>entity.is${property.propertyName?cap_first}()<#else>entity.get${property.propertyName?cap_first}()</#if><#if
+     property.propertyType == "Boolean"> ? 1l : 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
 <#if entity.protobuf>
         }
 </#if>
@@ -136,7 +137,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
         ${property.javaType} ${property.propertyName} = entity.get${property.propertyName?cap_first}();
         if (${property.propertyName} != null) {
             stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, ${property.propertyName}<#if
- property.propertyType == "Boolean"> ? 1l: 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
+ property.propertyType == "Boolean"> ? 1l : 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
         }
 </#if>
 </#list>
