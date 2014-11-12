@@ -118,7 +118,6 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
             cursor.close();
         }
     }
-    
 
     /** A raw-style query where you can pass any WHERE clause and arguments. */
     public List<${entity.className}> queryDeep(String where, String... selectionArg) {

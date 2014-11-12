@@ -48,7 +48,7 @@ import ${additionalImport};
  * Entity mapped to table ${entity.tableName}.
  */
 public class ${entity.className}<#if
-entity.superclass?has_content> extends ${entity.superclass} </#if><#if
+entity.superclass?has_content> extends ${entity.superclass}</#if><#if
 entity.interfacesToImplement?has_content> implements <#list entity.interfacesToImplement
 as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 
@@ -187,7 +187,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 </#if>
         synchronized (this) {
             this.${toOne.name} = ${toOne.name};
-<#if toOne.useFkProperty>        
+<#if toOne.useFkProperty>
             ${toOne.fkProperties[0].propertyName} = <#if !toOne.fkProperties[0].notNull>${toOne.name} == null ? null : </#if>${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}();
             ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
 <#else>
@@ -237,7 +237,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
     public void delete() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }    
+        }
         myDao.delete(this);
     }
 
@@ -245,7 +245,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
     public void update() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }    
+        }
         myDao.update(this);
     }
 
@@ -253,7 +253,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
     public void refresh() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }    
+        }
         myDao.refresh(this);
     }
 

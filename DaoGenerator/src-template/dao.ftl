@@ -86,10 +86,10 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     public ${entity.classNameDao}(DaoConfig config) {
         super(config);
     }
-    
+
     public ${entity.classNameDao}(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
-<#if entity.active>        
+<#if entity.active>
         this.daoSession = daoSession;
 </#if>
     }
@@ -109,7 +109,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
                 " (<#list index.properties 
 as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#list>
-</#if>         
+</#if>
     }
 
     /** Drops the underlying database table. */
@@ -177,8 +177,8 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
             entity.pkProperty.propertyType == "Date">)</#if>;
 <#else>
         return null;
-</#if>  
-    }    
+</#if>
+    }
 
     /** @inheritdoc */
     @Override
@@ -191,8 +191,8 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
     </#if>        builder.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(offset + ${property_index}));
 <#if !property.notNull>
         }
-</#if>        
-</#list>        
+</#if>
+</#list>
         return builder.build();
 <#elseif entity.constructors>
 <#--
@@ -205,7 +205,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
             property.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})<#if
             property.propertyType == "Boolean"> != 0</#if><#if
             property.propertyType == "Date">)</#if><#if property_has_next>,</#if> // ${property.propertyName}
-</#list>        
+</#list>
         );
         return entity;
 <#else>
@@ -217,7 +217,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
         return entity;
 </#if>
     }
-     
+
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, ${entity.className} entity, int offset) {
@@ -233,7 +233,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#list>
 </#if>
      }
-    
+
     /** @inheritdoc */
     @Override
     protected ${entity.pkType} updateKeyAfterInsert(${entity.className} entity, long rowId) {
@@ -251,27 +251,26 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
         return null;
 </#if>
     }
-    
+
     /** @inheritdoc */
     @Override
     public ${entity.pkType} getKey(${entity.className} entity) {
 <#if entity.pkProperty??>
-        if(entity != null) {
+        if (entity != null) {
             return entity.get${entity.pkProperty.propertyName?cap_first}();
-        } else {
-            return null;
         }
+        return null;
 <#else>
         return null;
-</#if>    
+</#if>
     }
 
     /** @inheritdoc */
-    @Override    
+    @Override
     protected boolean isEntityUpdateable() {
         return ${(!entity.protobuf)?string};
     }
-    
+
 <#list entity.incomingToManyRelations as toMany>
     /** Internal query to resolve the "${toMany.name}" to-many relationship of ${toMany.sourceEntity.className}. */
     public List<${toMany.targetEntity.className}> _query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
@@ -295,7 +294,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
         return query.list();
     }
 
-</#list>   
+</#list>
 <#if entity.toOneRelations?has_content>
     <#include "dao-deep.ftl">
 </#if>
