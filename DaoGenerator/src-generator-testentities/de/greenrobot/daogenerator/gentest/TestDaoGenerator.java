@@ -17,11 +17,9 @@
  */
 package de.greenrobot.daogenerator.gentest;
 
-import de.greenrobot.daogenerator.DaoGenerator;
-import de.greenrobot.daogenerator.Entity;
-import de.greenrobot.daogenerator.Property;
-import de.greenrobot.daogenerator.Schema;
-import de.greenrobot.daogenerator.ToMany;
+import de.greenrobot.daogenerator.*;
+
+import java.util.Date;
 
 /**
  * Generates test entities for test project DaoTest.
@@ -45,6 +43,7 @@ public class TestDaoGenerator {
 
         createSimple();
         createSimpleNotNull();
+        createSimpleDefaultValues();
         testEntity = createTest();
         createRelation();
         createDate();
@@ -95,6 +94,29 @@ public class TestDaoGenerator {
         notNull.addDoubleProperty("simpleDouble").notNull();
         notNull.addStringProperty("simpleString").notNull();
         notNull.addByteArrayProperty("simpleByteArray").notNull();
+    }
+
+    protected void createSimpleDefaultValues() {
+        Entity notNull = schema.addEntity("SimpleEntityDefaultValues");
+        notNull.addIdProperty().notNull();
+        notNull.addBooleanProperty("simpleBooleanTrue").addDefaultValue(true);
+        notNull.addBooleanProperty("simpleBooleanFalse").notNull().addDefaultValue(false);
+        notNull.addByteProperty("simpleByteMax").addDefaultValue(Byte.MAX_VALUE);
+        notNull.addByteProperty("simpleByteMin").notNull().addDefaultValue(Byte.MIN_VALUE);
+        notNull.addShortProperty("simpleShortMax").addDefaultValue(Short.MAX_VALUE);
+        notNull.addShortProperty("simpleShortMin").notNull().addDefaultValue(Short.MIN_VALUE);
+        notNull.addIntProperty("simpleIntMax").addDefaultValue(Integer.MAX_VALUE);
+        notNull.addIntProperty("simpleIntMin").notNull().addDefaultValue(Integer.MIN_VALUE);
+        notNull.addLongProperty("simpleLongMax").addDefaultValue(Long.MAX_VALUE);
+        notNull.addLongProperty("simpleLongMin").notNull().addDefaultValue(Long.MIN_VALUE);
+        notNull.addFloatProperty("simpleFloatMax").addDefaultValue(Float.MAX_VALUE);
+        notNull.addFloatProperty("simpleFloatMin").notNull().addDefaultValue(Float.MIN_VALUE);
+        notNull.addDoubleProperty("simpleDoubleMax").addDefaultValue(Double.MAX_VALUE);
+        notNull.addDoubleProperty("simpleDoubleMin").notNull().addDefaultValue(Double.MIN_VALUE);
+        notNull.addStringProperty("simpleString").addDefaultValue("greenrobot greenDAO");
+        notNull.addStringProperty("simpleStringNotNull").notNull().addDefaultValue("greenrobot greenDAO");
+        notNull.addDateProperty("simpleDate").addDefaultValue(new Date());
+        notNull.addDateProperty("simpleDateNotNull").notNull().addDefaultValue(new Date());
     }
 
     protected Entity createTest() {

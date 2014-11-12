@@ -10,6 +10,7 @@ import de.greenrobot.dao.identityscope.IdentityScopeType;
 
 import de.greenrobot.daotest.SimpleEntityDao;
 import de.greenrobot.daotest.SimpleEntityNotNullDao;
+import de.greenrobot.daotest.SimpleEntityDefaultValuesDao;
 import de.greenrobot.daotest.TestEntityDao;
 import de.greenrobot.daotest.RelationEntityDao;
 import de.greenrobot.daotest.DateEntityDao;
@@ -35,6 +36,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
         SimpleEntityDao.createTable(db, ifNotExists);
         SimpleEntityNotNullDao.createTable(db, ifNotExists);
+        SimpleEntityDefaultValuesDao.createTable(db, ifNotExists);
         TestEntityDao.createTable(db, ifNotExists);
         RelationEntityDao.createTable(db, ifNotExists);
         DateEntityDao.createTable(db, ifNotExists);
@@ -53,6 +55,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void dropAllTables(SQLiteDatabase db, boolean ifExists) {
         SimpleEntityDao.dropTable(db, ifExists);
         SimpleEntityNotNullDao.dropTable(db, ifExists);
+        SimpleEntityDefaultValuesDao.dropTable(db, ifExists);
         TestEntityDao.dropTable(db, ifExists);
         RelationEntityDao.dropTable(db, ifExists);
         DateEntityDao.dropTable(db, ifExists);
@@ -98,6 +101,7 @@ public class DaoMaster extends AbstractDaoMaster {
         super(db, SCHEMA_VERSION);
         registerDaoClass(SimpleEntityDao.class);
         registerDaoClass(SimpleEntityNotNullDao.class);
+        registerDaoClass(SimpleEntityDefaultValuesDao.class);
         registerDaoClass(TestEntityDao.class);
         registerDaoClass(RelationEntityDao.class);
         registerDaoClass(DateEntityDao.class);
