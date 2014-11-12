@@ -126,7 +126,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 <#list entity.properties as property>
 <#if property.notNull || entity.protobuf>
 <#if entity.protobuf>
-        if(entity.has${property.propertyName?cap_first}()) {
+        if (entity.has${property.propertyName?cap_first}()) {
     </#if>        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, <#if
 property.javaType = 'boolean'>entity.is${property.propertyName?cap_first}()<#else>entity.get${property.propertyName?cap_first}()</#if><#if
      property.propertyType == "Boolean"> ? 1l : 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
@@ -145,10 +145,10 @@ property.javaType = 'boolean'>entity.is${property.propertyName?cap_first}()<#els
 <#if !toOne.fkProperties?has_content>
 
         ${toOne.targetEntity.className} ${toOne.name} = entity.peak${toOne.name?cap_first}();
-        if(${toOne.name} != null) {
+        if (${toOne.name} != null) {
             ${toOne.targetEntity.pkProperty.javaType} ${toOne.name}__targetKey = ${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}();
 <#if !toOne.targetEntity.pkProperty.notNull>
-            if(${toOne.name}__targetKey != null) {
+            if (${toOne.name}__targetKey != null) {
                 // TODO bind ${toOne.name}__targetKey
             }
 <#else>
