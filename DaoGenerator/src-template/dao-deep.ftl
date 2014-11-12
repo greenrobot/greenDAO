@@ -48,7 +48,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 
 <#list entity.toOneRelations as toOne>
         ${toOne.targetEntity.className} ${toOne.name} = loadCurrentOther(daoSession.get${toOne.targetEntity.classNameDao}(), cursor, offset);
-<#if toOne.fkProperties[0].notNull>         if(${toOne.name} != null) {
+<#if toOne.fkProperties[0].notNull>         if (${toOne.name} != null) {
     </#if>        entity.set${toOne.name?cap_first}(${toOne.name});
 <#if toOne.fkProperties[0].notNull>
         }
@@ -118,7 +118,6 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
             cursor.close();
         }
     }
-    
 
     /** A raw-style query where you can pass any WHERE clause and arguments. */
     public List<${entity.className}> queryDeep(String where, String... selectionArg) {
