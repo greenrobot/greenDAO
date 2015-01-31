@@ -50,7 +50,7 @@ public class DaoSession extends AbstractDaoSession {
 </#list>        
 
 <#list schema.entities as entity>
-    private final ${entity.classNameUserDao} ${entity.classNameUserDao?uncap_first};
+    private final ${entity.classNameUserDao} ${entity.classNameDao?uncap_first};
 </#list>        
 
     public DaoSession(SQLiteDatabase db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
@@ -63,12 +63,12 @@ public class DaoSession extends AbstractDaoSession {
 
 </#list>        
 <#list schema.entities as entity>
-        ${entity.classNameUserDao?uncap_first} = new ${entity.classNameUserDao}<#--
+        ${entity.classNameDao?uncap_first} = new ${entity.classNameUserDao}<#--
 -->(${entity.classNameDao?uncap_first}Config, this);
 </#list>        
 
 <#list schema.entities as entity>
-        registerDao(${entity.className}.class, ${entity.classNameUserDao?uncap_first});
+        registerDao(${entity.className}.class, ${entity.classNameDao?uncap_first});
 </#list>        
     }
     
@@ -80,7 +80,7 @@ public class DaoSession extends AbstractDaoSession {
 
 <#list schema.entities as entity>
     public ${entity.classNameUserDao} get${entity.classNameDao?cap_first}() {
-        return ${entity.classNameUserDao?uncap_first};
+        return ${entity.classNameDao?uncap_first};
     }
 
 </#list>        
