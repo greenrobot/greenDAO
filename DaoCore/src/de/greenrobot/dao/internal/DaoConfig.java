@@ -97,7 +97,13 @@ public final class DaoConfig implements Cloneable {
 
     private static Property[] reflectProperties(Class<? extends AbstractDao<?, ?>> daoClass)
             throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException {
-        Class<?> propertiesClass = Class.forName(daoClass.getName() + "$Properties");
+        Class<?> propertiesClass;
+        try {
+          propertiesClass = Class.forName(daoClass.getName() + "$Properties");
+        } catch(ClassNotFoundException ignored) {
+          // This is for user-specified DAO class.
+          propertiesClass = Class.forName(daoClass.getSuperclass().getName() + "$Properties");
+        }
         Field[] fields = propertiesClass.getDeclaredFields();
 
         ArrayList<Property> propertyList = new ArrayList<Property>();

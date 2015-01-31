@@ -31,16 +31,6 @@ import ${entity.javaPackage}.${entity.classNameDao};
 */
 public class ${entity.classNameUserDao} extends ${entity.classNameDao} {
 
-    // KEEP THIS PROPERTY ALWAYS.
-    public static final String TABLENAME = ${entity.classNameDao}.TABLENAME;
-
-    /**
-     * Properties of entity ${entity.className} -- needed for DaoCore.<br/>
-     * KEEP THIS CLASS ALWAYS.
-    */
-    public static class Properties extends ${entity.classNameDao}.Properties {
-    };
-
     public ${entity.classNameUserDao}(DaoConfig config) {
         super(config);
     }
