@@ -27,13 +27,13 @@ import de.greenrobot.dao.test.AbstractDaoTestLongPk;
 </#if>
 
 import ${entity.javaPackage}.${entity.className};
-import ${entity.javaPackageDao}.${entity.classNameDao};
+import ${entity.javaPackageDao}.${entity.classNameUserDao};
 
 public class ${entity.classNameTest} extends <#if
-isStringPK>AbstractDaoTestStringPk<${entity.classNameDao}, ${entity.className}><#else>AbstractDaoTestLongPk<${entity.classNameDao}, ${entity.className}></#if> {
+isStringPK>AbstractDaoTestStringPk<${entity.classNameUserDao}, ${entity.className}><#else>AbstractDaoTestLongPk<${entity.classNameUserDao}, ${entity.className}></#if> {
 
     public ${entity.classNameTest}() {
-        super(${entity.classNameDao}.class);
+        super(${entity.classNameUserDao}.class);
     }
 
     @Override

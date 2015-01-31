@@ -64,7 +64,7 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
     private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private transient ${entity.classNameDao} myDao;
+    private transient ${entity.classNameUserDao} myDao;
 
 <#list entity.toOneRelations as toOne>
     private ${toOne.targetEntity.className} ${toOne.name};
@@ -110,7 +110,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
     /** called by internal mechanisms, do not call yourself. */
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.get${entity.classNameDao?cap_first}() : null;
+        myDao = daoSession != null ? daoSession.get${entity.classNameUserDao?cap_first}() : null;
     }
 
 </#if>
@@ -146,7 +146,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            ${toOne.targetEntity.classNameDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
+            ${toOne.targetEntity.classNameUserDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
             ${toOne.targetEntity.className} ${toOne.name}New = targetDao.load(__key);
             synchronized (this) {
                 ${toOne.name} = ${toOne.name}New;
@@ -158,7 +158,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            ${toOne.targetEntity.classNameDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
+            ${toOne.targetEntity.classNameUserDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
             targetDao.refresh(${toOne.name});
             ${toOne.name}__refreshed = true;
         }
@@ -203,7 +203,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            ${toMany.targetEntity.classNameDao} targetDao = daoSession.get${toMany.targetEntity.classNameDao?cap_first}();
+            ${toMany.targetEntity.classNameUserDao} targetDao = daoSession.get${toMany.targetEntity.classNameDao?cap_first}();
             List<${toMany.targetEntity.className}> ${toMany.name}New = targetDao._query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
                 --><#list toMany.sourceProperties as property>${property.propertyName}<#if property_has_next>, </#if></#list>);
             synchronized (this) {<#-- Check if another thread was faster, we cannot lock while doing the query to prevent deadlocks -->
