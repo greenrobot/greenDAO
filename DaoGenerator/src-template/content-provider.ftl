@@ -32,8 +32,8 @@ import ${entity.javaPackageDao}.${entity.classNameUserDao};
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
     + "/" + BASE_PATH;
 
-    private static final String TABLENAME = ${entity.classNameUserDao}.TABLENAME;
-    private static final String PK = ${entity.classNameUserDao}.Properties.${entity.pkProperty.propertyName?cap_first}
+    private static final String TABLENAME = ${entity.classNameDao}.TABLENAME;
+    private static final String PK = ${entity.classNameDao}.Properties.${entity.pkProperty.propertyName?cap_first}
     .columnName;
 
 <#assign counter = 0>
