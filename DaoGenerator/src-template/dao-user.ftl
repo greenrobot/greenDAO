@@ -28,8 +28,18 @@ import ${entity.javaPackage}.${entity.classNameDao};
 // OF THESE COMMENTS IS HIGHLY ADVISED ONCE YOU'VE DONE THAT.
 /** 
  * User-specified DAO for table ${entity.tableName}.
- */
+*/
 public class ${entity.classNameUserDao} extends ${entity.classNameDao} {
+
+    // KEEP THIS PROPERTY ALWAYS.
+    public static final String TABLENAME = ${entity.classNameDao}.TABLENAME;
+
+    /**
+     * Properties of entity ${entity.className} -- needed for DaoCore.<br/>
+     * KEEP THIS CLASS ALWAYS.
+    */
+    public static class Properties extends ${entity.classNameDao}.Properties {
+    };
 
     public ${entity.classNameUserDao}(DaoConfig config) {
         super(config);
