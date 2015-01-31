@@ -43,6 +43,7 @@ public class DaoGenerator {
     private Pattern patternKeepMethods;
 
     private Template templateDao;
+    private Template templateDaoUser;
     private Template templateDaoMaster;
     private Template templateDaoSession;
     private Template templateEntity;
@@ -63,6 +64,7 @@ public class DaoGenerator {
         config.setObjectWrapper(new DefaultObjectWrapper());
 
         templateDao = config.getTemplate("dao.ftl");
+        templateDaoUser = config.getTemplate("dao-user.ftl");
         templateDaoMaster = config.getTemplate("dao-master.ftl");
         templateDaoSession = config.getTemplate("dao-session.ftl");
         templateEntity = config.getTemplate("entity.ftl");
@@ -99,7 +101,9 @@ public class DaoGenerator {
 
         List<Entity> entities = schema.getEntities();
         for (Entity entity : entities) {
-            generate(templateDao, outDirFile, entity.getJavaPackageDao(), entity.getClassNameDao(), schema, entity);
+            final String javaPackage = entity.getJavaPackageDao();
+            final String classNameDao = entity.getClassNameDao();
+            generate(templateDao, outDirFile, javaPackage, classNameDao, schema, entity);
             if (!entity.isProtobuf() && !entity.isSkipGeneration()) {
                 generate(templateEntity, outDirFile, entity.getJavaPackage(), entity.getClassName(), schema, entity);
             }
@@ -118,6 +122,15 @@ public class DaoGenerator {
                 additionalObjectsForTemplate.put("contentProvider", contentProvider);
                 generate(templateContentProvider, outDirFile, entity.getJavaPackage(), entity.getClassName()
                         + "ContentProvider", schema, entity, additionalObjectsForTemplate);
+            }
+
+            // Auto-generate user-specified DAO classes on first run.
+            final String classNameUserDao = entity.getClassNameUserDao();
+            if (!classNameDao.equals(classNameUserDao)) {
+                File userDaoFile = toJavaFilename(outDirFile, javaPackage, classNameUserDao);
+                if (!userDaoFile.exists()) {
+                    generate(templateDaoUser, outDirFile, javaPackage, classNameUserDao, schema, entity);
+                }
             }
         }
         generate(templateDaoMaster, outDirFile, schema.getDefaultJavaPackageDao(), "DaoMaster", schema, null);
