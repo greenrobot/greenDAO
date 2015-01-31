@@ -2,7 +2,7 @@
  * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
- * 
+ *
  * greenDAO Generator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,7 +33,7 @@ import freemarker.template.Template;
 
 /**
  * Once you have your model created, use this class to generate entities and DAOs.
- * 
+ *
  * @author Markus
  */
 public class DaoGenerator {
@@ -43,6 +43,7 @@ public class DaoGenerator {
     private Pattern patternKeepMethods;
 
     private Template templateDao;
+    private Template templateDaoUser;
     private Template templateDaoMaster;
     private Template templateDaoSession;
     private Template templateEntity;
@@ -63,6 +64,7 @@ public class DaoGenerator {
         config.setObjectWrapper(new DefaultObjectWrapper());
 
         templateDao = config.getTemplate("dao.ftl");
+        templateDaoUser = config.getTemplate("dao-user.ftl");
         templateDaoMaster = config.getTemplate("dao-master.ftl");
         templateDaoSession = config.getTemplate("dao-session.ftl");
         templateEntity = config.getTemplate("entity.ftl");
@@ -99,7 +101,9 @@ public class DaoGenerator {
 
         List<Entity> entities = schema.getEntities();
         for (Entity entity : entities) {
-            generate(templateDao, outDirFile, entity.getJavaPackageDao(), entity.getClassNameDao(), schema, entity);
+            final String javaPackage = entity.getJavaPackageDao();
+            final String classNameDao = entity.getClassNameDao();
+            generate(templateDao, outDirFile, javaPackage, classNameDao, schema, entity);
             if (!entity.isProtobuf() && !entity.isSkipGeneration()) {
                 generate(templateEntity, outDirFile, entity.getJavaPackage(), entity.getClassName(), schema, entity);
             }
@@ -118,6 +122,15 @@ public class DaoGenerator {
                 additionalObjectsForTemplate.put("contentProvider", contentProvider);
                 generate(templateContentProvider, outDirFile, entity.getJavaPackage(), entity.getClassName()
                         + "ContentProvider", schema, entity, additionalObjectsForTemplate);
+            }
+
+            // Auto-generate user-specified DAO classes on first run.
+            final String classNameUserDao = entity.getClassNameUserDao();
+            if (!classNameDao.equals(classNameUserDao)) {
+                File userDaoFile = toJavaFilename(outDirFile, javaPackage, classNameUserDao);
+                if (!userDaoFile.exists()) {
+                    generate(templateDaoUser, outDirFile, javaPackage, classNameUserDao, schema, entity);
+                }
             }
         }
         generate(templateDaoMaster, outDirFile, schema.getDefaultJavaPackageDao(), "DaoMaster", schema, null);

@@ -2,7 +2,7 @@
  * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
- * 
+ *
  * greenDAO Generator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -52,6 +52,7 @@ public class Entity {
 
     private String tableName;
     private String classNameDao;
+    private String classNameUserDao;
     private String classNameTest;
     private String javaPackage;
     private String javaPackageDao;
@@ -298,6 +299,14 @@ public class Entity {
         this.classNameDao = classNameDao;
     }
 
+    public String getClassNameUserDao() {
+        return classNameUserDao;
+    }
+
+    public void setClassNameUserDao(String classNameUserDao) {
+        this.classNameUserDao = classNameUserDao;
+    }
+
     public String getClassNameTest() {
         return classNameTest;
     }
@@ -503,6 +512,9 @@ public class Entity {
         if (classNameDao == null) {
             classNameDao = className + "Dao";
         }
+        if (classNameUserDao == null) {
+            classNameUserDao = classNameDao;
+        }
         if (classNameTest == null) {
             classNameTest = className + "Test";
         }
@@ -580,6 +592,9 @@ public class Entity {
     private void init3rdPassAdditionalImports() {
         if (active && !javaPackage.equals(javaPackageDao)) {
             additionalImportsEntity.add(javaPackageDao + "." + classNameDao);
+            if (!classNameDao.equals(classNameUserDao)) {
+                additionalImportsEntity.add(javaPackageDao + "." + classNameUserDao);
+            }
         }
 
         for (ToOne toOne : toOneRelations) {
@@ -601,8 +616,14 @@ public class Entity {
         if (!targetEntity.getJavaPackage().equals(javaPackage)) {
             additionalImportsEntity.add(targetEntity.getJavaPackage() + "." + targetEntity.getClassName());
         }
-        if (!targetEntity.getJavaPackageDao().equals(javaPackage)) {
-            additionalImportsEntity.add(targetEntity.getJavaPackageDao() + "." + targetEntity.getClassNameDao());
+        final String targetJavaPackageDao = targetEntity.getJavaPackageDao();
+        if (!targetJavaPackageDao.equals(javaPackage)) {
+            final String targetClassNameDao = targetEntity.getClassNameDao();
+            final String targetClassNameUserDao = targetEntity.getClassNameUserDao();
+            additionalImportsEntity.add(targetJavaPackageDao + "." + targetClassNameDao);
+            if (!targetClassNameDao.equals(targetClassNameUserDao)) {
+                additionalImportsEntity.add(targetJavaPackageDao + "." + targetClassNameUserDao);
+            }
         }
     }
 
