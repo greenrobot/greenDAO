@@ -42,7 +42,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
 <#list schema.entities as entity>
 <#if !entity.skipTableCreation>
-        ${entity.classNameUserDao}.createTable(db, ifNotExists);
+        ${entity.classNameDao}.createTable(db, ifNotExists);
 </#if>
 </#list>
     }
@@ -51,7 +51,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void dropAllTables(SQLiteDatabase db, boolean ifExists) {
 <#list schema.entities as entity>
 <#if !entity.skipTableCreation>
-        ${entity.classNameUserDao}.dropTable(db, ifExists);
+        ${entity.classNameDao}.dropTable(db, ifExists);
 </#if>
 </#list>
     }

@@ -46,7 +46,7 @@ import ${entity.javaPackageDao}.${entity.classNameUserDao};
 public class DaoSession extends AbstractDaoSession {
 
 <#list schema.entities as entity>
-    private final DaoConfig ${entity.classNameUserDao?uncap_first}Config;
+    private final DaoConfig ${entity.classNameDao?uncap_first}Config;
 </#list>        
 
 <#list schema.entities as entity>
@@ -58,13 +58,13 @@ public class DaoSession extends AbstractDaoSession {
         super(db);
 
 <#list schema.entities as entity>
-        ${entity.classNameUserDao?uncap_first}Config = daoConfigMap.get(${entity.classNameUserDao}.class).clone();
-        ${entity.classNameUserDao?uncap_first}Config.initIdentityScope(type);
+        ${entity.classNameDao?uncap_first}Config = daoConfigMap.get(${entity.classNameUserDao}.class).clone();
+        ${entity.classNameDao?uncap_first}Config.initIdentityScope(type);
 
 </#list>        
 <#list schema.entities as entity>
         ${entity.classNameUserDao?uncap_first} = new ${entity.classNameUserDao}<#--
--->(${entity.classNameUserDao?uncap_first}Config, this);
+-->(${entity.classNameDao?uncap_first}Config, this);
 </#list>        
 
 <#list schema.entities as entity>
@@ -74,7 +74,7 @@ public class DaoSession extends AbstractDaoSession {
     
     public void clear() {
 <#list schema.entities as entity>
-        ${entity.classNameUserDao?uncap_first}Config.getIdentityScope().clear();
+        ${entity.classNameDao?uncap_first}Config.getIdentityScope().clear();
 </#list>    
     }
 

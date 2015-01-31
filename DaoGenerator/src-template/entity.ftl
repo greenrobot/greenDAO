@@ -110,7 +110,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
     /** called by internal mechanisms, do not call yourself. */
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.get${entity.classNameUserDao?cap_first}() : null;
+        myDao = daoSession != null ? daoSession.get${entity.classNameDao?cap_first}() : null;
     }
 
 </#if>
