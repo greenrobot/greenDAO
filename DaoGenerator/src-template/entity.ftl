@@ -27,6 +27,7 @@ import java.util.List;
 </#if>
 <#if entity.active>
 import ${schema.defaultJavaPackageDao}.DaoSession;
+import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 
 </#if>
@@ -47,6 +48,7 @@ import ${additionalImport};
 /**
  * Entity mapped to table ${entity.tableName}.
  */
+@SuppressWarnings("ALL")
 public class ${entity.className}<#if
 entity.superclass?has_content> extends ${entity.superclass} </#if><#if
 entity.interfacesToImplement?has_content> implements <#list entity.interfacesToImplement
