@@ -119,7 +119,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
     }
 
 </#if>
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, ${entity.className} entity) {
         stmt.clearBindings();
@@ -166,7 +166,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
     }
 
 </#if>
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public ${entity.pkType} readKey(Cursor cursor, int offset) {
 <#if entity.pkProperty??>
@@ -180,7 +180,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#if>  
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public ${entity.className} readEntity(Cursor cursor, int offset) {
 <#if entity.protobuf>
@@ -218,7 +218,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#if>
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, ${entity.className} entity, int offset) {
 <#if entity.protobuf>
@@ -234,7 +234,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#if>
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected ${entity.pkType} updateKeyAfterInsert(${entity.className} entity, long rowId) {
 <#if entity.pkProperty??>
@@ -252,7 +252,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#if>
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public ${entity.pkType} getKey(${entity.className} entity) {
 <#if entity.pkProperty??>
@@ -266,7 +266,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#if>    
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return ${(!entity.protobuf)?string};

@@ -66,7 +66,7 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, SimpleEntity entity) {
         stmt.clearBindings();
@@ -122,13 +122,13 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public SimpleEntity readEntity(Cursor cursor, int offset) {
         SimpleEntity entity = new SimpleEntity( //
@@ -146,7 +146,7 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, SimpleEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
@@ -161,14 +161,14 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
         entity.setSimpleByteArray(cursor.isNull(offset + 9) ? null : cursor.getBlob(offset + 9));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Long updateKeyAfterInsert(SimpleEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long getKey(SimpleEntity entity) {
         if(entity != null) {
@@ -178,7 +178,7 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;

@@ -54,7 +54,7 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, ToManyTarget2 entity) {
         stmt.clearBindings();
@@ -70,13 +70,13 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public ToManyTarget2 readEntity(Cursor cursor, int offset) {
         ToManyTarget2 entity = new ToManyTarget2( //
@@ -86,21 +86,21 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, ToManyTarget2 entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setFkId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Long updateKeyAfterInsert(ToManyTarget2 entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long getKey(ToManyTarget2 entity) {
         if(entity != null) {
@@ -110,7 +110,7 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;

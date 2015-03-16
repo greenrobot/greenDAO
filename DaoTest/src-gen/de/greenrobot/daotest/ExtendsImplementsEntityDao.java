@@ -50,7 +50,7 @@ public class ExtendsImplementsEntityDao extends AbstractDao<ExtendsImplementsEnt
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, ExtendsImplementsEntity entity) {
         stmt.clearBindings();
@@ -66,13 +66,13 @@ public class ExtendsImplementsEntityDao extends AbstractDao<ExtendsImplementsEnt
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public ExtendsImplementsEntity readEntity(Cursor cursor, int offset) {
         ExtendsImplementsEntity entity = new ExtendsImplementsEntity( //
@@ -82,21 +82,21 @@ public class ExtendsImplementsEntityDao extends AbstractDao<ExtendsImplementsEnt
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, ExtendsImplementsEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setText(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Long updateKeyAfterInsert(ExtendsImplementsEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long getKey(ExtendsImplementsEntity entity) {
         if(entity != null) {
@@ -106,7 +106,7 @@ public class ExtendsImplementsEntityDao extends AbstractDao<ExtendsImplementsEnt
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;

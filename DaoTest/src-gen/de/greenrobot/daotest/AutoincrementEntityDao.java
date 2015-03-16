@@ -48,7 +48,7 @@ public class AutoincrementEntityDao extends AbstractDao<AutoincrementEntity, Lon
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, AutoincrementEntity entity) {
         stmt.clearBindings();
@@ -59,13 +59,13 @@ public class AutoincrementEntityDao extends AbstractDao<AutoincrementEntity, Lon
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public AutoincrementEntity readEntity(Cursor cursor, int offset) {
         AutoincrementEntity entity = new AutoincrementEntity( //
@@ -74,20 +74,20 @@ public class AutoincrementEntityDao extends AbstractDao<AutoincrementEntity, Lon
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, AutoincrementEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Long updateKeyAfterInsert(AutoincrementEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long getKey(AutoincrementEntity entity) {
         if(entity != null) {
@@ -97,7 +97,7 @@ public class AutoincrementEntityDao extends AbstractDao<AutoincrementEntity, Lon
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;

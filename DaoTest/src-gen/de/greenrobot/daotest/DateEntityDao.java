@@ -52,7 +52,7 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, DateEntity entity) {
         stmt.clearBindings();
@@ -69,13 +69,13 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
         stmt.bindLong(3, entity.getDateNotNull().getTime());
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public DateEntity readEntity(Cursor cursor, int offset) {
         DateEntity entity = new DateEntity( //
@@ -86,7 +86,7 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, DateEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
@@ -94,14 +94,14 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
         entity.setDateNotNull(new java.util.Date(cursor.getLong(offset + 2)));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Long updateKeyAfterInsert(DateEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long getKey(DateEntity entity) {
         if(entity != null) {
@@ -111,7 +111,7 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;

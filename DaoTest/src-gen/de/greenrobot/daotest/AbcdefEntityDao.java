@@ -70,7 +70,7 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, AbcdefEntity entity) {
         stmt.clearBindings();
@@ -136,13 +136,13 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public AbcdefEntity readEntity(Cursor cursor, int offset) {
         AbcdefEntity entity = new AbcdefEntity( //
@@ -162,7 +162,7 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, AbcdefEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
@@ -179,14 +179,14 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
         entity.setK(cursor.isNull(offset + 11) ? null : cursor.getInt(offset + 11));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Long updateKeyAfterInsert(AbcdefEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long getKey(AbcdefEntity entity) {
         if(entity != null) {
@@ -196,7 +196,7 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;
