@@ -60,7 +60,7 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, RelationSource2 entity) {
         stmt.clearBindings();
@@ -82,13 +82,13 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
         entity.__setDaoSession(daoSession);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public RelationSource2 readEntity(Cursor cursor, int offset) {
         RelationSource2 entity = new RelationSource2( //
@@ -98,21 +98,21 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, RelationSource2 entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setToOneId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Long updateKeyAfterInsert(RelationSource2 entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long getKey(RelationSource2 entity) {
         if(entity != null) {
@@ -122,7 +122,7 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;

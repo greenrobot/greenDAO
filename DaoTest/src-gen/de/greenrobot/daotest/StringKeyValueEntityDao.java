@@ -50,7 +50,7 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, StringKeyValueEntity entity) {
         stmt.clearBindings();
@@ -66,13 +66,13 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public String readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public StringKeyValueEntity readEntity(Cursor cursor, int offset) {
         StringKeyValueEntity entity = new StringKeyValueEntity( //
@@ -82,20 +82,20 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, StringKeyValueEntity entity, int offset) {
         entity.setKey(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setValue(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected String updateKeyAfterInsert(StringKeyValueEntity entity, long rowId) {
         return entity.getKey();
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public String getKey(StringKeyValueEntity entity) {
         if(entity != null) {
@@ -105,7 +105,7 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;

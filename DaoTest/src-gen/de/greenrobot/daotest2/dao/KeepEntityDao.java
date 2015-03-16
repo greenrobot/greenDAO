@@ -48,7 +48,7 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, KeepEntity entity) {
         stmt.clearBindings();
@@ -59,13 +59,13 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public KeepEntity readEntity(Cursor cursor, int offset) {
         KeepEntity entity = new KeepEntity( //
@@ -74,20 +74,20 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, KeepEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Long updateKeyAfterInsert(KeepEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long getKey(KeepEntity entity) {
         if(entity != null) {
@@ -97,7 +97,7 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;

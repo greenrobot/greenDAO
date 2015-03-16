@@ -61,7 +61,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, ToManyTargetEntity entity) {
         stmt.clearBindings();
@@ -87,13 +87,13 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public ToManyTargetEntity readEntity(Cursor cursor, int offset) {
         ToManyTargetEntity entity = new ToManyTargetEntity( //
@@ -105,7 +105,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, ToManyTargetEntity entity, int offset) {
         entity.setToManyId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
@@ -114,14 +114,14 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         entity.setTargetJoinProperty(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Long updateKeyAfterInsert(ToManyTargetEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long getKey(ToManyTargetEntity entity) {
         if(entity != null) {
@@ -131,7 +131,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;

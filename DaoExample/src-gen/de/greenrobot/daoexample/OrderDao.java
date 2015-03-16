@@ -61,7 +61,7 @@ public class OrderDao extends AbstractDao<Order, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, Order entity) {
         stmt.clearBindings();
@@ -84,13 +84,13 @@ public class OrderDao extends AbstractDao<Order, Long> {
         entity.__setDaoSession(daoSession);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Order readEntity(Cursor cursor, int offset) {
         Order entity = new Order( //
@@ -101,7 +101,7 @@ public class OrderDao extends AbstractDao<Order, Long> {
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, Order entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
@@ -109,14 +109,14 @@ public class OrderDao extends AbstractDao<Order, Long> {
         entity.setCustomerId(cursor.getLong(offset + 2));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Long updateKeyAfterInsert(Order entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long getKey(Order entity) {
         if(entity != null) {
@@ -126,7 +126,7 @@ public class OrderDao extends AbstractDao<Order, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;

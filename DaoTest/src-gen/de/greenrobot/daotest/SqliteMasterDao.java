@@ -39,7 +39,7 @@ public class SqliteMasterDao extends AbstractDao<SqliteMaster, Void> {
         super(config, daoSession);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, SqliteMaster entity) {
         stmt.clearBindings();
@@ -70,13 +70,13 @@ public class SqliteMasterDao extends AbstractDao<SqliteMaster, Void> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Void readKey(Cursor cursor, int offset) {
         return null;
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public SqliteMaster readEntity(Cursor cursor, int offset) {
         SqliteMaster entity = new SqliteMaster( //
@@ -89,7 +89,7 @@ public class SqliteMasterDao extends AbstractDao<SqliteMaster, Void> {
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, SqliteMaster entity, int offset) {
         entity.setType(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
@@ -99,20 +99,20 @@ public class SqliteMasterDao extends AbstractDao<SqliteMaster, Void> {
         entity.setSql(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Void updateKeyAfterInsert(SqliteMaster entity, long rowId) {
         // Unsupported or missing PK type
         return null;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Void getKey(SqliteMaster entity) {
         return null;
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;

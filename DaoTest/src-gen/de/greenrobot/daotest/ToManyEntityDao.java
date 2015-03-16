@@ -53,7 +53,7 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, ToManyEntity entity) {
         stmt.clearBindings();
@@ -75,13 +75,13 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
         entity.__setDaoSession(daoSession);
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public ToManyEntity readEntity(Cursor cursor, int offset) {
         ToManyEntity entity = new ToManyEntity( //
@@ -91,21 +91,21 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
         return entity;
     }
      
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public void readEntity(Cursor cursor, ToManyEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setSourceJoinProperty(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
      }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     protected Long updateKeyAfterInsert(ToManyEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override
     public Long getKey(ToManyEntity entity) {
         if(entity != null) {
@@ -115,7 +115,7 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
         }
     }
 
-    /** @inheritdoc */
+    /** @inheritDoc */
     @Override    
     protected boolean isEntityUpdateable() {
         return true;
