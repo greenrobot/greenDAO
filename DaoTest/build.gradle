@@ -4,35 +4,35 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.3'
+        classpath 'com.android.tools.build:gradle:0.13.3'
     }
 }
 
 apply plugin: 'android'
 
 dependencies {
-    instrumentTestCompile project(':DaoCore')
+    androidTestCompile project(':DaoCore')
 }
 
 android {
-    buildToolsVersion "19.0"
-    compileSdkVersion 17
+    buildToolsVersion '20.0.0'
+    compileSdkVersion 19
 
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
+            // Workaround: assets.srcDirs in androidTest doesn't seem to work currently
+            assets.srcDirs = ['assets']
         }
 
-        instrumentTest {
-            manifest.srcFile 'AndroidManifest.xml'
+        androidTest {
             assets.srcDirs = ['assets']
             java.srcDirs = ['src','src-gen']
         }
-
     }
 
     defaultConfig {
-        testPackageName "de.greenrobot.daotest"
+        testApplicationId "de.greenrobot.daotest"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 }

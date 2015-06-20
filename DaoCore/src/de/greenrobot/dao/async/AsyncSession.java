@@ -1,27 +1,29 @@
 package de.greenrobot.dao.async;
 
-import java.util.concurrent.Callable;
-
+import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.AbstractDaoSession;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.async.AsyncOperation.OperationType;
 import de.greenrobot.dao.query.Query;
 
+import java.util.concurrent.Callable;
+
 /**
  * Asynchronous interface to entity operations. All operations will enqueued a @link {@link AsyncOperation} and return
  * immediately (fine to call on the UI/main thread). The queue will be processed in a (single) background thread. The
- * processing order is the call order of the operations. It's possible to start multiple AsyncSessions that will execute
+ * processing order is the call order of the operations. It's possible to start multiple AsyncSessions that will
+ * execute
  * concurrently.
- * 
+ *
  * @author Markus
- * 
  * @see AbstractDaoSession#startAsyncSession()
  */
 // Facade to AsyncOperationExecutor: prepares operations and delegates work to AsyncOperationExecutor.
 public class AsyncSession {
     private final AbstractDaoSession daoSession;
     private final AsyncOperationExecutor executor;
+    private int sessionFlags;
 
     public AsyncSession(AbstractDaoSession daoSession) {
         this.daoSession = daoSession;
@@ -75,7 +77,7 @@ public class AsyncSession {
     /**
      * Waits until all enqueued operations are complete, but at most the given amount of milliseconds. If the thread
      * gets interrupted, any {@link InterruptedException} will be rethrown as a {@link DaoException}.
-     * 
+     *
      * @return true if operations completed in the given time frame.
      */
     public boolean waitForCompletion(int maxMillis) {
@@ -303,7 +305,8 @@ public class AsyncSession {
     }
 
     private AsyncOperation enqueueDatabaseOperation(OperationType type, Object param, int flags) {
-        AsyncOperation operation = new AsyncOperation(type, daoSession.getDatabase(), param, flags);
+        SQLiteDatabase database = daoSession.getDatabase();
+        AsyncOperation operation = new AsyncOperation(type, null, database, param, flags | sessionFlags);
         executor.enqueue(operation);
         return operation;
     }
@@ -314,9 +317,18 @@ public class AsyncSession {
 
     private <E> AsyncOperation enqueEntityOperation(OperationType type, Class<E> entityClass, Object param, int flags) {
         AbstractDao<?, ?> dao = daoSession.getDao(entityClass);
-        AsyncOperation operation = new AsyncOperation(type, dao, param, flags);
+        AsyncOperation operation = new AsyncOperation(type, dao, null, param, flags | sessionFlags);
         executor.enqueue(operation);
         return operation;
     }
 
+    /** {@link de.greenrobot.dao.async.AsyncOperation} flags set for all operations (will be ORed with call flags). */
+    public int getSessionFlags() {
+        return sessionFlags;
+    }
+
+    /** {@link de.greenrobot.dao.async.AsyncOperation} flags set for all operations (will be ORed with call flags). */
+    public void setSessionFlags(int sessionFlags) {
+        this.sessionFlags = sessionFlags;
+    }
 }

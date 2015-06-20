@@ -22,9 +22,8 @@ import de.greenrobot.dao.DaoException;
 
 /**
  * An operation that will be enqueued for asynchronous execution.
- * 
+ *
  * @author Markus
- * 
  * @see AsyncSession
  */
 // TODO Implement Future<V>
@@ -45,6 +44,7 @@ public class AsyncOperation {
 
     /** TODO unused, just an idea */
     public static final int FLAG_STOP_QUEUE_ON_EXCEPTION = 1 << 1;
+    public static final int FLAG_TRACK_CREATOR_STACKTRACE = 1 << 2;
 
     final OperationType type;
     final AbstractDao<Object, Object> dao;
@@ -57,26 +57,21 @@ public class AsyncOperation {
     volatile long timeCompleted;
     private volatile boolean completed;
     volatile Throwable throwable;
+    final Exception creatorStacktrace;
     volatile Object result;
     volatile int mergedOperationsCount;
 
     int sequenceNumber;
 
     @SuppressWarnings("unchecked")
-    AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Object parameter, int flags) {
+    /** Either supply dao or database (set other to null). */
+    AsyncOperation(OperationType type, AbstractDao<?, ?> dao, SQLiteDatabase database, Object parameter, int flags) {
         this.type = type;
         this.flags = flags;
         this.dao = (AbstractDao<Object, Object>) dao;
-        this.database = null;
-        this.parameter = parameter;
-    }
-
-    AsyncOperation(OperationType type, SQLiteDatabase database, Object parameter, int flags) {
-        this.type = type;
         this.database = database;
-        this.flags = flags;
-        this.dao = null;
         this.parameter = parameter;
+        creatorStacktrace = (flags & FLAG_TRACK_CREATOR_STACKTRACE) != 0 ? new Exception("AsyncOperation was created here") : null;
     }
 
     public Throwable getThrowable() {
@@ -97,7 +92,7 @@ public class AsyncOperation {
 
     /**
      * The operation's result after it has completed. Waits until a result is available.
-     * 
+     *
      * @return The operation's result or null if the operation type does not produce any result.
      * @throws {@link AsyncDaoException} if the operation produced an exception
      * @see #waitForCompletion()
@@ -123,7 +118,7 @@ public class AsyncOperation {
 
     /**
      * @return true if this operation is mergeable with the given operation. Checks for null, {@link #FLAG_MERGE_TX},
-     *         and if the database instances match.
+     * and if the database instances match.
      */
     boolean isMergeableWith(AsyncOperation other) {
         return other != null && isMergeTx() && other.isMergeTx() && getDatabase() == other.getDatabase();
@@ -156,7 +151,7 @@ public class AsyncOperation {
     /**
      * Waits until the operation is complete. If the thread gets interrupted, any {@link InterruptedException} will be
      * rethrown as a {@link DaoException}.
-     * 
+     *
      * @return Result if any, see {@link #getResult()}
      */
     public synchronized Object waitForCompletion() {
@@ -173,7 +168,7 @@ public class AsyncOperation {
     /**
      * Waits until the operation is complete, but at most the given amount of milliseconds.If the thread gets
      * interrupted, any {@link InterruptedException} will be rethrown as a {@link DaoException}.
-     * 
+     *
      * @return true if the operation completed in the given time frame.
      */
     public synchronized boolean waitForCompletion(int maxMillis) {
@@ -223,4 +218,11 @@ public class AsyncOperation {
         mergedOperationsCount = 0;
     }
 
+    /**
+     * The stacktrace is captured using an exception if {@link #FLAG_TRACK_CREATOR_STACKTRACE} was used (null
+     * otherwise).
+     */
+    public Exception getCreatorStacktrace() {
+        return creatorStacktrace;
+    }
 }
