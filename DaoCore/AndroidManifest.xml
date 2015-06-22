@@ -3,6 +3,6 @@
       package="de.greenrobot.dao"
       android:versionCode="1"
       android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="4" />
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="18"/>
 
 </manifest>
