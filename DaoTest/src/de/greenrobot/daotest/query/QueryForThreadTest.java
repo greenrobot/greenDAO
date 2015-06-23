@@ -17,14 +17,23 @@
  */
 package de.greenrobot.daotest.query;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import android.util.SparseArray;
 import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
 
-public class QueryThreadLocalTest extends TestEntityTestBase {
+public class QueryForThreadTest extends TestEntityTestBase {
+    /** Takes longer when activated */
+    private final static boolean DO_LEAK_TESTS = false;
+    private final static int LEAK_TEST_ITERATIONS = DO_LEAK_TESTS ? 100000 : 2500;
+
     private Query<TestEntity> queryFromOtherThread;
 
     public void testGetForCurrentThread_SameInstance() {
@@ -41,7 +50,45 @@ public class QueryThreadLocalTest extends TestEntityTestBase {
         assertEquals(value + 1, (int) entityFor2.getSimpleInteger());
         query = query.forCurrentThread();
         TestEntity entityFor1 = query.unique();
-        assertEquals(value, (int) entityFor1.getSimpleInteger());
+    }
+
+    public void testGetForCurrentThread_ManyThreadsDontLeak() throws Exception {
+        QueryBuilder<TestEntity> builder = dao.queryBuilder().where(Properties.SimpleInteger.eq("dummy"));
+        final Query<TestEntity> query = builder.build();
+        for (int i = 1; i <= LEAK_TEST_ITERATIONS; i++) {
+            Thread thread = new Thread() {
+                public void run() {
+                    query.forCurrentThread();
+                };
+            };
+            thread.start();
+            if (i % 10 == 0) {
+                thread.join();
+            }
+        }
+        Field queryDataField = Query.class.getDeclaredField("queryData");
+        queryDataField.setAccessible(true);
+        Object queryData = queryDataField.get(query);
+        Class<?> dataSuperclass = queryData.getClass().getSuperclass();
+        Field mapField = dataSuperclass.getDeclaredField("queriesForThreads");
+        mapField.setAccessible(true);
+
+        Method gcMethod = dataSuperclass.getDeclaredMethod("gc");
+        gcMethod.setAccessible(true);
+        SparseArray<?> map = (SparseArray<?>) mapField.get(queryData);
+        for (int i = 0; map.size() > 1 && i < 1000; i++) {
+            DaoLog.d("Queries left after " + i + ". GC: " + map.size());
+            System.gc();
+            gcMethod.invoke(queryData);
+        }
+        assertEquals(1, map.size());
+    }
+
+    public void testBuildQueryDoesntLeak() {
+        QueryBuilder<TestEntity> builder = dao.queryBuilder().where(Properties.SimpleInteger.eq("dummy"));
+        for (int i = 0; i < LEAK_TEST_ITERATIONS; i++) {
+            builder.build();
+        }
     }
 
     public void testGetForCurrentThread_TwoThreads() throws InterruptedException {

@@ -16,7 +16,6 @@
 package de.greenrobot.dao.query;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
 
 /**
@@ -29,41 +28,32 @@ import de.greenrobot.dao.AbstractDao;
  *            The enitity class the query will delete from.
  */
 public class DeleteQuery<T> extends AbstractQuery<T> {
-    private final static class ThreadLocalQuery<T2> extends ThreadLocal<DeleteQuery<T2>> {
-        private final String sql;
-        private final AbstractDao<T2, ?> dao;
-        private final String[] initialValues;
+    private final static class QueryData<T2> extends AbstractQueryData<T2, DeleteQuery<T2>> {
 
-        private ThreadLocalQuery(AbstractDao<T2, ?> dao, String sql, String[] initialValues) {
-            this.dao = dao;
-            this.sql = sql;
-            this.initialValues = initialValues;
+        private QueryData(AbstractDao<T2, ?> dao, String sql, String[] initialValues) {
+            super(dao, sql, initialValues);
         }
 
         @Override
-        protected DeleteQuery<T2> initialValue() {
+        protected DeleteQuery<T2> createQuery() {
             return new DeleteQuery<T2>(this, dao, sql, initialValues.clone());
         }
     }
 
     static <T2> DeleteQuery<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
-        ThreadLocalQuery<T2> threadLocal = new ThreadLocalQuery<T2>(dao, sql, toStringArray(initialValues));
-        return threadLocal.get();
+        QueryData<T2> queryData = new QueryData<T2>(dao, sql, toStringArray(initialValues));
+        return queryData.forCurrentThread();
     }
 
-    private SQLiteStatement compiledStatement;
-    private final ThreadLocalQuery<T> threadLocalQuery;
+    private final QueryData<T> queryData;
 
-    private DeleteQuery(ThreadLocalQuery<T> threadLocalQuery, AbstractDao<T, ?> dao, String sql, String[] initialValues) {
+    private DeleteQuery(QueryData<T> queryData, AbstractDao<T, ?> dao, String sql, String[] initialValues) {
         super(dao, sql, initialValues);
-        this.threadLocalQuery = threadLocalQuery;
+        this.queryData = queryData;
     }
 
     public DeleteQuery<T> forCurrentThread() {
-        DeleteQuery<T> query = threadLocalQuery.get();
-        String[] initialValues = threadLocalQuery.initialValues;
-        System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
-        return query;
+        return queryData.forCurrentThread(this);
     }
 
     /**
@@ -75,35 +65,18 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
         checkThread();
         SQLiteDatabase db = dao.getDatabase();
         if (db.isDbLockedByCurrentThread()) {
-            executeDeleteWithoutDetachingEntitiesInsideTx();
+            dao.getDatabase().execSQL(sql, parameters);
         } else {
             // Do TX to acquire a connection before locking this to avoid deadlocks
             // Locking order as described in AbstractDao
             db.beginTransaction();
             try {
-                executeDeleteWithoutDetachingEntitiesInsideTx();
+                dao.getDatabase().execSQL(sql, parameters);
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
             }
         }
-    }
-
-    private synchronized void executeDeleteWithoutDetachingEntitiesInsideTx() {
-        if (compiledStatement != null) {
-            compiledStatement.clearBindings();
-        } else {
-            compiledStatement = dao.getDatabase().compileStatement(sql);
-        }
-        for (int i = 0; i < parameters.length; i++) {
-            String value = parameters[i];
-            if (value != null) {
-                compiledStatement.bindString(i + 1, value);
-            } else {
-                compiledStatement.bindNull(i + 1);
-            }
-        }
-        compiledStatement.execute();
     }
 
 }

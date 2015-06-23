@@ -1,19 +1,19 @@
 package de.greenrobot.daotest;
 
-import java.lang.reflect.Method;
-
-import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.query.Query;
 
+import java.lang.reflect.Method;
+
 public class DaoSessionConcurrentWALTest extends DaoSessionConcurrentTest {
+
     @Override
-    protected void setUpDb() {
-        getApplication().deleteDatabase("wal-test-db");
+    protected SQLiteDatabase createDatabase() {
         int MODE_ENABLE_WRITE_AHEAD_LOGGING = 8;
-        db = getApplication().openOrCreateDatabase("wal-test-db",
-                Context.MODE_PRIVATE | MODE_ENABLE_WRITE_AHEAD_LOGGING, null);
+        getContext().deleteDatabase(DB_NAME);
+        return getContext().openOrCreateDatabase(DB_NAME, MODE_ENABLE_WRITE_AHEAD_LOGGING, null);
     }
 
     public void testConcurrentLockAndQueryDuringTxWAL() throws InterruptedException {

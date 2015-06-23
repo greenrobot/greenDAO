@@ -22,7 +22,7 @@ import de.greenrobot.daotest.TestEntity;
 
 public class TestEntityIdentityScopeTest extends TestEntityTest {
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         setIdentityScopeBeforeSetUp(new IdentityScopeLong<TestEntity>());
         super.setUp();
     }

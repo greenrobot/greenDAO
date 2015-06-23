@@ -106,11 +106,16 @@ public class SqlUtils {
     }
 
     /** Creates SELECT COUNT(*) with a trailing space. */
-    public static String createSqlSelectCountStar(String tablename) {
+    public static String createSqlSelectCountStar(String tablename, String tableAliasOrNull) {
         StringBuilder builder = new StringBuilder("SELECT COUNT(*) FROM ");
-        return builder.append(tablename).append(' ').toString();
+        builder.append(tablename).append(' ');
+        if(tableAliasOrNull != null) {
+            builder.append(tableAliasOrNull).append(' ');
+        }
+        return builder.toString();
     }
 
+    /** Remember: SQLite does not support joins nor table alias for DELETE. */
     public static String createSqlDelete(String tablename, String[] columns) {
         StringBuilder builder = new StringBuilder("DELETE FROM ");
         builder.append(tablename);

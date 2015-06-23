@@ -30,7 +30,7 @@ public class QuerySpecialNamesTest extends AbstractDaoTest<SpecialNamesEntityDao
     }
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         QueryBuilder.LOG_SQL = true;
         QueryBuilder.LOG_VALUES = true;
@@ -48,6 +48,8 @@ public class QuerySpecialNamesTest extends AbstractDaoTest<SpecialNamesEntityDao
         queryBuilder.where(Properties.Sum.isNotNull());
         queryBuilder.where(Properties.Order.isNotNull());
         queryBuilder.list();
+        queryBuilder.buildCount().count();
+        queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
     }
 
     public void testWhereWithSpecialNamesWithValues() {
@@ -62,6 +64,8 @@ public class QuerySpecialNamesTest extends AbstractDaoTest<SpecialNamesEntityDao
         queryBuilder.where(Properties.Sum.lt(1));
         queryBuilder.where(Properties.Order.gt(1));
         queryBuilder.list();
+        queryBuilder.buildCount().count();
+        queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
     }
 
     public void testOrderWithSpecialNames() {

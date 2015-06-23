@@ -30,7 +30,7 @@ import de.greenrobot.daotest.entity.TestEntityTestBase;
 // TODO more tests
 public class DeleteQueryTest extends TestEntityTestBase {
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         QueryBuilder.LOG_SQL = true;
         QueryBuilder.LOG_VALUES = true;
@@ -50,6 +50,22 @@ public class DeleteQueryTest extends TestEntityTestBase {
         List<TestEntity> allAfterDelete = dao.loadAll();
         assertEquals(1, allAfterDelete.size());
         assertEquals(getSimpleInteger(0), (int) allAfterDelete.get(0).getSimpleInteger());
+    }
+
+    public void testDeleteQueryOr() {
+        ArrayList<TestEntity> inserted = insert(3);
+
+        QueryBuilder<TestEntity> queryBuilder = dao.queryBuilder();
+        Integer value1 = inserted.get(0).getSimpleInteger();
+        Integer value2 = inserted.get(2).getSimpleInteger();
+        queryBuilder.whereOr(Properties.SimpleInteger.eq(value1), Properties.SimpleInteger.eq(value2));
+        DeleteQuery<TestEntity> deleteQuery = queryBuilder.buildDelete();
+
+        deleteQuery.executeDeleteWithoutDetachingEntities();
+
+        List<TestEntity> allAfterDelete = dao.loadAll();
+        assertEquals(1, allAfterDelete.size());
+        assertEquals(inserted.get(1).getSimpleInteger(), allAfterDelete.get(0).getSimpleInteger());
     }
 
     public void testDeleteQueryExecutingMultipleTimes() {
@@ -85,7 +101,7 @@ public class DeleteQueryTest extends TestEntityTestBase {
         TestEntity remaining = dao.loadAll().get(0);
         assertEquals(getSimpleString(2), remaining.getSimpleString());
     }
-    
+
     public void testBuildQueryAndDeleteQuery() {
         insert(3);
         int value = getSimpleInteger(1);

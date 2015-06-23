@@ -6,40 +6,32 @@ import de.greenrobot.dao.DaoException;
 
 public class CountQuery<T> extends AbstractQuery<T> {
 
-    private final static class ThreadLocalQuery<T2> extends ThreadLocal<CountQuery<T2>> {
-        private final String sql;
-        private final AbstractDao<T2, ?> dao;
-        private final String[] initialValues;
+    private final static class QueryData<T2> extends AbstractQueryData<T2, CountQuery<T2>> {
 
-        private ThreadLocalQuery(AbstractDao<T2, ?> dao, String sql, String[] initialValues) {
-            this.dao = dao;
-            this.sql = sql;
-            this.initialValues = initialValues;
+        private QueryData(AbstractDao<T2, ?> dao, String sql, String[] initialValues) {
+            super(dao, sql, initialValues);
         }
 
         @Override
-        protected CountQuery<T2> initialValue() {
+        protected CountQuery<T2> createQuery() {
             return new CountQuery<T2>(this, dao, sql, initialValues.clone());
         }
     }
 
     static <T2> CountQuery<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues) {
-        ThreadLocalQuery<T2> threadLocal = new ThreadLocalQuery<T2>(dao, sql, toStringArray(initialValues));
-        return threadLocal.get();
+        QueryData<T2> queryData = new QueryData<T2>(dao, sql, toStringArray(initialValues));
+        return queryData.forCurrentThread();
     }
 
-    private final ThreadLocalQuery<T> threadLocalQuery;
+    private final QueryData<T> queryData;
 
-    private CountQuery(ThreadLocalQuery<T> threadLocalQuery, AbstractDao<T, ?> dao, String sql, String[] initialValues) {
+    private CountQuery(QueryData<T> queryData, AbstractDao<T, ?> dao, String sql, String[] initialValues) {
         super(dao, sql, initialValues);
-        this.threadLocalQuery = threadLocalQuery;
+        this.queryData = queryData;
     }
 
     public CountQuery<T> forCurrentThread() {
-        CountQuery<T> query = threadLocalQuery.get();
-        String[] initialValues = threadLocalQuery.initialValues;
-        System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
-        return query;
+        return queryData.forCurrentThread(this);
     }
 
     /** Returns the count (number of results matching the query). Uses SELECT COUNT (*) sematics. */

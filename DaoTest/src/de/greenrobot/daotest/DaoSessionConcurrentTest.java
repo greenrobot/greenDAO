@@ -2,7 +2,6 @@ package de.greenrobot.daotest;
 
 import java.util.concurrent.CountDownLatch;
 
-import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.SystemClock;
@@ -11,7 +10,7 @@ import de.greenrobot.dao.query.DeleteQuery;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 
-public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application, DaoMaster, DaoSession> {
+public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
     class TestThread extends Thread {
         final Runnable runnable;
 
@@ -46,7 +45,7 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<Application
     }
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         dao = daoSession.getTestEntityDao();
     }

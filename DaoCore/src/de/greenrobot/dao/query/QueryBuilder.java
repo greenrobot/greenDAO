@@ -326,8 +326,16 @@ public class QueryBuilder<T> {
         String tablename = dao.getTablename();
         String baseSql = SqlUtils.createSqlDelete(tablename, null);
         StringBuilder builder = new StringBuilder(baseSql);
-        appendWhereClause(builder, tablename);
+
+        // tablePrefix gets replaced by table name below. Don't use tableName here because it causes trouble when
+        // table name ends with tablePrefix.
+        appendWhereClause(builder, tablePrefix);
+
         String sql = builder.toString();
+
+        // Remove table aliases, not supported for DELETE queries.
+        // TODO(?): don't create table aliases in the first place.
+        sql = sql.replace(tablePrefix + ".'", tablename + ".'");
 
         if (LOG_SQL) {
             DaoLog.d("Built SQL for delete query: " + sql);
@@ -345,9 +353,9 @@ public class QueryBuilder<T> {
      */
     public CountQuery<T> buildCount() {
         String tablename = dao.getTablename();
-        String baseSql = SqlUtils.createSqlSelectCountStar(tablename);
+        String baseSql = SqlUtils.createSqlSelectCountStar(tablename, tablePrefix);
         StringBuilder builder = new StringBuilder(baseSql);
-        appendWhereClause(builder, tablename);
+        appendWhereClause(builder, tablePrefix);
         String sql = builder.toString();
 
         if (LOG_SQL) {

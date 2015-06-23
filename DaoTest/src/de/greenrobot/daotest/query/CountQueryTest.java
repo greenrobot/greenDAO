@@ -29,7 +29,7 @@ import de.greenrobot.daotest.entity.TestEntityTestBase;
 // TODO more tests
 public class CountQueryTest extends TestEntityTestBase {
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         QueryBuilder.LOG_SQL = true;
         QueryBuilder.LOG_VALUES = true;
@@ -48,6 +48,51 @@ public class CountQueryTest extends TestEntityTestBase {
         assertEquals(2, query.count());
 
         dao.deleteAll();
+        assertEquals(0, query.count());
+    }
+
+    public void testCountQueryTwoParameters() {
+        int value = getSimpleInteger(1);
+        String valueString = getSimpleString(1);
+        
+        QueryBuilder<TestEntity> queryBuilder = dao.queryBuilder();
+        queryBuilder.where(Properties.SimpleInteger.eq(value), Properties.SimpleString.eq(valueString));
+        CountQuery<TestEntity> query = queryBuilder.buildCount();
+        assertEquals(0, query.count());
+
+        ArrayList<TestEntity> inserted = insert(3);
+        assertEquals(1, query.count());
+
+        inserted.get(2).setSimpleInteger(value);
+        dao.update(inserted.get(2));
+        assertEquals(1, query.count());
+        
+        inserted.get(2).setSimpleString(valueString);
+        dao.update(inserted.get(2));
+        assertEquals(2, query.count());
+
+        dao.deleteAll();
+        assertEquals(0, query.count());
+    }
+
+    public void testCountQueryTwoParametersOr() {
+        int value = getSimpleInteger(1);
+        String valueString = getSimpleString(2);
+        
+        QueryBuilder<TestEntity> queryBuilder = dao.queryBuilder();
+        queryBuilder.whereOr(Properties.SimpleInteger.eq(value), Properties.SimpleString.eq(valueString));
+        CountQuery<TestEntity> query = queryBuilder.buildCount();
+        assertEquals(0, query.count());
+
+        ArrayList<TestEntity> inserted = insert(3);
+        assertEquals(2, query.count());
+
+        inserted.get(1).setSimpleInteger(getSimpleInteger(2));
+        dao.update(inserted.get(1));
+        assertEquals(1, query.count());
+        
+        inserted.get(2).setSimpleString(getSimpleString(3));
+        dao.update(inserted.get(2));
         assertEquals(0, query.count());
     }
 

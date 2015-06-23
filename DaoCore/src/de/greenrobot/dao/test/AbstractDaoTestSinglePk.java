@@ -16,11 +16,6 @@
 
 package de.greenrobot.dao.test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.SQLException;
@@ -28,17 +23,18 @@ import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.SqlUtils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Default tests for single-PK entities.
- * 
+ *
+ * @param <D> DAO class
+ * @param <T> Entity type of the DAO
+ * @param <K> Key type of the DAO
  * @author Markus
- * 
- * @param <D>
- *            DAO class
- * @param <T>
- *            Entity type of the DAO
- * @param <K>
- *            Key type of the DAO
  */
 public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K> extends AbstractDaoTest<D, T, K> {
 
@@ -51,7 +47,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
     }
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         Property[] columns = daoAccess.getProperties();
         for (Property column : columns) {

@@ -18,6 +18,7 @@ package de.greenrobot.dao.query;
 import java.util.List;
 
 import android.database.Cursor;
+import android.os.Process;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 
@@ -32,27 +33,23 @@ import de.greenrobot.dao.DaoException;
 // TODO support long, double and other types, not just Strings, for parameters
 // TODO Make parameters setable by Property (if unique in paramaters)
 // TODO Query for PKs/ROW IDs
+// TODO Make query compilable
 public class Query<T> extends AbstractQuery<T> {
-    private final static class ThreadLocalQuery<T2> extends ThreadLocal<Query<T2>> {
-        private final String sql;
-        private final AbstractDao<T2, ?> dao;
-        private final String[] initialValues;
+    private final static class QueryData<T2> extends AbstractQueryData<T2, Query<T2>> {
         private final int limitPosition;
         private final int offsetPosition;
 
-        private ThreadLocalQuery(AbstractDao<T2, ?> dao, String sql, String[] initialValues, int limitPosition,
-                int offsetPosition) {
-            this.dao = dao;
-            this.sql = sql;
-            this.initialValues = initialValues;
+        QueryData(AbstractDao<T2, ?> dao, String sql, String[] initialValues, int limitPosition, int offsetPosition) {
+            super(dao,sql,initialValues);
             this.limitPosition = limitPosition;
             this.offsetPosition = offsetPosition;
         }
 
         @Override
-        protected Query<T2> initialValue() {
+        protected Query<T2> createQuery() {
             return new Query<T2>(this, dao, sql, initialValues.clone(), limitPosition, offsetPosition);
         }
+
     }
 
     /** For internal use by greenDAO only. */
@@ -62,32 +59,25 @@ public class Query<T> extends AbstractQuery<T> {
 
     static <T2> Query<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues, int limitPosition,
             int offsetPosition) {
-        ThreadLocalQuery<T2> threadLocal = new ThreadLocalQuery<T2>(dao, sql, toStringArray(initialValues),
-                limitPosition, offsetPosition);
-        return threadLocal.get();
+        QueryData<T2> queryData = new QueryData<T2>(dao, sql, toStringArray(initialValues), limitPosition,
+                offsetPosition);
+        return queryData.forCurrentThread();
     }
 
     private final int limitPosition;
     private final int offsetPosition;
-    private final ThreadLocalQuery<T> threadLocalQuery;
+    private final QueryData<T> queryData;
 
-    private Query(ThreadLocalQuery<T> threadLocalQuery, AbstractDao<T, ?> dao, String sql, String[] initialValues,
-            int limitPosition, int offsetPosition) {
+    private Query(QueryData<T> queryData, AbstractDao<T, ?> dao, String sql, String[] initialValues, int limitPosition,
+            int offsetPosition) {
         super(dao, sql, initialValues);
-        this.threadLocalQuery = threadLocalQuery;
+        this.queryData = queryData;
         this.limitPosition = limitPosition;
         this.offsetPosition = offsetPosition;
     }
 
-    // public void compile() {
-    // // TODO implement compile
-    // }
-
     public Query<T> forCurrentThread() {
-        Query<T> query = threadLocalQuery.get();
-        String[] initialValues = threadLocalQuery.initialValues;
-        System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
-        return query;
+        return queryData.forCurrentThread(this);
     }
 
     /**

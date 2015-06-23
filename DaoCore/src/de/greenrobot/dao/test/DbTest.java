@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2013 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,67 +16,96 @@
 
 package de.greenrobot.dao.test;
 
-import java.util.Random;
-
 import android.app.Application;
-import android.content.Context;
+import android.app.Instrumentation;
 import android.database.sqlite.SQLiteDatabase;
-import android.test.ApplicationTestCase;
+import android.test.AndroidTestCase;
 import de.greenrobot.dao.DbUtils;
 
-/**
- * Base class for database related testing. Prepares an in-memory or an file-based DB.
- * 
- * @author Markus
- * 
- */
-public abstract class DbTest<T extends Application> extends ApplicationTestCase<T> {
+import java.util.Random;
 
-    protected SQLiteDatabase db;
-    protected Random random;
+/**
+ * Base class for database related testing, which prepares an in-memory or an file-based DB (using the test {@link
+ * android.content.Context}). Also, offers some convenience methods to create new {@link Application} objects similar to
+ * {@link android.test.ApplicationTestCase}.
+ * <p/>
+ * Unlike ApplicationTestCase, this class should behave more correctly when you call {@link #createApplication(Class)}
+ * during {@link #setUp()}: {@link android.test.ApplicationTestCase#testApplicationTestCaseSetUpProperly()} leaves
+ * Application objects un-terminated.
+ *
+ * @author Markus
+ */
+public abstract class DbTest extends AndroidTestCase {
+
+    public static final String DB_NAME = "greendao-unittest-db.temp";
+
+    protected final Random random;
     protected final boolean inMemory;
+    protected SQLiteDatabase db;
+
+    private Application application;
 
     public DbTest() {
         this(true);
     }
 
-    @SuppressWarnings("unchecked")
     public DbTest(boolean inMemory) {
-        this((Class<T>) Application.class, inMemory);
-    }
-
-    public DbTest(Class<T> appClass, boolean inMemory) {
-        super(appClass);
         this.inMemory = inMemory;
         random = new Random();
     }
 
     @Override
-    protected void setUp() {
-        try {
-            super.setUp();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        createApplication();
-        setUpDb();
+    protected void setUp() throws Exception {
+        super.setUp();
+        db = createDatabase();
     }
 
-    /** Override if you create your own DB */
-    protected void setUpDb() {
+    /** Returns a prepared application with the onCreate method already called. */
+    public <T extends Application> T createApplication(Class<T> appClass) {
+        assertNull("Application already created", application);
+        T app;
+        try {
+            app = (T) Instrumentation.newApplication(appClass, getContext());
+        } catch (Exception e) {
+            throw new RuntimeException("Could not create application " + appClass, e);
+        }
+        app.onCreate();
+        application = app;
+        return app;
+    }
+
+    /** Terminates a previously created application. Also called by {@link #tearDown()} if needed. */
+    public void terminateApplication() {
+        assertNotNull("Application not yet created", application);
+        application.onTerminate();
+        application = null;
+    }
+
+    /** Gets the previously created application. */
+    public <T extends Application> T getApplication() {
+        assertNotNull("Application not yet created", application);
+        return (T) application;
+    }
+
+    /** May be overriden by sub classes to set up a different db. */
+    protected SQLiteDatabase createDatabase() {
         if (inMemory) {
-            db = SQLiteDatabase.create(null);
+            return SQLiteDatabase.create(null);
         } else {
-            getApplication().deleteDatabase("test-db");
-            db = getApplication().openOrCreateDatabase("test-db", Context.MODE_PRIVATE, null);
+            getContext().deleteDatabase(DB_NAME);
+            return getContext().openOrCreateDatabase(DB_NAME, 0, null);
         }
     }
 
     @Override
+    /** Closes the db, and terminates an application, if one was created before. */
     protected void tearDown() throws Exception {
+        if (application != null) {
+            terminateApplication();
+        }
         db.close();
         if (!inMemory) {
-            getApplication().deleteDatabase("test-db");
+            getContext().deleteDatabase(DB_NAME);
         }
         super.tearDown();
     }

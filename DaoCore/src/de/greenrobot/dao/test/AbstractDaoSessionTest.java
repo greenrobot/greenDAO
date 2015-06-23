@@ -19,7 +19,6 @@ package de.greenrobot.dao.test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDaoMaster;
 import de.greenrobot.dao.AbstractDaoSession;
@@ -32,8 +31,8 @@ import de.greenrobot.dao.AbstractDaoSession;
  * @param <T>
  *            Type of a concrete DAO master
  */
-public abstract class AbstractDaoSessionTest<A extends Application, T extends AbstractDaoMaster, S extends AbstractDaoSession>
-        extends DbTest<A> {
+public abstract class AbstractDaoSessionTest<T extends AbstractDaoMaster, S extends AbstractDaoSession>
+        extends DbTest {
 
     private final Class<T> daoMasterClass;
     protected T daoMaster;
@@ -48,14 +47,9 @@ public abstract class AbstractDaoSessionTest<A extends Application, T extends Ab
         this.daoMasterClass = daoMasterClass;
     }
 
-    public AbstractDaoSessionTest(Class<A> appClass, Class<T> daoMasterClass, boolean inMemory) {
-        super(appClass, inMemory);
-        this.daoMasterClass = daoMasterClass;
-    }
-
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         try {
             Constructor<T> constructor = daoMasterClass.getConstructor(SQLiteDatabase.class);

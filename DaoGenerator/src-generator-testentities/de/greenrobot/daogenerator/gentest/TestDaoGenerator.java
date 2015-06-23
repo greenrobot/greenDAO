@@ -79,6 +79,8 @@ public class TestDaoGenerator {
         simple.addDoubleProperty("simpleDouble");
         simple.addStringProperty("simpleString");
         simple.addByteArrayProperty("simpleByteArray");
+        
+        simple.addContentProvider().readOnly();
     }
 
     protected void createSimpleNotNull() {

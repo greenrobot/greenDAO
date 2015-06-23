@@ -3,7 +3,6 @@ package de.greenrobot.daotest.async;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import android.app.Application;
 import de.greenrobot.dao.async.AsyncOperation;
 import de.greenrobot.dao.async.AsyncOperationListener;
 import de.greenrobot.dao.async.AsyncSession;
@@ -11,7 +10,7 @@ import de.greenrobot.dao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
 
-public abstract class AbstractAsyncTest extends AbstractDaoSessionTest<Application, DaoMaster, DaoSession> implements
+public abstract class AbstractAsyncTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> implements
         AsyncOperationListener {
 
     protected AsyncSession asyncSession;
@@ -22,7 +21,7 @@ public abstract class AbstractAsyncTest extends AbstractDaoSessionTest<Applicati
     }
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         super.setUp();
         asyncSession = daoSession.startAsyncSession();
         asyncSession.setListener(this);
