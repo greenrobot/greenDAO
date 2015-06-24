@@ -71,7 +71,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     */
     public static class Properties {
 <#list entity.propertiesColumns as property>
-        public final static Property ${property.propertyName?cap_first} = new Property(${property_index}, ${property.javaType}.class, "${property.propertyName}", ${property.primaryKey?string}, "${property.columnName}");
+        public static final  Property ${property.propertyName?cap_first} = new Property(${property_index}, ${property.javaType}.class, "${property.propertyName}", ${property.primaryKey?string}, "${property.columnName}");
 </#list>
     };
 
@@ -97,7 +97,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 <#if !entity.skipTableCreation>
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        String constraint = ifNotExists ? "IF NOT EXISTS " : "";
         db.execSQL("CREATE TABLE " + constraint + "'${entity.tableName}' (" + //
 <#list entity.propertiesColumns as property>
                 "'${property.columnName}' ${property.columnType}<#if property.constraints??> ${property.constraints} </#if><#if property_has_next>," +<#else>);");</#if> // ${property_index}: ${property.propertyName}
@@ -126,7 +126,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 <#list entity.properties as property>
 <#if property.notNull || entity.protobuf>
 <#if entity.protobuf>
-        if(entity.has${property.propertyName?cap_first}()) {
+        if (entity.has${property.propertyName?cap_first}()) {
     </#if>        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, entity.get${property.propertyName?cap_first}()<#if
      property.propertyType == "Boolean"> ? 1l: 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
 <#if entity.protobuf>
@@ -144,10 +144,10 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 <#if !toOne.fkProperties?has_content>
 
         ${toOne.targetEntity.className} ${toOne.name} = entity.peak${toOne.name?cap_first}();
-        if(${toOne.name} != null) {
+        if (${toOne.name} != null) {
             ${toOne.targetEntity.pkProperty.javaType} ${toOne.name}__targetKey = ${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}();
 <#if !toOne.targetEntity.pkProperty.notNull>
-            if(${toOne.name}__targetKey != null) {
+            if (${toOne.name}__targetKey != null) {
                 // TODO bind ${toOne.name}__targetKey
             }
 <#else>
@@ -256,7 +256,7 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
     @Override
     public ${entity.pkType} getKey(${entity.className} entity) {
 <#if entity.pkProperty??>
-        if(entity != null) {
+        if (entity != null) {
             return entity.get${entity.pkProperty.propertyName?cap_first}();
         } else {
             return null;
