@@ -51,6 +51,7 @@ public class QueryBuilder<T> {
     private StringBuilder orderBuilder;
 
     private final List<Object> values;
+    private final List<Join<T, ?>> joins;
     private final AbstractDao<T, ?> dao;
     private final String tablePrefix;
 
@@ -70,6 +71,7 @@ public class QueryBuilder<T> {
         this.dao = dao;
         this.tablePrefix = tablePrefix;
         values = new ArrayList<Object>();
+        joins = new ArrayList<Join<T, ?>>();
         whereCollector = new WhereCollector<T>(dao, tablePrefix);
     }
 
@@ -118,26 +120,23 @@ public class QueryBuilder<T> {
     }
 
     /** Not supported yet. */
-    public <J> Join<T, J> join(Class<J> entityClass, Property toOneProperty) {
-        AbstractDao<?, ?> dao2 = dao.getSession().getDao(entityClass);
-        Property pkProperty = dao2.getPkProperty();
-        return join(entityClass, toOneProperty, pkProperty);
+    public <J> Join<T, J> join(Class<J> destinationEntityClass, Property destinationProperty) {
+        return join(dao.getPkProperty(), destinationEntityClass, destinationProperty);
     }
 
     /** Not supported yet. */
-    public <J> Join<T, J> join(Class<J> entityClass, Property sourceProperty, Property targetProperty) {
-        AbstractDao<?, ?> dao2 = dao.getSession().getDao(entityClass);
-        // new Join(dao2, )
-        // return new QueryBuilder<J>();
-        throw new UnsupportedOperationException();
+    public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass) {
+        AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
+        Property destinationProperty = destinationDao.getPkProperty();
+        String joinTablePrefix = "J" + (joins.size() + 1);
+        return new Join<T, J>(dao, sourceProperty, destinationDao, destinationProperty, joinTablePrefix);
     }
 
     /** Not supported yet. */
-    public <J> QueryBuilder<J> joinToMany(Class<J> entityClass, Property toManyProperty) {
-        throw new UnsupportedOperationException();
-        // @SuppressWarnings("unchecked")
-        // AbstractDao<J, ?> joinDao = (AbstractDao<J, ?>) dao.getSession().getDao(entityClass);
-        // return new QueryBuilder<J>(joinDao, "TX");
+    public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass, Property destinationProperty) {
+        AbstractDao<J, ?> dao2 = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
+        String joinTablePrefix = "J" + (joins.size() + 1);
+        return new Join<T, J>(dao, sourceProperty, dao2, destinationProperty, joinTablePrefix);
     }
 
     /** Adds the given properties to the ORDER BY section using ascending order. */

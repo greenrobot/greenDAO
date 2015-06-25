@@ -25,13 +25,56 @@ public class Join<SRC, DST> {
 
     private final Property joinPropertySource;
     private final Property joinPropertyDestination;
+    private final WhereCollector<DST> whereCollector;
 
     public Join(AbstractDao<SRC, ?> daoSource, Property sourceJoinProperty,
-                AbstractDao<DST, ?> daoDestination, Property destinationJoinProperty) {
+                AbstractDao<DST, ?> daoDestination, Property destinationJoinProperty,
+                String joinTablePrefix) {
         this.daoSource = daoSource;
         this.joinPropertySource = sourceJoinProperty;
         this.daoDestination = daoDestination;
         this.joinPropertyDestination = destinationJoinProperty;
+        whereCollector = new WhereCollector<DST>(daoDestination, joinTablePrefix);
     }
 
+
+    /**
+     * Adds the given conditions to the where clause using an logical AND. To create new conditions, use the properties
+     * given in the generated dao classes.
+     */
+    public Join<SRC, DST> where(WhereCondition cond, WhereCondition... condMore) {
+        whereCollector.add(cond, condMore);
+        return this;
+    }
+
+    /**
+     * Adds the given conditions to the where clause using an logical OR. To create new conditions, use the properties
+     * given in the generated dao classes.
+     */
+    public Join<SRC, DST> whereOr(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
+        whereCollector.add(or(cond1, cond2, condMore));
+        return this;
+    }
+
+    /**
+     * Creates a WhereCondition by combining the given conditions using OR. The returned WhereCondition must be used
+     * inside {@link #where(WhereCondition, WhereCondition...)} or
+     * {@link #whereOr(WhereCondition, WhereCondition, WhereCondition...)}.
+     */
+    public WhereCondition or(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
+        return whereCollector.combineWhereConditions(" OR ", cond1, cond2, condMore);
+    }
+
+    /**
+     * Creates a WhereCondition by combining the given conditions using AND. The returned WhereCondition must be used
+     * inside {@link #where(WhereCondition, WhereCondition...)} or
+     * {@link #whereOr(WhereCondition, WhereCondition, WhereCondition...)}.
+     */
+    public WhereCondition and(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
+        return whereCollector.combineWhereConditions(" AND ", cond1, cond2, condMore);
+    }
+
+    WhereCollector<DST> getWhereCollector() {
+        return whereCollector;
+    }
 }
