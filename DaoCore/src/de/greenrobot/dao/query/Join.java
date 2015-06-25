@@ -20,20 +20,22 @@ import de.greenrobot.dao.Property;
 
 public class Join<SRC, DST> {
 
-    private final AbstractDao<SRC, ?> daoSource;
-    private final AbstractDao<DST, ?> daoDestination;
+    final String sourceTablePrefix;
+    final AbstractDao<DST, ?> daoDestination;
 
-    private final Property joinPropertySource;
-    private final Property joinPropertyDestination;
-    private final WhereCollector<DST> whereCollector;
+    final Property joinPropertySource;
+    final Property joinPropertyDestination;
+    final String tablePrefix;
+    final WhereCollector<DST> whereCollector;
 
-    public Join(AbstractDao<SRC, ?> daoSource, Property sourceJoinProperty,
+    public Join(String sourceTablePrefix, Property sourceJoinProperty,
                 AbstractDao<DST, ?> daoDestination, Property destinationJoinProperty,
                 String joinTablePrefix) {
-        this.daoSource = daoSource;
+        this.sourceTablePrefix = sourceTablePrefix;
         this.joinPropertySource = sourceJoinProperty;
         this.daoDestination = daoDestination;
         this.joinPropertyDestination = destinationJoinProperty;
+        tablePrefix = joinTablePrefix;
         whereCollector = new WhereCollector<DST>(daoDestination, joinTablePrefix);
     }
 
@@ -74,7 +76,4 @@ public class Join<SRC, DST> {
         return whereCollector.combineWhereConditions(" AND ", cond1, cond2, condMore);
     }
 
-    WhereCollector<DST> getWhereCollector() {
-        return whereCollector;
-    }
 }

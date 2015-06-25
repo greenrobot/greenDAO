@@ -128,15 +128,22 @@ public class QueryBuilder<T> {
     public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass) {
         AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
         Property destinationProperty = destinationDao.getPkProperty();
-        String joinTablePrefix = "J" + (joins.size() + 1);
-        return new Join<T, J>(dao, sourceProperty, destinationDao, destinationProperty, joinTablePrefix);
+        return addJoin(sourceProperty, destinationDao, destinationProperty);
     }
 
     /** Not supported yet. */
     public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass, Property destinationProperty) {
-        AbstractDao<J, ?> dao2 = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
+        AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
+        return addJoin(sourceProperty, destinationDao, destinationProperty);
+    }
+
+    private <J> Join<T, J> addJoin(Property sourceProperty,
+                                   AbstractDao<J, ?> destinationDao, Property destinationProperty) {
         String joinTablePrefix = "J" + (joins.size() + 1);
-        return new Join<T, J>(dao, sourceProperty, dao2, destinationProperty, joinTablePrefix);
+        Join<T, J> join = new Join<T, J>(tablePrefix, sourceProperty, destinationDao, destinationProperty,
+                joinTablePrefix);
+        joins.add(join);
+        return join;
     }
 
     /** Adds the given properties to the ORDER BY section using ascending order. */
@@ -210,7 +217,7 @@ public class QueryBuilder<T> {
         String select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
         StringBuilder builder = new StringBuilder(select);
 
-        appendWhereClause(builder, tablePrefix);
+        appendJoinsAndWheres(builder, tablePrefix);
 
         if (orderBuilder != null && orderBuilder.length() > 0) {
             builder.append(" ORDER BY ").append(orderBuilder);
@@ -256,10 +263,9 @@ public class QueryBuilder<T> {
 
         // tablePrefix gets replaced by table name below. Don't use tableName here because it causes trouble when
         // table name ends with tablePrefix.
-        appendWhereClause(builder, tablePrefix);
+        appendJoinsAndWheres(builder, tablePrefix);
 
         String sql = builder.toString();
-
         // Remove table aliases, not supported for DELETE queries.
         // TODO(?): don't create table aliases in the first place.
         sql = sql.replace(tablePrefix + ".'", tablename + ".'");
@@ -282,7 +288,8 @@ public class QueryBuilder<T> {
         String tablename = dao.getTablename();
         String baseSql = SqlUtils.createSqlSelectCountStar(tablename, tablePrefix);
         StringBuilder builder = new StringBuilder(baseSql);
-        appendWhereClause(builder, tablePrefix);
+        appendJoinsAndWheres(builder, tablePrefix);
+
         String sql = builder.toString();
 
         if (LOG_SQL) {
@@ -295,11 +302,29 @@ public class QueryBuilder<T> {
         return CountQuery.create(dao, sql, values.toArray());
     }
 
-    private void appendWhereClause(StringBuilder builder, String tablePrefixOrNull) {
+    private void appendJoinsAndWheres(StringBuilder builder, String tablePrefixOrNull) {
         values.clear();
-        if (!whereCollector.isEmpty()) {
+        for (Join<T, ?> join : joins) {
+            builder.append(" JOIN ").append(join.daoDestination.getTablename()).append(' ');
+            builder.append(join.tablePrefix).append(" ON ");
+            builder.append(join.sourceTablePrefix).append('.').append(join.joinPropertySource.columnName);
+            builder.append('=').append(join.tablePrefix).append('.').append(join.joinPropertyDestination.columnName);
+        }
+        boolean whereAppended = !whereCollector.isEmpty();
+        if (whereAppended) {
             builder.append(" WHERE ");
             whereCollector.appendWhereClause(builder, tablePrefixOrNull, values);
+        }
+        for (Join<T, ?> join : joins) {
+            if (!join.whereCollector.isEmpty()) {
+                if (!whereAppended) {
+                    builder.append(" WHERE ");
+                    whereAppended = true;
+                } else {
+                    builder.append(" AND ");
+                }
+                join.whereCollector.appendWhereClause(builder, join.tablePrefix, values);
+            }
         }
     }
 
