@@ -67,6 +67,26 @@ public class JoinTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
         }
     }
 
+    public void testJoinMixedParameterValues() {
+        prepareData();
+        QueryBuilder<RelationEntity> queryBuilder = relationEntityDao.queryBuilder();
+        queryBuilder.where(RelationEntityDao.Properties.SimpleString.like(""), RelationEntityDao.Properties.SimpleString.ge(""));
+        Join<RelationEntity, TestEntity> join = queryBuilder.join(RelationEntityDao.Properties.TestIdNotNull,
+                TestEntity.class);
+        join.where(Properties.SimpleInt.le(0));
+        queryBuilder.offset(0).limit(0);
+        Query<RelationEntity> query = queryBuilder.build();
+        query.setParameter(0, "entity-%");
+        query.setParameter(1, "entity-4");
+        query.setParameter(2, 6);
+        query.setOffset(1);
+        query.setLimit(99);
+        List<RelationEntity> entities = query.list();
+        assertEquals(2, entities.size());
+        assertEquals("entity-5", entities.get(0).getSimpleString());
+        assertEquals("entity-6", entities.get(1).getSimpleString());
+    }
+
     public void testJoinDelete() {
         prepareData();
         QueryBuilder<RelationEntity> queryBuilder = createQueryBuilder(5);
@@ -76,7 +96,7 @@ public class JoinTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
             assertEquals("JOINs are not supported for DELETE queries", e.getMessage());
             return;
         }
-        // Unsupported by SQLite
+        // Never executed, unsupported by SQLite
         assertEquals(9, relationEntityDao.count());
         assertEquals(10, testEntityDao.count());
         assertNull(relationEntityDao.queryBuilder().where(Properties.SimpleString.eq("entity-5")).unique());
