@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.List;
 
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.internal.SqlUtils;
 
 /**
  * Internal interface to model WHERE conditions used in queries. Use the {@link Property} objects in the DAO classes to
@@ -59,8 +60,7 @@ public interface WhereCondition {
         public void appendValuesTo(List<Object> valuesTarget) {
             if (hasSingleValue) {
                 valuesTarget.add(value);
-            }
-            if (values != null) {
+            } else if (values != null) {
                 for (Object value : values) {
                     valuesTarget.add(value);
                 }
@@ -136,10 +136,7 @@ public interface WhereCondition {
 
         @Override
         public void appendTo(StringBuilder builder, String tableAlias) {
-            if (tableAlias != null) {
-                builder.append(tableAlias).append('.');
-            }
-            builder.append('\'').append(property.columnName).append('\'').append(op);
+            SqlUtils.appendProperty(builder, tableAlias, property).append(op);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,18 @@
 package de.greenrobot.dao.internal;
 
 import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.Property;
 
 /** Helper class to create SQL statements as used by greenDAO internally. */
 public class SqlUtils {
+
+    public static StringBuilder appendProperty(StringBuilder builder, String tablePrefix, Property property) {
+        if (tablePrefix != null) {
+            builder.append(tablePrefix).append('.');
+        }
+        builder.append('\'').append(property.columnName).append('\'');
+        return builder;
+    }
 
     public static StringBuilder appendColumn(StringBuilder builder, String column) {
         builder.append('\'').append(column).append('\'');

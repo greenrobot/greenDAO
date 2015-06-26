@@ -241,13 +241,7 @@ public class QueryBuilder<T> {
         }
 
         String sql = builder.toString();
-        if (LOG_SQL) {
-            DaoLog.d("Built SQL for query: " + sql);
-        }
-
-        if (LOG_VALUES) {
-            DaoLog.d("Values for query: " + values);
-        }
+        checkLog(sql);
 
         return Query.create(dao, sql, values.toArray(), limitPosition, offsetPosition);
     }
@@ -269,13 +263,7 @@ public class QueryBuilder<T> {
         // Remove table aliases, not supported for DELETE queries.
         // TODO(?): don't create table aliases in the first place.
         sql = sql.replace(tablePrefix + ".'", tablename + ".'");
-
-        if (LOG_SQL) {
-            DaoLog.d("Built SQL for delete query: " + sql);
-        }
-        if (LOG_VALUES) {
-            DaoLog.d("Values for delete query: " + values);
-        }
+        checkLog(sql);
 
         return DeleteQuery.create(dao, sql, values.toArray());
     }
@@ -291,15 +279,18 @@ public class QueryBuilder<T> {
         appendJoinsAndWheres(builder, tablePrefix);
 
         String sql = builder.toString();
-
-        if (LOG_SQL) {
-            DaoLog.d("Built SQL for count query: " + sql);
-        }
-        if (LOG_VALUES) {
-            DaoLog.d("Values for count query: " + values);
-        }
+        checkLog(sql);
 
         return CountQuery.create(dao, sql, values.toArray());
+    }
+
+    private void checkLog(String sql) {
+        if (LOG_SQL) {
+            DaoLog.d("Built SQL for query: " + sql);
+        }
+        if (LOG_VALUES) {
+            DaoLog.d("Values for query: " + values);
+        }
     }
 
     private void appendJoinsAndWheres(StringBuilder builder, String tablePrefixOrNull) {
@@ -307,8 +298,8 @@ public class QueryBuilder<T> {
         for (Join<T, ?> join : joins) {
             builder.append(" JOIN ").append(join.daoDestination.getTablename()).append(' ');
             builder.append(join.tablePrefix).append(" ON ");
-            builder.append(join.sourceTablePrefix).append('.').append(join.joinPropertySource.columnName);
-            builder.append('=').append(join.tablePrefix).append('.').append(join.joinPropertyDestination.columnName);
+            SqlUtils.appendProperty(builder, join.sourceTablePrefix, join.joinPropertySource).append('=');
+            SqlUtils.appendProperty(builder, join.tablePrefix, join.joinPropertyDestination);
         }
         boolean whereAppended = !whereCollector.isEmpty();
         if (whereAppended) {

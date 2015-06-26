@@ -16,6 +16,7 @@
 package de.greenrobot.daotest.query;
 
 import de.greenrobot.dao.query.Join;
+import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.DaoMaster;
@@ -47,7 +48,31 @@ public class JoinTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
         relationEntityDao = daoSession.getRelationEntityDao();
     }
 
-    public void testEqInteger() {
+    public void testJoinSimple() {
+        prepareData();
+
+        QueryBuilder<RelationEntity> queryBuilder = relationEntityDao.queryBuilder();
+        Join<RelationEntity, TestEntity> join = queryBuilder.join(RelationEntityDao.Properties.TestIdNotNull,
+                TestEntity.class);
+        join.where(Properties.SimpleInt.eq(5));
+        RelationEntity unique = queryBuilder.uniqueOrThrow();
+        assertEquals("entity-5", unique.getSimpleString());
+    }
+
+    public void testJoinSimpleParameterValue() {
+        prepareData();
+
+        QueryBuilder<RelationEntity> queryBuilder = relationEntityDao.queryBuilder();
+        queryBuilder.join(RelationEntityDao.Properties.TestIdNotNull, TestEntity.class).where(Properties.SimpleInt.eq(0));
+        Query<RelationEntity> query = queryBuilder.build();
+        for (int i = 0; i < 10; i++) {
+            query.setParameter(0, i + 1);
+            RelationEntity unique = query.uniqueOrThrow();
+            assertEquals("entity-" + (i + 1), unique.getSimpleString());
+        }
+    }
+
+    private void prepareData() {
         List<TestEntity> targetEntities = new ArrayList<TestEntity>();
         List<RelationEntity> entities = new ArrayList<RelationEntity>();
         for (int i = 0; i < 10; i++) {
@@ -64,12 +89,5 @@ public class JoinTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
             entities.add(entity);
         }
         relationEntityDao.insertInTx(entities);
-
-        QueryBuilder<RelationEntity> queryBuilder = relationEntityDao.queryBuilder();
-        Join<RelationEntity, TestEntity> join = queryBuilder.join(RelationEntityDao.Properties.TestIdNotNull,
-                TestEntity.class);
-        join.where(Properties.SimpleInt.eq(5));
-        RelationEntity unique = queryBuilder.unique();
-        assertEquals("entity-5", unique.getSimpleString());
     }
 }
