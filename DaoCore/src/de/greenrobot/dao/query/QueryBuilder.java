@@ -135,7 +135,7 @@ public class QueryBuilder<T> {
     public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass) {
         AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
         Property destinationProperty = destinationDao.getPkProperty();
-        return addJoin(sourceProperty, destinationDao, destinationProperty);
+        return addJoin(tablePrefix, sourceProperty, destinationDao, destinationProperty);
     }
 
     /**
@@ -144,13 +144,25 @@ public class QueryBuilder<T> {
      */
     public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass, Property destinationProperty) {
         AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
-        return addJoin(sourceProperty, destinationDao, destinationProperty);
+        return addJoin(tablePrefix, sourceProperty, destinationDao, destinationProperty);
     }
 
-    private <J> Join<T, J> addJoin(Property sourceProperty,
-                                   AbstractDao<J, ?> destinationDao, Property destinationProperty) {
+    /**
+     * Expands the query to another entity type by using a JOIN. The given sourceJoin's property is used to match the
+     * given destinationProperty of the given destinationEntity. Note that destination entity of the given join is used
+     * as the source for the new join to add. In this way, it is possible to compose complex "join of joins" across
+     * several entities if required.
+     */
+    public <J> Join<T, J> join(Join<?, T> sourceJoin, Property sourceProperty, Class<J> destinationEntityClass,
+                               Property destinationProperty) {
+        AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
+        return addJoin(sourceJoin.tablePrefix, sourceProperty, destinationDao, destinationProperty);
+    }
+
+    private <J> Join<T, J> addJoin(String sourceTablePrefix, Property sourceProperty, AbstractDao<J, ?> destinationDao,
+                                   Property destinationProperty) {
         String joinTablePrefix = "J" + (joins.size() + 1);
-        Join<T, J> join = new Join<T, J>(tablePrefix, sourceProperty, destinationDao, destinationProperty,
+        Join<T, J> join = new Join<T, J>(sourceTablePrefix, sourceProperty, destinationDao, destinationProperty,
                 joinTablePrefix);
         joins.add(join);
         return join;

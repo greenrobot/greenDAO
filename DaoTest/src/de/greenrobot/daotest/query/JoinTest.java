@@ -87,6 +87,28 @@ public class JoinTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
         assertEquals("entity-6", entities.get(1).getSimpleString());
     }
 
+    public void testJoinOfJoin() {
+        prepareData();
+        List<RelationEntity> relationEntities = relationEntityDao.loadAll();
+        relationEntities.get(2).setParent(relationEntities.get(4));
+        relationEntities.get(3).setParent(relationEntities.get(5));
+        relationEntities.get(7).setParent(relationEntities.get(5));
+        relationEntityDao.updateInTx(relationEntities);
+
+        QueryBuilder<RelationEntity> queryBuilder = relationEntityDao.queryBuilder();
+        Join<RelationEntity, RelationEntity> join1 =
+                queryBuilder.join(RelationEntityDao.Properties.ParentId, RelationEntity.class);
+        queryBuilder.join(join1, RelationEntityDao.Properties.TestIdNotNull, TestEntity.class, Properties.Id)
+                .where(Properties.SimpleInt.lt(6));
+
+        Query<RelationEntity> query = queryBuilder.build();
+        RelationEntity entity = query.uniqueOrThrow();
+        assertEquals(relationEntities.get(2).getSimpleString(), entity.getSimpleString());
+
+        query.setParameter(0, 99);
+        assertEquals(3, query.list().size());
+    }
+
     public void testJoinDelete() {
         prepareData();
         QueryBuilder<RelationEntity> queryBuilder = createQueryBuilder(5);
@@ -114,7 +136,6 @@ public class JoinTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
 
     private void prepareData() {
         List<TestEntity> targetEntities = new ArrayList<TestEntity>();
-        List<RelationEntity> entities = new ArrayList<RelationEntity>();
         for (int i = 0; i < 10; i++) {
             TestEntity testEntity = new TestEntity();
             testEntity.setSimpleInt(i + 1);
@@ -122,6 +143,8 @@ public class JoinTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
             targetEntities.add(testEntity);
         }
         testEntityDao.insertInTx(targetEntities);
+
+        List<RelationEntity> entities = new ArrayList<RelationEntity>();
         for (int i = 0; i < 10; i++) {
             RelationEntity entity = new RelationEntity();
             entity.setSimpleString("entity-" + (i + 1));
