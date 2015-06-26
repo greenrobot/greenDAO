@@ -18,6 +18,10 @@ package de.greenrobot.dao.query;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 
+/**
+ * A Join lets you relate to other entity types for queries, and allows using WHERE statements on the joined entity
+ * type.
+ */
 public class Join<SRC, DST> {
 
     final String sourceTablePrefix;

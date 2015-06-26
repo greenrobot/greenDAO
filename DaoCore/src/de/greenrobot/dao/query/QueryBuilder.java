@@ -120,19 +120,28 @@ public class QueryBuilder<T> {
         return whereCollector.combineWhereConditions(" AND ", cond1, cond2, condMore);
     }
 
-    /** Not supported yet. */
+    /**
+     * Expands the query to another entity type by using a JOIN. The primary key property of the primary entity for
+     * this QueryBuilder is used to match the given destinationProperty.
+     */
     public <J> Join<T, J> join(Class<J> destinationEntityClass, Property destinationProperty) {
         return join(dao.getPkProperty(), destinationEntityClass, destinationProperty);
     }
 
-    /** Not supported yet. */
+    /**
+     * Expands the query to another entity type by using a JOIN. The given sourceProperty is used to match the primary
+     * key property of the given destinationEntity.
+     */
     public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass) {
         AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
         Property destinationProperty = destinationDao.getPkProperty();
         return addJoin(sourceProperty, destinationDao, destinationProperty);
     }
 
-    /** Not supported yet. */
+    /**
+     * Expands the query to another entity type by using a JOIN. The given sourceProperty is used to match the given
+     * destinationProperty of the given destinationEntity.
+     */
     public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass, Property destinationProperty) {
         AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
         return addJoin(sourceProperty, destinationDao, destinationProperty);
@@ -252,7 +261,7 @@ public class QueryBuilder<T> {
      * QueryBuilder for each execution.
      */
     public DeleteQuery<T> buildDelete() {
-        if(!joins.isEmpty()) {
+        if (!joins.isEmpty()) {
             throw new DaoException("JOINs are not supported for DELETE queries");
         }
         String tablename = dao.getTablename();
