@@ -17,6 +17,7 @@ package de.greenrobot.dao.query;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.AbstractDaoSession;
+import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.SqlUtils;
@@ -251,6 +252,9 @@ public class QueryBuilder<T> {
      * QueryBuilder for each execution.
      */
     public DeleteQuery<T> buildDelete() {
+        if(!joins.isEmpty()) {
+            throw new DaoException("JOINs are not supported for DELETE queries");
+        }
         String tablename = dao.getTablename();
         String baseSql = SqlUtils.createSqlDelete(tablename, null);
         StringBuilder builder = new StringBuilder(baseSql);

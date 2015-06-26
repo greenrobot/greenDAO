@@ -15,6 +15,7 @@
  */
 package de.greenrobot.daotest.query;
 
+import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.query.Join;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
@@ -50,26 +51,45 @@ public class JoinTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
 
     public void testJoinSimple() {
         prepareData();
-
-        QueryBuilder<RelationEntity> queryBuilder = relationEntityDao.queryBuilder();
-        Join<RelationEntity, TestEntity> join = queryBuilder.join(RelationEntityDao.Properties.TestIdNotNull,
-                TestEntity.class);
-        join.where(Properties.SimpleInt.eq(5));
+        QueryBuilder<RelationEntity> queryBuilder = createQueryBuilder(5);
         RelationEntity unique = queryBuilder.uniqueOrThrow();
         assertEquals("entity-5", unique.getSimpleString());
     }
 
     public void testJoinSimpleParameterValue() {
         prepareData();
-
-        QueryBuilder<RelationEntity> queryBuilder = relationEntityDao.queryBuilder();
-        queryBuilder.join(RelationEntityDao.Properties.TestIdNotNull, TestEntity.class).where(Properties.SimpleInt.eq(0));
+        QueryBuilder<RelationEntity> queryBuilder = createQueryBuilder(-1);
         Query<RelationEntity> query = queryBuilder.build();
         for (int i = 0; i < 10; i++) {
             query.setParameter(0, i + 1);
             RelationEntity unique = query.uniqueOrThrow();
             assertEquals("entity-" + (i + 1), unique.getSimpleString());
         }
+    }
+
+    public void testJoinDelete() {
+        prepareData();
+        QueryBuilder<RelationEntity> queryBuilder = createQueryBuilder(5);
+        try {
+            queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
+        } catch (DaoException e) {
+            assertEquals("JOINs are not supported for DELETE queries", e.getMessage());
+            return;
+        }
+        // Unsupported by SQLite
+        assertEquals(9, relationEntityDao.count());
+        assertEquals(10, testEntityDao.count());
+        assertNull(relationEntityDao.queryBuilder().where(Properties.SimpleString.eq("entity-5")).unique());
+    }
+
+    public void testJoinCount() {
+        prepareData();
+        QueryBuilder<RelationEntity> queryBuilder = relationEntityDao.queryBuilder();
+        Join<RelationEntity, TestEntity> join = queryBuilder.join(RelationEntityDao.Properties.TestIdNotNull,
+                TestEntity.class);
+        join.where(Properties.SimpleInt.gt(6));
+        queryBuilder.count();
+        assertEquals(4, queryBuilder.count());
     }
 
     private void prepareData() {
@@ -90,4 +110,14 @@ public class JoinTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
         }
         relationEntityDao.insertInTx(entities);
     }
+
+    private QueryBuilder<RelationEntity> createQueryBuilder(int simpleIntWhereValue) {
+        QueryBuilder<RelationEntity> queryBuilder = relationEntityDao.queryBuilder();
+        Join<RelationEntity, TestEntity> join = queryBuilder.join(RelationEntityDao.Properties.TestIdNotNull,
+                TestEntity.class);
+        join.where(Properties.SimpleInt.eq(simpleIntWhereValue));
+        return queryBuilder;
+    }
+
+
 }
