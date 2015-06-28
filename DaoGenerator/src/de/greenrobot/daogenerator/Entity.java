@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -314,14 +314,17 @@ public class Entity {
         this.javaPackageTest = javaPackageTest;
     }
 
+    /** Internal property used by templates, don't use during entity definition. */
     public List<Property> getPropertiesPk() {
         return propertiesPk;
     }
 
+    /** Internal property used by templates, don't use during entity definition. */
     public List<Property> getPropertiesNonPk() {
         return propertiesNonPk;
     }
 
+    /** Internal property used by templates, don't use during entity definition. */
     public Property getPkProperty() {
         return pkProperty;
     }
@@ -330,6 +333,7 @@ public class Entity {
         return indexes;
     }
 
+    /** Internal property used by templates, don't use during entity definition. */
     public String getPkType() {
         return pkType;
     }
