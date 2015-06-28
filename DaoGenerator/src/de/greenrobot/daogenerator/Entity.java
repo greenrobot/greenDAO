@@ -446,7 +446,7 @@ public class Entity {
     }
 
     void init2ndPass() {
-        init2nPassNamesWithDefaults();
+        init2ndPassNamesWithDefaults();
 
         for (int i = 0; i < properties.size(); i++) {
             Property property = properties.get(i);
@@ -503,7 +503,7 @@ public class Entity {
         }
     }
 
-    protected void init2nPassNamesWithDefaults() {
+    protected void init2ndPassNamesWithDefaults() {
         if (tableName == null) {
             tableName = DaoUtil.dbName(className);
         }
@@ -552,7 +552,7 @@ public class Entity {
         }
     }
 
-    void init3ndPass() {
+    void init3rdPass() {
         for (Property property : properties) {
             property.init3ndPass();
         }

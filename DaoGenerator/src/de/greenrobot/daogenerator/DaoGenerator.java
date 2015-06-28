@@ -90,7 +90,7 @@ public class DaoGenerator {
         File outDirTestFile = outDirTest != null ? toFileForceExists(outDirTest) : null;
 
         schema.init2ndPass();
-        schema.init3ndPass();
+        schema.init3rdPass();
 
         System.out.println("Processing schema version " + schema.getVersion() + "...");
 
