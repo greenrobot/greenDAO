@@ -15,12 +15,12 @@
  */
 package de.greenrobot.dao.query;
 
-import java.util.List;
-
 import android.database.Cursor;
-import android.os.Process;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * A repeatable query returning entities.
@@ -87,6 +87,16 @@ public class Query<T> extends AbstractQuery<T> {
             throw new IllegalArgumentException("Illegal parameter index: " + index);
         }
         super.setParameter(index, parameter);
+    }
+
+    public void setParameter(int index, Date parameter) {
+        Long converted = parameter != null ? parameter.getTime() : null;
+        setParameter(index, converted);
+    }
+
+    public void setParameter(int index, Boolean parameter) {
+        Integer converted = parameter != null ? (parameter ? 1 : 0) : null;
+        setParameter(index, converted);
     }
 
     /**
