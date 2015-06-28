@@ -58,9 +58,9 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
                 "'SIMPLE_BOOLEAN' INTEGER);"); // 8: simpleBoolean
         // Add Indexes
         db.execSQL("CREATE INDEX " + constraint + "IDX_TEST_ENTITY_INDEXED_STRING ON TEST_ENTITY" +
-                " (INDEXED_STRING);");
+                " ('INDEXED_STRING');");
         db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_TEST_ENTITY_INDEXED_STRING_ASC_UNIQUE ON TEST_ENTITY" +
-                " (INDEXED_STRING_ASC_UNIQUE);");
+                " ('INDEXED_STRING_ASC_UNIQUE');");
     }
 
     /** Drops the underlying database table. */

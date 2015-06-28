@@ -92,7 +92,8 @@ public class ToMany {
         if (propertyOrderList.isEmpty()) {
             return null;
         } else {
-            return propertyOrderList.getCommaSeparatedString();
+            // Table prefix must match default of QueryBuilder in DaoCore
+            return propertyOrderList.getCommaSeparatedString("T");
         }
     }
 

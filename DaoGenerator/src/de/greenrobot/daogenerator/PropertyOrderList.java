@@ -57,13 +57,16 @@ public class PropertyOrderList {
         return propertiesOrder;
     }
 
-    public String getCommaSeparatedString() {
+    public String getCommaSeparatedString(String tablePrefixOrNull) {
         StringBuilder builder = new StringBuilder();
         int size = properties.size();
         for (int i = 0; i < size; i++) {
             Property property = properties.get(i);
             String order = propertiesOrder.get(i);
             if (property != null) {
+                if(tablePrefixOrNull != null) {
+                    builder.append(tablePrefixOrNull).append('.');
+                }
                 builder.append('\'').append(property.getColumnName()).append('\'').append(' ');
             }
             if (order != null) {
