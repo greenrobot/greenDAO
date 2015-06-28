@@ -80,10 +80,10 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
     private ToManyTargetEntity[] prepareToMany(long id, int count) {
         ToManyEntity entity = new ToManyEntity(id);
         daoSession.insert(entity);
-        return insertTargetEntitites(id, count, null);
+        return insertTargetEntities(id, count, null);
     }
 
-    private ToManyTargetEntity[] insertTargetEntitites(Long toManyId, int count, String joinProperty) {
+    private ToManyTargetEntity[] insertTargetEntities(Long toManyId, int count, String joinProperty) {
         ToManyTargetEntity[] targetEntities = new ToManyTargetEntity[count];
         for (int i = 0; i < count; i++) {
             ToManyTargetEntity target = new ToManyTargetEntity();
@@ -154,7 +154,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         ToManyEntity entity = new ToManyEntity(1l);
         entity.setSourceJoinProperty("JOIN ME");
         daoSession.insert(entity);
-        insertTargetEntitites(null, 3, "JOIN ME");
+        insertTargetEntities(null, 3, "JOIN ME");
 
         ToManyEntity testEntity = toManyEntityDao.load(1l);
         List<ToManyTargetEntity> targetEntities = testEntity.getToManyByJoinProperty();
@@ -176,7 +176,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         ToManyEntity entity = new ToManyEntity(1l);
         entity.setSourceJoinProperty("JOIN ME");
         daoSession.insert(entity);
-        insertTargetEntitites(1l, 3, "JOIN ME");
+        insertTargetEntities(1l, 3, "JOIN ME");
 
         ToManyEntity testEntity = toManyEntityDao.load(1l);
         List<ToManyTargetEntity> targetEntities = testEntity.getToManyJoinTwo();

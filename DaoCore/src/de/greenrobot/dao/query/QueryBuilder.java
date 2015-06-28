@@ -200,8 +200,8 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Adds the given raw SQL string to the ORDER BY section. Do not use this for standard properties: ordedAsc and
-     * orderDesc are prefered.
+     * Adds the given raw SQL string to the ORDER BY section. Do not use this for standard properties: orderAsc and
+     * orderDesc are preferred.
      */
     public QueryBuilder<T> orderRaw(String rawOrder) {
         checkOrderBuilder();
