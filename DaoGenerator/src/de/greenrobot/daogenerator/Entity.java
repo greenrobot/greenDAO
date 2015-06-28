@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -314,15 +314,15 @@ public class Entity {
         this.javaPackageTest = javaPackageTest;
     }
 
-    List<Property> getPropertiesPk() {
+    public List<Property> getPropertiesPk() {
         return propertiesPk;
     }
 
-    List<Property> getPropertiesNonPk() {
+    public List<Property> getPropertiesNonPk() {
         return propertiesNonPk;
     }
 
-    Property getPkProperty() {
+    public Property getPkProperty() {
         return pkProperty;
     }
 
@@ -330,7 +330,7 @@ public class Entity {
         return indexes;
     }
 
-    String getPkType() {
+    public String getPkType() {
         return pkType;
     }
 
