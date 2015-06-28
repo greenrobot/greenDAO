@@ -143,7 +143,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
             if (toManyEntity_ToManyTargetEntityListQuery == null) {
                 QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
                 queryBuilder.where(Properties.ToManyId.eq(null));
-                queryBuilder.orderRaw("_id ASC");
+                queryBuilder.orderRaw("'_id' ASC");
                 toManyEntity_ToManyTargetEntityListQuery = queryBuilder.build();
             }
         }
@@ -158,7 +158,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
             if (toManyEntity_ToManyDescListQuery == null) {
                 QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
                 queryBuilder.where(Properties.ToManyIdDesc.eq(null));
-                queryBuilder.orderRaw("_id DESC");
+                queryBuilder.orderRaw("'_id' DESC");
                 toManyEntity_ToManyDescListQuery = queryBuilder.build();
             }
         }
@@ -173,7 +173,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
             if (toManyEntity_ToManyByJoinPropertyQuery == null) {
                 QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
                 queryBuilder.where(Properties.TargetJoinProperty.eq(null));
-                queryBuilder.orderRaw("_id ASC");
+                queryBuilder.orderRaw("'_id' ASC");
                 toManyEntity_ToManyByJoinPropertyQuery = queryBuilder.build();
             }
         }
@@ -189,7 +189,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
                 QueryBuilder<ToManyTargetEntity> queryBuilder = queryBuilder();
                 queryBuilder.where(Properties.ToManyId.eq(null));
                 queryBuilder.where(Properties.TargetJoinProperty.eq(null));
-                queryBuilder.orderRaw("TARGET_JOIN_PROPERTY DESC,_id DESC");
+                queryBuilder.orderRaw("'TARGET_JOIN_PROPERTY' DESC,'_id' DESC");
                 toManyEntity_ToManyJoinTwoQuery = queryBuilder.build();
             }
         }
