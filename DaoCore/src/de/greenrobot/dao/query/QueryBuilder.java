@@ -287,7 +287,7 @@ public class QueryBuilder<T> {
         String sql = builder.toString();
         // Remove table aliases, not supported for DELETE queries.
         // TODO(?): don't create table aliases in the first place.
-        sql = sql.replace(tablePrefix + ".'", tablename + ".'");
+        sql = sql.replace(tablePrefix + ".\"", '"'+tablename + "\".\"");
         checkLog(sql);
 
         return DeleteQuery.create(dao, sql, values.toArray());

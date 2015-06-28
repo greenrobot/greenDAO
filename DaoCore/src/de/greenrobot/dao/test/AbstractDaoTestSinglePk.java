@@ -278,7 +278,7 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
             builder.append(valueForColumn).append(",");
         }
         SqlUtils.appendColumns(builder, "T", dao.getAllColumns()).append(" FROM ");
-        builder.append(dao.getTablename()).append(" T");
+        builder.append('"').append(dao.getTablename()).append('"').append(" T");
         if (pk != null) {
             builder.append(" WHERE ");
 

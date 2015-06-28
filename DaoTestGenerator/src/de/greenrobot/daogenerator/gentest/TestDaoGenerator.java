@@ -172,6 +172,7 @@ public class TestDaoGenerator {
 
     protected void createSpecialNames() {
         Entity specialNamesEntity = schema.addEntity("SpecialNamesEntity");
+        specialNamesEntity.setTableName("ORDER TRANSACTION GROUP BY");
         specialNamesEntity.addIdProperty();
         specialNamesEntity.addStringProperty("count");
         specialNamesEntity.addStringProperty("select");

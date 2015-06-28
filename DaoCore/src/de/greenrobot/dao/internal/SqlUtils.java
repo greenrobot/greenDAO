@@ -25,17 +25,17 @@ public class SqlUtils {
         if (tablePrefix != null) {
             builder.append(tablePrefix).append('.');
         }
-        builder.append('\'').append(property.columnName).append('\'');
+        builder.append('"').append(property.columnName).append('"');
         return builder;
     }
 
     public static StringBuilder appendColumn(StringBuilder builder, String column) {
-        builder.append('\'').append(column).append('\'');
+        builder.append('"').append(column).append('"');
         return builder;
     }
 
     public static StringBuilder appendColumn(StringBuilder builder, String tableAlias, String column) {
-        builder.append(tableAlias).append(".'").append(column).append('\'');
+        builder.append(tableAlias).append(".\"").append(column).append('"');
         return builder;
     }
 
@@ -53,7 +53,7 @@ public class SqlUtils {
     public static StringBuilder appendColumns(StringBuilder builder, String[] columns) {
         int length = columns.length;
         for (int i = 0; i < length; i++) {
-            builder.append('\'').append(columns[i]).append('\'');
+            builder.append('"').append(columns[i]).append('"');
             if (i < length - 1) {
                 builder.append(',');
             }
@@ -94,7 +94,7 @@ public class SqlUtils {
 
     public static String createSqlInsert(String insertInto, String tablename, String[] columns) {
         StringBuilder builder = new StringBuilder(insertInto);
-        builder.append(tablename).append(" (");
+        builder.append('"').append(tablename).append('"').append(" (");
         appendColumns(builder, columns);
         builder.append(") VALUES (");
         appendPlaceholders(builder, columns.length);
@@ -104,21 +104,21 @@ public class SqlUtils {
 
     /** Creates an select for given columns with a trailing space */
     public static String createSqlSelect(String tablename, String tableAlias, String[] columns) {
-        StringBuilder builder = new StringBuilder("SELECT ");
         if (tableAlias == null || tableAlias.length() < 0) {
             throw new DaoException("Table alias required");
         }
 
+        StringBuilder builder = new StringBuilder("SELECT ");
         SqlUtils.appendColumns(builder, tableAlias, columns).append(" FROM ");
-        builder.append(tablename).append(' ').append(tableAlias).append(' ');
+        builder.append('"').append(tablename).append('"').append(' ').append(tableAlias).append(' ');
         return builder.toString();
     }
 
     /** Creates SELECT COUNT(*) with a trailing space. */
     public static String createSqlSelectCountStar(String tablename, String tableAliasOrNull) {
         StringBuilder builder = new StringBuilder("SELECT COUNT(*) FROM ");
-        builder.append(tablename).append(' ');
-        if(tableAliasOrNull != null) {
+        builder.append('"').append(tablename).append('"').append(' ');
+        if (tableAliasOrNull != null) {
             builder.append(tableAliasOrNull).append(' ');
         }
         return builder.toString();
@@ -126,21 +126,23 @@ public class SqlUtils {
 
     /** Remember: SQLite does not support joins nor table alias for DELETE. */
     public static String createSqlDelete(String tablename, String[] columns) {
+        String quotedTablename = '"' + tablename + '"';
         StringBuilder builder = new StringBuilder("DELETE FROM ");
-        builder.append(tablename);
+        builder.append(quotedTablename);
         if (columns != null && columns.length > 0) {
             builder.append(" WHERE ");
-            appendColumnsEqValue(builder, tablename, columns);
+            appendColumnsEqValue(builder, quotedTablename, columns);
         }
         return builder.toString();
     }
 
     public static String createSqlUpdate(String tablename, String[] updateColumns, String[] whereColumns) {
+        String quotedTablename = '"' + tablename + '"';
         StringBuilder builder = new StringBuilder("UPDATE ");
-        builder.append(tablename).append(" SET ");
+        builder.append(quotedTablename).append(" SET ");
         appendColumnsEqualPlaceholders(builder, updateColumns);
         builder.append(" WHERE ");
-        appendColumnsEqValue(builder, tablename, whereColumns);
+        appendColumnsEqValue(builder, quotedTablename, whereColumns);
         return builder.toString();
     }
 
