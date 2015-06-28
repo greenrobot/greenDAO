@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -63,8 +63,8 @@ public class TestDaoGenerator {
 
     public void generate() throws Exception {
         DaoGenerator daoGenerator = new DaoGenerator();
-        daoGenerator.generateAll(schema, "../DaoTest/src-gen", "../DaoTest/src");
-        daoGenerator.generateAll(schema2, "../DaoTest/src-gen", "../DaoTest/src");
+        daoGenerator.generateAll(schema, "../DaoTest/src-gen", null, "../DaoTest/src");
+        daoGenerator.generateAll(schema2, "../DaoTest/src-gen", null, "../DaoTest/src");
     }
 
     protected void createSimple() {
