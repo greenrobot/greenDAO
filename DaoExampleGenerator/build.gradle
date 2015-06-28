@@ -7,11 +7,6 @@ version = '1.4.0-SNAPSHOT'
 sourceCompatibility = 1.6
 mainClassName = "de.greenrobot.daogenerator.gentest.ExampleDaoGenerator"
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 dependencies {
     compile project(':DaoGenerator')
 }
