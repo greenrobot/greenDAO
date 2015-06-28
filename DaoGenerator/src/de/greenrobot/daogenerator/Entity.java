@@ -425,7 +425,7 @@ public class Entity {
 
     public void implementsInterface(String... interfaces) {
         for (String interfaceToImplement : interfaces) {
-            if (interfaceToImplement.contains(interfaceToImplement)) {
+            if (interfacesToImplement.contains(interfaceToImplement)) {
                 throw new RuntimeException("Interface defined more than once: " + interfaceToImplement);
             }
             interfacesToImplement.add(interfaceToImplement);
