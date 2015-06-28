@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -17,33 +17,30 @@
  */
 package de.greenrobot.daogenerator.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-
-import org.junit.Test;
-
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.DaoUtil;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
+import org.junit.Test;
+
+import java.io.File;
+
+import static org.junit.Assert.*;
 
 public class SimpleDaoGeneratorTest {
 
     @Test
     public void testMinimalSchema() throws Exception {
         Schema schema = new Schema(1, "de.greenrobot.testdao");
-        Entity adressTable = schema.addEntity("Adresse");
-        Property idProperty = adressTable.addIdProperty().getProperty();
-        adressTable.addIntProperty("count").index();
-        adressTable.addIntProperty("dummy").notNull();
+        Entity addressEntity = schema.addEntity("Addresse");
+        Property idProperty = addressEntity.addIdProperty().getProperty();
+        addressEntity.addIntProperty("count").index();
+        addressEntity.addIntProperty("dummy").notNull();
         assertEquals(1, schema.getEntities().size());
-        assertEquals(3, adressTable.getProperties().size());
+        assertEquals(3, addressEntity.getProperties().size());
 
-        File daoFile = new File("test-out/de/greenrobot/testdao/" + adressTable.getClassName() + "Dao.java");
+        File daoFile = new File("test-out/de/greenrobot/testdao/" + addressEntity.getClassName() + "Dao.java");
         daoFile.delete();
         assertFalse(daoFile.exists());
 
@@ -62,4 +59,11 @@ public class SimpleDaoGeneratorTest {
         assertEquals("CAMEL_CASE_XXXX", DaoUtil.dbName("CamelCaseXXXX"));
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testInterfacesError() throws Exception {
+        Schema schema = new Schema(1, "de.greenrobot.testdao");
+        Entity addressTable = schema.addEntity("Addresse");
+        addressTable.implementsInterface("Dummy");
+        addressTable.implementsInterface("Dummy");
+    }
 }
