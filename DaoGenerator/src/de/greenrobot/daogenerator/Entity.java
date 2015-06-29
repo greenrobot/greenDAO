@@ -19,7 +19,12 @@ package de.greenrobot.daogenerator;
 
 import de.greenrobot.daogenerator.Property.PropertyBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Model class for an entity: a Java data object mapped to a data base table. A new entity is added to a {@link Schema}
@@ -43,7 +48,7 @@ public class Entity {
     private final Set<String> propertyNames;
     private final List<Index> indexes;
     private final List<ToOne> toOneRelations;
-    private final List<ToMany> toManyRelations;
+    private final List<ToManyBase> toManyRelations;
     private final List<ToMany> incomingToManyRelations;
     private final Collection<String> additionalImportsEntity;
     private final Collection<String> additionalImportsDao;
@@ -77,7 +82,7 @@ public class Entity {
         propertyNames = new HashSet<String>();
         indexes = new ArrayList<Index>();
         toOneRelations = new ArrayList<ToOne>();
-        toManyRelations = new ArrayList<ToMany>();
+        toManyRelations = new ArrayList<ToManyBase>();
         incomingToManyRelations = new ArrayList<ToMany>();
         additionalImportsEntity = new TreeSet<String>();
         additionalImportsDao = new TreeSet<String>();
@@ -170,7 +175,7 @@ public class Entity {
 
     public ToMany addToMany(Property[] sourceProperties, Entity target, Property[] targetProperties) {
         if (protobuf) {
-            throw new IllegalStateException("Protobuf entities do not support realtions, currently");
+            throw new IllegalStateException("Protobuf entities do not support relations, currently");
         }
 
         ToMany toMany = new ToMany(schema, this, sourceProperties, target, targetProperties);
@@ -178,6 +183,14 @@ public class Entity {
         target.incomingToManyRelations.add(toMany);
         return toMany;
     }
+
+    public ToManyWithJoinEntity addToMany(Entity target, Entity joinEntity, Property id1, Property id2) {
+        ToManyWithJoinEntity toMany = new ToManyWithJoinEntity(schema, this, target, joinEntity, id1, id2);
+        toManyRelations.add(toMany);
+        // TODO needed?        target.incomingToManyRelations.add(toMany);
+        return toMany;
+    }
+
 
     /**
      * Adds a to-one relationship to the given target entity using the given given foreign key property (which belongs
@@ -380,7 +393,7 @@ public class Entity {
         return toOneRelations;
     }
 
-    public List<ToMany> getToManyRelations() {
+    public List<ToManyBase> getToManyRelations() {
         return toManyRelations;
     }
 
@@ -477,7 +490,7 @@ public class Entity {
             }
         }
 
-        for (ToMany toMany : toManyRelations) {
+        for (ToManyBase toMany : toManyRelations) {
             toMany.init2ndPass();
             // Source Properties may not be virtual, so we do not need the following code:
             // for (Property sourceProperty : toMany.getSourceProperties()) {
@@ -571,12 +584,14 @@ public class Entity {
         }
 
         Set<String> toManyNames = new HashSet<String>();
-        for (ToMany toMany : toManyRelations) {
-            toMany.init3ndPass();
-            Entity targetEntity = toMany.getTargetEntity();
-            for (Property targetProperty : toMany.getTargetProperties()) {
-                if (!targetEntity.propertiesColumns.contains(targetProperty)) {
-                    targetEntity.propertiesColumns.add(targetProperty);
+        for (ToManyBase toMany : toManyRelations) {
+            toMany.init3rdPass();
+            if (toMany instanceof ToMany) {
+                Entity targetEntity = toMany.getTargetEntity();
+                for (Property targetProperty : ((ToMany) toMany).getTargetProperties()) {
+                    if (!targetEntity.propertiesColumns.contains(targetProperty)) {
+                        targetEntity.propertiesColumns.add(targetProperty);
+                    }
                 }
             }
             if (!toManyNames.add(toMany.getName().toLowerCase())) {
@@ -599,7 +614,7 @@ public class Entity {
             }
         }
 
-        for (ToMany toMany : toManyRelations) {
+        for (ToManyBase toMany : toManyRelations) {
             Entity targetEntity = toMany.getTargetEntity();
             checkAdditionalImportsEntityTargetEntity(targetEntity);
         }
@@ -624,4 +639,5 @@ public class Entity {
     public String toString() {
         return "Entity " + className + " (package: " + javaPackage + ")";
     }
+
 }
