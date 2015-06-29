@@ -205,7 +205,8 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
             }
             ${toMany.targetEntity.classNameDao} targetDao = daoSession.get${toMany.targetEntity.classNameDao?cap_first}();
             List<${toMany.targetEntity.className}> ${toMany.name}New = targetDao._query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
-                --><#list toMany.sourceProperties as property>${property.propertyName}<#if property_has_next>, </#if></#list>);
+                --><#if toMany.sourceProperties??><#list toMany.sourceProperties as property>${property.propertyName}<#if property_has_next>, </#if></#list><#else><#--
+                -->${entity.pkProperty.propertyName}</#if>);
             synchronized (this) {<#-- Check if another thread was faster, we cannot lock while doing the query to prevent deadlocks -->
                 if(${toMany.name} == null) {
                     ${toMany.name} = ${toMany.name}New;

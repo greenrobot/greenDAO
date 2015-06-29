@@ -17,6 +17,7 @@ import de.greenrobot.daotest.SpecialNamesEntityDao;
 import de.greenrobot.daotest.AbcdefEntityDao;
 import de.greenrobot.daotest.ToManyTargetEntityDao;
 import de.greenrobot.daotest.ToManyEntityDao;
+import de.greenrobot.daotest.JoinManyToDateEntityDao;
 import de.greenrobot.daotest.TreeEntityDao;
 import de.greenrobot.daotest.AnActiveEntityDao;
 import de.greenrobot.daotest.ExtendsImplementsEntityDao;
@@ -42,6 +43,7 @@ public class DaoMaster extends AbstractDaoMaster {
         AbcdefEntityDao.createTable(db, ifNotExists);
         ToManyTargetEntityDao.createTable(db, ifNotExists);
         ToManyEntityDao.createTable(db, ifNotExists);
+        JoinManyToDateEntityDao.createTable(db, ifNotExists);
         TreeEntityDao.createTable(db, ifNotExists);
         AnActiveEntityDao.createTable(db, ifNotExists);
         ExtendsImplementsEntityDao.createTable(db, ifNotExists);
@@ -60,6 +62,7 @@ public class DaoMaster extends AbstractDaoMaster {
         AbcdefEntityDao.dropTable(db, ifExists);
         ToManyTargetEntityDao.dropTable(db, ifExists);
         ToManyEntityDao.dropTable(db, ifExists);
+        JoinManyToDateEntityDao.dropTable(db, ifExists);
         TreeEntityDao.dropTable(db, ifExists);
         AnActiveEntityDao.dropTable(db, ifExists);
         ExtendsImplementsEntityDao.dropTable(db, ifExists);
@@ -105,6 +108,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(AbcdefEntityDao.class);
         registerDaoClass(ToManyTargetEntityDao.class);
         registerDaoClass(ToManyEntityDao.class);
+        registerDaoClass(JoinManyToDateEntityDao.class);
         registerDaoClass(TreeEntityDao.class);
         registerDaoClass(AnActiveEntityDao.class);
         registerDaoClass(ExtendsImplementsEntityDao.class);

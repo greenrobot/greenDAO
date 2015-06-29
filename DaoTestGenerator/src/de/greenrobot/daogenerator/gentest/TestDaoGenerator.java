@@ -25,7 +25,7 @@ import de.greenrobot.daogenerator.ToMany;
 
 /**
  * Generates test entities for test project DaoTest.
- * 
+ *
  * @author Markus
  */
 public class TestDaoGenerator {
@@ -35,9 +35,10 @@ public class TestDaoGenerator {
         testDaoGenerator.generate();
     }
 
-    private Schema schema;
-    private Entity testEntity;
-    private Schema schema2;
+    private final Schema schema;
+    private final Entity testEntity;
+    private final Entity dateEntity;
+    private final Schema schema2;
 
     public TestDaoGenerator() {
         schema = new Schema(1, "de.greenrobot.daotest");
@@ -47,7 +48,7 @@ public class TestDaoGenerator {
         createSimpleNotNull();
         testEntity = createTest();
         createRelation();
-        createDate();
+        dateEntity = createDate();
         createSpecialNames();
         createAbcdef();
         createToMany();
@@ -58,7 +59,7 @@ public class TestDaoGenerator {
         createAutoincrement();
         createSqliteMaster();
 
-        createSchema2();
+        schema2 = createSchema2();
     }
 
     public void generate() throws Exception {
@@ -79,7 +80,7 @@ public class TestDaoGenerator {
         simple.addDoubleProperty("simpleDouble");
         simple.addStringProperty("simpleString");
         simple.addByteArrayProperty("simpleByteArray");
-        
+
         simple.addContentProvider().readOnly();
     }
 
@@ -147,12 +148,19 @@ public class TestDaoGenerator {
         toManyByJoinProperty.setName("toManyByJoinProperty");
         toManyByJoinProperty.orderAsc(targetIdProperty);
 
-        Property[] sourceProperties = { sourceIdProperty, sourceJoinProperty };
-        Property[] targetProperties = { toManyIdProperty, targetJoinProperty };
+        Property[] sourceProperties = {sourceIdProperty, sourceJoinProperty};
+        Property[] targetProperties = {toManyIdProperty, targetJoinProperty};
         ToMany toManyJoinTwo = toManyEntity.addToMany(sourceProperties, toManyTargetEntity, targetProperties);
         toManyJoinTwo.setName("toManyJoinTwo");
         toManyJoinTwo.orderDesc(targetJoinProperty);
         toManyJoinTwo.orderDesc(targetIdProperty);
+
+        Entity toManyJoinEntity = schema.addEntity("JoinManyToDateEntity");
+        toManyJoinEntity.addIdProperty();
+        Property id1 = toManyJoinEntity.addLongProperty("idToMany").getProperty();
+        Property id2 = toManyJoinEntity.addLongProperty("idDate").getProperty();
+
+        toManyEntity.addToMany(dateEntity, toManyJoinEntity, id1, id2);
     }
 
     protected void createTreeEntity() {
@@ -163,11 +171,12 @@ public class TestDaoGenerator {
         treeEntity.addToMany(treeEntity, parentIdProperty).setName("children");
     }
 
-    protected void createDate() {
+    protected Entity createDate() {
         Entity dateEntity = schema.addEntity("DateEntity");
         dateEntity.addIdProperty();
         dateEntity.addDateProperty("date");
         dateEntity.addDateProperty("dateNotNull").notNull();
+        return dateEntity;
     }
 
     protected void createSpecialNames() {
@@ -217,8 +226,8 @@ public class TestDaoGenerator {
         entity.implementsSerializable();
     }
 
-    private void createSchema2() {
-        schema2 = new Schema(1, "de.greenrobot.daotest2");
+    private Schema createSchema2() {
+        Schema schema2 = new Schema(1, "de.greenrobot.daotest2");
         schema2.setDefaultJavaPackageTest("de.greenrobot.daotest2.entity");
         schema2.setDefaultJavaPackageDao("de.greenrobot.daotest2.dao");
         schema2.enableKeepSectionsByDefault();
@@ -247,6 +256,7 @@ public class TestDaoGenerator {
         relationSource2.setJavaPackageDao("de.greenrobot.daotest2.specialdao");
         relationSource2.setJavaPackageTest("de.greenrobot.daotest2.specialtest");
         relationSource2.setSkipGenerationTest(true);
+        return schema2;
     }
 
     protected void createStringKeyValue() {

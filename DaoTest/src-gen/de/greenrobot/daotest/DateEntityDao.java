@@ -1,5 +1,6 @@
 package de.greenrobot.daotest;
 
+import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -7,6 +8,8 @@ import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import de.greenrobot.daotest.DateEntity;
 
@@ -28,6 +31,7 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
         public final static Property DateNotNull = new Property(2, java.util.Date.class, "dateNotNull", false, "DATE_NOT_NULL");
     };
 
+    private Query<DateEntity> toManyEntity_DateEntityListQuery;
 
     public DateEntityDao(DaoConfig config) {
         super(config);
@@ -117,4 +121,19 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
         return true;
     }
     
+    /** Internal query to resolve the "dateEntityList" to-many relationship of ToManyEntity. */
+    public List<DateEntity> _queryToManyEntity_DateEntityList(Long idToMany) {
+        synchronized (this) {
+            if (toManyEntity_DateEntityListQuery == null) {
+                QueryBuilder<DateEntity> queryBuilder = queryBuilder();
+                queryBuilder.join(JoinManyToDateEntity.class, JoinManyToDateEntityDao.Properties.IdDate)
+                    .where(JoinManyToDateEntityDao.Properties.IdToMany.eq(idToMany));
+                toManyEntity_DateEntityListQuery = queryBuilder.build();
+            }
+        }
+        Query<DateEntity> query = toManyEntity_DateEntityListQuery.forCurrentThread();
+        query.setParameter(0, idToMany);
+        return query.list();
+    }
+
 }

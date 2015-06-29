@@ -275,13 +275,20 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
 <#list entity.incomingToManyRelations as toMany>
     /** Internal query to resolve the "${toMany.name}" to-many relationship of ${toMany.sourceEntity.className}. */
     public List<${toMany.targetEntity.className}> _query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
-    --><#list toMany.targetProperties as property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
+    --><#if toMany.targetProperties??><#list toMany.targetProperties as property><#--
+    -->${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list><#else><#--
+    -->${toMany.sourceProperty.javaType} ${toMany.sourceProperty.propertyName}</#if>) {
         synchronized (this) {
             if (${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query == null) {
                 QueryBuilder<${toMany.targetEntity.className}> queryBuilder = queryBuilder();
-<#list toMany.targetProperties as property>
+<#if toMany.targetProperties??>
+    <#list toMany.targetProperties as property>
                 queryBuilder.where(Properties.${property.propertyName?cap_first}.eq(null));
-</#list>
+    </#list>
+<#else>
+                queryBuilder.join(${toMany.joinEntity.className}.class, ${toMany.joinEntity.classNameDao}.Properties.${toMany.targetProperty.propertyName?cap_first})
+                    .where(${toMany.joinEntity.classNameDao}.Properties.${toMany.sourceProperty.propertyName?cap_first}.eq(${toMany.sourceProperty.propertyName}));
+</#if>
 <#if toMany.order?has_content>
                 queryBuilder.orderRaw("${toMany.order}");
 </#if>
@@ -289,9 +296,13 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
             }
         }
         Query<${toMany.targetEntity.className}> query = ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query.forCurrentThread();
-<#list toMany.targetProperties as property>
+<#if toMany.targetProperties??>
+    <#list toMany.targetProperties as property>
         query.setParameter(${property_index}, ${property.propertyName});
-</#list>
+    </#list>
+<#else>
+        query.setParameter(0, ${toMany.sourceProperty.propertyName});
+</#if>
         return query.list();
     }
 

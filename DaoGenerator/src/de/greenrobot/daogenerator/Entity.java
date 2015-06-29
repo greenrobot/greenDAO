@@ -49,7 +49,7 @@ public class Entity {
     private final List<Index> indexes;
     private final List<ToOne> toOneRelations;
     private final List<ToManyBase> toManyRelations;
-    private final List<ToMany> incomingToManyRelations;
+    private final List<ToManyBase> incomingToManyRelations;
     private final Collection<String> additionalImportsEntity;
     private final Collection<String> additionalImportsDao;
     private final List<String> interfacesToImplement;
@@ -83,7 +83,7 @@ public class Entity {
         indexes = new ArrayList<Index>();
         toOneRelations = new ArrayList<ToOne>();
         toManyRelations = new ArrayList<ToManyBase>();
-        incomingToManyRelations = new ArrayList<ToMany>();
+        incomingToManyRelations = new ArrayList<ToManyBase>();
         additionalImportsEntity = new TreeSet<String>();
         additionalImportsDao = new TreeSet<String>();
         interfacesToImplement = new ArrayList<String>();
@@ -187,7 +187,7 @@ public class Entity {
     public ToManyWithJoinEntity addToMany(Entity target, Entity joinEntity, Property id1, Property id2) {
         ToManyWithJoinEntity toMany = new ToManyWithJoinEntity(schema, this, target, joinEntity, id1, id2);
         toManyRelations.add(toMany);
-        // TODO needed?        target.incomingToManyRelations.add(toMany);
+        target.incomingToManyRelations.add(toMany);
         return toMany;
     }
 
@@ -397,7 +397,7 @@ public class Entity {
         return toManyRelations;
     }
 
-    public List<ToMany> getIncomingToManyRelations() {
+    public List<ToManyBase> getIncomingToManyRelations() {
         return incomingToManyRelations;
     }
 
