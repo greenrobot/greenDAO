@@ -41,6 +41,7 @@ public class DaoGenerator {
     private Pattern patternKeepIncludes;
     private Pattern patternKeepFields;
     private Pattern patternKeepMethods;
+    private Pattern patternKeepAnnotations;
 
     private Template templateDao;
     private Template templateDaoMaster;
@@ -57,6 +58,7 @@ public class DaoGenerator {
         patternKeepIncludes = compilePattern("INCLUDES");
         patternKeepFields = compilePattern("FIELDS");
         patternKeepMethods = compilePattern("METHODS");
+        patternKeepAnnotations = compileNamedPattern("ANNOTATIONS");
 
         Configuration config = new Configuration();
         config.setClassForTemplateLoading(this.getClass(), "/");
@@ -74,6 +76,11 @@ public class DaoGenerator {
         int flags = Pattern.DOTALL | Pattern.MULTILINE;
         return Pattern.compile(".*^\\s*?//\\s*?KEEP " + sectionName + ".*?\n(.*?)^\\s*// KEEP " + sectionName
                 + " END.*?\n", flags);
+    }
+
+    private Pattern compileNamedPattern(String sectionName) {
+        int flags = Pattern.DOTALL | Pattern.MULTILINE;
+        return Pattern.compile("//\\s*?KEEP\\s+(\\S*)\\s*" + sectionName + ".*?\n(.*?)^\\s*// KEEP " + sectionName + " END.*?\n", flags);
     }
 
     /** Generates all entities and DAOs for the given schema. */
@@ -191,6 +198,13 @@ public class DaoGenerator {
                 if (matcher.matches()) {
                     root.put("keepMethods", matcher.group(1));
                 }
+
+                matcher = patternKeepAnnotations.matcher(contents);
+                Map allMatches = new HashMap();
+                while (matcher.find()) {
+                    allMatches.put(matcher.group(1), matcher.group(2));
+                }
+                root.put("keepAnnotations", allMatches);
             } catch (IOException e) {
                 e.printStackTrace();
             }
