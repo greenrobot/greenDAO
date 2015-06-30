@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -18,8 +18,8 @@
 package de.greenrobot.daotest.entity;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import de.greenrobot.dao.query.LazyList;
 import de.greenrobot.dao.test.AbstractDaoTest;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao;
@@ -57,7 +57,7 @@ public abstract class TestEntityTestBase extends AbstractDaoTest<TestEntityDao, 
         return 100 + i;
     }
 
-    protected void assertIds(ArrayList<TestEntity> list, LazyList<TestEntity> list2) {
+    protected void assertIds(List<TestEntity> list, List<TestEntity> list2) {
         for (int i = 0; i < list.size(); i++) {
             TestEntity entity = list.get(i);
             TestEntity lazyEntity = list2.get(i);

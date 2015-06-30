@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -61,6 +61,23 @@ public class LazyListTest extends TestEntityTestBase {
         assertIds(list, listLazy);
         assertFalse(listLazy.isClosed());
         listLazy.close();
+    }
+
+    public void testSublist() {
+        ArrayList<TestEntity> list = insert(10);
+        LazyList<TestEntity> listLazy = dao.queryBuilder().orderAsc(Properties.SimpleInteger).build().listLazy();
+        assertIds(list.subList(2, 7), listLazy.subList(2, 7));
+    }
+
+    public void testSublistUncached() {
+        ArrayList<TestEntity> list = insert(10);
+        LazyList<TestEntity> listLazy = dao.queryBuilder().orderAsc(Properties.SimpleInteger).build().listLazyUncached();
+        try {
+            assertIds(list.subList(2,7), listLazy.subList(2,7));
+        } catch (DaoException e) {
+            assertEquals("This operation only works with cached lazy lists", e.getMessage());
+        }
+
     }
 
     public void testIterator() {
