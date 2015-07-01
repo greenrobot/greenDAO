@@ -102,6 +102,14 @@ public class Property {
             return this;
         }
 
+        public PropertyBuilder customType(String customType, String converter) {
+            property.customType = customType;
+            property.customTypeClassName = DaoUtil.getClassnameFromFullyQualified(customType);
+            property.converter = converter;
+            property.converterClassName = DaoUtil.getClassnameFromFullyQualified(converter);
+            return this;
+        }
+
         public Property getProperty() {
             return property;
         }
@@ -114,6 +122,11 @@ public class Property {
 
     private String columnName;
     private String columnType;
+
+    private String customType;
+    private String customTypeClassName;
+    private String converter;
+    private String converterClassName;
 
     private boolean primaryKey;
     private boolean pkAsc;
@@ -185,8 +198,24 @@ public class Property {
         return ordinal;
     }
 
-    public void setOrdinal(int ordinal) {
+    void setOrdinal(int ordinal) {
         this.ordinal = ordinal;
+    }
+
+    public String getCustomType() {
+        return customType;
+    }
+
+    public String getCustomTypeClassName() {
+        return customTypeClassName;
+    }
+
+    public String getConverter() {
+        return converter;
+    }
+
+    public String getConverterClassName() {
+        return converterClassName;
     }
 
     public Entity getEntity() {

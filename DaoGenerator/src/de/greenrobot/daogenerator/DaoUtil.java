@@ -38,7 +38,16 @@ public class DaoUtil {
         }
         return builder.toString().toUpperCase();
     }
-    
+
+    public static String getClassnameFromFullyQualified(String converter) {
+        int index = converter.lastIndexOf('.');
+        if (index != -1) {
+            return  converter.substring(index + 1);
+        } else {
+            return converter;
+        }
+    }
+
     public static byte[] readAllBytes(InputStream in) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         copyAllBytes(in, out);

@@ -58,6 +58,7 @@ public class TestDaoGenerator {
         createStringKeyValue();
         createAutoincrement();
         createSqliteMaster();
+        createCustomType();
 
         schema2 = createSchema2();
     }
@@ -226,6 +227,35 @@ public class TestDaoGenerator {
         entity.implementsSerializable();
     }
 
+    protected void createStringKeyValue() {
+        Entity entity = schema.addEntity("StringKeyValueEntity");
+        entity.addStringProperty("key").primaryKey();
+        entity.addStringProperty("value");
+    }
+
+    protected void createAutoincrement() {
+        Entity entity = schema.addEntity("AutoincrementEntity");
+        entity.addIdProperty().autoincrement();
+    }
+
+    protected void createSqliteMaster() {
+        Entity entity = schema.addEntity("SqliteMaster");
+        entity.setSkipTableCreation(true);
+        entity.setHasKeepSections(true);
+        entity.addStringProperty("type");
+        entity.addStringProperty("name");
+        entity.addStringProperty("tableName").columnName("tbl_name");
+        entity.addLongProperty("rootpage");
+        entity.addStringProperty("sql");
+    }
+
+    protected void createCustomType() {
+        Entity entity = schema.addEntity("CustomTypeEntity");
+        entity.addIdProperty();
+        entity.addLongProperty("myCustomTimestamp").customType("de.greenrobot.daotest.customtype.MyTimestamp",
+                "de.greenrobot.daotest.customtype.MyTimestampConverter");
+    }
+
     private Schema createSchema2() {
         Schema schema2 = new Schema(1, "de.greenrobot.daotest2");
         schema2.setDefaultJavaPackageTest("de.greenrobot.daotest2.entity");
@@ -259,26 +289,5 @@ public class TestDaoGenerator {
         return schema2;
     }
 
-    protected void createStringKeyValue() {
-        Entity entity = schema.addEntity("StringKeyValueEntity");
-        entity.addStringProperty("key").primaryKey();
-        entity.addStringProperty("value");
-    }
-
-    protected void createAutoincrement() {
-        Entity entity = schema.addEntity("AutoincrementEntity");
-        entity.addIdProperty().autoincrement();
-    }
-
-    protected void createSqliteMaster() {
-        Entity entity = schema.addEntity("SqliteMaster");
-        entity.setSkipTableCreation(true);
-        entity.setHasKeepSections(true);
-        entity.addStringProperty("type");
-        entity.addStringProperty("name");
-        entity.addStringProperty("tableName").columnName("tbl_name");
-        entity.addLongProperty("rootpage");
-        entity.addStringProperty("sql");
-    }
 
 }
