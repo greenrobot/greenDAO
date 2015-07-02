@@ -39,12 +39,21 @@ public class DaoUtil {
         return builder.toString().toUpperCase();
     }
 
-    public static String getClassnameFromFullyQualified(String converter) {
-        int index = converter.lastIndexOf('.');
+    public static String getClassnameFromFullyQualified(String clazz) {
+        int index = clazz.lastIndexOf('.');
         if (index != -1) {
-            return  converter.substring(index + 1);
+            return  clazz.substring(index + 1);
         } else {
-            return converter;
+            return clazz;
+        }
+    }
+
+    public static String getPackageFromFullyQualified(String clazz) {
+        int index = clazz.lastIndexOf('.');
+        if (index != -1) {
+            return  clazz.substring(0, index);
+        } else {
+            return null;
         }
     }
 
