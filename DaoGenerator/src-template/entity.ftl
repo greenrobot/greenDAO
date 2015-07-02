@@ -56,7 +56,7 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
     /** Not-null value. */
 </#if>
-    private ${property.javaType} ${property.propertyName};
+    private ${property.javaTypeInEntity} ${property.propertyName};
 </#list>
 
 <#if entity.active>
@@ -99,7 +99,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 </#if>
 
     public ${entity.className}(<#list entity.properties as
-property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
+property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
 <#list entity.properties as property>
         this.${property.propertyName} = ${property.propertyName};
 </#list>
@@ -118,14 +118,14 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
     /** Not-null value. */
 </#if>
-    public ${property.javaType} get${property.propertyName?cap_first}() {
+    public ${property.javaTypeInEntity} get${property.propertyName?cap_first}() {
         return ${property.propertyName};
     }
 
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
     /** Not-null value; ensure this value is available before it is saved to the database. */
 </#if>
-    public void set${property.propertyName?cap_first}(${property.javaType} ${property.propertyName}) {
+    public void set${property.propertyName?cap_first}(${property.javaTypeInEntity} ${property.propertyName}) {
         this.${property.propertyName} = ${property.propertyName};
     }
 

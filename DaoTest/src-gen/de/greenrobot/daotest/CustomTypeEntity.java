@@ -9,7 +9,7 @@ import de.greenrobot.daotest.customtype.MyTimestamp;
 public class CustomTypeEntity {
 
     private Long id;
-    private Long myCustomTimestamp;
+    private MyTimestamp myCustomTimestamp;
 
     public CustomTypeEntity() {
     }
@@ -18,7 +18,7 @@ public class CustomTypeEntity {
         this.id = id;
     }
 
-    public CustomTypeEntity(Long id, Long myCustomTimestamp) {
+    public CustomTypeEntity(Long id, MyTimestamp myCustomTimestamp) {
         this.id = id;
         this.myCustomTimestamp = myCustomTimestamp;
     }
@@ -31,11 +31,11 @@ public class CustomTypeEntity {
         this.id = id;
     }
 
-    public Long getMyCustomTimestamp() {
+    public MyTimestamp getMyCustomTimestamp() {
         return myCustomTimestamp;
     }
 
-    public void setMyCustomTimestamp(Long myCustomTimestamp) {
+    public void setMyCustomTimestamp(MyTimestamp myCustomTimestamp) {
         this.myCustomTimestamp = myCustomTimestamp;
     }
 

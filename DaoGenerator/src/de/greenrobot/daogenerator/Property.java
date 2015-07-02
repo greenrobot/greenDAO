@@ -194,6 +194,14 @@ public class Property {
         return javaType;
     }
 
+    public String getJavaTypeInEntity() {
+        if (customTypeClassName != null) {
+            return customTypeClassName;
+        } else {
+            return javaType;
+        }
+    }
+
     public int getOrdinal() {
         return ordinal;
     }
