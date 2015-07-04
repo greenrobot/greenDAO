@@ -79,6 +79,9 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     private DaoSession daoSession;
 
 </#if>
+<#list entity.properties as property><#if property.customType?has_content><#--
+-->    private final ${property.converterClassName} ${property.propertyName}Converter = new ${property.converterClassName}();
+</#if></#list>
 <#list entity.incomingToManyRelations as toMany>
     private Query<${toMany.targetEntity.className}> ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query;
 </#list>
@@ -127,16 +130,14 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
 <#if property.notNull || entity.protobuf>
 <#if entity.protobuf>
         if(entity.has${property.propertyName?cap_first}()) {
-    </#if>        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, entity.get${property.propertyName?cap_first}()<#if
-     property.propertyType == "Boolean"> ? 1l: 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
+    </#if>        stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, ${property.databaseValueExpressionNotNull});
 <#if entity.protobuf>
         }
 </#if>
 <#else> <#-- nullable, non-protobuff -->
-        ${property.javaType} ${property.propertyName} = entity.get${property.propertyName?cap_first}();
+        ${property.javaTypeInEntity} ${property.propertyName} = entity.get${property.propertyName?cap_first}();
         if (${property.propertyName} != null) {
-            stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, ${property.propertyName}<#if
- property.propertyType == "Boolean"> ? 1l: 0l</#if><#if property.propertyType == "Date">.getTime()</#if>);
+            stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, ${property.databaseValueExpression});
         }
 </#if>
 </#list>

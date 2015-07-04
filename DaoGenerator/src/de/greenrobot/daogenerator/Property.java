@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -224,6 +224,35 @@ public class Property {
 
     public String getConverterClassName() {
         return converterClassName;
+    }
+
+    public String getDatabaseValueExpression() {
+        return getDatabaseValueExpression(propertyName);
+    }
+
+    public String getDatabaseValueExpressionNotNull() {
+        return getDatabaseValueExpression("entity.get" + DaoUtil.capFirst(propertyName) + "()");
+    }
+
+    // Got too messy in template:
+    // <#if property.customType?has_content>${property.propertyName}Converter.convertToDatabaseValue(</#if><#--
+    // -->entity.get${property.propertyName?cap_first}()<#if property.customType?has_content>)</#if><#if
+    // property.propertyType == "Boolean"> ? 1l: 0l</#if><#if property.propertyType == "Date">.getTime()</#if>
+    public String getDatabaseValueExpression(String entityValue) {
+        StringBuilder builder = new StringBuilder();
+        if (customType != null) {
+            builder.append(propertyName).append("Converter.convertToDatabaseValue(");
+        }
+        builder.append(entityValue);
+        if (customType != null) {
+            builder.append(')');
+        }
+        if(propertyType == PropertyType.Boolean) {
+            builder.append(" ? 1L: 0L");
+        } else if(propertyType == PropertyType.Date) {
+            builder.append(".getTime()");
+        }
+        return builder.toString();
     }
 
     public Entity getEntity() {

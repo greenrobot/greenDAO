@@ -71,7 +71,7 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
     protected void bindValues(SQLiteStatement stmt, SimpleEntityNotNull entity) {
         stmt.clearBindings();
         stmt.bindLong(1, entity.getId());
-        stmt.bindLong(2, entity.getSimpleBoolean() ? 1l: 0l);
+        stmt.bindLong(2, entity.getSimpleBoolean() ? 1L: 0L);
         stmt.bindLong(3, entity.getSimpleByte());
         stmt.bindLong(4, entity.getSimpleShort());
         stmt.bindLong(5, entity.getSimpleInt());

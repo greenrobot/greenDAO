@@ -30,6 +30,7 @@ public class CustomTypeEntityDao extends AbstractDao<CustomTypeEntity, Long> {
         public final static Property MyCustomTimestamp = new Property(1, Long.class, "myCustomTimestamp", false, "MY_CUSTOM_TIMESTAMP");
     };
 
+    private final MyTimestampConverter myCustomTimestampConverter = new MyTimestampConverter();
 
     public CustomTypeEntityDao(DaoConfig config) {
         super(config);
@@ -63,9 +64,9 @@ public class CustomTypeEntityDao extends AbstractDao<CustomTypeEntity, Long> {
             stmt.bindLong(1, id);
         }
  
-        Long myCustomTimestamp = entity.getMyCustomTimestamp();
+        MyTimestamp myCustomTimestamp = entity.getMyCustomTimestamp();
         if (myCustomTimestamp != null) {
-            stmt.bindLong(2, myCustomTimestamp);
+            stmt.bindLong(2, myCustomTimestampConverter.convertToDatabaseValue(myCustomTimestamp));
         }
     }
 

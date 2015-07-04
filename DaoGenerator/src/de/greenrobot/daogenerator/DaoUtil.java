@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -42,16 +42,20 @@ public class DaoUtil {
     public static String getClassnameFromFullyQualified(String clazz) {
         int index = clazz.lastIndexOf('.');
         if (index != -1) {
-            return  clazz.substring(index + 1);
+            return clazz.substring(index + 1);
         } else {
             return clazz;
         }
     }
 
+    public static String capFirst(String string) {
+        return Character.toUpperCase(string.charAt(0)) + (string.length() > 1 ? string.substring(1) : "");
+    }
+
     public static String getPackageFromFullyQualified(String clazz) {
         int index = clazz.lastIndexOf('.');
         if (index != -1) {
-            return  clazz.substring(0, index);
+            return clazz.substring(0, index);
         } else {
             return null;
         }
@@ -62,7 +66,7 @@ public class DaoUtil {
         copyAllBytes(in, out);
         return out.toByteArray();
     }
-    
+
     public static byte[] readAllBytes(File file) throws IOException {
         FileInputStream is = new FileInputStream(file);
         try {
@@ -71,7 +75,7 @@ public class DaoUtil {
             is.close();
         }
     }
-    
+
     public static byte[] readAllBytes(String filename) throws IOException {
         FileInputStream is = new FileInputStream(filename);
         try {
@@ -80,10 +84,10 @@ public class DaoUtil {
             is.close();
         }
     }
-    
+
     /**
      * Copies all available data from in to out without closing any stream.
-     * 
+     *
      * @return number of bytes copied
      */
     public static int copyAllBytes(InputStream in, OutputStream out) throws IOException {
@@ -99,7 +103,6 @@ public class DaoUtil {
         }
         return byteCount;
     }
-    
 
 
 }

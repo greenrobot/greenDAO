@@ -78,7 +78,7 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
  
         Boolean simpleBoolean = entity.getSimpleBoolean();
         if (simpleBoolean != null) {
-            stmt.bindLong(2, simpleBoolean ? 1l: 0l);
+            stmt.bindLong(2, simpleBoolean ? 1L: 0L);
         }
  
         Byte simpleByte = entity.getSimpleByte();

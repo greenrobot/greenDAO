@@ -108,7 +108,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
  
         Boolean simpleBoolean = entity.getSimpleBoolean();
         if (simpleBoolean != null) {
-            stmt.bindLong(9, simpleBoolean ? 1l: 0l);
+            stmt.bindLong(9, simpleBoolean ? 1L: 0L);
         }
     }
 
