@@ -201,11 +201,9 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
 -->
         ${entity.className} entity = new ${entity.className}( //
 <#list entity.properties as property>
-            <#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#if
-            property.propertyType == "Byte">(byte) </#if><#if
-            property.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})<#if
-            property.propertyType == "Boolean"> != 0</#if><#if
-            property.propertyType == "Date">)</#if><#if property_has_next>,</#if> // ${property.propertyName}
+            <#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#--
+            -->${property.getEntityValueExpression("cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})")}<#--
+            --><#if property_has_next>,</#if> // ${property.propertyName}
 </#list>        
         );
         return entity;
@@ -226,11 +224,8 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
         throw new UnsupportedOperationException("Protobuf objects cannot be modified");
 <#else> 
 <#list entity.properties as property>
-        entity.set${property.propertyName?cap_first}(<#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#if
-            property.propertyType == "Byte">(byte) </#if><#if
-            property.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})<#if
-            property.propertyType == "Boolean"> != 0</#if><#if
-            property.propertyType == "Date">)</#if>);
+        entity.set${property.propertyName?cap_first}(<#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#--
+            -->${property.getEntityValueExpression("cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})")});
 </#list>
 </#if>
      }

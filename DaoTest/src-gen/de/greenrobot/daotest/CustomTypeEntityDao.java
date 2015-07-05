@@ -81,7 +81,7 @@ public class CustomTypeEntityDao extends AbstractDao<CustomTypeEntity, Long> {
     public CustomTypeEntity readEntity(Cursor cursor, int offset) {
         CustomTypeEntity entity = new CustomTypeEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1) // myCustomTimestamp
+            cursor.isNull(offset + 1) ? null : myCustomTimestampConverter.convertToEntityProperty(cursor.getLong(offset + 1)) // myCustomTimestamp
         );
         return entity;
     }
@@ -90,7 +90,7 @@ public class CustomTypeEntityDao extends AbstractDao<CustomTypeEntity, Long> {
     @Override
     public void readEntity(Cursor cursor, CustomTypeEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setMyCustomTimestamp(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
+        entity.setMyCustomTimestamp(cursor.isNull(offset + 1) ? null : myCustomTimestampConverter.convertToEntityProperty(cursor.getLong(offset + 1)));
      }
     
     /** @inheritdoc */

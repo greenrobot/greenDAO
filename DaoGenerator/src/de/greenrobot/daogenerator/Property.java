@@ -255,6 +255,35 @@ public class Property {
         return builder.toString();
     }
 
+    // Got too messy in template:
+    // <#if property.propertyType == "Byte">(byte) </#if>
+    // <#if property.propertyType == "Date">new java.util.Date(</#if>
+    // cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})
+    // <#if property.propertyType == "Boolean"> != 0</#if>
+    // <#if property.propertyType == "Date">)</#if>
+    public String getEntityValueExpression(String databaseValue) {
+        StringBuilder builder = new StringBuilder();
+        if (customType != null) {
+            builder.append(propertyName).append("Converter.convertToEntityProperty(");
+        }
+        if(propertyType == PropertyType.Byte) {
+            builder.append("(byte) ");
+        }else
+        if(propertyType == PropertyType.Date) {
+            builder.append("new java.util.Date(");
+        }
+        builder.append(databaseValue);
+        if(propertyType == PropertyType.Boolean) {
+            builder.append(" != 0");
+        } else if(propertyType == PropertyType.Date) {
+            builder.append(")");
+        }
+        if (customType != null) {
+            builder.append(')');
+        }
+        return builder.toString();
+    }
+
     public Entity getEntity() {
         return entity;
     }
