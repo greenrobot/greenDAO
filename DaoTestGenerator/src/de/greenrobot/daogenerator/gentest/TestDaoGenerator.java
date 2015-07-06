@@ -175,7 +175,8 @@ public class TestDaoGenerator {
     protected Entity createDate() {
         Entity dateEntity = schema.addEntity("DateEntity");
         dateEntity.addIdProperty();
-        dateEntity.addDateProperty("date");
+        dateEntity.addDateProperty("date").codeBeforeField("// Test code for\n    // field")
+        .codeBeforeGetter("// Test code for\n    // getter").codeBeforeSetter("// Test code for\n    // setter");
         dateEntity.addDateProperty("dateNotNull").notNull();
         return dateEntity;
     }
