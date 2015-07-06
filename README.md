@@ -27,7 +27,13 @@ More Open Source by greenrobot
 
 Release History
 ---------------
-### Future release
+### V2.0.0 Major feature release (upcoming, 2015-??-??, both core and generator)
+* Join for queries: relate a query to other entities (or joins)
+* To-Many relations using a join entity (useful for M:N relationships)
+* Custom types for properties: by implementing PropertyConverter, entities can have properties of any type, e.g. enums, BigInteger, alternative time/date classes, JSON objects, serialized objects, ...
+*
+* Fixes for table names matching a SQL keyword (e.g. "order", "transaction")
+* Several bug fixes
 * Added Flag for AsyncOperation to track the caller's stacktrace (useful for debugging)
 
 ### Generator V1.3.1 (2014-05-24): Bugfix
