@@ -110,6 +110,21 @@ public class Property {
             return this;
         }
 
+        public PropertyBuilder codeBeforeField(String code) {
+            property.codeBeforeField = code;
+            return this;
+        }
+
+        public PropertyBuilder codeBeforeGetter(String code) {
+            property.codeBeforeGetter = code;
+            return this;
+        }
+
+        public PropertyBuilder codeBeforeSetter(String code) {
+            property.codeBeforeSetter = code;
+            return this;
+        }
+
         public Property getProperty() {
             return property;
         }
@@ -127,6 +142,10 @@ public class Property {
     private String customTypeClassName;
     private String converter;
     private String converterClassName;
+
+    private String codeBeforeField;
+    private String codeBeforeGetter;
+    private String codeBeforeSetter;
 
     private boolean primaryKey;
     private boolean pkAsc;
@@ -224,6 +243,18 @@ public class Property {
 
     public String getConverterClassName() {
         return converterClassName;
+    }
+
+    public String getCodeBeforeField() {
+        return codeBeforeField;
+    }
+
+    public String getCodeBeforeGetter() {
+        return codeBeforeGetter;
+    }
+
+    public String getCodeBeforeSetter() {
+        return codeBeforeSetter;
     }
 
     public String getDatabaseValueExpression() {
