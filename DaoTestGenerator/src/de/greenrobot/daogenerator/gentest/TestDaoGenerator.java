@@ -177,6 +177,7 @@ public class TestDaoGenerator {
         dateEntity.addIdProperty();
         dateEntity.addDateProperty("date").codeBeforeField("// Test code for\n    // field")
         .codeBeforeGetter("// Test code for\n    // getter").codeBeforeSetter("// Test code for\n    // setter");
+        dateEntity.addImport("java.lang.String");
         dateEntity.addDateProperty("dateNotNull").notNull();
         return dateEntity;
     }

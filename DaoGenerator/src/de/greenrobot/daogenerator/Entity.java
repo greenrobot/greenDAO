@@ -254,6 +254,11 @@ public class Entity {
         return this;
     }
 
+    public Entity addImport(String additionalImport) {
+        additionalImportsEntity.add(additionalImport);
+        return this;
+    }
+
     /** The entity is represented by a protocol buffers object. Requires some special actions like using builders. */
     Entity useProtobuf() {
         protobuf = true;
