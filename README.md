@@ -8,6 +8,14 @@ greenDAO is a light & fast ORM solution for Android that maps objects to SQLite 
 
 Features
 --------
+greenDAO has a unique set of features:
+
+* Rock solid: greenDAO has been around since 2011 and is used by countless famous apps
+* Small: The library is <100K and it's just plain Java jar (no CPU dependent native parts)
+* Fast: Probably the fastest ORM for Android, driven by intelligent code generation
+* Safe and expressive query API: QueryBuilder uses property constants to avoid typos
+* V2.0.0 Powerful joins: query across entities and even chain joins for complex relations
+* V2.0.0 Flexible property types: use custom classes or enums to represent data in your entity
 
 Features in Beta
 ----------------
