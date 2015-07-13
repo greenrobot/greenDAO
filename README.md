@@ -11,11 +11,28 @@ Features
 greenDAO has a unique set of features:
 
 * Rock solid: greenDAO has been around since 2011 and is used by countless famous apps
+* Super simple: concise and straight-forward API
 * Small: The library is <100K and it's just plain Java jar (no CPU dependent native parts)
 * Fast: Probably the fastest ORM for Android, driven by intelligent code generation
 * Safe and expressive query API: QueryBuilder uses property constants to avoid typos
 * V2.0.0 Powerful joins: query across entities and even chain joins for complex relations
 * V2.0.0 Flexible property types: use custom classes or enums to represent data in your entity
+
+
+Add greenDAO to your project
+----------------------------
+greenDAO is available on Maven Central. Please ensure that you are using the latest versions by [checking here](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22de.greenrobot%22%20AND%20a%3A%22greendao%22) [and here](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22de.greenrobot%22%20AND%20a%3A%22greendao-generator%22)
+
+Gradle dependency for your Android app:
+```
+    compile 'de.greenrobot:greendao:1.3.7'
+```
+
+Gradle dependency for your Java generator project:
+```
+    compile 'de.greenrobot:greendao-generator:1.3.1'
+```
+
 
 Features in Beta
 ----------------
