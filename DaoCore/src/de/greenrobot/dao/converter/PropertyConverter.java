@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.greenrobot.dao;
+package de.greenrobot.dao.converter;
 
 /**
  * To use custom types in your entity, implement this to convert db values to entity values and back.
