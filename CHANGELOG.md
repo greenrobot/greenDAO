@@ -1,10 +1,10 @@
 Release History
 ---------------
-### V2.0.0 Major feature release (upcoming, 2015-??-??, both core and generator)
+### V2.0.0 Major feature release (2015-07-30, both core and generator)
 * Join for queries: relate a query to other entities (or joins)
 * To-Many relations using a join entity (useful for M:N relationships)
 * Custom types for properties: by implementing PropertyConverter, entities can have properties of any type, e.g. enums, BigInteger, alternative time/date classes, JSON objects, serialized objects, ...
-* Add custom code to fields, getters, and setter's of entity properties to add custom annotations or JavaDoc
+* Add custom code to fields, getters, and setters of entity properties to add custom annotations or JavaDoc
 * Add additional imports to entities without keep sections
 * Fixes for table names matching a SQL keyword (e.g. "order", "transaction")
 * Several bug fixes

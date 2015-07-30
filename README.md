@@ -25,12 +25,12 @@ greenDAO is available on Maven Central. Please ensure that you are using the lat
 
 Gradle dependency for your Android app:
 ```
-    compile 'de.greenrobot:greendao:1.3.7'
+    compile 'de.greenrobot:greendao:2.0.0'
 ```
 
 Gradle dependency for your Java generator project:
 ```
-    compile 'de.greenrobot:greendao-generator:1.3.1'
+    compile 'de.greenrobot:greendao-generator:2.0.0'
 ```
 
 
