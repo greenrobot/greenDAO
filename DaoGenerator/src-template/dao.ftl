@@ -61,7 +61,7 @@ import ${entity.javaPackage}.${entity.className}.Builder;
 /** 
  * DAO for table "${entity.tableName}".
 */
-public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${entity.pkType}> {
+public class ${entity.classNameDao} extends ${entity.superclassDao}<${entity.className}, ${entity.pkType}> {
 
     public static final String TABLENAME = "${entity.tableName}";
 
