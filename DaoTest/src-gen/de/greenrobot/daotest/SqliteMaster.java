@@ -5,7 +5,7 @@ package de.greenrobot.daotest;
 // KEEP INCLUDES - put your custom includes here
 // KEEP INCLUDES END
 /**
- * Entity mapped to table SQLITE_MASTER.
+ * Entity mapped to table "SQLITE_MASTER".
  */
 public class SqliteMaster {
 

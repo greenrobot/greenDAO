@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'de.greenrobot'
-version = '1.3.8-SNAPSHOT'
+version = '2.0.0'
 sourceCompatibility = 1.6
 
 def isSnapshot = version.endsWith('-SNAPSHOT')
@@ -17,7 +17,6 @@ if(isSnapshot) {
 repositories {
     mavenCentral()
 }
-
 
 // provided is not supported in Gradle 1.4, see http://issues.gradle.org/browse/GRADLE-784
 // Like this, it won't appear at all in the POM

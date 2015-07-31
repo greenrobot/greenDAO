@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -24,6 +24,7 @@ import java.util.List;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
 import de.greenrobot.daotest.TestEntity;
+import de.greenrobot.daotest.TestEntityDao;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
 
@@ -135,7 +136,11 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         testEntity.setSimpleDate(date);
         dao.update(testEntity);
 
-        TestEntity testEntity2 = dao.queryBuilder().where(Properties.SimpleDate.eq(date)).uniqueOrThrow();
+        Query<TestEntity> queryDate = dao.queryBuilder().where(Properties.SimpleDate.eq(date)).build();
+        TestEntity testEntity2 = queryDate.uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
+        queryDate.setParameter(0, date);
+        testEntity2 = queryDate.uniqueOrThrow();
         assertEquals(testEntity.getId(), testEntity2.getId());
 
         testEntity2 = dao.queryBuilder().where(Properties.SimpleDate.eq(date.getTime())).uniqueOrThrow();
@@ -149,7 +154,11 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         testEntity.setSimpleBoolean(true);
         dao.update(testEntity);
 
-        TestEntity testEntity2 = dao.queryBuilder().where(Properties.SimpleBoolean.eq(true)).uniqueOrThrow();
+        Query<TestEntity> queryBoolean = dao.queryBuilder().where(Properties.SimpleBoolean.eq(true)).build();
+        TestEntity testEntity2 = queryBoolean.uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
+        queryBoolean.setParameter(0, true);
+        testEntity2 = queryBoolean.uniqueOrThrow();
         assertEquals(testEntity.getId(), testEntity2.getId());
 
         testEntity2 = dao.queryBuilder().where(Properties.SimpleBoolean.eq(Boolean.TRUE)).uniqueOrThrow();

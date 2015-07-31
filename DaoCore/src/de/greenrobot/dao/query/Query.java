@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,18 @@
  */
 package de.greenrobot.dao.query;
 
-import java.util.List;
-
 import android.database.Cursor;
-import android.os.Process;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * A repeatable query returning entities.
- * 
+ *
+ * @param <T> The enitity class the query will return results for.
  * @author Markus
- * 
- * @param <T>
- *            The enitity class the query will return results for.
  */
 // TODO support long, double and other types, not just Strings, for parameters
 // TODO Make parameters setable by Property (if unique in paramaters)
@@ -40,7 +38,7 @@ public class Query<T> extends AbstractQuery<T> {
         private final int offsetPosition;
 
         QueryData(AbstractDao<T2, ?> dao, String sql, String[] initialValues, int limitPosition, int offsetPosition) {
-            super(dao,sql,initialValues);
+            super(dao, sql, initialValues);
             this.limitPosition = limitPosition;
             this.offsetPosition = offsetPosition;
         }
@@ -58,7 +56,7 @@ public class Query<T> extends AbstractQuery<T> {
     }
 
     static <T2> Query<T2> create(AbstractDao<T2, ?> dao, String sql, Object[] initialValues, int limitPosition,
-            int offsetPosition) {
+                                 int offsetPosition) {
         QueryData<T2> queryData = new QueryData<T2>(dao, sql, toStringArray(initialValues), limitPosition,
                 offsetPosition);
         return queryData.forCurrentThread();
@@ -69,7 +67,7 @@ public class Query<T> extends AbstractQuery<T> {
     private final QueryData<T> queryData;
 
     private Query(QueryData<T> queryData, AbstractDao<T, ?> dao, String sql, String[] initialValues, int limitPosition,
-            int offsetPosition) {
+                  int offsetPosition) {
         super(dao, sql, initialValues);
         this.queryData = queryData;
         this.limitPosition = limitPosition;
@@ -81,7 +79,8 @@ public class Query<T> extends AbstractQuery<T> {
     }
 
     /**
-     * Sets the parameter (0 based) using the position in which it was added during building the query.
+     * Sets the parameter (0 based) using the position in which it was added during building the query. Note: all
+     * standard WHERE parameters come first. After that come the WHERE parameters of joins (if any).
      */
     public void setParameter(int index, Object parameter) {
         if (index >= 0 && (index == limitPosition || index == offsetPosition)) {
@@ -90,9 +89,19 @@ public class Query<T> extends AbstractQuery<T> {
         super.setParameter(index, parameter);
     }
 
+    public void setParameter(int index, Date parameter) {
+        Long converted = parameter != null ? parameter.getTime() : null;
+        setParameter(index, converted);
+    }
+
+    public void setParameter(int index, Boolean parameter) {
+        Integer converted = parameter != null ? (parameter ? 1 : 0) : null;
+        setParameter(index, converted);
+    }
+
     /**
-     * Sets the limit of the maximum number of results returned by this Query. {@link QueryBuilder#limit(int)} must have
-     * been called on the QueryBuilder that created this Query object.
+     * Sets the limit of the maximum number of results returned by this Query. {@link QueryBuilder#limit(int)} must
+     * have been called on the QueryBuilder that created this Query object.
      */
     public void setLimit(int limit) {
         checkThread();
@@ -103,8 +112,8 @@ public class Query<T> extends AbstractQuery<T> {
     }
 
     /**
-     * Sets the offset for results returned by this Query. {@link QueryBuilder#offset(int)} must have been called on the
-     * QueryBuilder that created this Query object.
+     * Sets the offset for results returned by this Query. {@link QueryBuilder#offset(int)} must have been called on
+     * the QueryBuilder that created this Query object.
      */
     public void setOffset(int offset) {
         checkThread();
@@ -133,8 +142,8 @@ public class Query<T> extends AbstractQuery<T> {
     }
 
     /**
-     * Executes the query and returns the result as a list that lazy loads the entities on every access (uncached). Make
-     * sure to close the list to close the underlying cursor.
+     * Executes the query and returns the result as a list that lazy loads the entities on every access (uncached).
+     * Make sure to close the list to close the underlying cursor.
      */
     public LazyList<T> listLazyUncached() {
         checkThread();
@@ -152,10 +161,9 @@ public class Query<T> extends AbstractQuery<T> {
 
     /**
      * Executes the query and returns the unique result or null.
-     * 
-     * @throws DaoException
-     *             if the result is not unique
+     *
      * @return Entity or null if no matching entity was found
+     * @throws DaoException if the result is not unique
      */
     public T unique() {
         checkThread();
@@ -165,10 +173,9 @@ public class Query<T> extends AbstractQuery<T> {
 
     /**
      * Executes the query and returns the unique result (never null).
-     * 
-     * @throws DaoException
-     *             if the result is not unique or no entity was found
+     *
      * @return Entity
+     * @throws DaoException if the result is not unique or no entity was found
      */
     public T uniqueOrThrow() {
         T entity = unique();

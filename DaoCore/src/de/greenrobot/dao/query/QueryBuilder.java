@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,15 @@
  */
 package de.greenrobot.dao.query;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.AbstractDaoSession;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.InternalQueryDaoAccess;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.SqlUtils;
-import de.greenrobot.dao.query.WhereCondition.PropertyCondition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Builds custom entity queries using constraints and parameters and without SQL (QueryBuilder creates SQL for you). To
@@ -37,13 +34,11 @@ import de.greenrobot.dao.query.WhereCondition.PropertyCondition;
  * Example: Query for all users with the first name "Joe" ordered by their last name. (The class Properties is an inner
  * class of UserDao and should be imported before.)<br/>
  * <code>
- *  List<User> joes = dao.queryBuilder().where(Properties.FirstName.eq("Joe")).orderAsc(Properties.LastName).list();
- *  </code>
- * 
+ * List<User> joes = dao.queryBuilder().where(Properties.FirstName.eq("Joe")).orderAsc(Properties.LastName).list();
+ * </code>
+ *
+ * @param <T> Entity class to create an query for.
  * @author Markus
- * 
- * @param <T>
- *            Entity class to create an query for.
  */
 public class QueryBuilder<T> {
 
@@ -52,18 +47,16 @@ public class QueryBuilder<T> {
 
     /** Set to see the given values. */
     public static boolean LOG_VALUES;
+    private final WhereCollector<T> whereCollector;
 
     private StringBuilder orderBuilder;
-    private StringBuilder joinBuilder;
-
-    private final List<WhereCondition> whereConditions;
 
     private final List<Object> values;
+    private final List<Join<T, ?>> joins;
     private final AbstractDao<T, ?> dao;
     private final String tablePrefix;
 
     private Integer limit;
-
     private Integer offset;
 
     /** For internal use by greenDAO only. */
@@ -79,7 +72,8 @@ public class QueryBuilder<T> {
         this.dao = dao;
         this.tablePrefix = tablePrefix;
         values = new ArrayList<Object>();
-        whereConditions = new ArrayList<WhereCondition>();
+        joins = new ArrayList<Join<T, ?>>();
+        whereCollector = new WhereCollector<T>(dao, tablePrefix);
     }
 
     private void checkOrderBuilder() {
@@ -95,11 +89,7 @@ public class QueryBuilder<T> {
      * given in the generated dao classes.
      */
     public QueryBuilder<T> where(WhereCondition cond, WhereCondition... condMore) {
-        whereConditions.add(cond);
-        for (WhereCondition whereCondition : condMore) {
-            checkCondition(whereCondition);
-            whereConditions.add(whereCondition);
-        }
+        whereCollector.add(cond, condMore);
         return this;
     }
 
@@ -108,7 +98,7 @@ public class QueryBuilder<T> {
      * given in the generated dao classes.
      */
     public QueryBuilder<T> whereOr(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
-        whereConditions.add(or(cond1, cond2, condMore));
+        whereCollector.add(or(cond1, cond2, condMore));
         return this;
     }
 
@@ -118,7 +108,7 @@ public class QueryBuilder<T> {
      * {@link #whereOr(WhereCondition, WhereCondition, WhereCondition...)}.
      */
     public WhereCondition or(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
-        return combineWhereConditions(" OR ", cond1, cond2, condMore);
+        return whereCollector.combineWhereConditions(" OR ", cond1, cond2, condMore);
     }
 
     /**
@@ -127,50 +117,55 @@ public class QueryBuilder<T> {
      * {@link #whereOr(WhereCondition, WhereCondition, WhereCondition...)}.
      */
     public WhereCondition and(WhereCondition cond1, WhereCondition cond2, WhereCondition... condMore) {
-        return combineWhereConditions(" AND ", cond1, cond2, condMore);
+        return whereCollector.combineWhereConditions(" AND ", cond1, cond2, condMore);
     }
 
-    protected WhereCondition combineWhereConditions(String combineOp, WhereCondition cond1, WhereCondition cond2,
-            WhereCondition... condMore) {
-        StringBuilder builder = new StringBuilder("(");
-        List<Object> combinedValues = new ArrayList<Object>();
-
-        addCondition(builder, combinedValues, cond1);
-        builder.append(combineOp);
-        addCondition(builder, combinedValues, cond2);
-
-        for (WhereCondition cond : condMore) {
-            builder.append(combineOp);
-            addCondition(builder, combinedValues, cond);
-        }
-        builder.append(')');
-        return new WhereCondition.StringCondition(builder.toString(), combinedValues.toArray());
+    /**
+     * Expands the query to another entity type by using a JOIN. The primary key property of the primary entity for
+     * this QueryBuilder is used to match the given destinationProperty.
+     */
+    public <J> Join<T, J> join(Class<J> destinationEntityClass, Property destinationProperty) {
+        return join(dao.getPkProperty(), destinationEntityClass, destinationProperty);
     }
 
-    protected void addCondition(StringBuilder builder, List<Object> values, WhereCondition condition) {
-        checkCondition(condition);
-        condition.appendTo(builder, tablePrefix);
-        condition.appendValuesTo(values);
+    /**
+     * Expands the query to another entity type by using a JOIN. The given sourceProperty is used to match the primary
+     * key property of the given destinationEntity.
+     */
+    public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass) {
+        AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
+        Property destinationProperty = destinationDao.getPkProperty();
+        return addJoin(tablePrefix, sourceProperty, destinationDao, destinationProperty);
     }
 
-    protected void checkCondition(WhereCondition whereCondition) {
-        if (whereCondition instanceof PropertyCondition) {
-            checkProperty(((PropertyCondition) whereCondition).property);
-        }
+    /**
+     * Expands the query to another entity type by using a JOIN. The given sourceProperty is used to match the given
+     * destinationProperty of the given destinationEntity.
+     */
+    public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass, Property destinationProperty) {
+        AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
+        return addJoin(tablePrefix, sourceProperty, destinationDao, destinationProperty);
     }
 
-    /** Not supported yet. */
-    public <J> QueryBuilder<J> join(Class<J> entityClass, Property toOneProperty) {
-        throw new UnsupportedOperationException();
-        // return new QueryBuilder<J>();
+    /**
+     * Expands the query to another entity type by using a JOIN. The given sourceJoin's property is used to match the
+     * given destinationProperty of the given destinationEntity. Note that destination entity of the given join is used
+     * as the source for the new join to add. In this way, it is possible to compose complex "join of joins" across
+     * several entities if required.
+     */
+    public <J> Join<T, J> join(Join<?, T> sourceJoin, Property sourceProperty, Class<J> destinationEntityClass,
+                               Property destinationProperty) {
+        AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
+        return addJoin(sourceJoin.tablePrefix, sourceProperty, destinationDao, destinationProperty);
     }
 
-    /** Not supported yet. */
-    public <J> QueryBuilder<J> joinToMany(Class<J> entityClass, Property toManyProperty) {
-        throw new UnsupportedOperationException();
-        // @SuppressWarnings("unchecked")
-        // AbstractDao<J, ?> joinDao = (AbstractDao<J, ?>) dao.getSession().getDao(entityClass);
-        // return new QueryBuilder<J>(joinDao, "TX");
+    private <J> Join<T, J> addJoin(String sourceTablePrefix, Property sourceProperty, AbstractDao<J, ?> destinationDao,
+                                   Property destinationProperty) {
+        String joinTablePrefix = "J" + (joins.size() + 1);
+        Join<T, J> join = new Join<T, J>(sourceTablePrefix, sourceProperty, destinationDao, destinationProperty,
+                joinTablePrefix);
+        joins.add(join);
+        return join;
     }
 
     /** Adds the given properties to the ORDER BY section using ascending order. */
@@ -205,8 +200,8 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Adds the given raw SQL string to the ORDER BY section. Do not use this for standard properties: ordedAsc and
-     * orderDesc are prefered.
+     * Adds the given raw SQL string to the ORDER BY section. Do not use this for standard properties: orderAsc and
+     * orderDesc are preferred.
      */
     public QueryBuilder<T> orderRaw(String rawOrder) {
         checkOrderBuilder();
@@ -215,26 +210,11 @@ public class QueryBuilder<T> {
     }
 
     protected StringBuilder append(StringBuilder builder, Property property) {
-        checkProperty(property);
+        whereCollector.checkProperty(property);
         builder.append(tablePrefix).append('.').append('\'').append(property.columnName).append('\'');
         return builder;
     }
 
-    protected void checkProperty(Property property) {
-        if (dao != null) {
-            Property[] properties = dao.getProperties();
-            boolean found = false;
-            for (Property property2 : properties) {
-                if (property == property2) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                throw new DaoException("Property '" + property.name + "' is not part of " + dao);
-            }
-        }
-    }
 
     /** Limits the number of results returned by queries. */
     public QueryBuilder<T> limit(int limit) {
@@ -256,15 +236,10 @@ public class QueryBuilder<T> {
      * each execution.
      */
     public Query<T> build() {
-        String select;
-        if (joinBuilder == null || joinBuilder.length() == 0) {
-            select = InternalQueryDaoAccess.getStatements(dao).getSelectAll();
-        } else {
-            select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
-        }
+        String select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
         StringBuilder builder = new StringBuilder(select);
 
-        appendWhereClause(builder, tablePrefix);
+        appendJoinsAndWheres(builder, tablePrefix);
 
         if (orderBuilder != null && orderBuilder.length() > 0) {
             builder.append(" ORDER BY ").append(orderBuilder);
@@ -288,13 +263,7 @@ public class QueryBuilder<T> {
         }
 
         String sql = builder.toString();
-        if (LOG_SQL) {
-            DaoLog.d("Built SQL for query: " + sql);
-        }
-
-        if (LOG_VALUES) {
-            DaoLog.d("Values for query: " + values);
-        }
+        checkLog(sql);
 
         return Query.create(dao, sql, values.toArray(), limitPosition, offsetPosition);
     }
@@ -304,26 +273,22 @@ public class QueryBuilder<T> {
      * QueryBuilder for each execution.
      */
     public DeleteQuery<T> buildDelete() {
+        if (!joins.isEmpty()) {
+            throw new DaoException("JOINs are not supported for DELETE queries");
+        }
         String tablename = dao.getTablename();
         String baseSql = SqlUtils.createSqlDelete(tablename, null);
         StringBuilder builder = new StringBuilder(baseSql);
 
         // tablePrefix gets replaced by table name below. Don't use tableName here because it causes trouble when
         // table name ends with tablePrefix.
-        appendWhereClause(builder, tablePrefix);
+        appendJoinsAndWheres(builder, tablePrefix);
 
         String sql = builder.toString();
-
         // Remove table aliases, not supported for DELETE queries.
         // TODO(?): don't create table aliases in the first place.
-        sql = sql.replace(tablePrefix + ".'", tablename + ".'");
-
-        if (LOG_SQL) {
-            DaoLog.d("Built SQL for delete query: " + sql);
-        }
-        if (LOG_VALUES) {
-            DaoLog.d("Values for delete query: " + values);
-        }
+        sql = sql.replace(tablePrefix + ".\"", '"'+tablename + "\".\"");
+        checkLog(sql);
 
         return DeleteQuery.create(dao, sql, values.toArray());
     }
@@ -336,31 +301,45 @@ public class QueryBuilder<T> {
         String tablename = dao.getTablename();
         String baseSql = SqlUtils.createSqlSelectCountStar(tablename, tablePrefix);
         StringBuilder builder = new StringBuilder(baseSql);
-        appendWhereClause(builder, tablePrefix);
-        String sql = builder.toString();
+        appendJoinsAndWheres(builder, tablePrefix);
 
-        if (LOG_SQL) {
-            DaoLog.d("Built SQL for count query: " + sql);
-        }
-        if (LOG_VALUES) {
-            DaoLog.d("Values for count query: " + values);
-        }
+        String sql = builder.toString();
+        checkLog(sql);
 
         return CountQuery.create(dao, sql, values.toArray());
     }
 
-    private void appendWhereClause(StringBuilder builder, String tablePrefixOrNull) {
+    private void checkLog(String sql) {
+        if (LOG_SQL) {
+            DaoLog.d("Built SQL for query: " + sql);
+        }
+        if (LOG_VALUES) {
+            DaoLog.d("Values for query: " + values);
+        }
+    }
+
+    private void appendJoinsAndWheres(StringBuilder builder, String tablePrefixOrNull) {
         values.clear();
-        if (!whereConditions.isEmpty()) {
+        for (Join<T, ?> join : joins) {
+            builder.append(" JOIN ").append(join.daoDestination.getTablename()).append(' ');
+            builder.append(join.tablePrefix).append(" ON ");
+            SqlUtils.appendProperty(builder, join.sourceTablePrefix, join.joinPropertySource).append('=');
+            SqlUtils.appendProperty(builder, join.tablePrefix, join.joinPropertyDestination);
+        }
+        boolean whereAppended = !whereCollector.isEmpty();
+        if (whereAppended) {
             builder.append(" WHERE ");
-            ListIterator<WhereCondition> iter = whereConditions.listIterator();
-            while (iter.hasNext()) {
-                if (iter.hasPrevious()) {
+            whereCollector.appendWhereClause(builder, tablePrefixOrNull, values);
+        }
+        for (Join<T, ?> join : joins) {
+            if (!join.whereCollector.isEmpty()) {
+                if (!whereAppended) {
+                    builder.append(" WHERE ");
+                    whereAppended = true;
+                } else {
                     builder.append(" AND ");
                 }
-                WhereCondition condition = iter.next();
-                condition.appendTo(builder, tablePrefixOrNull);
-                condition.appendValuesTo(values);
+                join.whereCollector.appendWhereClause(builder, join.tablePrefix, values);
             }
         }
     }
@@ -412,7 +391,8 @@ public class QueryBuilder<T> {
 
     /**
      * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#uniqueOrThrow() uniqueOrThrow()}; see
-     * {@link Query#uniqueOrThrow()} for details. To execute a query more than once, you should build the query and keep
+     * {@link Query#uniqueOrThrow()} for details. To execute a query more than once, you should build the query and
+     * keep
      * the {@link Query} object for efficiency reasons.
      */
     public T uniqueOrThrow() {

@@ -68,7 +68,7 @@ public class ContentProvider {
             basePath = "";
         }
         if (className == null) {
-            className = "EntityContentProvider";
+            className = entities.get(0).getClassName() + "ContentProvider";
         }
         if (javaPackage == null) {
             javaPackage = schema.getDefaultJavaPackage();

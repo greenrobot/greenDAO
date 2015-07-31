@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -19,7 +19,12 @@ package de.greenrobot.daogenerator;
 
 import de.greenrobot.daogenerator.Property.PropertyBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Model class for an entity: a Java data object mapped to a data base table. A new entity is added to a {@link Schema}
@@ -43,16 +48,12 @@ public class Entity {
     private final Set<String> propertyNames;
     private final List<Index> indexes;
     private final List<ToOne> toOneRelations;
-    private final List<ToMany> toManyRelations;
-    private final List<ToMany> incomingToManyRelations;
+    private final List<ToManyBase> toManyRelations;
+    private final List<ToManyBase> incomingToManyRelations;
     private final Collection<String> additionalImportsEntity;
     private final Collection<String> additionalImportsDao;
     private final List<String> interfacesToImplement;
     private final List<ContentProvider> contentProviders;
-    //annotation lists
-    private final List<Annotation> classAnnotations;
-    private final List<Annotation> emptyConstructorAnnotations;
-    private final List<Annotation> fullConstructorAnnotations;
 
     private String tableName;
     private String classNameDao;
@@ -83,16 +84,12 @@ public class Entity {
         propertyNames = new HashSet<String>();
         indexes = new ArrayList<Index>();
         toOneRelations = new ArrayList<ToOne>();
-        toManyRelations = new ArrayList<ToMany>();
-        incomingToManyRelations = new ArrayList<ToMany>();
+        toManyRelations = new ArrayList<ToManyBase>();
+        incomingToManyRelations = new ArrayList<ToManyBase>();
         additionalImportsEntity = new TreeSet<String>();
         additionalImportsDao = new TreeSet<String>();
         interfacesToImplement = new ArrayList<String>();
         contentProviders = new ArrayList<ContentProvider>();
-        classAnnotations = new ArrayList<Annotation>();
-        emptyConstructorAnnotations = new ArrayList<Annotation>();
-        fullConstructorAnnotations = new ArrayList<Annotation>();
-
         constructors = true;
     }
 
@@ -180,7 +177,7 @@ public class Entity {
 
     public ToMany addToMany(Property[] sourceProperties, Entity target, Property[] targetProperties) {
         if (protobuf) {
-            throw new IllegalStateException("Protobuf entities do not support realtions, currently");
+            throw new IllegalStateException("Protobuf entities do not support relations, currently");
         }
 
         ToMany toMany = new ToMany(schema, this, sourceProperties, target, targetProperties);
@@ -188,6 +185,14 @@ public class Entity {
         target.incomingToManyRelations.add(toMany);
         return toMany;
     }
+
+    public ToManyWithJoinEntity addToMany(Entity target, Entity joinEntity, Property id1, Property id2) {
+        ToManyWithJoinEntity toMany = new ToManyWithJoinEntity(schema, this, target, joinEntity, id1, id2);
+        toManyRelations.add(toMany);
+        target.incomingToManyRelations.add(toMany);
+        return toMany;
+    }
+
 
     /**
      * Adds a to-one relationship to the given target entity using the given given foreign key property (which belongs
@@ -239,6 +244,7 @@ public class Entity {
 
     public ContentProvider addContentProvider() {
         List<Entity> entities = new ArrayList<Entity>();
+        entities.add(this);
         ContentProvider contentProvider = new ContentProvider(schema, entities);
         contentProviders.add(contentProvider);
         return contentProvider;
@@ -247,6 +253,11 @@ public class Entity {
     /** Adds a new index to the entity. */
     public Entity addIndex(Index index) {
         indexes.add(index);
+        return this;
+    }
+
+    public Entity addImport(String additionalImport) {
+        additionalImportsEntity.add(additionalImport);
         return this;
     }
 
@@ -324,14 +335,17 @@ public class Entity {
         this.javaPackageTest = javaPackageTest;
     }
 
+    /** Internal property used by templates, don't use during entity definition. */
     public List<Property> getPropertiesPk() {
         return propertiesPk;
     }
 
+    /** Internal property used by templates, don't use during entity definition. */
     public List<Property> getPropertiesNonPk() {
         return propertiesNonPk;
     }
 
+    /** Internal property used by templates, don't use during entity definition. */
     public Property getPkProperty() {
         return pkProperty;
     }
@@ -340,6 +354,7 @@ public class Entity {
         return indexes;
     }
 
+    /** Internal property used by templates, don't use during entity definition. */
     public String getPkType() {
         return pkType;
     }
@@ -385,39 +400,12 @@ public class Entity {
         return toOneRelations;
     }
 
-    public List<ToMany> getToManyRelations() {
+    public List<ToManyBase> getToManyRelations() {
         return toManyRelations;
     }
 
-    public List<ToMany> getIncomingToManyRelations() {
+    public List<ToManyBase> getIncomingToManyRelations() {
         return incomingToManyRelations;
-    }
-
-    public List<Annotation> getClassAnnotations() {
-    	return classAnnotations;
-    }
-
-    public List<Annotation> getEmptyConstructorAnnotations() {
-    	return emptyConstructorAnnotations;
-    }
-
-    public List<Annotation> getFullConstructorAnnotations() {
-    	return fullConstructorAnnotations;
-    }
-
-    public Entity addClassAnnotation(Annotation annotation) {
-    	classAnnotations.add(annotation);
-    	return this;
-    }
-
-    public Entity addEmptyConstructorAnnotation(Annotation annotation) {
-    	emptyConstructorAnnotations.add(annotation);
-    	return this;
-    }
-
-    public Entity addFullConstructorAnnotation(Annotation annotation) {
-    	fullConstructorAnnotations.add(annotation);
-    	return this;
     }
 
     /**
@@ -458,6 +446,9 @@ public class Entity {
 
     public void implementsInterface(String... interfaces) {
         for (String interfaceToImplement : interfaces) {
+            if (interfacesToImplement.contains(interfaceToImplement)) {
+                throw new RuntimeException("Interface defined more than once: " + interfaceToImplement);
+            }
             interfacesToImplement.add(interfaceToImplement);
         }
     }
@@ -483,7 +474,7 @@ public class Entity {
     }
 
     void init2ndPass() {
-        init2nPassNamesWithDefaults();
+        init2ndPassNamesWithDefaults();
 
         for (int i = 0; i < properties.size(); i++) {
             Property property = properties.get(i);
@@ -514,7 +505,7 @@ public class Entity {
             }
         }
 
-        for (ToMany toMany : toManyRelations) {
+        for (ToManyBase toMany : toManyRelations) {
             toMany.init2ndPass();
             // Source Properties may not be virtual, so we do not need the following code:
             // for (Property sourceProperty : toMany.getSourceProperties()) {
@@ -540,7 +531,7 @@ public class Entity {
         }
     }
 
-    protected void init2nPassNamesWithDefaults() {
+    protected void init2ndPassNamesWithDefaults() {
         if (tableName == null) {
             tableName = DaoUtil.dbName(className);
         }
@@ -589,7 +580,7 @@ public class Entity {
         }
     }
 
-    void init3ndPass() {
+    void init3rdPass() {
         for (Property property : properties) {
             property.init3ndPass();
         }
@@ -608,12 +599,14 @@ public class Entity {
         }
 
         Set<String> toManyNames = new HashSet<String>();
-        for (ToMany toMany : toManyRelations) {
-            toMany.init3ndPass();
-            Entity targetEntity = toMany.getTargetEntity();
-            for (Property targetProperty : toMany.getTargetProperties()) {
-                if (!targetEntity.propertiesColumns.contains(targetProperty)) {
-                    targetEntity.propertiesColumns.add(targetProperty);
+        for (ToManyBase toMany : toManyRelations) {
+            toMany.init3rdPass();
+            if (toMany instanceof ToMany) {
+                Entity targetEntity = toMany.getTargetEntity();
+                for (Property targetProperty : ((ToMany) toMany).getTargetProperties()) {
+                    if (!targetEntity.propertiesColumns.contains(targetProperty)) {
+                        targetEntity.propertiesColumns.add(targetProperty);
+                    }
                 }
             }
             if (!toManyNames.add(toMany.getName().toLowerCase())) {
@@ -636,27 +629,31 @@ public class Entity {
             }
         }
 
-        for (ToMany toMany : toManyRelations) {
+        for (ToManyBase toMany : toManyRelations) {
             Entity targetEntity = toMany.getTargetEntity();
             checkAdditionalImportsEntityTargetEntity(targetEntity);
         }
 
-        addAnnotationImports(classAnnotations);
-        addAnnotationImports(emptyConstructorAnnotations);
-        addAnnotationImports(fullConstructorAnnotations);
         for (Property property : properties) {
-            addAnnotationImports(property.getGetterAnnotations());
-            addAnnotationImports(property.getSetterAnnotations());
-            addAnnotationImports(property.getFieldAnnotations());
-        }
-
-    }
-
-    private void addAnnotationImports(List<Annotation> annotations) {
-        for (Annotation annotation : annotations) {
-            if (annotation.getPackage() != null) {
-                additionalImportsEntity.add(annotation.getPackage() + "." + annotation.getName());
+            String customType = property.getCustomType();
+            if (customType != null) {
+                String pack = DaoUtil.getPackageFromFullyQualified(customType);
+                if (!pack.equals(javaPackage)) {
+                    additionalImportsEntity.add(customType);
+                }
+                if (!pack.equals(javaPackageDao)) {
+                    additionalImportsDao.add(customType);
+                }
             }
+
+            String converter = property.getConverter();
+            if (converter != null) {
+                String pack = DaoUtil.getPackageFromFullyQualified(converter);
+                if (!pack.equals(javaPackageDao)) {
+                    additionalImportsDao.add(converter);
+                }
+            }
+
         }
     }
 
@@ -679,4 +676,5 @@ public class Entity {
     public String toString() {
         return "Entity " + className + " (package: " + javaPackage + ")";
     }
+
 }

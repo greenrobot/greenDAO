@@ -25,7 +25,7 @@ import de.greenrobot.dao.InternalQueryDaoAccess;
  * @author Markus
  * 
  * @param <T>
- *            The enitity class the query will return results for.
+ *            The entity class the query will return results for.
  */
 // TODO support long, double, blob types directly
 abstract class AbstractQuery<T> {

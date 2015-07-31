@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -250,12 +250,21 @@ public class LazyList<E> implements List<E>, Closeable {
             }
             return entity;
         } else {
-            return loadEntity(location);
+            lock.lock();
+            try {
+                return loadEntity(location);
+            } finally {
+                lock.unlock();
+            }
         }
     }
 
+    /** Lock must be locked when entering this method. */
     protected E loadEntity(int location) {
-        cursor.moveToPosition(location);
+        boolean ok = cursor.moveToPosition(location);
+        if(!ok) {
+            throw new DaoException("Could not move to cursor location " + location);
+        }
         E entity = daoAccess.loadCurrent(cursor, 0, true);
         if (entity == null) {
             throw new DaoException("Loading of entity failed (null) at position " + location);
@@ -334,7 +343,7 @@ public class LazyList<E> implements List<E>, Closeable {
     public List<E> subList(int start, int end) {
         checkCached();
         for (int i = start; i < end; i++) {
-            entities.get(i);
+            get(i);
         }
         return entities.subList(start, end);
     }

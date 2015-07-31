@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -57,14 +57,17 @@ public class PropertyOrderList {
         return propertiesOrder;
     }
 
-    public String getCommaSeparatedString() {
+    public String getCommaSeparatedString(String tablePrefixOrNull) {
         StringBuilder builder = new StringBuilder();
         int size = properties.size();
         for (int i = 0; i < size; i++) {
             Property property = properties.get(i);
             String order = propertiesOrder.get(i);
             if (property != null) {
-                builder.append(property.getColumnName()).append(' ');
+                if(tablePrefixOrNull != null) {
+                    builder.append(tablePrefixOrNull).append('.');
+                }
+                builder.append('\'').append(property.getColumnName()).append('\'').append(' ');
             }
             if (order != null) {
                 builder.append(order);

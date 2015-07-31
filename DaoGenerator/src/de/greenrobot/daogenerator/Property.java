@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -16,9 +16,6 @@
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.greenrobot.daogenerator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /** Model class for an entity's property: a Java property mapped to a data base column. */
 public class Property {
@@ -105,29 +102,31 @@ public class Property {
             return this;
         }
 
+        public PropertyBuilder customType(String customType, String converter) {
+            property.customType = customType;
+            property.customTypeClassName = DaoUtil.getClassnameFromFullyQualified(customType);
+            property.converter = converter;
+            property.converterClassName = DaoUtil.getClassnameFromFullyQualified(converter);
+            return this;
+        }
+
+        public PropertyBuilder codeBeforeField(String code) {
+            property.codeBeforeField = code;
+            return this;
+        }
+
+        public PropertyBuilder codeBeforeGetter(String code) {
+            property.codeBeforeGetter = code;
+            return this;
+        }
+
+        public PropertyBuilder codeBeforeSetter(String code) {
+            property.codeBeforeSetter = code;
+            return this;
+        }
+
         public Property getProperty() {
             return property;
-        }
-
-        public PropertyBuilder addFieldAnnotation(Annotation annotation) {
-            property.fieldAnnotations.add(annotation);
-            return this;
-        }
-
-        public PropertyBuilder addSetterAnnotation(Annotation annotation) {
-            property.setterAnnotations.add(annotation);
-            return this;
-        }
-
-        public PropertyBuilder addGetterAnnotation(Annotation annotation) {
-            property.getterAnnotations.add(annotation);
-            return this;
-        }
-
-        public PropertyBuilder addSetterGetterAnnotation(Annotation annotation) {
-            addSetterAnnotation(annotation);
-            addGetterAnnotation(annotation);
-            return this;
         }
     }
 
@@ -139,6 +138,15 @@ public class Property {
     private String columnName;
     private String columnType;
 
+    private String customType;
+    private String customTypeClassName;
+    private String converter;
+    private String converterClassName;
+
+    private String codeBeforeField;
+    private String codeBeforeGetter;
+    private String codeBeforeSetter;
+
     private boolean primaryKey;
     private boolean pkAsc;
     private boolean pkDesc;
@@ -146,10 +154,6 @@ public class Property {
 
     private boolean unique;
     private boolean notNull;
-
-    private final List<Annotation> fieldAnnotations;
-    private final List<Annotation> setterAnnotations;
-    private final List<Annotation> getterAnnotations;
 
     /** Initialized in 2nd pass */
     private String constraints;
@@ -163,9 +167,6 @@ public class Property {
         this.entity = entity;
         this.propertyName = propertyName;
         this.propertyType = propertyType;
-        this.fieldAnnotations = new ArrayList<Annotation>();
-        this.getterAnnotations = new ArrayList<Annotation>();
-        this.setterAnnotations = new ArrayList<Annotation>();
     }
 
     public String getPropertyName() {
@@ -212,12 +213,106 @@ public class Property {
         return javaType;
     }
 
+    public String getJavaTypeInEntity() {
+        if (customTypeClassName != null) {
+            return customTypeClassName;
+        } else {
+            return javaType;
+        }
+    }
+
     public int getOrdinal() {
         return ordinal;
     }
 
-    public void setOrdinal(int ordinal) {
+    void setOrdinal(int ordinal) {
         this.ordinal = ordinal;
+    }
+
+    public String getCustomType() {
+        return customType;
+    }
+
+    public String getCustomTypeClassName() {
+        return customTypeClassName;
+    }
+
+    public String getConverter() {
+        return converter;
+    }
+
+    public String getConverterClassName() {
+        return converterClassName;
+    }
+
+    public String getCodeBeforeField() {
+        return codeBeforeField;
+    }
+
+    public String getCodeBeforeGetter() {
+        return codeBeforeGetter;
+    }
+
+    public String getCodeBeforeSetter() {
+        return codeBeforeSetter;
+    }
+
+    public String getDatabaseValueExpression() {
+        return getDatabaseValueExpression(propertyName);
+    }
+
+    public String getDatabaseValueExpressionNotNull() {
+        return getDatabaseValueExpression("entity.get" + DaoUtil.capFirst(propertyName) + "()");
+    }
+
+    // Got too messy in template:
+    // <#if property.customType?has_content>${property.propertyName}Converter.convertToDatabaseValue(</#if><#--
+    // -->entity.get${property.propertyName?cap_first}()<#if property.customType?has_content>)</#if><#if
+    // property.propertyType == "Boolean"> ? 1l: 0l</#if><#if property.propertyType == "Date">.getTime()</#if>
+    public String getDatabaseValueExpression(String entityValue) {
+        StringBuilder builder = new StringBuilder();
+        if (customType != null) {
+            builder.append(propertyName).append("Converter.convertToDatabaseValue(");
+        }
+        builder.append(entityValue);
+        if (customType != null) {
+            builder.append(')');
+        }
+        if(propertyType == PropertyType.Boolean) {
+            builder.append(" ? 1L: 0L");
+        } else if(propertyType == PropertyType.Date) {
+            builder.append(".getTime()");
+        }
+        return builder.toString();
+    }
+
+    // Got too messy in template:
+    // <#if property.propertyType == "Byte">(byte) </#if>
+    // <#if property.propertyType == "Date">new java.util.Date(</#if>
+    // cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})
+    // <#if property.propertyType == "Boolean"> != 0</#if>
+    // <#if property.propertyType == "Date">)</#if>
+    public String getEntityValueExpression(String databaseValue) {
+        StringBuilder builder = new StringBuilder();
+        if (customType != null) {
+            builder.append(propertyName).append("Converter.convertToEntityProperty(");
+        }
+        if(propertyType == PropertyType.Byte) {
+            builder.append("(byte) ");
+        }else
+        if(propertyType == PropertyType.Date) {
+            builder.append("new java.util.Date(");
+        }
+        builder.append(databaseValue);
+        if(propertyType == PropertyType.Boolean) {
+            builder.append(" != 0");
+        } else if(propertyType == PropertyType.Date) {
+            builder.append(")");
+        }
+        if (customType != null) {
+            builder.append(')');
+        }
+        return builder.toString();
     }
 
     public Entity getEntity() {
@@ -265,18 +360,6 @@ public class Property {
         if (constraintBuilder.length() > 0) {
             constraints = newContraints;
         }
-    }
-
-    public List<Annotation> getFieldAnnotations() {
-        return fieldAnnotations;
-    }
-
-    public List<Annotation> getSetterAnnotations() {
-        return setterAnnotations;
-    }
-
-    public List<Annotation> getGetterAnnotations() {
-        return getterAnnotations;
     }
 
     void init3ndPass() {

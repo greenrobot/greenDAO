@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -33,7 +33,7 @@ import freemarker.template.Template;
 
 /**
  * Once you have your model created, use this class to generate entities and DAOs.
- * 
+ *
  * @author Markus
  */
 public class DaoGenerator {
@@ -51,7 +51,7 @@ public class DaoGenerator {
 
     public DaoGenerator() throws IOException {
         System.out.println("greenDAO Generator");
-        System.out.println("Copyright 2011-2014 Markus Junginger, greenrobot.de. Licensed under GPL V3.");
+        System.out.println("Copyright 2011-2015 Markus Junginger, greenrobot.de. Licensed under GPL V3.");
         System.out.println("This program comes with ABSOLUTELY NO WARRANTY");
 
         patternKeepIncludes = compilePattern("INCLUDES");
@@ -78,22 +78,19 @@ public class DaoGenerator {
 
     /** Generates all entities and DAOs for the given schema. */
     public void generateAll(Schema schema, String outDir) throws Exception {
-        generateAll(schema, outDir, null);
+        generateAll(schema, outDir, null, null);
     }
 
     /** Generates all entities and DAOs for the given schema. */
-    public void generateAll(Schema schema, String outDir, String outDirTest) throws Exception {
+    public void generateAll(Schema schema, String outDir, String outDirEntity, String outDirTest) throws Exception {
         long start = System.currentTimeMillis();
 
         File outDirFile = toFileForceExists(outDir);
-
-        File outDirTestFile = null;
-        if (outDirTest != null) {
-            outDirTestFile = toFileForceExists(outDirTest);
-        }
+        File outDirEntityFile = outDirEntity != null? toFileForceExists(outDirEntity): outDirFile;
+        File outDirTestFile = outDirTest != null ? toFileForceExists(outDirTest) : null;
 
         schema.init2ndPass();
-        schema.init3ndPass();
+        schema.init3rdPass();
 
         System.out.println("Processing schema version " + schema.getVersion() + "...");
 
@@ -101,7 +98,7 @@ public class DaoGenerator {
         for (Entity entity : entities) {
             generate(templateDao, outDirFile, entity.getJavaPackageDao(), entity.getClassNameDao(), schema, entity);
             if (!entity.isProtobuf() && !entity.isSkipGeneration()) {
-                generate(templateEntity, outDirFile, entity.getJavaPackage(), entity.getClassName(), schema, entity);
+                generate(templateEntity, outDirEntityFile, entity.getJavaPackage(), entity.getClassName(), schema, entity);
             }
             if (outDirTestFile != null && !entity.isSkipGenerationTest()) {
                 String javaPackageTest = entity.getJavaPackageTest();
@@ -137,12 +134,12 @@ public class DaoGenerator {
     }
 
     private void generate(Template template, File outDirFile, String javaPackage, String javaClassName, Schema schema,
-            Entity entity) throws Exception {
+                          Entity entity) throws Exception {
         generate(template, outDirFile, javaPackage, javaClassName, schema, entity, null);
     }
 
     private void generate(Template template, File outDirFile, String javaPackage, String javaClassName, Schema schema,
-            Entity entity, Map<String, Object> additionalObjectsForTemplate) throws Exception {
+                          Entity entity, Map<String, Object> additionalObjectsForTemplate) throws Exception {
         Map<String, Object> root = new HashMap<String, Object>();
         root.put("schema", schema);
         root.put("entity", entity);

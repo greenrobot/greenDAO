@@ -15,6 +15,11 @@
  */
 package de.greenrobot.dao.async;
 
+/** Listener being called after completion of {@link de.greenrobot.dao.async.AsyncOperation}. */
 public interface AsyncOperationListener {
+    /**
+     * Note, that the operation may not have been successful, check
+     * {@link AsyncOperation#isFailed()} and/or {@link AsyncOperation#getThrowable()} for error situations.
+     */
     void onAsyncOperationCompleted(AsyncOperation operation);
 }
