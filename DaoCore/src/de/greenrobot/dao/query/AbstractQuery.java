@@ -27,7 +27,9 @@ import de.greenrobot.dao.InternalQueryDaoAccess;
  * @param <T>
  *            The entity class the query will return results for.
  */
-// TODO support long, double, blob types directly
+// TODO support long, double and other types, not just Strings, for parameters
+// TODO Make parameters setable by Property (if unique in parameters)
+// TODO Make query compilable
 abstract class AbstractQuery<T> {
     protected final AbstractDao<T, ?> dao;
     protected final InternalQueryDaoAccess<T> daoAccess;

@@ -19,20 +19,15 @@ import android.database.Cursor;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 
-import java.util.Date;
 import java.util.List;
 
 /**
  * A repeatable query returning entities.
  *
- * @param <T> The enitity class the query will return results for.
+ * @param <T> The entity class the query will return results for.
  * @author Markus
  */
-// TODO support long, double and other types, not just Strings, for parameters
-// TODO Make parameters setable by Property (if unique in paramaters)
-// TODO Query for PKs/ROW IDs
-// TODO Make query compilable
-public class Query<T> extends AbstractQuery<T> {
+public class Query<T> extends AbstractQueryWithLimit<T> {
     private final static class QueryData<T2> extends AbstractQueryData<T2, Query<T2>> {
         private final int limitPosition;
         private final int offsetPosition;
@@ -62,65 +57,16 @@ public class Query<T> extends AbstractQuery<T> {
         return queryData.forCurrentThread();
     }
 
-    private final int limitPosition;
-    private final int offsetPosition;
     private final QueryData<T> queryData;
 
     private Query(QueryData<T> queryData, AbstractDao<T, ?> dao, String sql, String[] initialValues, int limitPosition,
                   int offsetPosition) {
-        super(dao, sql, initialValues);
+        super(dao, sql, initialValues, limitPosition, offsetPosition);
         this.queryData = queryData;
-        this.limitPosition = limitPosition;
-        this.offsetPosition = offsetPosition;
     }
 
     public Query<T> forCurrentThread() {
         return queryData.forCurrentThread(this);
-    }
-
-    /**
-     * Sets the parameter (0 based) using the position in which it was added during building the query. Note: all
-     * standard WHERE parameters come first. After that come the WHERE parameters of joins (if any).
-     */
-    public void setParameter(int index, Object parameter) {
-        if (index >= 0 && (index == limitPosition || index == offsetPosition)) {
-            throw new IllegalArgumentException("Illegal parameter index: " + index);
-        }
-        super.setParameter(index, parameter);
-    }
-
-    public void setParameter(int index, Date parameter) {
-        Long converted = parameter != null ? parameter.getTime() : null;
-        setParameter(index, converted);
-    }
-
-    public void setParameter(int index, Boolean parameter) {
-        Integer converted = parameter != null ? (parameter ? 1 : 0) : null;
-        setParameter(index, converted);
-    }
-
-    /**
-     * Sets the limit of the maximum number of results returned by this Query. {@link QueryBuilder#limit(int)} must
-     * have been called on the QueryBuilder that created this Query object.
-     */
-    public void setLimit(int limit) {
-        checkThread();
-        if (limitPosition == -1) {
-            throw new IllegalStateException("Limit must be set with QueryBuilder before it can be used here");
-        }
-        parameters[limitPosition] = Integer.toString(limit);
-    }
-
-    /**
-     * Sets the offset for results returned by this Query. {@link QueryBuilder#offset(int)} must have been called on
-     * the QueryBuilder that created this Query object.
-     */
-    public void setOffset(int offset) {
-        checkThread();
-        if (offsetPosition == -1) {
-            throw new IllegalStateException("Offset must be set with QueryBuilder before it can be used here");
-        }
-        parameters[offsetPosition] = Integer.toString(offset);
     }
 
     /** Executes the query and returns the result as a list containing all entities loaded into memory. */
