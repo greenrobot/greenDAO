@@ -236,6 +236,32 @@ public class QueryBuilder<T> {
      * each execution.
      */
     public Query<T> build() {
+        StringBuilder builder = createSelectBuilder();
+        int limitPosition = checkAddLimit(builder);
+        int offsetPosition = checkAddOffset(builder);
+
+        String sql = builder.toString();
+        checkLog(sql);
+
+        return Query.create(dao, sql, values.toArray(), limitPosition, offsetPosition);
+    }
+
+    /**
+     * Builds a reusable query object for low level android.database.Cursor access.
+     * (Query objects can be executed more efficiently than creating a QueryBuilder for each execution.
+     */
+    public CursorQuery buildCursor() {
+        StringBuilder builder = createSelectBuilder();
+        int limitPosition = checkAddLimit(builder);
+        int offsetPosition = checkAddOffset(builder);
+
+        String sql = builder.toString();
+        checkLog(sql);
+
+        return CursorQuery.create(dao, sql, values.toArray(), limitPosition, offsetPosition);
+    }
+
+    private StringBuilder createSelectBuilder() {
         String select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
         StringBuilder builder = new StringBuilder(select);
 
@@ -244,14 +270,21 @@ public class QueryBuilder<T> {
         if (orderBuilder != null && orderBuilder.length() > 0) {
             builder.append(" ORDER BY ").append(orderBuilder);
         }
+        return builder;
+    }
 
+
+    private int checkAddLimit(StringBuilder builder) {
         int limitPosition = -1;
         if (limit != null) {
             builder.append(" LIMIT ?");
             values.add(limit);
             limitPosition = values.size() - 1;
         }
+        return limitPosition;
+    }
 
+    private int checkAddOffset(StringBuilder builder) {
         int offsetPosition = -1;
         if (offset != null) {
             if (limit == null) {
@@ -261,11 +294,7 @@ public class QueryBuilder<T> {
             values.add(offset);
             offsetPosition = values.size() - 1;
         }
-
-        String sql = builder.toString();
-        checkLog(sql);
-
-        return Query.create(dao, sql, values.toArray(), limitPosition, offsetPosition);
+        return offsetPosition;
     }
 
     /**
@@ -287,7 +316,7 @@ public class QueryBuilder<T> {
         String sql = builder.toString();
         // Remove table aliases, not supported for DELETE queries.
         // TODO(?): don't create table aliases in the first place.
-        sql = sql.replace(tablePrefix + ".\"", '"'+tablename + "\".\"");
+        sql = sql.replace(tablePrefix + ".\"", '"' + tablename + "\".\"");
         checkLog(sql);
 
         return DeleteQuery.create(dao, sql, values.toArray());
