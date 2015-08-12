@@ -20,8 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.database.sqlite.SQLiteDatabase;
+import de.greenrobot.dao.database.Database;
 import de.greenrobot.dao.identityscope.IdentityScopeType;
 import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.database.AndroidSQLiteDatabase;
 
 /**
  * The master of dao will guide you: start dao sessions with the master.
@@ -29,12 +31,12 @@ import de.greenrobot.dao.internal.DaoConfig;
  * @author Markus
  */
 public abstract class AbstractDaoMaster {
-    protected final SQLiteDatabase db;
+    protected final Database db;
     protected final int schemaVersion;
     protected final Map<Class<? extends AbstractDao<?, ?>>, DaoConfig> daoConfigMap;
 
     public AbstractDaoMaster(SQLiteDatabase db, int schemaVersion) {
-        this.db = db;
+        this.db = new AndroidSQLiteDatabase(db);
         this.schemaVersion = schemaVersion;
 
         daoConfigMap = new HashMap<Class<? extends AbstractDao<?, ?>>, DaoConfig>();
@@ -50,7 +52,7 @@ public abstract class AbstractDaoMaster {
     }
 
     /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
-    public SQLiteDatabase getDatabase() {
+    public Database getDatabase() {
         return db;
     }
 
