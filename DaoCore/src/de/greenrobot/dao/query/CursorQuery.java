@@ -68,7 +68,7 @@ public class CursorQuery<T> extends AbstractQueryWithLimit<T> {
         return queryData.forCurrentThread(this);
     }
 
-    /** Executes the query and returns the result as a list containing all entities loaded into memory. */
+    /** Executes the query and returns a raw android.database.Cursor. Don't forget to close it. */
     public Cursor query() {
         checkThread();
         return dao.getDatabase().rawQuery(sql, parameters);
