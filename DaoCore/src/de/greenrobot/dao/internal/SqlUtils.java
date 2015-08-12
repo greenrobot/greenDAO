@@ -146,4 +146,7 @@ public class SqlUtils {
         return builder.toString();
     }
 
+    public static String createSqlCount(String tablename) {
+        return "SELECT COUNT(*) FROM " + tablename;
+    }
 }

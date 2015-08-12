@@ -30,6 +30,11 @@ public class AndroidSQLiteStatement implements DatabaseStatement {
     }
 
     @Override
+    public long simpleQueryForLong() {
+        return delegate.simpleQueryForLong();
+    }
+
+    @Override
     public void bindNull(int index) {
         delegate.bindNull(index);
     }

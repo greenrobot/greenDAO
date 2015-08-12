@@ -3,6 +3,8 @@ package de.greenrobot.dao.database;
 public interface DatabaseStatement {
     void execute();
 
+    long simpleQueryForLong();
+
     void bindNull(int index);
 
     long executeInsert();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package de.greenrobot.dao.internal;
 
-import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.database.Database;
 import de.greenrobot.dao.database.DatabaseStatement;
 
@@ -30,6 +29,7 @@ public class TableStatements {
     private DatabaseStatement insertOrReplaceStatement;
     private DatabaseStatement updateStatement;
     private DatabaseStatement deleteStatement;
+    private DatabaseStatement countStatement;
 
     private volatile String selectAll;
     private volatile String selectByKey;
@@ -73,6 +73,14 @@ public class TableStatements {
             updateStatement = db.compileStatement(sql);
         }
         return updateStatement;
+    }
+
+    public DatabaseStatement getCountStatement() {
+        if (countStatement == null) {
+            String sql = SqlUtils.createSqlCount(tablename);
+            countStatement = db.compileStatement(sql);
+        }
+        return countStatement;
     }
 
     /** ends with an space to simplify appending to this string. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,15 @@
  */
 package de.greenrobot.dao.query;
 
-import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.database.Database;
 
 /**
  * A repeatable query for deleting entities.<br/>
  * New API note: this is more likely to change.
- * 
+ *
+ * @param <T> The entity class the query will delete from.
  * @author Markus
- * 
- * @param <T>
- *            The entity class the query will delete from.
  */
 public class DeleteQuery<T> extends AbstractQuery<T> {
     private final static class QueryData<T2> extends AbstractQueryData<T2, DeleteQuery<T2>> {
@@ -58,12 +56,13 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
 
     /**
      * Deletes all matching entities without detaching them from the identity scope (aka session/cache). Note that this
-     * method may lead to stale entity objects in the session cache. Stale entities may be returned when loaded by their
+     * method may lead to stale entity objects in the session cache. Stale entities may be returned when loaded by
+     * their
      * primary key, but not using queries.
      */
     public void executeDeleteWithoutDetachingEntities() {
         checkThread();
-        SQLiteDatabase db = dao.getDatabase();
+        Database db = dao.getDatabase();
         if (db.isDbLockedByCurrentThread()) {
             dao.getDatabase().execSQL(sql, parameters);
         } else {

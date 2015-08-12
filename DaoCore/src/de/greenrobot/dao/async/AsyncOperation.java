@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package de.greenrobot.dao.async;
 
-import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.database.Database;
 
 /**
  * An operation that will be enqueued for asynchronous execution.
@@ -48,7 +48,7 @@ public class AsyncOperation {
 
     final OperationType type;
     final AbstractDao<Object, Object> dao;
-    private final SQLiteDatabase database;
+    private final Database database;
     /** Entity, Iterable<Entity>, Entity[], or Runnable. */
     final Object parameter;
     final int flags;
@@ -65,7 +65,7 @@ public class AsyncOperation {
 
     @SuppressWarnings("unchecked")
     /** Either supply dao or database (set other to null). */
-    AsyncOperation(OperationType type, AbstractDao<?, ?> dao, SQLiteDatabase database, Object parameter, int flags) {
+    AsyncOperation(OperationType type, AbstractDao<?, ?> dao, Database database, Object parameter, int flags) {
         this.type = type;
         this.flags = flags;
         this.dao = (AbstractDao<Object, Object>) dao;
@@ -112,7 +112,7 @@ public class AsyncOperation {
         return (flags & FLAG_MERGE_TX) != 0;
     }
 
-    SQLiteDatabase getDatabase() {
+    Database getDatabase() {
         return database != null ? database : dao.getDatabase();
     }
 

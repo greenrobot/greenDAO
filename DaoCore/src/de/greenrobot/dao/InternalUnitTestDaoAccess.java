@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package de.greenrobot.dao;
 
-import java.lang.reflect.Constructor;
-
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import de.greenrobot.dao.database.Database;
 import de.greenrobot.dao.identityscope.IdentityScope;
 import de.greenrobot.dao.internal.DaoConfig;
+
+import java.lang.reflect.Constructor;
 
 /** Reserved for internal unit tests that want to access some non-public methods. Don't use for anything else. */
 public class InternalUnitTestDaoAccess<T, K> {
     private final AbstractDao<T, K> dao;
 
-    public InternalUnitTestDaoAccess(SQLiteDatabase db, Class<AbstractDao<T, K>> daoClass, IdentityScope<?, ?> identityScope)
+    public InternalUnitTestDaoAccess(Database db, Class<AbstractDao<T, K>> daoClass, IdentityScope<?, ?> identityScope)
             throws Exception {
         DaoConfig daoConfig = new DaoConfig(db, daoClass);
         daoConfig.setIdentityScope(identityScope);

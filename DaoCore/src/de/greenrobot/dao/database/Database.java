@@ -34,4 +34,6 @@ public interface Database {
     void execSQL(String sql, Object[] bindArgs) throws SQLException;
 
     DatabaseStatement compileStatement(String sql);
+
+    boolean isDbLockedByCurrentThread();
 }

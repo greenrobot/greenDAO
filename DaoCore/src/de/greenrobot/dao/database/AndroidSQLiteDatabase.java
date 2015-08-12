@@ -65,4 +65,9 @@ public class AndroidSQLiteDatabase implements Database {
     public DatabaseStatement compileStatement(String sql) {
         return new AndroidSQLiteStatement(delegate.compileStatement(sql));
     }
+
+    @Override
+    public boolean isDbLockedByCurrentThread() {
+        return delegate.isDbLockedByCurrentThread();
+    }
 }
