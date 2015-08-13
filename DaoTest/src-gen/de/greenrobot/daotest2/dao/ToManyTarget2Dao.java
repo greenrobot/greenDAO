@@ -2,12 +2,12 @@ package de.greenrobot.daotest2.dao;
 
 import java.util.List;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
 
@@ -41,7 +41,7 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
     }
 
     /** Creates the underlying database table. */
-    public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"TO_MANY_TARGET2\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
@@ -49,14 +49,14 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
     }
 
     /** Drops the underlying database table. */
-    public static void dropTable(SQLiteDatabase db, boolean ifExists) {
+    public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"TO_MANY_TARGET2\"";
         db.execSQL(sql);
     }
 
     /** @inheritdoc */
     @Override
-    protected void bindValues(SQLiteStatement stmt, ToManyTarget2 entity) {
+    protected void bindValues(DatabaseStatement stmt, ToManyTarget2 entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

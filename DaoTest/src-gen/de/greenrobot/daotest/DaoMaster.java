@@ -5,7 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
 import de.greenrobot.dao.AbstractDaoMaster;
+import de.greenrobot.dao.database.AndroidSQLiteDatabase;
+import de.greenrobot.dao.database.Database;
 import de.greenrobot.dao.identityscope.IdentityScopeType;
 
 import de.greenrobot.daotest.SimpleEntityDao;
@@ -34,7 +37,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public static final int SCHEMA_VERSION = 1;
 
     /** Creates underlying database table using DAOs. */
-    public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createAllTables(Database db, boolean ifNotExists) {
         SimpleEntityDao.createTable(db, ifNotExists);
         SimpleEntityNotNullDao.createTable(db, ifNotExists);
         TestEntityDao.createTable(db, ifNotExists);
@@ -54,7 +57,7 @@ public class DaoMaster extends AbstractDaoMaster {
     }
     
     /** Drops underlying database table using DAOs. */
-    public static void dropAllTables(SQLiteDatabase db, boolean ifExists) {
+    public static void dropAllTables(Database db, boolean ifExists) {
         SimpleEntityDao.dropTable(db, ifExists);
         SimpleEntityNotNullDao.dropTable(db, ifExists);
         TestEntityDao.dropTable(db, ifExists);
@@ -82,7 +85,7 @@ public class DaoMaster extends AbstractDaoMaster {
         @Override
         public void onCreate(SQLiteDatabase db) {
             Log.i("greenDAO", "Creating tables for schema version " + SCHEMA_VERSION);
-            createAllTables(db, false);
+            createAllTables(new AndroidSQLiteDatabase(db), false);
         }
     }
     
@@ -95,12 +98,16 @@ public class DaoMaster extends AbstractDaoMaster {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.i("greenDAO", "Upgrading schema from version " + oldVersion + " to " + newVersion + " by dropping all tables");
-            dropAllTables(db, true);
+            dropAllTables(new AndroidSQLiteDatabase(db), true);
             onCreate(db);
         }
     }
 
     public DaoMaster(SQLiteDatabase db) {
+        this(new AndroidSQLiteDatabase(db));
+    }
+
+    public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
         registerDaoClass(SimpleEntityDao.class);
         registerDaoClass(SimpleEntityNotNullDao.class);

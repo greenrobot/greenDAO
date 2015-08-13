@@ -5,11 +5,12 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.database.AndroidSQLiteDatabase;
+import de.greenrobot.dao.database.Database;
 
 import ${schema.defaultJavaPackageDao}.DaoSession;
 import ${entity.javaPackageDao}.${entity.classNameDao};
@@ -63,7 +64,7 @@ import ${entity.javaPackageDao}.${entity.classNameDao};
     return true;
     }
 
-    protected SQLiteDatabase getDatabase() {
+    protected Database getDatabase() {
     if(daoSession == null) {
     throw new IllegalStateException("DaoSession must be set during content provider is active");
     }
@@ -107,7 +108,7 @@ import ${entity.javaPackageDao}.${entity.classNameDao};
     throw new UnsupportedOperationException("This content provider is readonly");
 <#else>
     int uriType = sURIMatcher.match(uri);
-    SQLiteDatabase db = getDatabase();
+    Database db = getDatabase();
     int rowsDeleted = 0;
     String id;
     switch (uriType) {
@@ -143,7 +144,7 @@ import ${entity.javaPackageDao}.${entity.classNameDao};
     throw new UnsupportedOperationException("This content provider is readonly");
 <#else>
     int uriType = sURIMatcher.match(uri);
-    SQLiteDatabase db = getDatabase();
+    Database db = getDatabase();
     int rowsUpdated = 0;
     String id;
     switch (uriType) {
@@ -190,8 +191,8 @@ import ${entity.javaPackageDao}.${entity.classNameDao};
     throw new IllegalArgumentException("Unknown URI: " + uri);
     }
 
-    SQLiteDatabase db = getDatabase();
-    Cursor cursor = queryBuilder.query(db, projection, selection,
+    Database db = getDatabase();
+    Cursor cursor = queryBuilder.query(((AndroidSQLiteDatabase) db).getSQLiteDatabase(), projection, selection,
     selectionArgs, null, null, sortOrder);
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
 

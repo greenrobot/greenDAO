@@ -1,12 +1,12 @@
 package de.greenrobot.daotest;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
 
 import de.greenrobot.daotest.SimpleEntityNotNull;
 
@@ -45,7 +45,7 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
     }
 
     /** Creates the underlying database table. */
-    public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"SIMPLE_ENTITY_NOT_NULL\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY NOT NULL ," + // 0: id
@@ -61,14 +61,14 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
     }
 
     /** Drops the underlying database table. */
-    public static void dropTable(SQLiteDatabase db, boolean ifExists) {
+    public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"SIMPLE_ENTITY_NOT_NULL\"";
         db.execSQL(sql);
     }
 
     /** @inheritdoc */
     @Override
-    protected void bindValues(SQLiteStatement stmt, SimpleEntityNotNull entity) {
+    protected void bindValues(DatabaseStatement stmt, SimpleEntityNotNull entity) {
         stmt.clearBindings();
         stmt.bindLong(1, entity.getId());
         stmt.bindLong(2, entity.getSimpleBoolean() ? 1L: 0L);

@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.ArrayList;
 </#if>
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
@@ -37,6 +35,8 @@ import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.SqlUtils;
 </#if>
 import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
 <#if entity.incomingToManyRelations?has_content>
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
@@ -99,7 +99,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 
 <#if !entity.skipTableCreation>
     /** Creates the underlying database table. */
-    public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"${entity.tableName}\" (" + //
 <#list entity.propertiesColumns as property>
@@ -116,7 +116,7 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
     }
 
     /** Drops the underlying database table. */
-    public static void dropTable(SQLiteDatabase db, boolean ifExists) {
+    public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"${entity.tableName}\"";
         db.execSQL(sql);
     }
@@ -124,7 +124,7 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
 </#if>
     /** @inheritdoc */
     @Override
-    protected void bindValues(SQLiteStatement stmt, ${entity.className} entity) {
+    protected void bindValues(DatabaseStatement stmt, ${entity.className} entity) {
         stmt.clearBindings();
 <#list entity.properties as property>
 <#if property.notNull || entity.protobuf>

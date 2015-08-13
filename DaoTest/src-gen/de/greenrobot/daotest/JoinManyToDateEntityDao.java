@@ -1,12 +1,12 @@
 package de.greenrobot.daotest;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
 
 import de.greenrobot.daotest.JoinManyToDateEntity;
 
@@ -38,7 +38,7 @@ public class JoinManyToDateEntityDao extends AbstractDao<JoinManyToDateEntity, L
     }
 
     /** Creates the underlying database table. */
-    public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"JOIN_MANY_TO_DATE_ENTITY\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
@@ -47,14 +47,14 @@ public class JoinManyToDateEntityDao extends AbstractDao<JoinManyToDateEntity, L
     }
 
     /** Drops the underlying database table. */
-    public static void dropTable(SQLiteDatabase db, boolean ifExists) {
+    public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"JOIN_MANY_TO_DATE_ENTITY\"";
         db.execSQL(sql);
     }
 
     /** @inheritdoc */
     @Override
-    protected void bindValues(SQLiteStatement stmt, JoinManyToDateEntity entity) {
+    protected void bindValues(DatabaseStatement stmt, JoinManyToDateEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

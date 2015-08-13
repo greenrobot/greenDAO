@@ -35,8 +35,8 @@ public abstract class AbstractDaoMaster {
     protected final int schemaVersion;
     protected final Map<Class<? extends AbstractDao<?, ?>>, DaoConfig> daoConfigMap;
 
-    public AbstractDaoMaster(SQLiteDatabase db, int schemaVersion) {
-        this.db = new AndroidSQLiteDatabase(db);
+    public AbstractDaoMaster(Database db, int schemaVersion) {
+        this.db = db;
         this.schemaVersion = schemaVersion;
 
         daoConfigMap = new HashMap<Class<? extends AbstractDao<?, ?>>, DaoConfig>();
