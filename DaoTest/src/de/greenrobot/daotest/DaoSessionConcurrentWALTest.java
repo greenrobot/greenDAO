@@ -3,6 +3,8 @@ package de.greenrobot.daotest;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.database.AndroidSQLiteDatabase;
+import de.greenrobot.dao.database.Database;
 import de.greenrobot.dao.query.Query;
 
 import java.lang.reflect.Method;
@@ -10,10 +12,11 @@ import java.lang.reflect.Method;
 public class DaoSessionConcurrentWALTest extends DaoSessionConcurrentTest {
 
     @Override
-    protected SQLiteDatabase createDatabase() {
+    protected Database createDatabase() {
         int MODE_ENABLE_WRITE_AHEAD_LOGGING = 8;
         getContext().deleteDatabase(DB_NAME);
-        return getContext().openOrCreateDatabase(DB_NAME, MODE_ENABLE_WRITE_AHEAD_LOGGING, null);
+        SQLiteDatabase sqLiteDatabase = getContext().openOrCreateDatabase(DB_NAME, MODE_ENABLE_WRITE_AHEAD_LOGGING, null);
+        return new AndroidSQLiteDatabase(sqLiteDatabase);
     }
 
     public void testConcurrentLockAndQueryDuringTxWAL() throws InterruptedException {

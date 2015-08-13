@@ -15,12 +15,12 @@
  */
 package de.greenrobot.dao.async;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.database.Database;
 import de.greenrobot.dao.query.Query;
 
 import java.util.ArrayList;
@@ -181,7 +181,7 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
         mergedOps.add(operation1);
         mergedOps.add(operation2);
 
-        SQLiteDatabase db = operation1.getDatabase();
+        Database db = operation1.getDatabase();
         db.beginTransaction();
         boolean success = false;
         try {
@@ -342,7 +342,7 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
     }
 
     private void executeTransactionRunnable(AsyncOperation operation) {
-        SQLiteDatabase db = operation.getDatabase();
+        Database db = operation.getDatabase();
         db.beginTransaction();
         try {
             ((Runnable) operation.parameter).run();
@@ -354,7 +354,7 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
 
     @SuppressWarnings("unchecked")
     private void executeTransactionCallable(AsyncOperation operation) throws Exception {
-        SQLiteDatabase db = operation.getDatabase();
+        Database db = operation.getDatabase();
         db.beginTransaction();
         try {
             operation.result = ((Callable<Object>) operation.parameter).call();

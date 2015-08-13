@@ -36,4 +36,6 @@ public interface Database {
     DatabaseStatement compileStatement(String sql);
 
     boolean isDbLockedByCurrentThread();
+
+    void close();
 }

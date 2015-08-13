@@ -20,14 +20,17 @@ import android.app.Application;
 import android.app.Instrumentation;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
+import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.DbUtils;
+import de.greenrobot.dao.database.AndroidSQLiteDatabase;
+import de.greenrobot.dao.database.Database;
 
 import java.util.Random;
 
 /**
  * Base class for database related testing, which prepares an in-memory or an file-based DB (using the test {@link
- * android.content.Context}). Also, offers some convenience methods to create new {@link Application} objects similar to
- * {@link android.test.ApplicationTestCase}.
+ * android.content.Context}). Also, offers some convenience methods to create new {@link Application} objects similar
+ * to {@link android.test.ApplicationTestCase}.
  * <p/>
  * Unlike ApplicationTestCase, this class should behave more correctly when you call {@link #createApplication(Class)}
  * during {@link #setUp()}: {@link android.test.ApplicationTestCase#testApplicationTestCaseSetUpProperly()} leaves
@@ -41,7 +44,7 @@ public abstract class DbTest extends AndroidTestCase {
 
     protected final Random random;
     protected final boolean inMemory;
-    protected SQLiteDatabase db;
+    protected Database db;
 
     private Application application;
 
@@ -88,13 +91,16 @@ public abstract class DbTest extends AndroidTestCase {
     }
 
     /** May be overriden by sub classes to set up a different db. */
-    protected SQLiteDatabase createDatabase() {
+    protected Database createDatabase() {
+        SQLiteDatabase sqLiteDatabase;
         if (inMemory) {
-            return SQLiteDatabase.create(null);
+            sqLiteDatabase = SQLiteDatabase.create(null);
+
         } else {
             getContext().deleteDatabase(DB_NAME);
-            return getContext().openOrCreateDatabase(DB_NAME, 0, null);
+            sqLiteDatabase = getContext().openOrCreateDatabase(DB_NAME, 0, null);
         }
+        return new AndroidSQLiteDatabase(sqLiteDatabase);
     }
 
     @Override
@@ -111,7 +117,11 @@ public abstract class DbTest extends AndroidTestCase {
     }
 
     protected void logTableDump(String tablename) {
-        DbUtils.logTableDump(db, tablename);
+        if (db instanceof AndroidSQLiteDatabase) {
+            DbUtils.logTableDump(((AndroidSQLiteDatabase) db).getSQLiteDatabase(), tablename);
+        } else {
+            DaoLog.w("Table dump unsupported for " + db);
+        }
     }
 
 }

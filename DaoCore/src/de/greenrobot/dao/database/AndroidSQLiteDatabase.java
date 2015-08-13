@@ -70,4 +70,13 @@ public class AndroidSQLiteDatabase implements Database {
     public boolean isDbLockedByCurrentThread() {
         return delegate.isDbLockedByCurrentThread();
     }
+
+    @Override
+    public void close() {
+        delegate.close();
+    }
+
+    public SQLiteDatabase getSQLiteDatabase() {
+        return delegate;
+    }
 }

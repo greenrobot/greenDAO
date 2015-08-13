@@ -2,10 +2,10 @@ package de.greenrobot.daotest;
 
 import java.util.concurrent.CountDownLatch;
 
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import android.os.SystemClock;
 import de.greenrobot.dao.DaoLog;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
 import de.greenrobot.dao.query.DeleteQuery;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
@@ -309,17 +309,17 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<DaoMaster, 
      * threads and costs more memory.
      */
     public void _testThreadLocalSpeed() {
-        final SQLiteDatabase db = dao.getDatabase();
-        ThreadLocal<SQLiteStatement> threadLocal = new ThreadLocal<SQLiteStatement>() {
+        final Database db = dao.getDatabase();
+        ThreadLocal<DatabaseStatement> threadLocal = new ThreadLocal<DatabaseStatement>() {
             @Override
-            protected SQLiteStatement initialValue() {
+            protected DatabaseStatement initialValue() {
                 return db.compileStatement("SELECT 42");
             }
         };
         threadLocal.get();
         long start = SystemClock.currentThreadTimeMillis();
         for (int i = 0; i < 1000; i++) {
-            SQLiteStatement sqLiteStatement = threadLocal.get();
+            DatabaseStatement sqLiteStatement = threadLocal.get();
             assertNotNull(sqLiteStatement);
         }
         Long time = SystemClock.currentThreadTimeMillis() - start;

@@ -17,15 +17,18 @@
  */
 package de.greenrobot.daotest;
 
-import java.io.IOException;
-
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.DbUtils;
+import de.greenrobot.dao.database.AndroidSQLiteDatabase;
 import de.greenrobot.dao.test.DbTest;
+
+import java.io.IOException;
 
 public class DbUtilsTest extends DbTest {
     public void testExecuteSqlScript() throws IOException {
-        DbUtils.executeSqlScript(getContext(), db, "minimal-entity.sql");
+        SQLiteDatabase sqLiteDatabase = ((AndroidSQLiteDatabase) db).getSQLiteDatabase();
+        DbUtils.executeSqlScript(getContext(), sqLiteDatabase, "minimal-entity.sql");
         Cursor cursor = db.rawQuery("SELECT count(*) from MINIMAL_ENTITY", null);
         try {
             cursor.moveToFirst();
