@@ -23,6 +23,7 @@ import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.InternalUnitTestDaoAccess;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.database.Database;
 import de.greenrobot.dao.identityscope.IdentityScope;
 
 /**
@@ -73,7 +74,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, K>, T, K> extends
 
     protected void setUpTableForDao() throws Exception {
         try {
-            Method createTableMethod = daoClass.getMethod("createTable", SQLiteDatabase.class, boolean.class);
+            Method createTableMethod = daoClass.getMethod("createTable", Database.class, boolean.class);
             createTableMethod.invoke(null, db, false);
         } catch (NoSuchMethodException e) {
             DaoLog.i("No createTable method");

@@ -147,6 +147,6 @@ public class SqlUtils {
     }
 
     public static String createSqlCount(String tablename) {
-        return "SELECT COUNT(*) FROM " + tablename;
+        return "SELECT COUNT(*) FROM \"" + tablename +'"';
     }
 }

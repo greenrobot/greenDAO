@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.AbstractDaoMaster;
 import de.greenrobot.dao.AbstractDaoSession;
+import de.greenrobot.dao.database.Database;
 
 /**
  * Base class for DAO (master) related testing.
@@ -52,10 +53,10 @@ public abstract class AbstractDaoSessionTest<T extends AbstractDaoMaster, S exte
     protected void setUp() throws Exception {
         super.setUp();
         try {
-            Constructor<T> constructor = daoMasterClass.getConstructor(SQLiteDatabase.class);
+            Constructor<T> constructor = daoMasterClass.getConstructor(Database.class);
             daoMaster = constructor.newInstance(db);
 
-            Method createTableMethod = daoMasterClass.getMethod("createAllTables", SQLiteDatabase.class, boolean.class);
+            Method createTableMethod = daoMasterClass.getMethod("createAllTables", Database.class, boolean.class);
             createTableMethod.invoke(null, db, false);
         } catch (Exception e) {
             throw new RuntimeException("Could not prepare DAO session test", e);
