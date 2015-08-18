@@ -1,0 +1,37 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.2.3'
+    }
+}
+
+apply plugin: 'android'
+
+dependencies {
+}
+
+android {
+    buildToolsVersion '22.0.1'
+    compileSdkVersion 19
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            // Workaround: assets.srcDirs in androidTest doesn't seem to work currently
+            assets.srcDirs = ['assets']
+        }
+
+        androidTest {
+            assets.srcDirs = ['assets']
+            java.srcDirs = ['src','src-gen']
+        }
+    }
+
+    defaultConfig {
+        testApplicationId "de.greenrobot.ormlite"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+}
