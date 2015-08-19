@@ -1,3 +1,4 @@
 include 'DaoCore', 'DaoGenerator', 'DaoExampleGenerator', ':PerformanceTestOrmLite'
 include 'DaoTest' // Travis needs some Android setup for this
 include 'DaoTestGenerator'
+include ':DaoExample'
