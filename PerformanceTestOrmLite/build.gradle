@@ -8,9 +8,10 @@ buildscript {
     }
 }
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 dependencies {
+    androidTestCompile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 android {
