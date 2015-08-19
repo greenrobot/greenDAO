@@ -3,6 +3,7 @@ apply plugin: 'maven'
 apply plugin:'application'
 
 group = 'de.greenrobot'
+archivesBaseName = 'greendao-example-generator'
 version = '1.4.0-SNAPSHOT'
 sourceCompatibility = 1.6
 mainClassName = "de.greenrobot.daogenerator.gentest.ExampleDaoGenerator"
