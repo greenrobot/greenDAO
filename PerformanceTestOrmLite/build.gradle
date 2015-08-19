@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'com.android.application'
 
 dependencies {
-    androidTestCompile project(':DaoCore')
+    androidTestCompile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 android {
@@ -32,7 +32,7 @@ android {
     }
 
     defaultConfig {
-        testApplicationId "de.greenrobot.daotest"
+        testApplicationId "de.greenrobot.ormlite"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 }
