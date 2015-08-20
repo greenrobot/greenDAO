@@ -14,6 +14,16 @@ android {
     buildToolsVersion '23.0.0'
     compileSdkVersion 19
 
+    defaultConfig {
+        applicationId "de.greenrobot.performance.ormlite"
+        minSdkVersion 4
+        targetSdkVersion 19
+
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+
+        buildConfigField "boolean", "RUN_PERFORMANCE_TESTS", "false"
+    }
+
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -25,14 +35,6 @@ android {
             assets.srcDirs = ['assets']
             java.srcDirs = ['src','src-gen']
         }
-    }
-
-    defaultConfig {
-        applicationId "de.greenrobot.performance.ormlite"
-        minSdkVersion 4
-        targetSdkVersion 19
-
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 }
 

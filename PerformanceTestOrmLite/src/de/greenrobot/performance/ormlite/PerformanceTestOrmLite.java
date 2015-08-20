@@ -56,6 +56,11 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
     }
 
     public void testPerformance() throws Exception {
+        //noinspection PointlessBooleanExpression
+        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
+            Log.d("DAO", "ORMLite performance tests are disabled.");
+            return;
+        }
         runTests(100); // Warmup
         deleteAll();
         runTests(1000);

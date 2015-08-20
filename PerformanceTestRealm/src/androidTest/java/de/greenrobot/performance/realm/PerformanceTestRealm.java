@@ -52,6 +52,11 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
     }
 
     public void testPerformance() throws Exception {
+        //noinspection PointlessBooleanExpression
+        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
+            Log.d("DAO", "Realm performance tests are disabled.");
+            return;
+        }
         runTests(100); // Warmup
         deleteAll();
         runTests(1000);
@@ -124,7 +129,8 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
             entity.getSimpleByteArray();
         }
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Realm: Accessed properties of " + reloaded.size() + " entities in " + time + "ms");
+        Log.d("DAO",
+                "Realm: Accessed properties of " + reloaded.size() + " entities in " + time + "ms");
 
         System.gc();
         Log.d("DAO", "---------------End: " + entityCount);
@@ -151,21 +157,4 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
         time = System.currentTimeMillis() - start;
         Log.d("DAO", "Realm: Updated (one-by-one) " + count + " entities in " + time + "ms");
     }
-
-    // TODO ut: add semantics test
-//    public void testSemantics() {
-//        try {
-//            Dao<MinimalEntity, Long> minimalDao = DaoManager.createDao(connectionSource, MinimalEntity.class);
-//            MinimalEntity data = new MinimalEntity();
-//            minimalDao.create(data);
-//            assertNull(data.getId()); // ORMLite does not update PK after insert
-//            MinimalEntity data2 = minimalDao.queryForAll().get(0);
-//            MinimalEntity data3 = minimalDao.queryForId(data2.getId());
-//            assertNotSame(data, data2);
-//            assertNotSame(data2, data3); // ORMLite does not provide object equality
-//            assertEquals(data2.getId(), data3.getId());
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 }
