@@ -26,7 +26,8 @@ import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.test.AbstractDaoTest;
 
-public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends AbstractDaoTest<D, T, K> {
+public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
+        extends AbstractDaoTest<D, T, K> {
     long start;
     private String traceName;
     boolean useTraceView = false;
@@ -128,7 +129,9 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
 
         clearIdentityScopeIfAny();
         list = runLoadAll("load-all-1");
+        accessAll(list, "access-all-1");
         list = runLoadAll("load-all-2");
+        accessAll(list, "access-all-2");
 
         startClock("update");
         dao.updateInTx(list);
@@ -166,4 +169,10 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
     }
 
     protected abstract T createEntity();
+
+    /**
+     * Access every property of the entity under test and record execution time with {@link
+     * #startClock(String)} and {@link #stopClock()}.
+     */
+    protected abstract void accessAll(List<T> list, String traceName);
 }
