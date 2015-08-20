@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'com.android.application'
 
 dependencies {
-    androidTestCompile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile 'com.j256.ormlite:ormlite-android:4.48'
 }
 
 android {
