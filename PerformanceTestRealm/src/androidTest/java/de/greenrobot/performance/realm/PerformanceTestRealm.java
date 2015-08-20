@@ -13,6 +13,9 @@ import java.util.List;
 
 public class PerformanceTestRealm extends ApplicationTestCase<Application> {
 
+    private static final int BATCH_SIZE = 10000;
+    private static final int RUNS = 8;
+
     private Realm realm;
     private boolean inMemory;
 
@@ -57,17 +60,13 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
             Log.d("DAO", "Realm performance tests are disabled.");
             return;
         }
+
         runTests(100); // Warmup
-        deleteAll();
-        runTests(1000);
-        deleteAll();
-        runTests(1000);
-        deleteAll();
-        runTests(1000);
-        deleteAll();
-        runTests(1000);
-        deleteAll();
-        runTests(1000);
+
+        for (int i = 0; i < RUNS; i++) {
+            deleteAll();
+            runTests(BATCH_SIZE);
+        }
         Log.d("DAO", "---------------End");
     }
 

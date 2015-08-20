@@ -15,6 +15,9 @@ import com.j256.ormlite.dao.DaoManager;
 
 public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
 
+    private static final int BATCH_SIZE = 10000;
+    private static final int RUNS = 8;
+
     private Dao<SimpleEntityNotNull, Long> dao;
     private boolean inMemory;
     private DbHelper dbHelper;
@@ -61,17 +64,13 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
             Log.d("DAO", "ORMLite performance tests are disabled.");
             return;
         }
+
         runTests(100); // Warmup
-        deleteAll();
-        runTests(1000);
-        deleteAll();
-        runTests(1000);
-        deleteAll();
-        runTests(1000);
-        deleteAll();
-        runTests(1000);
-        deleteAll();
-        runTests(1000);
+
+        for (int i = 0; i < RUNS; i++) {
+            deleteAll();
+            runTests(BATCH_SIZE);
+        }
         Log.d("DAO", "---------------End");
     }
 

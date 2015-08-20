@@ -28,6 +28,9 @@ import de.greenrobot.dao.test.AbstractDaoTest;
 
 public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
         extends AbstractDaoTest<D, T, K> {
+    private static final int BATCH_SIZE = 10000;
+    private static final int RUNS = 8;
+
     long start;
     private String traceName;
     boolean useTraceView = false;
@@ -37,12 +40,10 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
     }
 
     public void testPerformance() throws Exception {
-        // runTests(1000);
-        // runTests(1000);
-        // runTests(1000);
-        // runTests(1000);
-        // runTests(1000);
-        // runTests(1000);
+        // disabled for regular builds
+//        for (int i = 0; i < RUNS; i++) {
+//            runTests(BATCH_SIZE);
+//        }
     }
 
     protected void runTests(int entityCount) {
