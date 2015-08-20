@@ -128,6 +128,24 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         time = System.currentTimeMillis() - start;
         Log.d("DAO", "ORMLite: Loaded " + reloaded.size() + " entities in " + time + "ms");
 
+        start = System.currentTimeMillis();
+        for (int i = 0; i < reloaded.size(); i++) {
+            SimpleEntityNotNull entity = reloaded.get(i);
+            entity.getId();
+            entity.getSimpleBoolean();
+            entity.getSimpleByte();
+            entity.getSimpleShort();
+            entity.getSimpleInt();
+            entity.getSimpleLong();
+            entity.getSimpleFloat();
+            entity.getSimpleDouble();
+            entity.getSimpleString();
+            entity.getSimpleByteArray();
+        }
+        time = System.currentTimeMillis() - start;
+        Log.d("DAO", "ORMLite: Accessed properties of " + reloaded.size() + " entities in " + time
+                + "ms");
+
         System.gc();
         Log.d("DAO", "---------------End: " + entityCount);
     }
@@ -152,7 +170,8 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
 
     public void testSemantics() {
         try {
-            Dao<MinimalEntity, Long> minimalDao = DaoManager.createDao(connectionSource, MinimalEntity.class);
+            Dao<MinimalEntity, Long> minimalDao = DaoManager.createDao(connectionSource,
+                    MinimalEntity.class);
             MinimalEntity data = new MinimalEntity();
             minimalDao.create(data);
             assertNull(data.getId()); // ORMLite does not update PK after insert
