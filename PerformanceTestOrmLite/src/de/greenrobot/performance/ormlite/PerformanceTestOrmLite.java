@@ -29,7 +29,8 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
     }
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
+        super.setUp();
         createApplication();
         prepareDb();
     }
@@ -56,6 +57,7 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         if (!inMemory) {
             getApplication().deleteDatabase("test-db");
         }
+        super.tearDown();
     }
 
     public void testPerformance() throws Exception {

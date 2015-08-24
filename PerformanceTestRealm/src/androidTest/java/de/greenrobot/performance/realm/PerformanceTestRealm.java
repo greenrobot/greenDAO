@@ -25,7 +25,8 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
     }
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
+        super.setUp();
         createApplication();
         createRealm();
     }
@@ -52,6 +53,7 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
                 new File(path).delete();
             }
         }
+        super.tearDown();
     }
 
     public void testPerformance() throws Exception {
