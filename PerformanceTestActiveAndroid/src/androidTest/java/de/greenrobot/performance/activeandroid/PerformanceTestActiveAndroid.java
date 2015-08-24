@@ -55,6 +55,7 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
             deleteAll();
             runTests(BATCH_SIZE);
         }
+        deleteAll();
         Log.d("DAO", "---------------End");
     }
 

@@ -69,6 +69,7 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
             deleteAll();
             runTests(BATCH_SIZE);
         }
+        deleteAll();
         Log.d("DAO", "---------------End");
     }
 
