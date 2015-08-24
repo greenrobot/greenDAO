@@ -162,7 +162,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
     protected void stopClock(String extraInfoOrNull) {
         long time = System.currentTimeMillis() - start;
         String extraLog = extraInfoOrNull != null ? " (" + extraInfoOrNull + ")" : "";
-        DaoLog.d(traceName + " completed in " + time + "ms" + extraLog);
+        DaoLog.d(traceName + " completed in " + time + " ms" + extraLog);
         if (useTraceView) {
             Debug.stopMethodTracing();
         }

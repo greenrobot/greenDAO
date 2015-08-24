@@ -81,7 +81,7 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         long start = System.currentTimeMillis();
         dbHelper.getWritableDatabase().execSQL("DELETE FROM SIMPLE_ENTITY_NOT_NULL");
         long time = System.currentTimeMillis() - start;
-        Log.d("DAO", "ORMLite: Deleted all entities in " + time + "ms");
+        Log.d("DAO", "ORMLite: Deleted all entities in " + time + " ms");
     }
 
     protected void runTests(int entityCount) throws Exception {
@@ -112,7 +112,7 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
             }
         });
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "ORMLite: Created (batch) " + list.size() + " entities in " + time + "ms");
+        Log.d("DAO", "ORMLite: Created (batch) " + list.size() + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         dao.callBatchTasks(new Callable<Void>() {
@@ -126,12 +126,12 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
             }
         });
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "ORMLite: Updated (batch) " + list.size() + " entities in " + time + "ms");
+        Log.d("DAO", "ORMLite: Updated (batch) " + list.size() + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         List<SimpleEntityNotNull> reloaded = dao.queryForAll();
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "ORMLite: Loaded " + reloaded.size() + " entities in " + time + "ms");
+        Log.d("DAO", "ORMLite: Loaded (batch) " + reloaded.size() + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         for (int i = 0; i < reloaded.size(); i++) {
@@ -149,7 +149,7 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         }
         time = System.currentTimeMillis() - start;
         Log.d("DAO", "ORMLite: Accessed properties of " + reloaded.size() + " entities in " + time
-                + "ms");
+                + " ms");
 
         System.gc();
         Log.d("DAO", "---------------End: " + entityCount);
@@ -163,14 +163,14 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
             dao.create(list.get(i));
         }
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "ORMLite: Inserted (one-by-one) " + count + " entities in " + time + "ms");
+        Log.d("DAO", "ORMLite: Inserted (one-by-one) " + count + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         for (int i = 0; i < count; i++) {
             dao.update(list.get(i));
         }
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "ORMLite: Updated (one-by-one) " + count + " entities in " + time + "ms");
+        Log.d("DAO", "ORMLite: Updated (one-by-one) " + count + " entities in " + time + " ms");
     }
 
     public void testSemantics() {

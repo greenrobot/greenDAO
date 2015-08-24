@@ -63,7 +63,7 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
         long start = System.currentTimeMillis();
         ActiveAndroid.execSQL("DELETE FROM SIMPLE_ENTITY_NOT_NULL");
         long time = System.currentTimeMillis() - start;
-        Log.d("DAO", "ActiveAndroid: Deleted all entities in " + time + "ms");
+        Log.d("DAO", "ActiveAndroid: Deleted all entities in " + time + " ms");
     }
 
     protected void runTests(int entityCount) throws Exception {
@@ -94,7 +94,7 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
         }
         time = System.currentTimeMillis() - start;
         Log.d("DAO",
-                "ActiveAndroid: Created (batch) " + list.size() + " entities in " + time + "ms");
+                "ActiveAndroid: Created (batch) " + list.size() + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         ActiveAndroid.beginTransaction();
@@ -108,7 +108,7 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
         }
         time = System.currentTimeMillis() - start;
         Log.d("DAO",
-                "ActiveAndroid: Updated (batch) " + list.size() + " entities in " + time + "ms");
+                "ActiveAndroid: Updated (batch) " + list.size() + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         List<SimpleEntityNotNull> reloaded = new Select()
@@ -116,7 +116,8 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
                 .from(SimpleEntityNotNull.class)
                 .execute();
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "ActiveAndroid: Loaded " + reloaded.size() + " entities in " + time + "ms");
+        Log.d("DAO", "ActiveAndroid: Loaded (batch) " + reloaded.size() + " entities in " + time
+                + " ms");
 
         start = System.currentTimeMillis();
         for (int i = 0; i < reloaded.size(); i++) {
@@ -135,7 +136,7 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
         time = System.currentTimeMillis() - start;
         Log.d("DAO",
                 "ActiveAndroid: Accessed properties of " + reloaded.size() + " entities in " + time
-                        + "ms");
+                        + " ms");
 
         System.gc();
         Log.d("DAO", "---------------End: " + entityCount);
@@ -150,7 +151,7 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
         }
         time = System.currentTimeMillis() - start;
         Log.d("DAO",
-                "ActiveAndroid: Inserted (one-by-one) " + count + " entities in " + time + "ms");
+                "ActiveAndroid: Inserted (one-by-one) " + count + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         for (int i = 0; i < count; i++) {
@@ -158,6 +159,6 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
         }
         time = System.currentTimeMillis() - start;
         Log.d("DAO",
-                "ActiveAndroid: Updated (one-by-one) " + count + " entities in " + time + "ms");
+                "ActiveAndroid: Updated (one-by-one) " + count + " entities in " + time + " ms");
     }
 }

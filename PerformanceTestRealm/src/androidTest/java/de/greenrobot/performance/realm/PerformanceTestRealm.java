@@ -79,7 +79,7 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
         realm.allObjects(SimpleEntityNotNull.class).clear();
         realm.commitTransaction();
         long time = System.currentTimeMillis() - start;
-        Log.d("DAO", "ActiveAndroid: Deleted all entities in " + time + "ms");
+        Log.d("DAO", "Realm: Deleted all entities in " + time + " ms");
     }
 
     protected void runTests(int entityCount) throws Exception {
@@ -103,19 +103,19 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
         realm.copyToRealm(list);
         realm.commitTransaction();
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Realm: Created (batch) " + list.size() + " entities in " + time + "ms");
+        Log.d("DAO", "Realm: Created (batch) " + list.size() + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(list);
         realm.commitTransaction();
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Realm: Updated (batch) " + list.size() + " entities in " + time + "ms");
+        Log.d("DAO", "Realm: Updated (batch) " + list.size() + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         RealmResults<SimpleEntityNotNull> reloaded = realm.allObjects(SimpleEntityNotNull.class);
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Realm: Loaded " + reloaded.size() + " entities in " + time + "ms");
+        Log.d("DAO", "Realm: Loaded (batch) " + reloaded.size() + " entities in " + time + " ms");
 
         // as Realm is not actually loading data, just referencing it,
         // at least make sure we access every property to force it being loaded
@@ -135,7 +135,7 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
         }
         time = System.currentTimeMillis() - start;
         Log.d("DAO",
-                "Realm: Accessed properties of " + reloaded.size() + " entities in " + time + "ms");
+                "Realm: Accessed properties of " + reloaded.size() + " entities in " + time + " ms");
 
         System.gc();
         Log.d("DAO", "---------------End: " + entityCount);
@@ -151,7 +151,7 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
             realm.commitTransaction();
         }
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Realm: Inserted (one-by-one) " + count + " entities in " + time + "ms");
+        Log.d("DAO", "Realm: Inserted (one-by-one) " + count + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         for (int i = 0; i < count; i++) {
@@ -160,6 +160,6 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
             realm.commitTransaction();
         }
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Realm: Updated (one-by-one) " + count + " entities in " + time + "ms");
+        Log.d("DAO", "Realm: Updated (one-by-one) " + count + " entities in " + time + " ms");
     }
 }
