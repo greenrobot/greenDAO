@@ -73,9 +73,12 @@ public class PerformanceTestRealm extends ApplicationTestCase<Application> {
     }
 
     protected void deleteAll() {
+        long start = System.currentTimeMillis();
         realm.beginTransaction();
         realm.allObjects(SimpleEntityNotNull.class).clear();
         realm.commitTransaction();
+        long time = System.currentTimeMillis() - start;
+        Log.d("DAO", "ActiveAndroid: Deleted all entities in " + time + "ms");
     }
 
     protected void runTests(int entityCount) throws Exception {

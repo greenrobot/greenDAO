@@ -59,7 +59,10 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
     }
 
     protected void deleteAll() {
+        long start = System.currentTimeMillis();
         ActiveAndroid.execSQL("DELETE FROM SIMPLE_ENTITY_NOT_NULL");
+        long time = System.currentTimeMillis() - start;
+        Log.d("DAO", "ActiveAndroid: Deleted all entities in " + time + "ms");
     }
 
     protected void runTests(int entityCount) throws Exception {
