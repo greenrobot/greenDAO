@@ -57,18 +57,18 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
     /** Not-null value. */
 </#if>
 <#if entity.hasKeepSections>
-    // KEEP ${property.propertyName} ANNOTATIONS - put your custom annotations here
-${(keepAnnotations[property.propertyName])!}    // KEEP ANNOTATIONS END
+  // KEEP ${property.propertyName} ANNOTATIONS - put your custom annotations here
+${(keepAnnotations[property.propertyName])!}  // KEEP ANNOTATIONS END
 </#if>
-    private ${property.javaType} ${property.propertyName};
+  private ${property.javaType} ${property.propertyName};
 </#list>
 
 <#if entity.active>
-    /** Used to resolve relations */
-    private transient DaoSession daoSession;
+  /** Used to resolve relations */
+  private transient DaoSession daoSession;
 
-    /** Used for active entity operations. */
-    private transient ${entity.classNameDao} myDao;
+  /** Used for active entity operations. */
+  private transient ${entity.classNameDao} myDao;
 
 <#list entity.toOneRelations as toOne>
     private ${toOne.targetEntity.className} ${toOne.name};
@@ -85,53 +85,53 @@ ${(keepAnnotations[property.propertyName])!}    // KEEP ANNOTATIONS END
 
 </#if>
 <#if entity.hasKeepSections>
-    // KEEP FIELDS - put your custom fields here
-${keepFields!}    // KEEP FIELDS END
+  // KEEP FIELDS - put your custom fields here
+${keepFields!}  // KEEP FIELDS END
 
 </#if>
 <#if entity.constructors>
-    public ${entity.className}() {
-    }
+  public ${entity.className}() {
+  }
 <#if entity.propertiesPk?has_content && entity.propertiesPk?size != entity.properties?size>
 
-    public ${entity.className}(<#list entity.propertiesPk as
+  public ${entity.className}(<#list entity.propertiesPk as
 property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
 <#list entity.propertiesPk as property>
-        this.${property.propertyName} = ${property.propertyName};
+    this.${property.propertyName} = ${property.propertyName};
 </#list>
-    }
+  }
 </#if>
 
-    public ${entity.className}(<#list entity.properties as
+  public ${entity.className}(<#list entity.properties as
 property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
 <#list entity.properties as property>
-        this.${property.propertyName} = ${property.propertyName};
+    this.${property.propertyName} = ${property.propertyName};
 </#list>
-    }
+  }
 </#if>
 
 <#if entity.active>
-    /** called by internal mechanisms, do not call yourself. */
-    public void __setDaoSession(DaoSession daoSession) {
-        this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.get${entity.classNameDao?cap_first}() : null;
-    }
+  /** called by internal mechanisms, do not call yourself. */
+  public void __setDaoSession(DaoSession daoSession) {
+    this.daoSession = daoSession;
+    myDao = daoSession != null ? daoSession.get${entity.classNameDao?cap_first}() : null;
+  }
 
 </#if>
 <#list entity.properties as property>
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
-    /** Not-null value. */
+  /** Not-null value. */
 </#if>
-    public ${property.javaType} get${property.propertyName?cap_first}() {
-        return ${property.propertyName};
-    }
+  public ${property.javaType} get${property.propertyName?cap_first}() {
+    return ${property.propertyName};
+  }
 
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
-    /** Not-null value; ensure this value is available before it is saved to the database. */
+  /** Not-null value; ensure this value is available before it is saved to the database. */
 </#if>
-    public void set${property.propertyName?cap_first}(${property.javaType} ${property.propertyName}) {
-        this.${property.propertyName} = ${property.propertyName};
-    }
+  public void set${property.propertyName?cap_first}(${property.javaType} ${property.propertyName}) {
+    this.${property.propertyName} = ${property.propertyName};
+  }
 
 </#list>
 <#--
@@ -140,59 +140,59 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 ##########################################
 -->
 <#list entity.toOneRelations as toOne>
-    /** To-one relationship, resolved on first access. */
-    public ${toOne.targetEntity.className} get${toOne.name?cap_first}() {
+  /** To-one relationship, resolved on first access. */
+  public ${toOne.targetEntity.className} get${toOne.name?cap_first}() {
 <#if toOne.useFkProperty>
-        ${toOne.fkProperties[0].javaType} __key = this.${toOne.fkProperties[0].propertyName};
-        if (${toOne.name}__resolvedKey == null || <#--
-        --><#if toOne.resolvedKeyUseEquals[0]>!${toOne.name}__resolvedKey.equals(__key)<#--
-        --><#else>${toOne.name}__resolvedKey != __key</#if>) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            ${toOne.targetEntity.classNameDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
-            ${toOne.targetEntity.className} ${toOne.name}New = targetDao.load(__key);
-            synchronized (this) {
-                ${toOne.name} = ${toOne.name}New;
-            	${toOne.name}__resolvedKey = __key;
-            }
-        }
-<#else>
-        if (${toOne.name} != null || !${toOne.name}__refreshed) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            ${toOne.targetEntity.classNameDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
-            targetDao.refresh(${toOne.name});
-            ${toOne.name}__refreshed = true;
-        }
-</#if>
-        return ${toOne.name};
+    ${toOne.fkProperties[0].javaType} __key = this.${toOne.fkProperties[0].propertyName};
+    if (${toOne.name}__resolvedKey == null || <#--
+    --><#if toOne.resolvedKeyUseEquals[0]>!${toOne.name}__resolvedKey.equals(__key)<#--
+    --><#else>${toOne.name}__resolvedKey != __key</#if>) {
+      if (daoSession == null) {
+        throw new DaoException("Entity is detached from DAO context");
+      }
+      ${toOne.targetEntity.classNameDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
+      ${toOne.targetEntity.className} ${toOne.name}New = targetDao.load(__key);
+      synchronized (this) {
+        ${toOne.name} = ${toOne.name}New;
+        ${toOne.name}__resolvedKey = __key;
+      }
     }
+<#else>
+    if (${toOne.name} != null || !${toOne.name}__refreshed) {
+      if (daoSession == null) {
+        throw new DaoException("Entity is detached from DAO context");
+      }
+      ${toOne.targetEntity.classNameDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
+      targetDao.refresh(${toOne.name});
+      ${toOne.name}__refreshed = true;
+    }
+</#if>
+    return ${toOne.name};
+  }
 <#if !toOne.useFkProperty>
 
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    public ${toOne.targetEntity.className} peak${toOne.name?cap_first}() {
-        return ${toOne.name};
-    }
+  /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
+  public ${toOne.targetEntity.className} peak${toOne.name?cap_first}() {
+    return ${toOne.name};
+  }
 </#if>
 
-    public void set${toOne.name?cap_first}(${toOne.targetEntity.className} ${toOne.name}) {
+  public void set${toOne.name?cap_first}(${toOne.targetEntity.className} ${toOne.name}) {
 <#if toOne.fkProperties[0].notNull>
-        if (${toOne.name} == null) {
-            throw new DaoException("To-one property '${toOne.fkProperties[0].propertyName}' has not-null constraint; cannot set to-one to null");
-        }
-</#if>
-        synchronized (this) {
-            this.${toOne.name} = ${toOne.name};
-<#if toOne.useFkProperty>        
-            ${toOne.fkProperties[0].propertyName} = <#if !toOne.fkProperties[0].notNull>${toOne.name} == null ? null : </#if>${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}();
-            ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
-<#else>
-            ${toOne.name}__refreshed = true;
-</#if>
-        }
+    if (${toOne.name} == null) {
+      throw new DaoException("To-one property '${toOne.fkProperties[0].propertyName}' has not-null constraint; cannot set to-one to null");
     }
+</#if>
+    synchronized (this) {
+      this.${toOne.name} = ${toOne.name};
+<#if toOne.useFkProperty>        
+      ${toOne.fkProperties[0].propertyName} = <#if !toOne.fkProperties[0].notNull>${toOne.name} == null ? null : </#if>${toOne.name}.get${toOne.targetEntity.pkProperty.propertyName?cap_first}();
+      ${toOne.name}__resolvedKey = ${toOne.fkProperties[0].propertyName};
+<#else>
+      ${toOne.name}__refreshed = true;
+</#if>
+    }
+  }
 
 </#list>
 <#--
@@ -201,28 +201,28 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 ##########################################
 -->
 <#list entity.toManyRelations as toMany>
-    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
-    public List<${toMany.targetEntity.className}> get${toMany.name?cap_first}() {
-        if (${toMany.name} == null) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            ${toMany.targetEntity.classNameDao} targetDao = daoSession.get${toMany.targetEntity.classNameDao?cap_first}();
-            List<${toMany.targetEntity.className}> ${toMany.name}New = targetDao._query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
-                --><#list toMany.sourceProperties as property>${property.propertyName}<#if property_has_next>, </#if></#list>);
-            synchronized (this) {<#-- Check if another thread was faster, we cannot lock while doing the query to prevent deadlocks -->
-                if(${toMany.name} == null) {
-                    ${toMany.name} = ${toMany.name}New;
-                }
-            }
+  /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+  public List<${toMany.targetEntity.className}> get${toMany.name?cap_first}() {
+    if (${toMany.name} == null) {
+      if (daoSession == null) {
+        throw new DaoException("Entity is detached from DAO context");
+      }
+      ${toMany.targetEntity.classNameDao} targetDao = daoSession.get${toMany.targetEntity.classNameDao?cap_first}();
+      List<${toMany.targetEntity.className}> ${toMany.name}New = targetDao._query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
+      --><#list toMany.sourceProperties as property>${property.propertyName}<#if property_has_next>, </#if></#list>);
+      synchronized (this) {<#-- Check if another thread was faster, we cannot lock while doing the query to prevent deadlocks -->
+        if(${toMany.name} == null) {
+          ${toMany.name} = ${toMany.name}New;
         }
-        return ${toMany.name};
+      }
     }
+    return ${toMany.name};
+  }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    public synchronized void reset${toMany.name?cap_first}() {
-        ${toMany.name} = null;
-    }
+  /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+  public synchronized void reset${toMany.name?cap_first}() {
+    ${toMany.name} = null;
+  }
 
 </#list>
 <#--
@@ -231,34 +231,34 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
 ##########################################
 -->
 <#if entity.active>
-    /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */
-    public void delete() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
-        myDao.delete(this);
-    }
+  /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */
+  public void delete() {
+    if (myDao == null) {
+      throw new DaoException("Entity is detached from DAO context");
+    }    
+    myDao.delete(this);
+  }
 
-    /** Convenient call for {@link AbstractDao#update(Object)}. Entity must attached to an entity context. */
-    public void update() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
-        myDao.update(this);
-    }
+  /** Convenient call for {@link AbstractDao#update(Object)}. Entity must attached to an entity context. */
+  public void update() {
+    if (myDao == null) {
+      throw new DaoException("Entity is detached from DAO context");
+    }    
+    myDao.update(this);
+  }
 
-    /** Convenient call for {@link AbstractDao#refresh(Object)}. Entity must attached to an entity context. */
-    public void refresh() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
-        myDao.refresh(this);
-    }
+  /** Convenient call for {@link AbstractDao#refresh(Object)}. Entity must attached to an entity context. */
+  public void refresh() {
+    if (myDao == null) {
+      throw new DaoException("Entity is detached from DAO context");
+    }    
+    myDao.refresh(this);
+  }
 
 </#if>
 <#if entity.hasKeepSections>
-    // KEEP METHODS - put your custom methods here
-${keepMethods!}    // KEEP METHODS END
+  // KEEP METHODS - put your custom methods here
+${keepMethods!}  // KEEP METHODS END
 
 </#if>
 }
