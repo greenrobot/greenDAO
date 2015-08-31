@@ -23,19 +23,6 @@ android {
 
         buildConfigField "boolean", "RUN_PERFORMANCE_TESTS", "false"
     }
-
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            // Workaround: assets.srcDirs in androidTest doesn't seem to work currently
-            assets.srcDirs = ['assets']
-        }
-
-        androidTest {
-            assets.srcDirs = ['assets']
-            java.srcDirs = ['src','src-gen']
-        }
-    }
 }
 
 dependencies {
