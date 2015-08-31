@@ -11,6 +11,7 @@ import android.net.Uri;
 
 import de.greenrobot.dao.DaoLog;
 
+import de.greenrobot.dao.database.AndroidSQLiteDatabase;
 import de.greenrobot.daotest.SimpleEntityDao;
 
 /* Copy this code snippet into your AndroidManifest.xml inside the <application> element:
@@ -63,7 +64,7 @@ public class SimpleEntityContentProvider extends ContentProvider {
         if(daoSession == null) {
             throw new IllegalStateException("DaoSession must be set during content provider is active");
         }
-        return daoSession.getDatabase();
+        return ((AndroidSQLiteDatabase) daoSession.getDatabase()).getSQLiteDatabase();
     }
         
     @Override

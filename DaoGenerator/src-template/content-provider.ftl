@@ -68,7 +68,7 @@ import ${entity.javaPackageDao}.${entity.classNameDao};
     if(daoSession == null) {
     throw new IllegalStateException("DaoSession must be set during content provider is active");
     }
-    return daoSession.getDatabase();
+    return ((AndroidSQLiteDatabase) daoSession.getDatabase()).getSQLiteDatabase();
     }
 
 <#--
