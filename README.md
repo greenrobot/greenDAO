@@ -30,7 +30,7 @@ Gradle dependency for your Android app:
 
 Gradle dependency for your Java generator project:
 ```
-    compile 'de.greenrobot:greendao-generator:2.0.0'
+    provided 'de.greenrobot:greendao-generator:2.0.0'
 ```
 
 
