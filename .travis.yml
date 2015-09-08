@@ -12,6 +12,7 @@ env:
 android:
   components:
     - build-tools-23.0.0
+    - extra-android-m2repository
 before_install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
