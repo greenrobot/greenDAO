@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -308,10 +308,10 @@ class AsyncOperationExecutor implements Runnable, Handler.Callback {
                     executeTransactionCallable(operation);
                     break;
                 case QueryList:
-                    operation.result = ((Query) operation.parameter).list();
+                    operation.result = ((Query) operation.parameter).forCurrentThread().list();
                     break;
                 case QueryUnique:
-                    operation.result = ((Query) operation.parameter).unique();
+                    operation.result = ((Query) operation.parameter).forCurrentThread().unique();
                     break;
                 case DeleteByKey:
                     operation.dao.deleteByKey(operation.parameter);
