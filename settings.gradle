@@ -3,6 +3,7 @@ include 'DaoTest' // Travis needs some Android setup for this
 include 'DaoTestGenerator'
 include ':DaoExample'
 include ':PerformanceTests:ActiveAndroid'
+include ':PerformanceTests:Cupboard'
 include ':PerformanceTests:OrmLite'
-include ':PerformanceTests:Realm'
 include ':PerformanceTests:Parse'
+include ':PerformanceTests:Realm'
