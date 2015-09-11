@@ -59,6 +59,7 @@ test {
 }
 
 javadoc {
+    failOnError = false
     title = "greenDAO Generator ${version} API"
     // Unfinished APIs:
     excludes = ['de/greenrobot/daogenerator/Query*']

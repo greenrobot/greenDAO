@@ -31,6 +31,14 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
 
     Q forCurrentThread() {
         int threadId = Process.myTid();
+        if (threadId == 0) {
+            // Workaround for Robolectric, always returns 0
+            long id = Thread.currentThread().getId();
+            if (id < 0 || id > Integer.MAX_VALUE) {
+                throw new RuntimeException("Cannot handle thread ID: " + id);
+            }
+            threadId = (int) id;
+        }
         synchronized (queriesForThreads) {
             WeakReference<Q> queryRef = queriesForThreads.get(threadId);
             Q query = queryRef != null ? queryRef.get() : null;

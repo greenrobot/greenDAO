@@ -25,14 +25,14 @@ import de.greenrobot.dao.async.AsyncSession;
 import de.greenrobot.dao.query.QueryBuilder;
 
 /**
- * DaoSession gives you access to your DAOs, offers convenient persistence methods, and also serves as a session cache.<br/>
- * <br/>
- * To access the DAOs, call the get{entity}Dao methods by the generated DaoSession sub class.<br/>
- * <br/>
+ * DaoSession gives you access to your DAOs, offers convenient persistence methods, and also serves as a session cache.<br>
+ * <br>
+ * To access the DAOs, call the get{entity}Dao methods by the generated DaoSession sub class.<br>
+ * <br>
  * DaoSession offers many of the available persistence operations on entities as a convenience. Consider using DAOs
  * directly to access all available operations, especially if you call a lot of operations on a single entity type to
- * avoid the overhead imposed by DaoSession (the overhead is small, but it may add up).<br/>
- * <br/>
+ * avoid the overhead imposed by DaoSession (the overhead is small, but it may add up).<br>
+ * <br>
  * By default, the DaoSession has a session cache (IdentityScopeType.Session). The session cache is not just a plain
  * data cache to improve performance, but also manages object identities. For example, if you load the same entity twice
  * in a query, you will get a single Java object instead of two when using a session cache. This is particular useful
