@@ -1,22 +1,23 @@
 package de.greenrobot.dao.query;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import android.os.Process;
-import android.util.SparseArray;
 import de.greenrobot.dao.AbstractDao;
 
 abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
     final String sql;
     final AbstractDao<T, ?> dao;
     final String[] initialValues;
-    final SparseArray<WeakReference<Q>> queriesForThreads;
+    final Map<Long,WeakReference<Q>> queriesForThreads;
 
     AbstractQueryData(AbstractDao<T, ?> dao, String sql, String[] initialValues) {
         this.dao = dao;
         this.sql = sql;
         this.initialValues = initialValues;
-        queriesForThreads = new SparseArray<WeakReference<Q>>();
+        queriesForThreads = new HashMap<Long, WeakReference<Q>>();
     }
 
     /** Just an optimized version, which performs faster if the current thread is already the query's owner thread. */
@@ -30,7 +31,7 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
     }
 
     Q forCurrentThread() {
-        int threadId = Process.myTid();
+        long threadId = Thread.currentThread().getId();
         synchronized (queriesForThreads) {
             WeakReference<Q> queryRef = queriesForThreads.get(threadId);
             Q query = queryRef != null ? queryRef.get() : null;
@@ -49,9 +50,11 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
 
     void gc() {
         synchronized (queriesForThreads) {
-            for (int i = queriesForThreads.size() - 1; i >= 0; i--) {
-                if (queriesForThreads.valueAt(i).get() == null) {
-                    queriesForThreads.remove(queriesForThreads.keyAt(i));
+            Iterator iterator = queriesForThreads.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                if(entry.getValue() == null) {
+                    iterator.remove();
                 }
             }
         }
