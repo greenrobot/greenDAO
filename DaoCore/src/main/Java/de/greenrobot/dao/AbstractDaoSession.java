@@ -15,6 +15,8 @@
  */
 package de.greenrobot.dao;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,6 +187,11 @@ public class AbstractDaoSession {
     /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
     public SQLiteDatabase getDatabase() {
         return db;
+    }
+
+    /** Allows to inspect the meta model using DAOs (e.g. querying table names or properties). */
+    public Collection<AbstractDao<?, ?>> getAllDaos() {
+        return Collections.unmodifiableCollection(entityToDao.values());
     }
 
     /**
