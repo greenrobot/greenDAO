@@ -15,6 +15,7 @@
  */
 package de.greenrobot.dao;
 
+import java.lang.Iterable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,6 +133,10 @@ public class AbstractDaoSession {
             throw new DaoException("No DAO registered for " + entityClass);
         }
         return dao;
+    }
+
+    public Iterable<AbstractDao<?, ?>> getAllDaos() {
+        return entityToDao.values();
     }
 
     /**
