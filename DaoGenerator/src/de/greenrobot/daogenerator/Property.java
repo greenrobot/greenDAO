@@ -125,6 +125,12 @@ public class Property {
             return this;
         }
 
+        public PropertyBuilder codeBeforeGetterAndSetter(String code) {
+            property.codeBeforeGetter = code;
+            property.codeBeforeSetter = code;
+            return this;
+        }
+
         public Property getProperty() {
             return property;
         }

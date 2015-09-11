@@ -131,8 +131,8 @@ property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_
 <#if property.notNull && complexTypes?seq_contains(property.propertyType)>
     /** Not-null value; ensure this value is available before it is saved to the database. */
 </#if>
-<#if property.codeBeforeGetter ??>
-    ${property.codeBeforeGetter}
+<#if property.codeBeforeSetter ??>
+    ${property.codeBeforeSetter}
 </#if>
     public void set${property.propertyName?cap_first}(${property.javaTypeInEntity} ${property.propertyName}) {
         this.${property.propertyName} = ${property.propertyName};

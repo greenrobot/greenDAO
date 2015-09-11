@@ -42,13 +42,11 @@ dependencies {
 sourceSets {
     main {
         compileClasspath += configurations.provided
-        java {
-            srcDir 'src'
-        }
     }
 }
 
 javadoc {
+    failOnError = false
     classpath += configurations.provided
     title = " greenDAO ${version} API"
 	options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2013 <a href="http://greenrobot.de/">greenrobot.de</a>. All Rights Reserved.</i>'

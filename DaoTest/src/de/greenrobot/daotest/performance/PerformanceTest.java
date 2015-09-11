@@ -26,7 +26,11 @@ import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.test.AbstractDaoTest;
 
-public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends AbstractDaoTest<D, T, K> {
+public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
+        extends AbstractDaoTest<D, T, K> {
+    private static final int BATCH_SIZE = 10000;
+    private static final int RUNS = 8;
+
     long start;
     private String traceName;
     boolean useTraceView = false;
@@ -36,12 +40,10 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
     }
 
     public void testPerformance() throws Exception {
-        // runTests(1000);
-        // runTests(1000);
-        // runTests(1000);
-        // runTests(1000);
-        // runTests(1000);
-        // runTests(1000);
+        // disabled for regular builds
+//        for (int i = 0; i < RUNS; i++) {
+//            runTests(BATCH_SIZE);
+//        }
     }
 
     protected void runTests(int entityCount) {
@@ -128,7 +130,9 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
 
         clearIdentityScopeIfAny();
         list = runLoadAll("load-all-1");
+        accessAll(list, "access-all-1");
         list = runLoadAll("load-all-2");
+        accessAll(list, "access-all-2");
 
         startClock("update");
         dao.updateInTx(list);
@@ -158,7 +162,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
     protected void stopClock(String extraInfoOrNull) {
         long time = System.currentTimeMillis() - start;
         String extraLog = extraInfoOrNull != null ? " (" + extraInfoOrNull + ")" : "";
-        DaoLog.d(traceName + " completed in " + time + "ms" + extraLog);
+        DaoLog.d(traceName + " completed in " + time + " ms" + extraLog);
         if (useTraceView) {
             Debug.stopMethodTracing();
         }
@@ -166,4 +170,10 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K> extends
     }
 
     protected abstract T createEntity();
+
+    /**
+     * Access every property of the entity under test and record execution time with {@link
+     * #startClock(String)} and {@link #stopClock()}.
+     */
+    protected abstract void accessAll(List<T> list, String traceName);
 }

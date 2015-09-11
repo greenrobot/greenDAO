@@ -39,6 +39,7 @@ public class TestDaoGenerator {
     private final Entity testEntity;
     private final Entity dateEntity;
     private final Schema schema2;
+    private final Schema schemaUnitTest;
 
     public TestDaoGenerator() {
         schema = new Schema(1, "de.greenrobot.daotest");
@@ -61,12 +62,14 @@ public class TestDaoGenerator {
         createCustomType();
 
         schema2 = createSchema2();
+        schemaUnitTest = createSchemaUnitTest();
     }
 
     public void generate() throws Exception {
         DaoGenerator daoGenerator = new DaoGenerator();
         daoGenerator.generateAll(schema, "../DaoTest/src-gen", null, "../DaoTest/src");
         daoGenerator.generateAll(schema2, "../DaoTest/src-gen", null, "../DaoTest/src");
+        daoGenerator.generateAll(schemaUnitTest, "../DaoTest/src-unit-test", null, "../DaoTest/src-unit-test");
     }
 
     protected void createSimple() {
@@ -291,5 +294,12 @@ public class TestDaoGenerator {
         return schema2;
     }
 
+    private Schema createSchemaUnitTest() {
+        Schema schema = new Schema(1, "de.greenrobot.dao.unittest");
+
+        Entity entity = schema.addEntity("MinimalEntity");
+        entity.addIdProperty();
+        return schema;
+    }
 
 }
