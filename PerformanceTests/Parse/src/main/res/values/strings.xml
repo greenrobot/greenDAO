@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<resources>
-    <string name="parse_app_id">YOUR_APPLICATION_ID</string>
-    <string name="parse_client_key">YOUR_CLIENT_KEY</string>
-
-    <string name="app_name">Parse Performance Test</string>
-
-</resources>
