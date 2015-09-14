@@ -21,7 +21,7 @@ android {
 
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
 
-        buildConfigField "boolean", "RUN_PERFORMANCE_TESTS", "true"
+        buildConfigField "boolean", "RUN_PERFORMANCE_TESTS", "false"
     }
 }
 
