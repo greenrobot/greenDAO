@@ -18,8 +18,8 @@ dependencies {
 }
 
 android {
-    buildToolsVersion '23.0.1'
-    compileSdkVersion 23
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     sourceSets {
         main {

@@ -15,13 +15,13 @@ repositories {
 }
 
 android {
-    buildToolsVersion '23.0.0'
-    compileSdkVersion 19
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
         applicationId 'de.greenrobot.performance.activeandroid'
-        minSdkVersion 4
-        targetSdkVersion 19
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
 
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
 
