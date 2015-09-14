@@ -1,12 +1,11 @@
 Release History
 ---------------
 ### V2.1.0 Minor feature release (2015-09-XX, both core and generator)
-* Robolectric support: workaround for a broken system call in Robolectric triggered by Query.forCurrentThread
-* CursorQuery (beta)
-* Added performance tests for: ActiveAndroid, Realm
+* Official Robolectric support: workaround for a broken system call in Robolectric triggered by Query.forCurrentThread
+* CursorQuery (beta, API might change)
 * Fixed async queries
-* Internal reorganization of directories
 * Better Android Studio support
+* Added performance tests for: ActiveAndroid, Realm, Parse
 * Generator: Fixed codeBeforeGetter, added codeBeforeGetterAndSetter
 
 ### V2.0.0 Major feature release (2015-07-30, both core and generator)

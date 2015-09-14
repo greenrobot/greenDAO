@@ -1,0 +1,34 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.parse'
+
+buildscript {
+  repositories {
+    mavenCentral()
+    maven { url 'https://maven.parse.com/repo' }
+  }
+  dependencies {
+    classpath 'com.parse.tools:gradle:1.+'
+  }
+}
+
+android {
+    buildToolsVersion '23.0.0'
+    compileSdkVersion 19
+
+    defaultConfig {
+        applicationId 'de.greenrobot.performance.parse'
+        minSdkVersion 4
+        targetSdkVersion 19
+
+        testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+
+        buildConfigField "boolean", "RUN_PERFORMANCE_TESTS", "false"
+    }
+
+}
+
+dependencies {
+    compile 'com.parse.bolts:bolts-android:1.2.1'
+    compile 'com.parse:parse-android:1.10.0'
+}
+
