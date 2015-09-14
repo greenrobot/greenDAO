@@ -14,12 +14,14 @@ import static nl.qbusict.cupboard.CupboardFactory.cupboard;
 
 public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
 
+    private static final String TAG = "PerformanceTestCupboard";
+
     private static final int BATCH_SIZE = 10000;
     private static final int RUNS = 8;
+
     private static final String DATABASE_NAME = "cupboard.db";
     private static final int DATABASE_VERSION = 1;
 
-    private DbHelper dbHelper;
     private DatabaseCompartment database;
 
     public PerformanceTestCupboard() {
@@ -34,7 +36,7 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
     }
 
     protected void prepareDb() {
-        dbHelper = new DbHelper(getApplication(), DATABASE_NAME, DATABASE_VERSION);
+        DbHelper dbHelper = new DbHelper(getApplication(), DATABASE_NAME, DATABASE_VERSION);
         database = cupboard().withDatabase(dbHelper.getWritableDatabase());
     }
 
@@ -47,7 +49,7 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
     public void testPerformance() throws Exception {
         //noinspection PointlessBooleanExpression
         if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
-            Log.d("DAO", "Cupboard performance tests are disabled.");
+            Log.d(TAG, "Performance tests are disabled.");
             return;
         }
 
@@ -58,18 +60,18 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
             runTests(BATCH_SIZE);
         }
         deleteAll();
-        Log.d("DAO", "---------------End");
+        Log.d(TAG, "---------------End");
     }
 
     protected void deleteAll() {
         long start = System.currentTimeMillis();
         database.delete(SimpleEntityNotNull.class, "");
         long time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Cupboard: Deleted all entities in " + time + " ms");
+        Log.d(TAG, "Deleted all entities in " + time + " ms");
     }
 
     protected void runTests(int entityCount) throws Exception {
-        Log.d("DAO", "---------------Start: " + entityCount);
+        Log.d(TAG, "---------------Start: " + entityCount);
 
         long start, time;
 
@@ -87,18 +89,17 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
         start = System.currentTimeMillis();
         database.put(list);
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Cupboard: Created (batch) " + list.size() + " entities in " + time + " ms");
+        Log.d(TAG, "Created (batch) " + list.size() + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         database.put(list);
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Cupboard: Updated (batch) " + list.size() + " entities in " + time + " ms");
+        Log.d(TAG, "Updated (batch) " + list.size() + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         List<SimpleEntityNotNull> reloaded = database.query(SimpleEntityNotNull.class).list();
         time = System.currentTimeMillis() - start;
-        Log.d("DAO",
-                "Cupboard: Loaded (batch) " + reloaded.size() + " entities in " + time + " ms");
+        Log.d(TAG, "Loaded (batch) " + reloaded.size() + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         for (int i = 0; i < reloaded.size(); i++) {
@@ -115,11 +116,10 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
             entity.getSimpleByteArray();
         }
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Cupboard: Accessed properties of " + reloaded.size() + " entities in " + time
-                + " ms");
 
+        Log.d(TAG, "Accessed properties of " + reloaded.size() + " entities in " + time + " ms");
         System.gc();
-        Log.d("DAO", "---------------End: " + entityCount);
+        Log.d(TAG, "---------------End: " + entityCount);
     }
 
     protected void runOneByOne(List<SimpleEntityNotNull> list, int count) throws SQLException {
@@ -130,13 +130,13 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
             database.put(list.get(i));
         }
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Cupboard: Inserted (one-by-one) " + count + " entities in " + time + " ms");
+        Log.d(TAG, "Inserted (one-by-one) " + count + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         for (int i = 0; i < count; i++) {
             database.put(list.get(i));
         }
         time = System.currentTimeMillis() - start;
-        Log.d("DAO", "Cupboard: Updated (one-by-one) " + count + " entities in " + time + " ms");
+        Log.d(TAG, "Updated (one-by-one) " + count + " entities in " + time + " ms");
     }
 }
