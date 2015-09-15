@@ -14,7 +14,7 @@ import static nl.qbusict.cupboard.CupboardFactory.cupboard;
 
 public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
 
-    private static final String TAG = "PerformanceTestCupboard";
+    private static final String TAG = "PerfTestCupboard";
 
     private static final int BATCH_SIZE = 10000;
     private static final int RUNS = 8;
@@ -31,6 +31,7 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
         createApplication();
         prepareDb();
     }
@@ -43,6 +44,7 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
     @Override
     protected void tearDown() throws Exception {
         getApplication().deleteDatabase(DATABASE_NAME);
+
         super.tearDown();
     }
 
@@ -53,13 +55,10 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
             return;
         }
 
-        runTests(100); // Warmup
-
+        Log.d(TAG, "---------------Start");
         for (int i = 0; i < RUNS; i++) {
-            deleteAll();
             runTests(BATCH_SIZE);
         }
-        deleteAll();
         Log.d(TAG, "---------------End");
     }
 
@@ -75,7 +74,7 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
 
         long start, time;
 
-        final List<SimpleEntityNotNull> list = new ArrayList<SimpleEntityNotNull>();
+        final List<SimpleEntityNotNull> list = new ArrayList<>();
         for (int i = 0; i < entityCount; i++) {
             list.add(SimpleEntityNotNullHelper.createEntity((long) i));
         }
@@ -118,6 +117,9 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
         time = System.currentTimeMillis() - start;
 
         Log.d(TAG, "Accessed properties of " + reloaded.size() + " entities in " + time + " ms");
+
+        deleteAll();
+
         System.gc();
         Log.d(TAG, "---------------End: " + entityCount);
     }
