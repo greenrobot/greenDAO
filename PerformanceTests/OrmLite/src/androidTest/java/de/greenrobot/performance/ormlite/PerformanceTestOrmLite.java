@@ -4,6 +4,7 @@ import android.app.Application;
 import android.test.ApplicationTestCase;
 import android.util.Log;
 import com.j256.ormlite.dao.Dao;
+import de.greenrobot.performance.StringGenerator;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
 
     private static final int BATCH_SIZE = 10000;
     private static final int RUNS = 8;
+    private static final int INDEXED_RUNS = 1000;
 
     private boolean inMemory;
     private DbHelper dbHelper;
@@ -54,6 +56,61 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         }
 
         super.tearDown();
+    }
+
+    public void testIndexedStringEntityQuery() throws Exception {
+        //noinspection PointlessBooleanExpression
+        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
+            Log.d(TAG, "Performance tests are disabled.");
+            return;
+        }
+
+        Log.d(TAG, "---------------Indexed Queries: Start");
+
+        // set up data access
+        final Dao<IndexedStringEntity, Long> dao = dbHelper.getDao(IndexedStringEntity.class);
+        Log.d(TAG, "Set up data access.");
+
+        // create entities
+        final List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
+        for (int i = 0; i < BATCH_SIZE; i++) {
+            IndexedStringEntity entity = new IndexedStringEntity();
+            entity._id = (long) i;
+            entity.indexedString = fixedRandomStrings[i];
+            entities.add(entity);
+        }
+        Log.d(TAG, "Built entities.");
+
+        // insert entities
+        dao.callBatchTasks(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                for (IndexedStringEntity entity : entities) {
+                    dao.create(entity);
+                }
+                return null;
+            }
+        });
+        Log.d(TAG, "Inserted entities.");
+
+        // query for entities by indexed string at random
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(INDEXED_RUNS, BATCH_SIZE - 1);
+
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < INDEXED_RUNS; i++) {
+            int nextIndex = randomIndices[i];
+            //noinspection unused
+            List<IndexedStringEntity> query = dao.queryBuilder()
+                    .where()
+                    .eq("INDEXED_STRING", fixedRandomStrings[nextIndex])
+                    .query();
+            // ORMLite already builds all entities when executing the query, so move on
+        }
+        long time = System.currentTimeMillis() - start;
+        Log.d(TAG, "Queried for " + INDEXED_RUNS + " indexed entities in " + time + " ms");
+
+        Log.d(TAG, "---------------Indexed Queries: End");
     }
 
     public void testPerformance() throws Exception {

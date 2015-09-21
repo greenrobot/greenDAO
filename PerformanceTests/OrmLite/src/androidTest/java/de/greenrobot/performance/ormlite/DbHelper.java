@@ -19,6 +19,7 @@ public class DbHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource) {
         try {
+            TableUtils.createTable(connectionSource, IndexedStringEntity.class);
             TableUtils.createTable(connectionSource, SimpleEntityNotNull.class);
             TableUtils.createTable(connectionSource, MinimalEntity.class);
         } catch (SQLException e) {
@@ -30,6 +31,7 @@ public class DbHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion,
             int newVersion) {
         try {
+            TableUtils.dropTable(connectionSource, IndexedStringEntity.class, true);
             TableUtils.dropTable(connectionSource, SimpleEntityNotNull.class, true);
             TableUtils.dropTable(connectionSource, MinimalEntity.class, true);
             // after we drop the old databases, we create the new ones
