@@ -9,12 +9,10 @@ import android.util.Log;
 import de.greenrobot.performance.StringGenerator;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import nl.qbusict.cupboard.Cupboard;
 import nl.qbusict.cupboard.CupboardBuilder;
 import nl.qbusict.cupboard.DatabaseCompartment;
-import nl.qbusict.cupboard.QueryResultIterable;
 
 /**
  * https://bitbucket.org/qbusict/cupboard/wiki/GettingStarted
@@ -61,9 +59,17 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
             Log.d(TAG, "Performance tests are disabled.");
             return;
         }
+        Log.d(TAG, "--------Indexed Queries: Start");
 
-        Log.d(TAG, "---------------Indexed Queries: Start");
+        for (int i = 0; i < RUNS; i++) {
+            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
+            doIndexedStringEntityQuery();
+        }
 
+        Log.d(TAG, "--------Indexed Queries: End");
+    }
+
+    public void doIndexedStringEntityQuery() {
         // set up database
         cupboard.register(IndexedStringEntity.class);
         DbHelper dbHelper = new DbHelper(getApplication(), DATABASE_NAME, DATABASE_VERSION);
@@ -91,22 +97,18 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
         long start = System.currentTimeMillis();
         for (int i = 0; i < INDEXED_RUNS; i++) {
             int nextIndex = randomIndices[i];
-            QueryResultIterable<IndexedStringEntity> query = database.query(
+            //noinspection unused
+            List<IndexedStringEntity> query = database.query(
                     IndexedStringEntity.class)
                     .withSelection("indexedString = ?", fixedRandomStrings[nextIndex])
-                    .query();
-            //noinspection ForLoopReplaceableByForEach
-            for (Iterator<IndexedStringEntity> iterator = query.iterator(); iterator.hasNext(); ) {
-                // explicitly access each entity so it is reconstructed from queried data
-                //noinspection unused
-                IndexedStringEntity entity = iterator.next();
-            }
-            query.close();
+                    .list();
         }
         long time = System.currentTimeMillis() - start;
         Log.d(TAG, "Queried for " + INDEXED_RUNS + " indexed entities in " + time + " ms");
 
-        Log.d(TAG, "---------------Indexed Queries: End");
+        // delete all entities
+        database.delete(IndexedStringEntity.class, "");
+        Log.d(TAG, "Deleted all entities.");
     }
 
     public void testPerformance() throws Exception {
