@@ -88,12 +88,11 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
         database.put(entities);
 
         // query for entities by indexed string at random
-        Random random = new Random();
-        random.setSeed(StringGenerator.SEED);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(INDEXED_RUNS, BATCH_SIZE - 1);
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < INDEXED_RUNS; i++) {
-            int nextIndex = random.nextInt(BATCH_SIZE);
+            int nextIndex = randomIndices[i];
             QueryResultIterable<IndexedStringEntity> query = database.query(
                     IndexedStringEntity.class)
                     .withSelection("indexedString = ?", fixedRandomStrings[nextIndex])

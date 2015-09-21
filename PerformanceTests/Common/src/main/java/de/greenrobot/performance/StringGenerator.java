@@ -38,4 +38,20 @@ public class StringGenerator {
         return strings;
     }
 
+    /**
+     * Creates the same random sequence of indexes. To be used to select strings by {@link
+     * #createFixedRandomStrings(int)}.
+     */
+    public static int[] getFixedRandomIndices(int count, int maxIndex) {
+        int[] indices = new int[count];
+
+        Random random = new Random();
+        random.setSeed(StringGenerator.SEED);
+
+        for (int i = 0; i < count; i++) {
+            indices[i] = random.nextInt(maxIndex + 1);
+        }
+
+        return indices;
+    }
 }

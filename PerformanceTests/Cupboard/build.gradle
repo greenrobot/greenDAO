@@ -26,6 +26,6 @@ android {
 }
 
 dependencies {
+    androidTestCompile project(':PerformanceTests:Common')
     androidTestCompile 'nl.qbusict:cupboard:2.1.2'
-    androidTestCompile 'org.apache.commons:commons-lang3:3.4'
 }
