@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- * http://ormlite.com/sqlite_java_android_orm.shtml
- * https://github.com/j256/ormlite-examples
+ * http://ormlite.com/sqlite_java_android_orm.shtml https://github.com/j256/ormlite-examples
  */
 public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
 
@@ -64,9 +63,17 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
             Log.d(TAG, "Performance tests are disabled.");
             return;
         }
+        Log.d(TAG, "--------Indexed Queries: Start");
 
-        Log.d(TAG, "---------------Indexed Queries: Start");
+        for (int i = 0; i < RUNS; i++) {
+            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
+            doIndexedStringEntityQuery();
+        }
 
+        Log.d(TAG, "--------Indexed Queries: End");
+    }
+
+    public void doIndexedStringEntityQuery() throws Exception {
         // set up data access
         final Dao<IndexedStringEntity, Long> dao = dbHelper.getDao(IndexedStringEntity.class);
         Log.d(TAG, "Set up data access.");
@@ -110,7 +117,9 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         long time = System.currentTimeMillis() - start;
         Log.d(TAG, "Queried for " + INDEXED_RUNS + " indexed entities in " + time + " ms");
 
-        Log.d(TAG, "---------------Indexed Queries: End");
+        // delete all entities
+        dbHelper.getWritableDatabase().execSQL("DELETE FROM INDEXED_STRING_ENTITY");
+        Log.d(TAG, "Deleted all entities.");
     }
 
     public void testPerformance() throws Exception {
@@ -233,11 +242,13 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
             Dao<MinimalEntity, Long> minimalDao = dbHelper.getDao(MinimalEntity.class);
             MinimalEntity data = new MinimalEntity();
             minimalDao.create(data);
-            assertNotNull(data.getId()); // ORMLite does update PK after insert if set to generatedId
+            // ORMLite does update PK after insert if set to generatedId
+            assertNotNull(data.getId());
             MinimalEntity data2 = minimalDao.queryForAll().get(0);
             MinimalEntity data3 = minimalDao.queryForId(data2.getId());
+            // ORMLite does not provide object equality
             assertNotSame(data, data2);
-            assertNotSame(data2, data3); // ORMLite does not provide object equality
+            assertNotSame(data2, data3);
             assertEquals(data2.getId(), data3.getId());
         } catch (SQLException e) {
             throw new RuntimeException(e);
