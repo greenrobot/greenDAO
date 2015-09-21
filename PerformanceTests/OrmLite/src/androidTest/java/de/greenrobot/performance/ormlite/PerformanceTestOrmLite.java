@@ -3,9 +3,7 @@ package de.greenrobot.performance.ormlite;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 import android.util.Log;
-import com.j256.ormlite.android.AndroidConnectionSource;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +11,7 @@ import java.util.concurrent.Callable;
 
 /**
  * http://ormlite.com/sqlite_java_android_orm.shtml
+ * https://github.com/j256/ormlite-examples
  */
 public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
 
@@ -21,10 +20,8 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
     private static final int BATCH_SIZE = 10000;
     private static final int RUNS = 8;
 
-    private Dao<SimpleEntityNotNull, Long> dao;
     private boolean inMemory;
     private DbHelper dbHelper;
-    private AndroidConnectionSource connectionSource;
 
     public PerformanceTestOrmLite() {
         super(Application.class);
@@ -34,7 +31,7 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        
+
         createApplication();
         setUpOrmLite();
     }
@@ -48,12 +45,6 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
             getApplication().deleteDatabase(name);
         }
         dbHelper = new DbHelper(getApplication(), name);
-        connectionSource = new AndroidConnectionSource(dbHelper);
-        try {
-            dao = DaoManager.createDao(connectionSource, SimpleEntityNotNull.class);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
@@ -61,7 +52,7 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         if (!inMemory) {
             getApplication().deleteDatabase("test-db");
         }
-        
+
         super.tearDown();
     }
 
@@ -73,13 +64,16 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         }
         Log.d(TAG, "---------------Start");
 
+        Dao<SimpleEntityNotNull, Long> dao = dbHelper.getDao(SimpleEntityNotNull.class);
+
         for (int i = 0; i < RUNS; i++) {
-            runTests(BATCH_SIZE);
+            runTests(dao, BATCH_SIZE);
         }
         Log.d(TAG, "---------------End");
     }
 
-    protected void runTests(int entityCount) throws Exception {
+    protected void runTests(final Dao<SimpleEntityNotNull, Long> dao, int entityCount)
+            throws Exception {
         Log.d(TAG, "---------------Start: " + entityCount);
 
         long start, time;
@@ -90,7 +84,7 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         }
         System.gc();
 
-        runOneByOne(list, entityCount / 10);
+        runOneByOne(dao, list, entityCount / 10);
 
         System.gc();
         deleteAll();
@@ -151,7 +145,8 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         Log.d(TAG, "---------------End: " + entityCount);
     }
 
-    protected void runOneByOne(List<SimpleEntityNotNull> list, int count) throws SQLException {
+    protected void runOneByOne(Dao<SimpleEntityNotNull, Long> dao, List<SimpleEntityNotNull> list,
+            int count) throws SQLException {
         long start;
         long time;
         start = System.currentTimeMillis();
@@ -178,11 +173,10 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
 
     public void testSemantics() {
         try {
-            Dao<MinimalEntity, Long> minimalDao = DaoManager.createDao(connectionSource,
-                    MinimalEntity.class);
+            Dao<MinimalEntity, Long> minimalDao = dbHelper.getDao(MinimalEntity.class);
             MinimalEntity data = new MinimalEntity();
             minimalDao.create(data);
-            assertNull(data.getId()); // ORMLite does not update PK after insert
+            assertNotNull(data.getId()); // ORMLite does update PK after insert if set to generatedId
             MinimalEntity data2 = minimalDao.queryForAll().get(0);
             MinimalEntity data3 = minimalDao.queryForId(data2.getId());
             assertNotSame(data, data2);

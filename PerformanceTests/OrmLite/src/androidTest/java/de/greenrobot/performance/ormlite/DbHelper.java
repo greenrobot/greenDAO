@@ -2,38 +2,40 @@ package de.greenrobot.performance.ormlite;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
+import java.sql.SQLException;
 
-public class DbHelper extends SQLiteOpenHelper {
+/**
+ * https://github.com/j256/ormlite-examples/blob/master/android/HelloAndroid/src/com/example/helloandroid/DatabaseHelper.java
+ */
+public class DbHelper extends OrmLiteSqliteOpenHelper {
 
     public DbHelper(Context context, String name) {
         super(context, name, null, 1);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
-        String sql = "CREATE TABLE SIMPLE_ENTITY_NOT_NULL (" + //
-                "_id INTEGER PRIMARY KEY NOT NULL ," + // 0
-                "SIMPLE_BOOLEAN INTEGER NOT NULL ," + // 1
-                "SIMPLE_BYTE INTEGER NOT NULL ," + // 2
-                "SIMPLE_SHORT INTEGER NOT NULL ," + // 3
-                "SIMPLE_INT INTEGER NOT NULL ," + // 4
-                "SIMPLE_LONG INTEGER NOT NULL ," + // 5
-                "SIMPLE_FLOAT REAL NOT NULL ," + // 6
-                "SIMPLE_DOUBLE REAL NOT NULL ," + // 7
-                "SIMPLE_STRING TEXT NOT NULL ," + // 8
-                "SIMPLE_BYTE_ARRAY BLOB NOT NULL )"; // 9
-        db.execSQL(sql);
-        
-        String sql2 = "CREATE TABLE MINIMAL_ENTITY (_id INTEGER PRIMARY KEY)";
-        db.execSQL(sql2);
+    public void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource) {
+        try {
+            TableUtils.createTable(connectionSource, SimpleEntityNotNull.class);
+            TableUtils.createTable(connectionSource, MinimalEntity.class);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS SIMPLE_ENTITY_NOT_NULL");
-        db.execSQL("DROP TABLE IF EXISTS MINIMAL_ENTITY");
-        onCreate(db);
+    public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion,
+            int newVersion) {
+        try {
+            TableUtils.dropTable(connectionSource, SimpleEntityNotNull.class, true);
+            TableUtils.dropTable(connectionSource, MinimalEntity.class, true);
+            // after we drop the old databases, we create the new ones
+            onCreate(db, connectionSource);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
-
 }
