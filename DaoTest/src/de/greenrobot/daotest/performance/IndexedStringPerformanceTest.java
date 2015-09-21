@@ -17,7 +17,8 @@ public class IndexedStringPerformanceTest
         extends AbstractDaoTest<IndexedStringEntityDao, IndexedStringEntity, Long> {
 
     private static final int BATCH_SIZE = 10000;
-    private static final int INDEXED_RUNS = 1000;
+    private static final int QUERY_COUNT = 1000;
+    private static final int RUNS = 8;
 
     public IndexedStringPerformanceTest() {
         super(IndexedStringEntityDao.class, false);
@@ -25,12 +26,15 @@ public class IndexedStringPerformanceTest
 
     public void testIndexedStringEntityQuery() {
         // disabled for regular builds
-//        doIndexedStringEntityQuery();
+//        DaoLog.d("--------Indexed Queries: Start");
+//        for (int i = 0; i < RUNS; i++) {
+//            DaoLog.d("----Run " + (i + 1) + " of " + RUNS);
+//            doIndexedStringEntityQuery();
+//        }
+//        DaoLog.d("--------Indexed Queries: End");
     }
 
     private void doIndexedStringEntityQuery() {
-        DaoLog.d("---------------Indexed Queries: Start");
-
         // create entities
         List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
         String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
@@ -47,19 +51,23 @@ public class IndexedStringPerformanceTest
         DaoLog.d("Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(INDEXED_RUNS, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < INDEXED_RUNS; i++) {
+        for (int i = 0; i < QUERY_COUNT; i++) {
             int nextIndex = randomIndices[i];
-            dao.queryBuilder()
+            //noinspection unused
+            List<IndexedStringEntity> query = dao.queryBuilder()
                     .where(IndexedStringEntityDao.Properties.IndexedString.eq(
                             fixedRandomStrings[nextIndex]))
                     .list();
         }
         long time = System.currentTimeMillis() - start;
-        DaoLog.d("Queried for " + INDEXED_RUNS + " indexed entities in " + time + " ms");
+        DaoLog.d("Queried for " + QUERY_COUNT + " of " + BATCH_SIZE + " indexed entities in " + time
+                + " ms.");
 
-        DaoLog.d("---------------Indexed Queries: End");
+        // delete all entities
+        dao.deleteAll();
+        DaoLog.d("Deleted all entities.");
     }
 }
