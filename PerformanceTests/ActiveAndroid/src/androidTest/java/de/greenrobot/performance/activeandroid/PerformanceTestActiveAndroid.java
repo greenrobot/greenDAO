@@ -20,8 +20,8 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
     private static final String TAG = "PerfTestActiveAndroid";
 
     private static final int BATCH_SIZE = 10000;
+    private static final int QUERY_COUNT = 1000;
     private static final int RUNS = 8;
-    private static final int INDEXED_RUNS = 1000;
 
     private static final String DATABASE_NAME = "active-android.db";
 
@@ -52,9 +52,17 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
             Log.d(TAG, "Performance tests are disabled.");
             return;
         }
+        Log.d(TAG, "--------Indexed Queries: Start");
 
-        Log.d(TAG, "---------------Indexed Queries: Start");
+        for (int i = 0; i < RUNS; i++) {
+            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
+            doIndexedStringEntityQuery();
+        }
 
+        Log.d(TAG, "--------Indexed Queries: End");
+    }
+
+    private void doIndexedStringEntityQuery() {
         // set up database
         Configuration dbConfiguration = new Configuration.Builder(getContext())
                 .setDatabaseName(DATABASE_NAME)
@@ -86,11 +94,12 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
         Log.d(TAG, "Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(INDEXED_RUNS, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < INDEXED_RUNS; i++) {
+        for (int i = 0; i < QUERY_COUNT; i++) {
             int nextIndex = randomIndices[i];
+            //noinspection unused
             List<IndexedStringEntity> query = new Select()
                     .from(IndexedStringEntity.class)
                     .where("INDEXED_STRING = ?", fixedRandomStrings[nextIndex])
@@ -98,9 +107,13 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
             // ActiveAndroid already builds all entities when executing the query, so move on
         }
         long time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Queried for " + INDEXED_RUNS + " indexed entities in " + time + " ms");
+        Log.d(TAG,
+                "Queried for " + QUERY_COUNT + " of " + BATCH_SIZE + " indexed entities in " + time
+                        + " ms.");
 
-        Log.d(TAG, "---------------Indexed Queries: End");
+        // delete all entities
+        ActiveAndroid.execSQL("DELETE FROM INDEXED_STRING_ENTITY");
+        Log.d(TAG, "Deleted all entities.");
     }
 
     public void testPerformance() throws Exception {
