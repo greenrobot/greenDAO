@@ -93,7 +93,7 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
             int nextIndex = randomIndices[i];
             List<IndexedStringEntity> query = new Select()
                     .from(IndexedStringEntity.class)
-                    .where("INDEXED_STRING = ?", nextIndex)
+                    .where("INDEXED_STRING = ?", fixedRandomStrings[nextIndex])
                     .execute();
             // ActiveAndroid already builds all entities when executing the query, so move on
         }
