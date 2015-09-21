@@ -30,6 +30,7 @@ android {
 }
 
 dependencies {
-    androidTestCompile 'com.android.support:support-v4:22.2.1'
+    androidTestCompile project(':PerformanceTests:Common')
+    androidTestCompile 'com.android.support:support-v4:23.0.1'
     androidTestCompile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 }

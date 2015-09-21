@@ -4,8 +4,10 @@ import android.app.Application;
 import android.test.ApplicationTestCase;
 import android.util.Log;
 import com.activeandroid.ActiveAndroid;
+import com.activeandroid.Cache;
 import com.activeandroid.Configuration;
 import com.activeandroid.query.Select;
+import de.greenrobot.performance.StringGenerator;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,8 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
 
     private static final int BATCH_SIZE = 10000;
     private static final int RUNS = 8;
+    private static final int INDEXED_RUNS = 1000;
+
     private static final String DATABASE_NAME = "active-android.db";
 
     public PerformanceTestActiveAndroid() {
@@ -30,23 +34,73 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
         super.setUp();
 
         createApplication();
-        setupDatabase();
-    }
-
-    protected void setupDatabase() {
-        Configuration dbConfiguration = new Configuration.Builder(getContext())
-                .setDatabaseName(DATABASE_NAME)
-                .addModelClass(SimpleEntityNotNull.class)
-                .create();
-        ActiveAndroid.initialize(dbConfiguration);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        ActiveAndroid.dispose();
+        if (Cache.isInitialized()) {
+            ActiveAndroid.dispose();
+        }
         getApplication().deleteDatabase(DATABASE_NAME);
 
         super.tearDown();
+    }
+
+    public void testIndexedStringEntityQuery() {
+        //noinspection PointlessBooleanExpression
+        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
+            Log.d(TAG, "Performance tests are disabled.");
+            return;
+        }
+
+        Log.d(TAG, "---------------Indexed Queries: Start");
+
+        // set up database
+        Configuration dbConfiguration = new Configuration.Builder(getContext())
+                .setDatabaseName(DATABASE_NAME)
+                .addModelClass(IndexedStringEntity.class)
+                .create();
+        ActiveAndroid.initialize(dbConfiguration);
+        Log.d(TAG, "Set up database.");
+
+        // create entities (after db setup as model class needs access to table information)
+        List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
+        for (int i = 0; i < BATCH_SIZE; i++) {
+            IndexedStringEntity entity = new IndexedStringEntity();
+            entity.indexedString = fixedRandomStrings[i];
+            entities.add(entity);
+        }
+        Log.d(TAG, "Built entities.");
+
+        // insert entities
+        ActiveAndroid.beginTransaction();
+        try {
+            for (int i = 0; i < BATCH_SIZE; i++) {
+                entities.get(i).save();
+            }
+            ActiveAndroid.setTransactionSuccessful();
+        } finally {
+            ActiveAndroid.endTransaction();
+        }
+        Log.d(TAG, "Inserted entities.");
+
+        // query for entities by indexed string at random
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(INDEXED_RUNS, BATCH_SIZE - 1);
+
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < INDEXED_RUNS; i++) {
+            int nextIndex = randomIndices[i];
+            List<IndexedStringEntity> query = new Select()
+                    .from(IndexedStringEntity.class)
+                    .where("INDEXED_STRING = ?", nextIndex)
+                    .execute();
+            // ActiveAndroid already builds all entities when executing the query, so move on
+        }
+        long time = System.currentTimeMillis() - start;
+        Log.d(TAG, "Queried for " + INDEXED_RUNS + " indexed entities in " + time + " ms");
+
+        Log.d(TAG, "---------------Indexed Queries: End");
     }
 
     public void testPerformance() throws Exception {
@@ -55,11 +109,19 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
             Log.d(TAG, "Performance tests are disabled.");
             return;
         }
-
         Log.d(TAG, "---------------Start");
+
+        // set up database
+        Configuration dbConfiguration = new Configuration.Builder(getContext())
+                .setDatabaseName(DATABASE_NAME)
+                .addModelClass(SimpleEntityNotNull.class)
+                .create();
+        ActiveAndroid.initialize(dbConfiguration);
+
         for (int i = 0; i < RUNS; i++) {
             runTests(BATCH_SIZE);
         }
+
         Log.d(TAG, "---------------End");
     }
 
