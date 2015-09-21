@@ -6,20 +6,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.test.ApplicationTestCase;
 import android.util.Log;
-
 import de.greenrobot.performance.StringGenerator;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import java.util.Random;
 import nl.qbusict.cupboard.Cupboard;
 import nl.qbusict.cupboard.CupboardBuilder;
 import nl.qbusict.cupboard.DatabaseCompartment;
 import nl.qbusict.cupboard.QueryResultIterable;
-
-import static nl.qbusict.cupboard.CupboardFactory.cupboard;
 
 /**
  * https://bitbucket.org/qbusict/cupboard/wiki/GettingStarted
@@ -46,10 +41,10 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
         super.setUp();
 
         createApplication();
-        setupCupboard();
+        setUpCupboard();
     }
 
-    private void setupCupboard() {
+    private void setUpCupboard() {
         cupboard = new CupboardBuilder().useAnnotations().build();
     }
 
@@ -69,6 +64,12 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
 
         Log.d(TAG, "---------------Indexed Queries: Start");
 
+        // set up database
+        cupboard.register(IndexedStringEntity.class);
+        DbHelper dbHelper = new DbHelper(getApplication(), DATABASE_NAME, DATABASE_VERSION);
+        DatabaseCompartment database = cupboard.withDatabase(dbHelper.getWritableDatabase());
+        Log.d(TAG, "Set up database.");
+
         // create entities
         List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
         String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
@@ -78,14 +79,11 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
             entity.indexedString = fixedRandomStrings[i];
             entities.add(entity);
         }
-
-        // setup database
-        cupboard.register(IndexedStringEntity.class);
-        DbHelper dbHelper = new DbHelper(getApplication(), DATABASE_NAME, DATABASE_VERSION);
-        DatabaseCompartment database = cupboard.withDatabase(dbHelper.getWritableDatabase());
+        Log.d(TAG, "Built entities.");
 
         // insert entities
         database.put(entities);
+        Log.d(TAG, "Inserted entities.");
 
         // query for entities by indexed string at random
         int[] randomIndices = StringGenerator.getFixedRandomIndices(INDEXED_RUNS, BATCH_SIZE - 1);
@@ -117,16 +115,17 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
             Log.d(TAG, "Performance tests are disabled.");
             return;
         }
+        Log.d(TAG, "---------------Start");
 
-        // setup database
+        // set up database
         cupboard.register(SimpleEntityNotNull.class);
         DbHelper dbHelper = new DbHelper(getApplication(), DATABASE_NAME, DATABASE_VERSION);
         DatabaseCompartment database = cupboard.withDatabase(dbHelper.getWritableDatabase());
 
-        Log.d(TAG, "---------------Start");
         for (int i = 0; i < RUNS; i++) {
             runTests(database, BATCH_SIZE);
         }
+
         Log.d(TAG, "---------------End");
     }
 
