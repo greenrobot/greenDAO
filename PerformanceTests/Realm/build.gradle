@@ -26,5 +26,5 @@ android {
 }
 
 dependencies {
-    androidTestCompile 'io.realm:realm-android:0.82.1'
+    androidTestCompile 'io.realm:realm-android:0.82.2'
 }
