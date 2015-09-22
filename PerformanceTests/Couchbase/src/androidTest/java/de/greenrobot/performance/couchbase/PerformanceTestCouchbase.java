@@ -25,7 +25,7 @@ public class PerformanceTestCouchbase extends ApplicationTestCase<Application> {
 
     private static final String TAG = "PerfTestCouchbase";
 
-    private static final int BATCH_SIZE = 1000;
+    private static final int BATCH_SIZE = 10000;
     private static final int RUNS = 8;
 
     private static final String DB_NAME = "couchbase-test";
@@ -78,28 +78,33 @@ public class PerformanceTestCouchbase extends ApplicationTestCase<Application> {
 
         long start, time;
 
-        // In Couchbase there is no such thing as batching,
-        // each document has to be created on its own.
-        // Hence we can only measure one-by-one creation time.
-
         // precreate property maps for documents
         List<Map<String, Object>> maps = new ArrayList<>(entityCount);
         for (int i = 0; i < entityCount; i++) {
             maps.add(createDocumentMap(i));
         }
+        System.gc();
+
+        runOneByOne(maps, entityCount / 10);
+
+        System.gc();
+        deleteAll();
 
         start = System.currentTimeMillis();
         List<Document> documents = new ArrayList<>(entityCount);
+        database.beginTransaction();
         for (int i = 0; i < entityCount; i++) {
             // use our own ids (use .createDocument() for random UUIDs)
             Document document = database.getDocument(String.valueOf(i));
             document.putProperties(maps.get(i));
             documents.add(document);
         }
+        database.endTransaction(true);
         time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Created (one-by-one) " + documents.size() + " entities in " + time + " ms");
+        Log.d(TAG, "Created (batch) " + BATCH_SIZE + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
+        database.beginTransaction();
         for (int i = 0; i < entityCount; i++) {
             Document document = documents.get(i);
             Map<String, Object> updatedProperties = new HashMap<>();
@@ -108,8 +113,9 @@ public class PerformanceTestCouchbase extends ApplicationTestCase<Application> {
             updatedProperties.putAll(maps.get(i));
             document.putProperties(updatedProperties);
         }
+        database.endTransaction(true);
         time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Updated (one-by-one) " + documents.size() + " entities in " + time + " ms");
+        Log.d(TAG, "Updated (batch) " + BATCH_SIZE + " entities in " + time + " ms");
 
         start = System.currentTimeMillis();
         List<Document> reloaded = new ArrayList<>();
@@ -144,15 +150,45 @@ public class PerformanceTestCouchbase extends ApplicationTestCase<Application> {
         Log.d(TAG, "---------------End: " + entityCount);
     }
 
+    private void runOneByOne(List<Map<String, Object>> maps, int count)
+            throws CouchbaseLiteException {
+        long start;
+        long time;
+        start = System.currentTimeMillis();
+        List<Document> documents = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            // use our own ids (use .createDocument() for random UUIDs)
+            Document document = database.getDocument(String.valueOf(i));
+            document.putProperties(maps.get(i));
+            documents.add(document);
+        }
+        time = System.currentTimeMillis() - start;
+        Log.d(TAG, "Inserted (one-by-one) " + count + " entities in " + time + " ms");
+
+        start = System.currentTimeMillis();
+        for (int i = 0; i < count; i++) {
+            Document document = documents.get(i);
+            Map<String, Object> updatedProperties = new HashMap<>();
+            // copy existing properties to get _rev property
+            updatedProperties.putAll(document.getProperties());
+            updatedProperties.putAll(maps.get(i));
+            document.putProperties(updatedProperties);
+        }
+        time = System.currentTimeMillis() - start;
+        Log.d(TAG, "Updated (one-by-one) " + count + " entities in " + time + " ms");
+    }
+
     protected void deleteAll() throws CouchbaseLiteException {
         long start = System.currentTimeMillis();
         // query all documents, mark them as deleted
         Query query = database.createAllDocumentsQuery();
         QueryEnumerator result = query.run();
+        database.beginTransaction();
         while (result.hasNext()) {
             QueryRow row = result.next();
             row.getDocument().delete();
         }
+        database.endTransaction(true);
         long time = System.currentTimeMillis() - start;
         Log.d(TAG, "Deleted all entities in " + time + " ms");
     }
