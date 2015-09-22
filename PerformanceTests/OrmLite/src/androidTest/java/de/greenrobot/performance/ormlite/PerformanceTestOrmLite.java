@@ -65,19 +65,20 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         }
         Log.d(TAG, "--------Indexed Queries: Start");
 
+        // set up data access
+        final Dao<IndexedStringEntity, Long> dao = dbHelper.getDao(IndexedStringEntity.class);
+        Log.d(TAG, "Set up data access.");
+
         for (int i = 0; i < RUNS; i++) {
             Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
-            doIndexedStringEntityQuery();
+            doIndexedStringEntityQuery(dao);
         }
 
         Log.d(TAG, "--------Indexed Queries: End");
     }
 
-    public void doIndexedStringEntityQuery() throws Exception {
-        // set up data access
-        final Dao<IndexedStringEntity, Long> dao = dbHelper.getDao(IndexedStringEntity.class);
-        Log.d(TAG, "Set up data access.");
-
+    public void doIndexedStringEntityQuery(final Dao<IndexedStringEntity, Long> dao)
+            throws Exception {
         // create entities
         final List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
         String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);

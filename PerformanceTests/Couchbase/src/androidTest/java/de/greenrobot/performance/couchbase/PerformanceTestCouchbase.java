@@ -72,15 +72,6 @@ public class PerformanceTestCouchbase extends ApplicationTestCase<Application> {
         }
         Log.d(TAG, "--------Indexed Queries: Start");
 
-        for (int i = 0; i < RUNS; i++) {
-            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
-            doIndexedStringEntityQuery();
-        }
-
-        Log.d(TAG, "--------Indexed Queries: End");
-    }
-
-    private void doIndexedStringEntityQuery() throws CouchbaseLiteException {
         // set up index on string property
         View indexedStringView = database.getView("indexedStringView");
         indexedStringView.setMap(new Mapper() {
@@ -93,6 +84,15 @@ public class PerformanceTestCouchbase extends ApplicationTestCase<Application> {
         }, "1");
         Log.d(TAG, "Set up view.");
 
+        for (int i = 0; i < RUNS; i++) {
+            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
+            doIndexedStringEntityQuery(indexedStringView);
+        }
+
+        Log.d(TAG, "--------Indexed Queries: End");
+    }
+
+    private void doIndexedStringEntityQuery(View indexedStringView) throws CouchbaseLiteException {
         // create entities
         String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
         database.beginTransaction();

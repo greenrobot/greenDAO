@@ -61,21 +61,21 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
         }
         Log.d(TAG, "--------Indexed Queries: Start");
 
-        for (int i = 0; i < RUNS; i++) {
-            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
-            doIndexedStringEntityQuery();
-        }
-
-        Log.d(TAG, "--------Indexed Queries: End");
-    }
-
-    public void doIndexedStringEntityQuery() {
         // set up database
         cupboard.register(IndexedStringEntity.class);
         DbHelper dbHelper = new DbHelper(getApplication(), DATABASE_NAME, DATABASE_VERSION);
         DatabaseCompartment database = cupboard.withDatabase(dbHelper.getWritableDatabase());
         Log.d(TAG, "Set up database.");
 
+        for (int i = 0; i < RUNS; i++) {
+            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
+            doIndexedStringEntityQuery(database);
+        }
+
+        Log.d(TAG, "--------Indexed Queries: End");
+    }
+
+    public void doIndexedStringEntityQuery(DatabaseCompartment database) {
         // create entities
         List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
         String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);

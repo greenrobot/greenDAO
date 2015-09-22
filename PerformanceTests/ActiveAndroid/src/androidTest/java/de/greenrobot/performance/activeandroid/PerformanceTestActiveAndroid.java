@@ -54,6 +54,14 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
         }
         Log.d(TAG, "--------Indexed Queries: Start");
 
+        // set up database
+        Configuration dbConfiguration = new Configuration.Builder(getContext())
+                .setDatabaseName(DATABASE_NAME)
+                .addModelClass(IndexedStringEntity.class)
+                .create();
+        ActiveAndroid.initialize(dbConfiguration);
+        Log.d(TAG, "Set up database.");
+
         for (int i = 0; i < RUNS; i++) {
             Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
             doIndexedStringEntityQuery();
@@ -63,15 +71,7 @@ public class PerformanceTestActiveAndroid extends ApplicationTestCase<Applicatio
     }
 
     private void doIndexedStringEntityQuery() {
-        // set up database
-        Configuration dbConfiguration = new Configuration.Builder(getContext())
-                .setDatabaseName(DATABASE_NAME)
-                .addModelClass(IndexedStringEntity.class)
-                .create();
-        ActiveAndroid.initialize(dbConfiguration);
-        Log.d(TAG, "Set up database.");
-
-        // create entities (after db setup as model class needs access to table information)
+        // create entities
         List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
         String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
         for (int i = 0; i < BATCH_SIZE; i++) {
