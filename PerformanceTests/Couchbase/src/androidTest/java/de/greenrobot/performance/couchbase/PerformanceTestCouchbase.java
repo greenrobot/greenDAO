@@ -6,11 +6,15 @@ import android.util.Log;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Emitter;
 import com.couchbase.lite.Manager;
+import com.couchbase.lite.Mapper;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
+import com.couchbase.lite.View;
 import com.couchbase.lite.android.AndroidContext;
+import de.greenrobot.performance.StringGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +30,7 @@ public class PerformanceTestCouchbase extends ApplicationTestCase<Application> {
     private static final String TAG = "PerfTestCouchbase";
 
     private static final int BATCH_SIZE = 10000;
+    private static final int QUERY_COUNT = 1000;
     private static final int RUNS = 8;
 
     private static final String DB_NAME = "couchbase-test";
@@ -57,6 +62,74 @@ public class PerformanceTestCouchbase extends ApplicationTestCase<Application> {
         database = null;
 
         super.tearDown();
+    }
+
+    public void testIndexedStringEntityQuery() throws CouchbaseLiteException {
+        //noinspection PointlessBooleanExpression
+        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
+            Log.d(TAG, "Performance tests are disabled.");
+            return;
+        }
+        Log.d(TAG, "--------Indexed Queries: Start");
+
+        for (int i = 0; i < RUNS; i++) {
+            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
+            doIndexedStringEntityQuery();
+        }
+
+        Log.d(TAG, "--------Indexed Queries: End");
+    }
+
+    private void doIndexedStringEntityQuery() throws CouchbaseLiteException {
+        // set up index on string property
+        View indexedStringView = database.getView("indexedStringView");
+        indexedStringView.setMap(new Mapper() {
+            @Override
+            public void map(Map<String, Object> document, Emitter emitter) {
+                String indexedString = (String) document.get("indexedString");
+                // only need an index of strings mapped to the document, so provide no value
+                emitter.emit(indexedString, null);
+            }
+        }, "1");
+        Log.d(TAG, "Set up view.");
+
+        // create entities
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
+        database.beginTransaction();
+        for (int i = 0; i < BATCH_SIZE; i++) {
+            Document entity = database.getDocument(String.valueOf(i));
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("indexedString", fixedRandomStrings[i]);
+            entity.putProperties(properties);
+        }
+        database.endTransaction(true);
+        Log.d(TAG, "Built and inserted entities.");
+
+        // query for entities by indexed string at random
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < QUERY_COUNT; i++) {
+            int nextIndex = randomIndices[i];
+            List<Object> keyToQuery = new ArrayList<>(1);
+            keyToQuery.add(fixedRandomStrings[nextIndex]);
+
+            Query query = indexedStringView.createQuery();
+            query.setKeys(keyToQuery);
+            QueryEnumerator result = query.run();
+            while (result.hasNext()) {
+                QueryRow row = result.next();
+                //noinspection unused
+                Document document = row.getDocument();
+            }
+        }
+        long time = System.currentTimeMillis() - start;
+        Log.d(TAG,
+                "Queried for " + QUERY_COUNT + " of " + BATCH_SIZE + " indexed entities in " + time
+                        + " ms.");
+
+        // delete all entities
+        deleteAll();
     }
 
     public void testPerformance() throws Exception {
@@ -186,7 +259,7 @@ public class PerformanceTestCouchbase extends ApplicationTestCase<Application> {
         database.beginTransaction();
         while (result.hasNext()) {
             QueryRow row = result.next();
-            row.getDocument().delete();
+            row.getDocument().purge();
         }
         database.endTransaction(true);
         long time = System.currentTimeMillis() - start;
