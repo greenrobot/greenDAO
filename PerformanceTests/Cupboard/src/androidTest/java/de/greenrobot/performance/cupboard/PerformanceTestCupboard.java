@@ -22,8 +22,8 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
     private static final String TAG = "PerfTestCupboard";
 
     private static final int BATCH_SIZE = 10000;
+    private static final int QUERY_COUNT = 1000;
     private static final int RUNS = 8;
-    private static final int INDEXED_RUNS = 1000;
 
     private static final String DATABASE_NAME = "cupboard.db";
     private static final int DATABASE_VERSION = 1;
@@ -92,10 +92,10 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
         Log.d(TAG, "Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(INDEXED_RUNS, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < INDEXED_RUNS; i++) {
+        for (int i = 0; i < QUERY_COUNT; i++) {
             int nextIndex = randomIndices[i];
             //noinspection unused
             List<IndexedStringEntity> query = database.query(
@@ -104,7 +104,9 @@ public class PerformanceTestCupboard extends ApplicationTestCase<Application> {
                     .list();
         }
         long time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Queried for " + INDEXED_RUNS + " indexed entities in " + time + " ms");
+        Log.d(TAG,
+                "Queried for " + QUERY_COUNT + " of " + BATCH_SIZE + " indexed entities in " + time
+                        + " ms.");
 
         // delete all entities
         database.delete(IndexedStringEntity.class, "");

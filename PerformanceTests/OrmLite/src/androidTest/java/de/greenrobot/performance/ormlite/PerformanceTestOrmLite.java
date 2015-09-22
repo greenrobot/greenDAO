@@ -18,8 +18,8 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
     private static final String TAG = "PerfTestOrmLite";
 
     private static final int BATCH_SIZE = 10000;
+    private static final int QUERY_COUNT = 1000;
     private static final int RUNS = 8;
-    private static final int INDEXED_RUNS = 1000;
 
     private boolean inMemory;
     private DbHelper dbHelper;
@@ -102,10 +102,10 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
         Log.d(TAG, "Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(INDEXED_RUNS, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < INDEXED_RUNS; i++) {
+        for (int i = 0; i < QUERY_COUNT; i++) {
             int nextIndex = randomIndices[i];
             //noinspection unused
             List<IndexedStringEntity> query = dao.queryBuilder()
@@ -115,7 +115,9 @@ public class PerformanceTestOrmLite extends ApplicationTestCase<Application> {
             // ORMLite already builds all entities when executing the query, so move on
         }
         long time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Queried for " + INDEXED_RUNS + " indexed entities in " + time + " ms");
+        Log.d(TAG,
+                "Queried for " + QUERY_COUNT + " of " + BATCH_SIZE + " indexed entities in " + time
+                        + " ms.");
 
         // delete all entities
         dbHelper.getWritableDatabase().execSQL("DELETE FROM INDEXED_STRING_ENTITY");
