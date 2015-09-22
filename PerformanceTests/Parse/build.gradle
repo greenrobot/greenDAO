@@ -29,7 +29,8 @@ android {
 }
 
 dependencies {
+    androidTestCompile project(':PerformanceTests:Common')
     compile 'com.parse.bolts:bolts-android:1.2.1'
-    compile 'com.parse:parse-android:1.10.1'
+    compile 'com.parse:parse-android:1.10.2'
 }
 
