@@ -26,5 +26,6 @@ android {
 }
 
 dependencies {
+    androidTestCompile project(':PerformanceTests:Common')
     androidTestCompile 'io.realm:realm-android:0.82.2'
 }
