@@ -32,6 +32,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         public final static Property IndexedStringAscUnique = new Property(6, String.class, "indexedStringAscUnique", false, "INDEXED_STRING_ASC_UNIQUE");
         public final static Property SimpleDate = new Property(7, java.util.Date.class, "simpleDate", false, "SIMPLE_DATE");
         public final static Property SimpleBoolean = new Property(8, Boolean.class, "simpleBoolean", false, "SIMPLE_BOOLEAN");
+        public final static Property SimpleByteArray = new Property(9, byte[].class, "simpleByteArray", false, "SIMPLE_BYTE_ARRAY");
     };
 
 
@@ -55,7 +56,8 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
                 "\"INDEXED_STRING\" TEXT," + // 5: indexedString
                 "\"INDEXED_STRING_ASC_UNIQUE\" TEXT," + // 6: indexedStringAscUnique
                 "\"SIMPLE_DATE\" INTEGER," + // 7: simpleDate
-                "\"SIMPLE_BOOLEAN\" INTEGER);"); // 8: simpleBoolean
+                "\"SIMPLE_BOOLEAN\" INTEGER," + // 8: simpleBoolean
+                "\"SIMPLE_BYTE_ARRAY\" BLOB);"); // 9: simpleByteArray
         // Add Indexes
         db.execSQL("CREATE INDEX " + constraint + "IDX_TEST_ENTITY_INDEXED_STRING ON TEST_ENTITY" +
                 " (\"INDEXED_STRING\");");
@@ -110,6 +112,11 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         if (simpleBoolean != null) {
             stmt.bindLong(9, simpleBoolean ? 1L: 0L);
         }
+ 
+        byte[] simpleByteArray = entity.getSimpleByteArray();
+        if (simpleByteArray != null) {
+            stmt.bindBlob(10, simpleByteArray);
+        }
     }
 
     /** @inheritdoc */
@@ -130,7 +137,8 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // indexedString
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // indexedStringAscUnique
             cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)), // simpleDate
-            cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0 // simpleBoolean
+            cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0, // simpleBoolean
+            cursor.isNull(offset + 9) ? null : cursor.getBlob(offset + 9) // simpleByteArray
         );
         return entity;
     }
@@ -147,6 +155,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         entity.setIndexedStringAscUnique(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setSimpleDate(cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)));
         entity.setSimpleBoolean(cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0);
+        entity.setSimpleByteArray(cursor.isNull(offset + 9) ? null : cursor.getBlob(offset + 9));
      }
     
     /** @inheritdoc */

@@ -16,6 +16,7 @@ public class TestEntity {
     private String indexedStringAscUnique;
     private java.util.Date simpleDate;
     private Boolean simpleBoolean;
+    private byte[] simpleByteArray;
 
     public TestEntity() {
     }
@@ -24,7 +25,7 @@ public class TestEntity {
         this.id = id;
     }
 
-    public TestEntity(Long id, int simpleInt, Integer simpleInteger, String simpleStringNotNull, String simpleString, String indexedString, String indexedStringAscUnique, java.util.Date simpleDate, Boolean simpleBoolean) {
+    public TestEntity(Long id, int simpleInt, Integer simpleInteger, String simpleStringNotNull, String simpleString, String indexedString, String indexedStringAscUnique, java.util.Date simpleDate, Boolean simpleBoolean, byte[] simpleByteArray) {
         this.id = id;
         this.simpleInt = simpleInt;
         this.simpleInteger = simpleInteger;
@@ -34,6 +35,7 @@ public class TestEntity {
         this.indexedStringAscUnique = indexedStringAscUnique;
         this.simpleDate = simpleDate;
         this.simpleBoolean = simpleBoolean;
+        this.simpleByteArray = simpleByteArray;
     }
 
     public Long getId() {
@@ -108,6 +110,14 @@ public class TestEntity {
 
     public void setSimpleBoolean(Boolean simpleBoolean) {
         this.simpleBoolean = simpleBoolean;
+    }
+
+    public byte[] getSimpleByteArray() {
+        return simpleByteArray;
+    }
+
+    public void setSimpleByteArray(byte[] simpleByteArray) {
+        this.simpleByteArray = simpleByteArray;
     }
 
 }

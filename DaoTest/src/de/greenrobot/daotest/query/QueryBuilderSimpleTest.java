@@ -171,6 +171,23 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         assertEquals(testEntity.getId(), testEntity2.getId());
     }
 
+    // TODO fix byte arrays? Android is doing String args everywhere
+    public void _testEqByteArray() {
+        ArrayList<TestEntity> inserted = insert(3);
+        TestEntity testEntity = inserted.get(1);
+
+        byte[] byteArray = {96, 77, 37, -21};
+        testEntity.setSimpleByteArray(byteArray);
+        dao.update(testEntity);
+
+        Query<TestEntity> queryBoolean = dao.queryBuilder().where(Properties.SimpleByteArray.eq(byteArray)).build();
+        TestEntity testEntity2 = queryBoolean.uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
+
+        queryBoolean.setParameter(0, new byte[]{96, 77, 37, -21, 99});
+        assertNull(queryBoolean.unique());
+    }
+
     public void testIsNullIsNotNull() {
         ArrayList<TestEntity> inserted = insert(2);
         TestEntity testEntityNull = inserted.get(0);
@@ -210,15 +227,15 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         Query<TestEntity> query = dao.queryBuilder().where(Properties.SimpleString.like("%robot")).build();
         TestEntity entity2 = query.uniqueOrThrow();
         assertEquals(entity.getId(), entity2.getId());
-        
+
         query.setParameter(0, "green%");
         entity2 = query.uniqueOrThrow();
         assertEquals(entity.getId(), entity2.getId());
-        
+
         query.setParameter(0, "%enrob%");
         entity2 = query.uniqueOrThrow();
         assertEquals(entity.getId(), entity2.getId());
-        
+
         query.setParameter(0, "%nothere%");
         entity2 = query.unique();
         assertNull(entity2);

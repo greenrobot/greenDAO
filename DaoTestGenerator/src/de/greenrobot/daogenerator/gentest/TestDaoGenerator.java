@@ -113,6 +113,7 @@ public class TestDaoGenerator {
         testEntity.addStringProperty("indexedStringAscUnique").indexAsc(null, true);
         testEntity.addDateProperty("simpleDate");
         testEntity.addBooleanProperty("simpleBoolean");
+        testEntity.addByteArrayProperty("simpleByteArray");
         return testEntity;
     }
 
