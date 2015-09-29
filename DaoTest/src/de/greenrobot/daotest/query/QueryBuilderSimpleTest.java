@@ -21,10 +21,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
+import de.greenrobot.dao.query.WhereCondition;
 import de.greenrobot.daotest.TestEntity;
-import de.greenrobot.daotest.TestEntityDao;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
 
@@ -172,7 +173,7 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
     }
 
     // TODO fix byte arrays? Android is doing String args everywhere
-    public void _testEqByteArray() {
+    public void testEqByteArray() {
         ArrayList<TestEntity> inserted = insert(3);
         TestEntity testEntity = inserted.get(1);
 
@@ -180,12 +181,15 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         testEntity.setSimpleByteArray(byteArray);
         dao.update(testEntity);
 
-        Query<TestEntity> queryBoolean = dao.queryBuilder().where(Properties.SimpleByteArray.eq(byteArray)).build();
-        TestEntity testEntity2 = queryBoolean.uniqueOrThrow();
+        // Unsupported: Query<TestEntity> query = dao.queryBuilder().where(Properties.SimpleByteArray.eq(byteArray)).build();
+        String conditionString = Properties.SimpleByteArray.columnName + '=' + SqlUtils.escapeBlobArgument(byteArray);
+        WhereCondition condition = new WhereCondition.StringCondition(conditionString);
+        Query<TestEntity> query = dao.queryBuilder().where(condition).build();
+        TestEntity testEntity2 = query.uniqueOrThrow();
         assertEquals(testEntity.getId(), testEntity2.getId());
 
-        queryBoolean.setParameter(0, new byte[]{96, 77, 37, -21, 99});
-        assertNull(queryBoolean.unique());
+        // Unsupported: query.setParameter(0, new byte[]{96, 77, 37, -21, 99});
+        // Unsupported: assertNull(query.unique());
     }
 
     public void testIsNullIsNotNull() {

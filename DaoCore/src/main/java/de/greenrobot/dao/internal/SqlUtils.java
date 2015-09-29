@@ -20,6 +20,7 @@ import de.greenrobot.dao.Property;
 
 /** Helper class to create SQL statements as used by greenDAO internally. */
 public class SqlUtils {
+    private final static char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     public static StringBuilder appendProperty(StringBuilder builder, String tablePrefix, Property property) {
         if (tablePrefix != null) {
@@ -146,4 +147,13 @@ public class SqlUtils {
         return builder.toString();
     }
 
+    public static String escapeBlobArgument(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int i = 0; i < bytes.length; i++) {
+            int byteValue = bytes[i] & 0xFF;
+            hexChars[i * 2] = HEX_ARRAY[byteValue >>> 4];
+            hexChars[i * 2 + 1] = HEX_ARRAY[byteValue & 0x0F];
+        }
+        return "X'" + new String(hexChars) + '\'';
+    }
 }
