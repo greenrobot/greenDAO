@@ -148,12 +148,16 @@ public class SqlUtils {
     }
 
     public static String escapeBlobArgument(byte[] bytes) {
+        return "X'" + toHex(bytes) + '\'';
+    }
+
+    public static String toHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int i = 0; i < bytes.length; i++) {
             int byteValue = bytes[i] & 0xFF;
             hexChars[i * 2] = HEX_ARRAY[byteValue >>> 4];
             hexChars[i * 2 + 1] = HEX_ARRAY[byteValue & 0x0F];
         }
-        return "X'" + new String(hexChars) + '\'';
+        return new String(hexChars);
     }
 }

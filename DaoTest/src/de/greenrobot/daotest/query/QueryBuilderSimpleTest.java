@@ -182,6 +182,11 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         dao.update(testEntity);
 
         // Unsupported: Query<TestEntity> query = dao.queryBuilder().where(Properties.SimpleByteArray.eq(byteArray)).build();
+
+        // Works, but probably voids any index on BLOBs (Note: there's no hex2blob function and X'?' is bad syntax):
+        // String conditionString = "HEX(" + Properties.SimpleByteArray.columnName + ")=?";
+        // WhereCondition condition = new WhereCondition.StringCondition(conditionString, SqlUtils.toHex(byteArray));
+
         String conditionString = Properties.SimpleByteArray.columnName + '=' + SqlUtils.escapeBlobArgument(byteArray);
         WhereCondition condition = new WhereCondition.StringCondition(conditionString);
         Query<TestEntity> query = dao.queryBuilder().where(condition).build();
