@@ -32,6 +32,14 @@ public class SQLCipherDatabase implements Database {
     }
 
     @Override
+    public Cursor query(String table, String[] columns,
+                        String where, String[] selectionArgs,
+                        String groupBy, String having, String orderBy, String limit) {
+        return delegate.query(table, columns, where, selectionArgs,
+                groupBy, having, orderBy, limit);
+    }
+
+    @Override
     public void execSQL(String sql) throws SQLException {
         delegate.execSQL(sql);
     }

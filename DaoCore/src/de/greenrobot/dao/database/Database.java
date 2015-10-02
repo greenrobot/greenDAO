@@ -21,6 +21,10 @@ import android.database.SQLException;
 public interface Database {
     Cursor rawQuery(String sql, String[] selectionArgs);
 
+    Cursor query(String table, String[] columns,
+                 String where, String[] selectionArgs,
+                 String groupBy, String having, String orderBy, String limit);
+
     void execSQL(String sql) throws SQLException;
 
     void beginTransaction();
