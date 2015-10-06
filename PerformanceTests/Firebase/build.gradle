@@ -32,5 +32,6 @@ android {
 }
 
 dependencies {
+    androidTestCompile project(':PerformanceTests:Common')
     androidTestCompile 'com.firebase:firebase-client-android:2.3.1'
 }

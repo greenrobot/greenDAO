@@ -60,6 +60,7 @@ public class TestDaoGenerator {
         createAutoincrement();
         createSqliteMaster();
         createCustomType();
+        createIndexedString();
 
         schema2 = createSchema2();
         schemaUnitTest = createSchemaUnitTest();
@@ -260,6 +261,12 @@ public class TestDaoGenerator {
         entity.addIdProperty();
         entity.addLongProperty("myCustomTimestamp").customType("de.greenrobot.daotest.customtype.MyTimestamp",
                 "de.greenrobot.daotest.customtype.MyTimestampConverter");
+    }
+
+    protected void createIndexedString() {
+        Entity entity = schema.addEntity("IndexedStringEntity");
+        entity.addIdProperty();
+        entity.addStringProperty("indexedString").index();
     }
 
     private Schema createSchema2() {

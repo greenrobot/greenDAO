@@ -6,7 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "MINIMAL_ENTITY")
 public class MinimalEntity {
 
-    @DatabaseField(id = true, columnName="_id")
+    @DatabaseField(generatedId = true, columnName="_id")
     private Long id;
 
     public Long getId() {

@@ -33,5 +33,6 @@ android {
 }
 
 dependencies {
+    androidTestCompile project(':PerformanceTests:Common')
     androidTestCompile 'com.couchbase.lite:couchbase-lite-android:1.1.0'
 }

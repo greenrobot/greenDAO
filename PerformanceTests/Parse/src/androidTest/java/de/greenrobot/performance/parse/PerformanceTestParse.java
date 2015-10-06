@@ -9,6 +9,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import de.greenrobot.performance.StringGenerator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,10 @@ public class PerformanceTestParse extends ApplicationTestCase<Application> {
 
     private static final String TAG = "PerfTestParse";
 
-    private static final int BATCH_SIZE = 10000;
+    // reduced batch size due to memory leak when pinning (of bolts.Task?)
+    private static final int BATCH_SIZE = 1000;
+    // reduced query count due to slow performance
+    private static final int QUERY_COUNT = 100;
     private static final int RUNS = 8;
 
     public PerformanceTestParse() {
@@ -55,30 +59,87 @@ public class PerformanceTestParse extends ApplicationTestCase<Application> {
         ParseACL.setDefaultACL(defaultACL, true);
     }
 
-    public void testPerformance() throws Exception {
-        // set up parse inside of test
-        // setting it up in setUp() breaks Parse, as it keeps its init state between tests
-        // in hidden ParsePlugins
-        setupParse();
+    public void testIndexedStringEntityQuery() throws ParseException {
+        // According to the documentation, Parse does NOT support defining indexes manually
+        // or for the local datastore.
+        // We still are going to determine query performance WITHOUT AN INDEX.
 
         //noinspection PointlessBooleanExpression
         if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
             Log.d(TAG, "Performance tests are disabled.");
             return;
         }
+        Log.d(TAG, "--------Indexed Queries: Start");
 
+        // set up parse inside of test
+        // setting it up in setUp() breaks Parse, as it keeps its init state between tests
+        // in hidden ParsePlugins
+        ParseObject.registerSubclass(IndexedStringEntity.class);
+        setupParse();
+
+        for (int i = 0; i < RUNS; i++) {
+            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
+            doIndexedStringEntityQuery();
+        }
+
+        Log.d(TAG, "--------Indexed Queries: End");
+    }
+
+    private void doIndexedStringEntityQuery() throws ParseException {
+        // create entities
+        List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
+        for (int i = 0; i < BATCH_SIZE; i++) {
+            IndexedStringEntity entity = new IndexedStringEntity();
+            entity.setIndexedString(fixedRandomStrings[i]);
+            entities.add(entity);
+        }
+        Log.d(TAG, "Built entities.");
+
+        // insert entities
+        ParseObject.pinAll(entities);
+        Log.d(TAG, "Inserted entities.");
+
+        // query for entities by indexed string at random
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < QUERY_COUNT; i++) {
+            int nextIndex = randomIndices[i];
+
+            ParseQuery<IndexedStringEntity> query = ParseQuery.getQuery(IndexedStringEntity.class);
+            query.whereEqualTo(IndexedStringEntity.INDEXED_STRING, fixedRandomStrings[nextIndex]);
+            //noinspection unused
+            List<IndexedStringEntity> result = query.find();
+        }
+        long time = System.currentTimeMillis() - start;
+        Log.d(TAG,
+                "Queried for " + QUERY_COUNT + " of " + BATCH_SIZE + " UNINDEXED entities in "
+                        + time + " ms.");
+
+        // delete all entities
+        ParseObject.unpinAll();
+        Log.d(TAG, "Deleted all entities.");
+    }
+
+    public void testPerformance() throws Exception {
+        //noinspection PointlessBooleanExpression
+        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
+            Log.d(TAG, "Performance tests are disabled.");
+            return;
+        }
         Log.d(TAG, "---------------Start");
+
+        // set up parse inside of test
+        // setting it up in setUp() breaks Parse, as it keeps its init state between tests
+        // in hidden ParsePlugins
+        setupParse();
+
         for (int i = 0; i < RUNS; i++) {
             runTests(BATCH_SIZE);
         }
-        Log.d(TAG, "---------------End");
-    }
 
-    private void deleteAll() throws ParseException {
-        long start = System.currentTimeMillis();
-        ParseObject.unpinAll();
-        long time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Deleted all entities in " + time + " ms");
+        Log.d(TAG, "---------------End");
     }
 
     private void runTests(int entityCount) throws ParseException {
@@ -152,6 +213,13 @@ public class PerformanceTestParse extends ApplicationTestCase<Application> {
         }
         time = System.currentTimeMillis() - start;
         Log.d(TAG, "Updated (one-by-one) " + count + " entities in " + time + " ms");
+    }
+
+    private void deleteAll() throws ParseException {
+        long start = System.currentTimeMillis();
+        ParseObject.unpinAll();
+        long time = System.currentTimeMillis() - start;
+        Log.d(TAG, "Deleted all entities in " + time + " ms");
     }
 
     private ParseObject createEntity(int nr) {
