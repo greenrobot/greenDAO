@@ -12,7 +12,7 @@ import android.net.Uri;
 import de.greenrobot.dao.DaoLog;
 
 import ${schema.defaultJavaPackageDao}.DaoSession;
-import ${entity.javaPackageDao}.${entity.classNameDao};
+import ${entity.javaPackageDao}.${entity.classNameUserDao};
 
 /* Copy this code snippet into your AndroidManifest.xml inside the
 <application> element:

@@ -67,7 +67,7 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
     private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private transient ${entity.classNameDao} myDao;
+    private transient ${entity.classNameUserDao} myDao;
 
 <#list entity.toOneRelations as toOne>
     private ${toOne.targetEntity.className} ${toOne.name};
@@ -155,7 +155,7 @@ property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            ${toOne.targetEntity.classNameDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
+            ${toOne.targetEntity.classNameUserDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
             ${toOne.targetEntity.className} ${toOne.name}New = targetDao.load(__key);
             synchronized (this) {
                 ${toOne.name} = ${toOne.name}New;
@@ -167,7 +167,7 @@ property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            ${toOne.targetEntity.classNameDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
+            ${toOne.targetEntity.classNameUserDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
             targetDao.refresh(${toOne.name});
             ${toOne.name}__refreshed = true;
         }
@@ -212,7 +212,7 @@ property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            ${toMany.targetEntity.classNameDao} targetDao = daoSession.get${toMany.targetEntity.classNameDao?cap_first}();
+            ${toMany.targetEntity.classNameUserDao} targetDao = daoSession.get${toMany.targetEntity.classNameDao?cap_first}();
             List<${toMany.targetEntity.className}> ${toMany.name}New = targetDao._query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
                 --><#if toMany.sourceProperties??><#list toMany.sourceProperties as property>${property.propertyName}<#if property_has_next>, </#if></#list><#else><#--
                 -->${entity.pkProperty.propertyName}</#if>);

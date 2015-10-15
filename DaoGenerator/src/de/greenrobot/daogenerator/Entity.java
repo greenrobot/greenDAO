@@ -58,6 +58,7 @@ public class Entity {
     private String tableName;
     private String classNameDao;
     private String classNameTest;
+    private String classNameUserDao;
     private String javaPackage;
     private String javaPackageDao;
     private String javaPackageTest;
@@ -321,6 +322,14 @@ public class Entity {
         return classNameTest;
     }
 
+    public String getClassNameUserDao() {
+        return classNameUserDao;
+    }
+
+    public void setClassNameUserDao(String classNameUserDao) {
+        this.classNameUserDao = classNameUserDao;
+    }
+
     public void setClassNameTest(String classNameTest) {
         this.classNameTest = classNameTest;
     }
@@ -532,6 +541,9 @@ public class Entity {
         if (classNameTest == null) {
             classNameTest = className + "Test";
         }
+        if (classNameUserDao == null) {
+            classNameUserDao = classNameDao;
+        }
 
         if (javaPackage == null) {
             javaPackage = schema.getDefaultJavaPackage();
@@ -608,6 +620,9 @@ public class Entity {
     private void init3rdPassAdditionalImports() {
         if (active && !javaPackage.equals(javaPackageDao)) {
             additionalImportsEntity.add(javaPackageDao + "." + classNameDao);
+            if (!classNameDao.equals(classNameUserDao)) {
+                additionalImportsEntity.add(javaPackageDao + "." + classNameUserDao);
+            }
         }
 
         for (ToOne toOne : toOneRelations) {
@@ -651,8 +666,14 @@ public class Entity {
         if (!targetEntity.getJavaPackage().equals(javaPackage)) {
             additionalImportsEntity.add(targetEntity.getJavaPackage() + "." + targetEntity.getClassName());
         }
-        if (!targetEntity.getJavaPackageDao().equals(javaPackage)) {
-            additionalImportsEntity.add(targetEntity.getJavaPackageDao() + "." + targetEntity.getClassNameDao());
+        final String targetJavaPackageDao = targetEntity.getJavaPackageDao();
+        if (!targetJavaPackageDao.equals(javaPackage)) {
+            final String targetClassNameDao = targetEntity.getClassNameDao();
+            final String targetClassNameUserDao = targetEntity.getClassNameUserDao();
+            additionalImportsEntity.add(targetJavaPackageDao + "." + targetClassNameDao);
+            if (!targetClassNameDao.equals(targetClassNameUserDao)) {
+                additionalImportsEntity.add(targetJavaPackageDao + "." + targetClassNameUserDao);
+            }
         }
     }
 
