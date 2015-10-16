@@ -48,7 +48,7 @@ import ${additionalImport};
  * Entity mapped to table "${entity.tableName}".
  */
 public class ${entity.className}<#if
-entity.superclass?has_content> extends ${entity.superclass} </#if><#if
+entity.superclass?has_content> extends ${entity.superclass}</#if><#if
 entity.interfacesToImplement?has_content> implements <#list entity.interfacesToImplement
 as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 
