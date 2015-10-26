@@ -153,7 +153,7 @@ public class QueryBuilder<T> {
      * as the source for the new join to add. In this way, it is possible to compose complex "join of joins" across
      * several entities if required.
      */
-    public <J> Join<T, J> join(Join<?, T> sourceJoin, Property sourceProperty, Class<J> destinationEntityClass,
+    public <J> Join<T, J> join(Join<T, ?> sourceJoin, Property sourceProperty, Class<J> destinationEntityClass,
                                Property destinationProperty) {
         AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
         return addJoin(sourceJoin.tablePrefix, sourceProperty, destinationDao, destinationProperty);
