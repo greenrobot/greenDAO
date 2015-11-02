@@ -71,15 +71,15 @@ public class PerformanceTestFirebase extends BasePerfTestCase {
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            indexedStringEntityQueriesRun(entityRef);
+            indexedStringEntityQueriesRun(entityRef, getBatchSize());
         }
     }
 
-    private void indexedStringEntityQueriesRun(Firebase entityRef) throws InterruptedException {
+    private void indexedStringEntityQueriesRun(Firebase entityRef, int count) throws InterruptedException {
         // create entities
-        List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
-        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
-        for (int i = 0; i < BATCH_SIZE; i++) {
+        List<IndexedStringEntity> entities = new ArrayList<>(count);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(count);
+        for (int i = 0; i < count; i++) {
             IndexedStringEntity entity = new IndexedStringEntity();
             entity._id = (long) i;
             entity.indexedString = fixedRandomStrings[i];
@@ -92,7 +92,7 @@ public class PerformanceTestFirebase extends BasePerfTestCase {
         log("Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, count - 1);
 
         startClock();
         for (int i = 0; i < QUERY_COUNT; i++) {
@@ -142,26 +142,48 @@ public class PerformanceTestFirebase extends BasePerfTestCase {
     }
 
     @Override
-    protected void doSingleAndBatchCrud() throws Exception {
+    protected void doOneByOneAndBatchCrud() throws Exception {
         // set up node for entities
         Firebase simpleEntityRef = rootFirebaseRef.child("simpleEntities");
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            singleAndBatchCrudRun(simpleEntityRef, BATCH_SIZE);
+            oneByOneCrudRun(simpleEntityRef, getBatchSize() / 10);
+            batchCrudRun(simpleEntityRef, getBatchSize());
         }
     }
 
-    private void singleAndBatchCrudRun(Firebase simpleEntityRef, final int entityCount)
-            throws Exception {
+    private void oneByOneCrudRun(Firebase simpleEntityRef, int count) throws Exception {
         final List<SimpleEntityNotNull> list = new ArrayList<>();
-        for (int i = 0; i < entityCount; i++) {
+        for (int i = 0; i < count; i++) {
             list.add(SimpleEntityNotNullHelper.createEntity((long) i));
         }
 
-        singleCrudRun(simpleEntityRef, list, entityCount / 10);
+        startClock();
+        for (int i = 0; i < count; i++) {
+            // use the entity id as its key
+            SimpleEntityNotNull entity = list.get(i);
+            simpleEntityRef.child(String.valueOf(entity.getId())).setValue(entity);
+        }
+        stopClock(LogMessage.ONE_BY_ONE_CREATE);
+
+        startClock();
+        for (int i = 0; i < count; i++) {
+            // use the entity id as its key
+            SimpleEntityNotNull entity = list.get(i);
+            simpleEntityRef.child(String.valueOf(entity.getId())).setValue(entity);
+        }
+        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
 
         deleteAll(simpleEntityRef);
+    }
+
+    private void batchCrudRun(Firebase simpleEntityRef, final int count)
+            throws Exception {
+        final List<SimpleEntityNotNull> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(SimpleEntityNotNullHelper.createEntity((long) i));
+        }
 
         // there is no such thing as batch storing of items in Firebase
         // so store the whole list of entities at once
@@ -177,7 +199,7 @@ public class PerformanceTestFirebase extends BasePerfTestCase {
 
         final CountDownLatch loadLock = new CountDownLatch(1);
         startClock();
-        reloaded = new ArrayList<>(entityCount);
+        reloaded = new ArrayList<>(count);
         simpleEntityRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -214,25 +236,6 @@ public class PerformanceTestFirebase extends BasePerfTestCase {
         startClock();
         deleteAll(simpleEntityRef);
         stopClock(LogMessage.BATCH_DELETE);
-    }
-
-    private void singleCrudRun(Firebase simpleEntityRef, List<SimpleEntityNotNull> list,
-            int count) {
-        startClock();
-        for (int i = 0; i < count; i++) {
-            // use the entity id as its key
-            SimpleEntityNotNull entity = list.get(i);
-            simpleEntityRef.child(String.valueOf(entity.getId())).setValue(entity);
-        }
-        stopClock(LogMessage.ONE_BY_ONE_CREATE);
-
-        startClock();
-        for (int i = 0; i < count; i++) {
-            // use the entity id as its key
-            SimpleEntityNotNull entity = list.get(i);
-            simpleEntityRef.child(String.valueOf(entity.getId())).setValue(entity);
-        }
-        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
     }
 
     private void deleteAll(Firebase simpleEntityRef) throws InterruptedException {

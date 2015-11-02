@@ -40,15 +40,15 @@ public class PerformanceTestSqlite extends BasePerfTestCase {
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            indexedStringEntityQueriesRun(database);
+            indexedStringEntityQueriesRun(database, getBatchSize());
         }
     }
 
-    private void indexedStringEntityQueriesRun(SQLiteDatabase database) {
+    private void indexedStringEntityQueriesRun(SQLiteDatabase database, int count) {
         // create entities
-        List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
-        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
-        for (int i = 0; i < BATCH_SIZE; i++) {
+        List<IndexedStringEntity> entities = new ArrayList<>(count);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(count);
+        for (int i = 0; i < count; i++) {
             IndexedStringEntity entity = new IndexedStringEntity();
             entity._id = (long) i;
             entity.indexedString = fixedRandomStrings[i];
@@ -60,7 +60,7 @@ public class PerformanceTestSqlite extends BasePerfTestCase {
         database.beginTransaction();
         try {
             ContentValues values = new ContentValues();
-            for (int i = 0; i < BATCH_SIZE; i++) {
+            for (int i = 0; i < count; i++) {
                 IndexedStringEntity entity = entities.get(i);
                 values.put(DbHelper.IndexedEntityColumns._ID, entity._id);
                 values.put(DbHelper.IndexedEntityColumns.INDEXED_STRING, entity.indexedString);
@@ -76,7 +76,7 @@ public class PerformanceTestSqlite extends BasePerfTestCase {
         log("Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, count - 1);
 
         startClock();
         for (int i = 0; i < QUERY_COUNT; i++) {
@@ -103,32 +103,60 @@ public class PerformanceTestSqlite extends BasePerfTestCase {
     }
 
     @Override
-    protected void doSingleAndBatchCrud() throws Exception {
+    protected void doOneByOneAndBatchCrud() throws Exception {
         // set up database
         DbHelper dbHelper = new DbHelper(getApplication(), DATABASE_NAME, DATABASE_VERSION);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            singleAndBatchCrudRun(database, BATCH_SIZE);
+            oneByOneCrudRun(database, getBatchSize() / 10);
+            batchCrudRun(database, getBatchSize());
         }
     }
 
-    private void singleAndBatchCrudRun(SQLiteDatabase database, int entityCount) throws Exception {
+    private void oneByOneCrudRun(SQLiteDatabase database, int count) throws SQLException {
         final List<SimpleEntityNotNull> list = new ArrayList<>();
-        for (int i = 0; i < entityCount; i++) {
+        for (int i = 0; i < count; i++) {
             list.add(SimpleEntityNotNullHelper.createEntity((long) i));
         }
 
-        runOneByOne(database, list, entityCount / 10);
+        startClock();
+        ContentValues values = new ContentValues();
+        for (int i = 0; i < count; i++) {
+            SimpleEntityNotNull entity = list.get(i);
+            values.put(DbHelper.SimpleEntityColumns._ID, entity.getId());
+            buildContentValues(values, entity);
+            database.insert(DbHelper.Tables.SIMPLE_ENTITY, null, values);
+            values.clear();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_CREATE);
+
+        startClock();
+        for (int i = 0; i < count; i++) {
+            SimpleEntityNotNull entity = list.get(i);
+            buildContentValues(values, entity);
+            database.update(DbHelper.Tables.SIMPLE_ENTITY, values,
+                    DbHelper.SimpleEntityColumns._ID + "=" + entity.getId(),
+                    null);
+            values.clear();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
 
         deleteAll(database);
+    }
+
+    private void batchCrudRun(SQLiteDatabase database, int count) throws Exception {
+        final List<SimpleEntityNotNull> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(SimpleEntityNotNullHelper.createEntity((long) i));
+        }
 
         startClock();
         database.beginTransaction();
         try {
             ContentValues values = new ContentValues();
-            for (int i = 0; i < BATCH_SIZE; i++) {
+            for (int i = 0; i < count; i++) {
                 SimpleEntityNotNull entity = list.get(i);
                 values.put(DbHelper.SimpleEntityColumns._ID, entity.getId());
                 buildContentValues(values, entity);
@@ -145,7 +173,7 @@ public class PerformanceTestSqlite extends BasePerfTestCase {
         database.beginTransaction();
         try {
             ContentValues values = new ContentValues();
-            for (int i = 0; i < BATCH_SIZE; i++) {
+            for (int i = 0; i < count; i++) {
                 SimpleEntityNotNull entity = list.get(i);
                 buildContentValues(values, entity);
                 database.update(DbHelper.Tables.SIMPLE_ENTITY, values,
@@ -160,7 +188,7 @@ public class PerformanceTestSqlite extends BasePerfTestCase {
         stopClock(LogMessage.BATCH_UPDATE);
 
         startClock();
-        List<SimpleEntityNotNull> reloaded = new ArrayList<>(BATCH_SIZE);
+        List<SimpleEntityNotNull> reloaded = new ArrayList<>(count);
         Cursor query = database.query(DbHelper.Tables.SIMPLE_ENTITY, SimpleQuery.PROJECTION, null,
                 null, null, null, null, null);
         while (query.moveToNext()) {
@@ -203,31 +231,6 @@ public class PerformanceTestSqlite extends BasePerfTestCase {
 
     private void deleteAll(SQLiteDatabase database) {
         database.delete(DbHelper.Tables.SIMPLE_ENTITY, null, null);
-    }
-
-    private void runOneByOne(SQLiteDatabase database, List<SimpleEntityNotNull> list,
-            int count) throws SQLException {
-        startClock();
-        ContentValues values = new ContentValues();
-        for (int i = 0; i < count; i++) {
-            SimpleEntityNotNull entity = list.get(i);
-            values.put(DbHelper.SimpleEntityColumns._ID, entity.getId());
-            buildContentValues(values, entity);
-            database.insert(DbHelper.Tables.SIMPLE_ENTITY, null, values);
-            values.clear();
-        }
-        stopClock(LogMessage.ONE_BY_ONE_CREATE);
-
-        startClock();
-        for (int i = 0; i < count; i++) {
-            SimpleEntityNotNull entity = list.get(i);
-            buildContentValues(values, entity);
-            database.update(DbHelper.Tables.SIMPLE_ENTITY, values,
-                    DbHelper.SimpleEntityColumns._ID + "=" + entity.getId(),
-                    null);
-            values.clear();
-        }
-        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
     }
 
     private void buildContentValues(ContentValues values, SimpleEntityNotNull entity) {

@@ -72,15 +72,16 @@ public class PerformanceTestCouchbase extends BasePerfTestCase {
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            indexedStringEntityQueriesRun(indexedStringView);
+            indexedStringEntityQueriesRun(indexedStringView, getBatchSize());
         }
     }
 
-    private void indexedStringEntityQueriesRun(View indexedStringView) throws CouchbaseLiteException {
+    private void indexedStringEntityQueriesRun(View indexedStringView, int count)
+            throws CouchbaseLiteException {
         // create entities
-        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(count);
         database.beginTransaction();
-        for (int i = 0; i < BATCH_SIZE; i++) {
+        for (int i = 0; i < count; i++) {
             Document entity = database.getDocument(String.valueOf(i));
             Map<String, Object> properties = new HashMap<>();
             properties.put("indexedString", fixedRandomStrings[i]);
@@ -90,7 +91,7 @@ public class PerformanceTestCouchbase extends BasePerfTestCase {
         log("Built and inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, count - 1);
 
         startClock();
         for (int i = 0; i < QUERY_COUNT; i++) {
@@ -115,28 +116,56 @@ public class PerformanceTestCouchbase extends BasePerfTestCase {
     }
 
     @Override
-    protected void doSingleAndBatchCrud() throws Exception {
+    protected void doOneByOneAndBatchCrud() throws Exception {
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            singleAndBatchCrudRun(BATCH_SIZE);
+            oneByOneCrudRun(getBatchSize() / 10);
+            batchCrudRun(getBatchSize());
         }
     }
 
-    private void singleAndBatchCrudRun(int entityCount) throws Exception {
+    private void oneByOneCrudRun(int count) throws CouchbaseLiteException {
         // precreate property maps for documents
-        List<Map<String, Object>> maps = new ArrayList<>(entityCount);
-        for (int i = 0; i < entityCount; i++) {
+        List<Map<String, Object>> maps = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
             maps.add(createDocumentMap(i));
         }
 
-        singleCrudRun(maps, entityCount / 10);
-
-        deleteAll();
+        startClock();
+        List<Document> documents = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            // use our own ids (use .createDocument() for random UUIDs)
+            Document document = database.getDocument(String.valueOf(i));
+            document.putProperties(maps.get(i));
+            documents.add(document);
+        }
+        stopClock(LogMessage.ONE_BY_ONE_CREATE);
 
         startClock();
-        List<Document> documents = new ArrayList<>(entityCount);
+        for (int i = 0; i < count; i++) {
+            Document document = documents.get(i);
+            Map<String, Object> updatedProperties = new HashMap<>();
+            // copy existing properties to get _rev property
+            updatedProperties.putAll(document.getProperties());
+            updatedProperties.putAll(maps.get(i));
+            document.putProperties(updatedProperties);
+        }
+        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
+
+        deleteAll();
+    }
+
+    private void batchCrudRun(int count) throws Exception {
+        // precreate property maps for documents
+        List<Map<String, Object>> maps = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            maps.add(createDocumentMap(i));
+        }
+
+        startClock();
+        List<Document> documents = new ArrayList<>(count);
         database.beginTransaction();
-        for (int i = 0; i < entityCount; i++) {
+        for (int i = 0; i < count; i++) {
             // use our own ids (use .createDocument() for random UUIDs)
             Document document = database.getDocument(String.valueOf(i));
             document.putProperties(maps.get(i));
@@ -147,7 +176,7 @@ public class PerformanceTestCouchbase extends BasePerfTestCase {
 
         startClock();
         database.beginTransaction();
-        for (int i = 0; i < entityCount; i++) {
+        for (int i = 0; i < count; i++) {
             Document document = documents.get(i);
             Map<String, Object> updatedProperties = new HashMap<>();
             // copy existing properties to get _rev property
@@ -160,7 +189,7 @@ public class PerformanceTestCouchbase extends BasePerfTestCase {
 
         startClock();
         List<Document> reloaded = new ArrayList<>();
-        for (int i = 0; i < entityCount; i++) {
+        for (int i = 0; i < count; i++) {
             reloaded.add(database.getDocument(String.valueOf(i)));
         }
         stopClock(LogMessage.BATCH_READ);
@@ -186,30 +215,6 @@ public class PerformanceTestCouchbase extends BasePerfTestCase {
         startClock();
         deleteAll();
         stopClock(LogMessage.BATCH_DELETE);
-    }
-
-    private void singleCrudRun(List<Map<String, Object>> maps, int count)
-            throws CouchbaseLiteException {
-        startClock();
-        List<Document> documents = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            // use our own ids (use .createDocument() for random UUIDs)
-            Document document = database.getDocument(String.valueOf(i));
-            document.putProperties(maps.get(i));
-            documents.add(document);
-        }
-        stopClock(LogMessage.ONE_BY_ONE_CREATE);
-
-        startClock();
-        for (int i = 0; i < count; i++) {
-            Document document = documents.get(i);
-            Map<String, Object> updatedProperties = new HashMap<>();
-            // copy existing properties to get _rev property
-            updatedProperties.putAll(document.getProperties());
-            updatedProperties.putAll(maps.get(i));
-            document.putProperties(updatedProperties);
-        }
-        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
     }
 
     private void deleteAll() throws CouchbaseLiteException {

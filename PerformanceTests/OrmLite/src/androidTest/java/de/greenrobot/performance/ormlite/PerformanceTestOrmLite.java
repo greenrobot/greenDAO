@@ -56,16 +56,16 @@ public class PerformanceTestOrmLite extends BasePerfTestCase {
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            indexedStringEntityQueriesRun(dao);
+            indexedStringEntityQueriesRun(dao, getBatchSize());
         }
     }
 
-    private void indexedStringEntityQueriesRun(final Dao<IndexedStringEntity, Long> dao)
+    private void indexedStringEntityQueriesRun(final Dao<IndexedStringEntity, Long> dao, int count)
             throws Exception {
         // create entities
-        final List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
-        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
-        for (int i = 0; i < BATCH_SIZE; i++) {
+        final List<IndexedStringEntity> entities = new ArrayList<>(count);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(count);
+        for (int i = 0; i < count; i++) {
             IndexedStringEntity entity = new IndexedStringEntity();
             entity._id = (long) i;
             entity.indexedString = fixedRandomStrings[i];
@@ -86,7 +86,7 @@ public class PerformanceTestOrmLite extends BasePerfTestCase {
         log("Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, count - 1);
 
         startClock();
         for (int i = 0; i < QUERY_COUNT; i++) {
@@ -106,25 +106,44 @@ public class PerformanceTestOrmLite extends BasePerfTestCase {
     }
 
     @Override
-    protected void doSingleAndBatchCrud() throws Exception {
+    protected void doOneByOneAndBatchCrud() throws Exception {
         Dao<SimpleEntityNotNull, Long> dao = dbHelper.getDao(SimpleEntityNotNull.class);
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            singleAndBatchCrudRun(dao, BATCH_SIZE);
+            oneByOneCrudRun(dao, getBatchSize() / 10);
+            batchCrudRun(dao, getBatchSize());
         }
     }
 
-    private void singleAndBatchCrudRun(final Dao<SimpleEntityNotNull, Long> dao, int entityCount)
-            throws Exception {
+    private void oneByOneCrudRun(Dao<SimpleEntityNotNull, Long> dao, int count)
+            throws SQLException {
         final List<SimpleEntityNotNull> list = new ArrayList<>();
-        for (int i = 0; i < entityCount; i++) {
+        for (int i = 0; i < count; i++) {
             list.add(SimpleEntityNotNullHelper.createEntity((long) i));
         }
 
-        singleCrudRun(dao, list, entityCount / 10);
+        startClock();
+        for (int i = 0; i < count; i++) {
+            dao.create(list.get(i));
+        }
+        stopClock(LogMessage.ONE_BY_ONE_CREATE);
+
+        startClock();
+        for (int i = 0; i < count; i++) {
+            dao.update(list.get(i));
+        }
+        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
 
         deleteAll();
+    }
+
+    private void batchCrudRun(final Dao<SimpleEntityNotNull, Long> dao, int count)
+            throws Exception {
+        final List<SimpleEntityNotNull> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(SimpleEntityNotNullHelper.createEntity((long) i));
+        }
 
         startClock();
         dao.callBatchTasks(new Callable<Void>() {
@@ -175,21 +194,6 @@ public class PerformanceTestOrmLite extends BasePerfTestCase {
         startClock();
         deleteAll();
         stopClock(LogMessage.BATCH_DELETE);
-    }
-
-    private void singleCrudRun(Dao<SimpleEntityNotNull, Long> dao, List<SimpleEntityNotNull> list,
-            int count) throws SQLException {
-        startClock();
-        for (int i = 0; i < count; i++) {
-            dao.create(list.get(i));
-        }
-        stopClock(LogMessage.ONE_BY_ONE_CREATE);
-
-        startClock();
-        for (int i = 0; i < count; i++) {
-            dao.update(list.get(i));
-        }
-        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
     }
 
     private void deleteAll() {

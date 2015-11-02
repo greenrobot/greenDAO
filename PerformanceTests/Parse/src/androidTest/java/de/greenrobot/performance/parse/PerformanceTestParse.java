@@ -16,14 +16,18 @@ import java.util.List;
  */
 public class PerformanceTestParse extends BasePerfTestCase {
 
-    // reduced batch size due to memory leak when pinning (of bolts.Task?)
-    private static final int BATCH_SIZE = 1000;
     // reduced query count due to slow performance
     private static final int QUERY_COUNT = 100;
 
     @Override
     protected String getLogTag() {
         return "PerfTestParse";
+    }
+
+    @Override
+    protected int getBatchSize() {
+        // reduced batch size due to memory leak when pinning (of bolts.Task?)
+        return 1000;
     }
 
     @Override
@@ -62,15 +66,15 @@ public class PerformanceTestParse extends BasePerfTestCase {
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            indexedStringEntityQueriesRun();
+            indexedStringEntityQueriesRun(getBatchSize());
         }
     }
 
-    private void indexedStringEntityQueriesRun() throws ParseException {
+    private void indexedStringEntityQueriesRun(int count) throws ParseException {
         // create entities
-        List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
-        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
-        for (int i = 0; i < BATCH_SIZE; i++) {
+        List<IndexedStringEntity> entities = new ArrayList<>(count);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(count);
+        for (int i = 0; i < count; i++) {
             IndexedStringEntity entity = new IndexedStringEntity();
             entity.setIndexedString(fixedRandomStrings[i]);
             entities.add(entity);
@@ -82,7 +86,7 @@ public class PerformanceTestParse extends BasePerfTestCase {
         log("Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, count - 1);
 
         startClock();
         for (int i = 0; i < QUERY_COUNT; i++) {
@@ -101,7 +105,7 @@ public class PerformanceTestParse extends BasePerfTestCase {
     }
 
     @Override
-    protected void doSingleAndBatchCrud() throws Exception {
+    protected void doOneByOneAndBatchCrud() throws Exception {
         // set up parse inside of test
         // setting it up in setUp() breaks Parse, as it keeps its init state between tests
         // in hidden ParsePlugins
@@ -109,19 +113,37 @@ public class PerformanceTestParse extends BasePerfTestCase {
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            singleAndBatchCrudRun(BATCH_SIZE);
+            oneByOneCrudRun(getBatchSize() / 10);
+            batchCrudRun(getBatchSize());
         }
     }
 
-    private void singleAndBatchCrudRun(int entityCount) throws ParseException {
-        List<ParseObject> list = new ArrayList<>(entityCount);
-        for (int i = 0; i < entityCount; i++) {
+    private void oneByOneCrudRun(int count) throws ParseException {
+        List<ParseObject> list = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
             list.add(createEntity(i));
         }
 
-        singleCrudRun(list, entityCount / 10);
+        startClock();
+        for (int i = 0; i < count; i++) {
+            list.get(i).pin();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_CREATE);
+
+        startClock();
+        for (int i = 0; i < count; i++) {
+            list.get(i).pin();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
 
         deleteAll();
+    }
+
+    private void batchCrudRun(int count) throws ParseException {
+        List<ParseObject> list = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            list.add(createEntity(i));
+        }
 
         startClock();
         ParseObject.pinAll(list);
@@ -155,20 +177,6 @@ public class PerformanceTestParse extends BasePerfTestCase {
         startClock();
         deleteAll();
         stopClock(LogMessage.BATCH_DELETE);
-    }
-
-    private void singleCrudRun(List<ParseObject> list, int count) throws ParseException {
-        startClock();
-        for (int i = 0; i < count; i++) {
-            list.get(i).pin();
-        }
-        stopClock(LogMessage.ONE_BY_ONE_CREATE);
-
-        startClock();
-        for (int i = 0; i < count; i++) {
-            list.get(i).pin();
-        }
-        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
     }
 
     private void deleteAll() throws ParseException {

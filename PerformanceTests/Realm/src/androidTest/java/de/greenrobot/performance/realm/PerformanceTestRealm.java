@@ -62,15 +62,15 @@ public class PerformanceTestRealm extends BasePerfTestCase {
     protected void doIndexedStringEntityQueries() throws Exception {
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            indexedStringEntityQueriesRun();
+            indexedStringEntityQueriesRun(getBatchSize());
         }
     }
 
-    private void indexedStringEntityQueriesRun() {
+    private void indexedStringEntityQueriesRun(int count) {
         // create entities
-        List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
-        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
-        for (int i = 0; i < BATCH_SIZE; i++) {
+        List<IndexedStringEntity> entities = new ArrayList<>(count);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(count);
+        for (int i = 0; i < count; i++) {
             IndexedStringEntity entity = new IndexedStringEntity();
             entity.setId((long) i);
             entity.setIndexedString(fixedRandomStrings[i]);
@@ -85,7 +85,7 @@ public class PerformanceTestRealm extends BasePerfTestCase {
         log("Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, count - 1);
 
         startClock();
         for (int i = 0; i < QUERY_COUNT; i++) {
@@ -110,22 +110,44 @@ public class PerformanceTestRealm extends BasePerfTestCase {
     }
 
     @Override
-    protected void doSingleAndBatchCrud() throws Exception {
+    protected void doOneByOneAndBatchCrud() throws Exception {
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            singleAndBatchCrudRun(BATCH_SIZE);
+            oneByOneCrudRun(getBatchSize());
+            batchCrudRun(getBatchSize());
         }
     }
 
-    private void singleAndBatchCrudRun(int entityCount) throws Exception {
+    private void oneByOneCrudRun(int count) throws SQLException {
         final List<SimpleEntityNotNull> list = new ArrayList<>();
-        for (int i = 0; i < entityCount; i++) {
+        for (int i = 0; i < count; i++) {
             list.add(SimpleEntityNotNullHelper.createEntity((long) i));
         }
 
-        runOneByOne(list, entityCount / 10);
+        startClock();
+        for (int i = 0; i < count; i++) {
+            realm.beginTransaction();
+            realm.copyToRealm(list.get(i));
+            realm.commitTransaction();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_CREATE);
+
+        startClock();
+        for (int i = 0; i < count; i++) {
+            realm.beginTransaction();
+            realm.copyToRealmOrUpdate(list.get(i));
+            realm.commitTransaction();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
 
         deleteAll();
+    }
+
+    private void batchCrudRun(int count) throws Exception {
+        final List<SimpleEntityNotNull> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(SimpleEntityNotNullHelper.createEntity((long) i));
+        }
 
         startClock();
         realm.beginTransaction();
@@ -164,24 +186,6 @@ public class PerformanceTestRealm extends BasePerfTestCase {
         startClock();
         deleteAll();
         stopClock(LogMessage.BATCH_DELETE);
-    }
-
-    private void runOneByOne(List<SimpleEntityNotNull> list, int count) throws SQLException {
-        startClock();
-        for (int i = 0; i < count; i++) {
-            realm.beginTransaction();
-            realm.copyToRealm(list.get(i));
-            realm.commitTransaction();
-        }
-        stopClock(LogMessage.ONE_BY_ONE_CREATE);
-
-        startClock();
-        for (int i = 0; i < count; i++) {
-            realm.beginTransaction();
-            realm.copyToRealmOrUpdate(list.get(i));
-            realm.commitTransaction();
-        }
-        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
     }
 
     private void deleteAll() {

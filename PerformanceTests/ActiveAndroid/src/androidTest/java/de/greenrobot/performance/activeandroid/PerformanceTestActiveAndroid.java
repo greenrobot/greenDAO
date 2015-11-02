@@ -44,15 +44,15 @@ public class PerformanceTestActiveAndroid extends BasePerfTestCase {
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            indexedStringEntityQueriesRun();
+            indexedStringEntityQueriesRun(getBatchSize());
         }
     }
 
-    private void indexedStringEntityQueriesRun() {
+    private void indexedStringEntityQueriesRun(int count) {
         // create entities
-        List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
-        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
-        for (int i = 0; i < BATCH_SIZE; i++) {
+        List<IndexedStringEntity> entities = new ArrayList<>(count);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(count);
+        for (int i = 0; i < count; i++) {
             IndexedStringEntity entity = new IndexedStringEntity();
             entity.indexedString = fixedRandomStrings[i];
             entities.add(entity);
@@ -62,7 +62,7 @@ public class PerformanceTestActiveAndroid extends BasePerfTestCase {
         // insert entities
         ActiveAndroid.beginTransaction();
         try {
-            for (int i = 0; i < BATCH_SIZE; i++) {
+            for (int i = 0; i < count; i++) {
                 entities.get(i).save();
             }
             ActiveAndroid.setTransactionSuccessful();
@@ -72,7 +72,7 @@ public class PerformanceTestActiveAndroid extends BasePerfTestCase {
         log("Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, count - 1);
 
         startClock();
         for (int i = 0; i < QUERY_COUNT; i++) {
@@ -92,7 +92,7 @@ public class PerformanceTestActiveAndroid extends BasePerfTestCase {
     }
 
     @Override
-    protected void doSingleAndBatchCrud() throws Exception {
+    protected void doOneByOneAndBatchCrud() throws Exception {
         // set up database
         Configuration dbConfiguration = new Configuration.Builder(getContext())
                 .setDatabaseName(DATABASE_NAME)
@@ -102,19 +102,37 @@ public class PerformanceTestActiveAndroid extends BasePerfTestCase {
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            singleAndBatchCrudRun(BATCH_SIZE);
+            oneByOneCrudRun(getBatchSize() / 10);
+            batchCrudRun(getBatchSize());
         }
     }
 
-    private void singleAndBatchCrudRun(int entityCount) throws Exception {
+    private void oneByOneCrudRun(int count) throws SQLException {
+        final List<SimpleEntityNotNull> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(SimpleEntityNotNullHelper.createEntity());
+        }
+
+        startClock();
+        for (int i = 0; i < count; i++) {
+            list.get(i).save();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_CREATE);
+
+        startClock();
+        for (int i = 0; i < count; i++) {
+            list.get(i).save();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
+
+        deleteAll();
+    }
+
+    private void batchCrudRun(int entityCount) throws Exception {
         final List<SimpleEntityNotNull> list = new ArrayList<>();
         for (int i = 0; i < entityCount; i++) {
             list.add(SimpleEntityNotNullHelper.createEntity());
         }
-
-        singleCrudRun(list, entityCount / 10);
-
-        deleteAll();
 
         startClock();
         ActiveAndroid.beginTransaction();
@@ -166,20 +184,6 @@ public class PerformanceTestActiveAndroid extends BasePerfTestCase {
         startClock();
         deleteAll();
         stopClock(LogMessage.BATCH_DELETE);
-    }
-
-    private void singleCrudRun(List<SimpleEntityNotNull> list, int count) throws SQLException {
-        startClock();
-        for (int i = 0; i < count; i++) {
-            list.get(i).save();
-        }
-        stopClock(LogMessage.ONE_BY_ONE_CREATE);
-
-        startClock();
-        for (int i = 0; i < count; i++) {
-            list.get(i).save();
-        }
-        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
     }
 
     private void deleteAll() {

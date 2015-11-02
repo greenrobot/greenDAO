@@ -55,15 +55,15 @@ public class PerformanceTestCupboard extends BasePerfTestCase {
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            indexedStringEntityQueriesRun(database);
+            indexedStringEntityQueriesRun(database, getBatchSize());
         }
     }
 
-    private void indexedStringEntityQueriesRun(DatabaseCompartment database) {
+    private void indexedStringEntityQueriesRun(DatabaseCompartment database, int count) {
         // create entities
-        List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
-        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
-        for (int i = 0; i < BATCH_SIZE; i++) {
+        List<IndexedStringEntity> entities = new ArrayList<>(count);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(count);
+        for (int i = 0; i < count; i++) {
             IndexedStringEntity entity = new IndexedStringEntity();
             entity._id = (long) i;
             entity.indexedString = fixedRandomStrings[i];
@@ -76,7 +76,7 @@ public class PerformanceTestCupboard extends BasePerfTestCase {
         log("Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, count - 1);
 
         startClock();
         for (int i = 0; i < QUERY_COUNT; i++) {
@@ -95,7 +95,7 @@ public class PerformanceTestCupboard extends BasePerfTestCase {
     }
 
     @Override
-    protected void doSingleAndBatchCrud() throws Exception {
+    protected void doOneByOneAndBatchCrud() throws Exception {
         // set up database
         cupboard.register(SimpleEntityNotNull.class);
         DbHelper dbHelper = new DbHelper(getApplication(), DATABASE_NAME, DATABASE_VERSION);
@@ -103,20 +103,38 @@ public class PerformanceTestCupboard extends BasePerfTestCase {
 
         for (int i = 0; i < RUNS; i++) {
             log("----Run " + (i + 1) + " of " + RUNS);
-            singleAndBatchCrudRun(database, BATCH_SIZE);
+            oneByOneCrudRun(database, getBatchSize());
+            batchCrudRun(database, getBatchSize());
         }
     }
 
-    private void singleAndBatchCrudRun(DatabaseCompartment database, int entityCount)
-            throws Exception {
+    private void oneByOneCrudRun(DatabaseCompartment database, int count) throws SQLException {
         final List<SimpleEntityNotNull> list = new ArrayList<>();
-        for (int i = 0; i < entityCount; i++) {
+        for (int i = 0; i < count; i++) {
             list.add(SimpleEntityNotNullHelper.createEntity((long) i));
         }
 
-        singleCrudRun(database, list, entityCount / 10);
+        startClock();
+        for (int i = 0; i < count; i++) {
+            database.put(list.get(i));
+        }
+        stopClock(LogMessage.ONE_BY_ONE_CREATE);
+
+        startClock();
+        for (int i = 0; i < count; i++) {
+            database.put(list.get(i));
+        }
+        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
 
         deleteAll(database);
+    }
+
+    private void batchCrudRun(DatabaseCompartment database, int count)
+            throws Exception {
+        final List<SimpleEntityNotNull> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(SimpleEntityNotNullHelper.createEntity((long) i));
+        }
 
         startClock();
         database.put(list);
@@ -149,21 +167,6 @@ public class PerformanceTestCupboard extends BasePerfTestCase {
         startClock();
         deleteAll(database);
         stopClock(LogMessage.BATCH_DELETE);
-    }
-
-    private void singleCrudRun(DatabaseCompartment database, List<SimpleEntityNotNull> list,
-            int count) throws SQLException {
-        startClock();
-        for (int i = 0; i < count; i++) {
-            database.put(list.get(i));
-        }
-        stopClock(LogMessage.ONE_BY_ONE_CREATE);
-
-        startClock();
-        for (int i = 0; i < count; i++) {
-            database.put(list.get(i));
-        }
-        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
     }
 
     private void deleteAll(DatabaseCompartment database) {
