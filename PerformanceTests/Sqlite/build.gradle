@@ -20,8 +20,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
 
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
-
-        buildConfigField "boolean", "RUN_PERFORMANCE_TESTS", "false"
     }
 }
 
