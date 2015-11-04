@@ -19,12 +19,17 @@ package de.greenrobot.daotest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 
+/**
+ * Test to reproduce https://github.com/greenrobot/greenDAO/issues/223 (works at least on a Android 2.3 emulator).
+ */
 public class DeadlockPreventionTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
 
-    volatile boolean done;
+    CountDownLatch done = new CountDownLatch(1);
     private TestEntityDao dao;
 
     public DeadlockPreventionTest() {
@@ -32,7 +37,7 @@ public class DeadlockPreventionTest extends AbstractDaoSessionTest<DaoMaster, Da
     }
 
     // Runs pretty long, only run manually
-    public void _testLoadAll() throws InterruptedException {
+    public void testLoadAll() throws InterruptedException {
         dao = daoSession.getTestEntityDao();
         List<TestEntity> entities = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
@@ -41,28 +46,69 @@ public class DeadlockPreventionTest extends AbstractDaoSessionTest<DaoMaster, Da
             entities.add(entity);
         }
         dao.insertInTx(entities);
-
         System.out.println("Entities inserted");
-        Thread thread = new InsertThread();
-        Thread thread2 = new InsertBatchThread();
-        thread.start();
-        thread2.start();
 
-        for (int i = 0; i < 10; i++) {
-            System.out.println("Starting loadAll #" + i);
-            dao.loadAll();
+        LoadThread loadThread = new LoadThread();
+        InsertThread insertThread = new InsertThread();
+        InsertBatchThread insertBatchThread = new InsertBatchThread();
+        loadThread.start();
+        insertThread.start();
+        insertBatchThread.start();
+
+        int lastCounterInsert = insertThread.counter;
+        int lastCounterInsertBatch = insertBatchThread.counter;
+        int noProgressCount = 0;
+        while (!done.await(10, TimeUnit.SECONDS)) {
+            if (lastCounterInsert == insertThread.counter && lastCounterInsertBatch == insertBatchThread.counter) {
+                noProgressCount++;
+                System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                System.err.println("No progress #" + noProgressCount + ", dumping threads");
+                System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                dumpStacktrace("LOAD", loadThread);
+                dumpStacktrace("INSERT", insertThread);
+                dumpStacktrace("INSERT BATCH", insertBatchThread);
+
+                if (noProgressCount >= 3) {
+                    // Test seems to be stuck, kill everything!
+                    System.exit(1);
+                }
+            } else {
+                lastCounterInsert = insertThread.counter;
+                lastCounterInsertBatch = insertBatchThread.counter;
+                noProgressCount = 0;
+            }
         }
 
-        done = true;
-        thread.join();
-        thread2.join();
+        loadThread.join();
+        insertThread.join();
+        insertBatchThread.join();
     }
 
-    private class InsertThread extends Thread {
+    private void dumpStacktrace(String name, Thread thread) {
+        System.err.println("--- Thread dump of " + name + " ------------------------");
+        for (StackTraceElement element : thread.getStackTrace()) {
+            System.err.println(element);
+        }
+    }
+
+    private class LoadThread extends Thread {
         @Override
         public void run() {
-            int counter = 0;
-            while (!done) {
+            for (int i = 0; i < 10; i++) {
+                System.out.println("Starting loadAll #" + i);
+                dao.loadAll();
+            }
+            done.countDown();
+        }
+    }
+
+
+    private class InsertThread extends Thread {
+        volatile int counter = 0;
+
+        @Override
+        public void run() {
+            while (done.getCount() > 0) {
                 TestEntity entity = new TestEntity();
                 entity.setSimpleStringNotNull("TextThread" + counter);
                 dao.insert(entity);
@@ -75,11 +121,12 @@ public class DeadlockPreventionTest extends AbstractDaoSessionTest<DaoMaster, Da
     }
 
     private class InsertBatchThread extends Thread {
+        volatile int counter = 0;
+
         @Override
         public void run() {
-            int counter = 0;
             List<TestEntity> batch = new ArrayList<>();
-            while (!done) {
+            while (done.getCount() > 0) {
                 TestEntity entity = new TestEntity();
                 entity.setSimpleStringNotNull("TextThreadBatch" + counter);
                 batch.add(entity);
