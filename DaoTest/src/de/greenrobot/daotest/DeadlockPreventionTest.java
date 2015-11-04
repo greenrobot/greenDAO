@@ -108,13 +108,17 @@ public class DeadlockPreventionTest extends AbstractDaoSessionTest<DaoMaster, Da
 
         @Override
         public void run() {
+            List<TestEntity> toDelete = new ArrayList<>();
             while (done.getCount() > 0) {
                 TestEntity entity = new TestEntity();
                 entity.setSimpleStringNotNull("TextThread" + counter);
                 dao.insert(entity);
+                toDelete.add(entity);
                 counter++;
                 if (counter % 10 == 0) {
-                    System.out.println("Thread inserted " + counter);
+                    System.out.println("Thread inserted " + counter+ ", now deleting");
+                    dao.deleteInTx(toDelete);
+                    toDelete.clear();
                 }
             }
         }
@@ -126,6 +130,7 @@ public class DeadlockPreventionTest extends AbstractDaoSessionTest<DaoMaster, Da
         @Override
         public void run() {
             List<TestEntity> batch = new ArrayList<>();
+            List<TestEntity> toDelete = new ArrayList<>();
             while (done.getCount() > 0) {
                 TestEntity entity = new TestEntity();
                 entity.setSimpleStringNotNull("TextThreadBatch" + counter);
@@ -134,7 +139,13 @@ public class DeadlockPreventionTest extends AbstractDaoSessionTest<DaoMaster, Da
                 if (counter % 10 == 0) {
                     dao.insertInTx(batch);
                     System.out.println("Batch Thread inserted " + counter);
+                    toDelete.addAll(batch);
                     batch.clear();
+                }
+                if (counter % 1000 == 0) {
+                    dao.deleteInTx(toDelete);
+                    toDelete.clear();
+                    System.out.println("Batch Thread deleted " + counter);
                 }
             }
         }
