@@ -1,14 +1,12 @@
 package de.greenrobot.performance.firebase;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
-import android.util.Log;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
+import de.greenrobot.performance.BasePerfTestCase;
 import de.greenrobot.performance.StringGenerator;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,28 +19,24 @@ import java.util.concurrent.TimeUnit;
  *
  * https://www.firebase.com/docs/android/guide/
  */
-public class PerformanceTestFirebase extends ApplicationTestCase<Application> {
+public class PerformanceTestFirebase extends BasePerfTestCase {
 
-    private static final String TAG = "PerfTestFirebase";
-
-    private static final int BATCH_SIZE = 10000;
     // reduced query count as local datastore can not be indexed, resulting in low performance
     private static final int QUERY_COUNT = 100;
-    private static final int RUNS = 8;
 
     private Firebase rootFirebaseRef;
 
     private List<SimpleEntityNotNull> reloaded;
 
-    public PerformanceTestFirebase() {
-        super(Application.class);
+    @Override
+    protected String getLogTag() {
+        return "PerfTestFirebase";
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        createApplication();
         setupFirebase();
     }
 
@@ -67,48 +61,40 @@ public class PerformanceTestFirebase extends ApplicationTestCase<Application> {
         super.tearDown();
     }
 
-    public void testIndexedStringEntityQuery() throws InterruptedException {
+    @Override
+    protected void doIndexedStringEntityQueries() throws Exception {
         // Firebase does not support defining indexes locally, only in the cloud component
         // We measure the local datastore query time anyhow, but WITHOUT INDEXES.
-
-        //noinspection PointlessBooleanExpression
-        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
-            Log.d(TAG, "Performance tests are disabled.");
-            return;
-        }
-        Log.d(TAG, "--------Indexed Queries: Start");
 
         // set up node for entities
         Firebase entityRef = rootFirebaseRef.child("indexedStringEntity");
 
         for (int i = 0; i < RUNS; i++) {
-            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
-            doIndexedStringEntityQuery(entityRef);
+            log("----Run " + (i + 1) + " of " + RUNS);
+            indexedStringEntityQueriesRun(entityRef, getBatchSize());
         }
-
-        Log.d(TAG, "--------Indexed Queries: End");
     }
 
-    public void doIndexedStringEntityQuery(Firebase entityRef) throws InterruptedException {
+    private void indexedStringEntityQueriesRun(Firebase entityRef, int count) throws InterruptedException {
         // create entities
-        List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
-        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
-        for (int i = 0; i < BATCH_SIZE; i++) {
+        List<IndexedStringEntity> entities = new ArrayList<>(count);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(count);
+        for (int i = 0; i < count; i++) {
             IndexedStringEntity entity = new IndexedStringEntity();
             entity._id = (long) i;
             entity.indexedString = fixedRandomStrings[i];
             entities.add(entity);
         }
-        Log.d(TAG, "Built entities.");
+        log("Built entities.");
 
         // insert entities
         entityRef.setValue(entities);
-        Log.d(TAG, "Inserted entities.");
+        log("Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, count - 1);
 
-        long start = System.currentTimeMillis();
+        startClock();
         for (int i = 0; i < QUERY_COUNT; i++) {
             int nextIndex = randomIndices[i];
 
@@ -148,66 +134,72 @@ public class PerformanceTestFirebase extends ApplicationTestCase<Application> {
             queryLock.await();
             query.removeEventListener(queryEventListener);
         }
-        long time = System.currentTimeMillis() - start;
-        Log.d(TAG,
-                "Queried for " + QUERY_COUNT + " of " + BATCH_SIZE + " indexed entities in " + time
-                        + " ms.");
+        stopClock(LogMessage.QUERY_INDEXED);
 
         // delete all entities
         entityRef.setValue(null);
-        Log.d(TAG, "Deleted all entities.");
+        log("Deleted all entities.");
     }
 
-    public void testPerformance() throws Exception {
-        //noinspection PointlessBooleanExpression
-        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
-            Log.d(TAG, "Performance tests are disabled.");
-            return;
-        }
-        Log.d(TAG, "---------------Start");
-
+    @Override
+    protected void doOneByOneAndBatchCrud() throws Exception {
         // set up node for entities
         Firebase simpleEntityRef = rootFirebaseRef.child("simpleEntities");
 
         for (int i = 0; i < RUNS; i++) {
-            runTests(simpleEntityRef, BATCH_SIZE);
+            log("----Run " + (i + 1) + " of " + RUNS);
+            oneByOneCrudRun(simpleEntityRef, getBatchSize() / 10);
+            batchCrudRun(simpleEntityRef, getBatchSize());
         }
-        Log.d(TAG, "---------------End");
     }
 
-    protected void runTests(Firebase simpleEntityRef, final int entityCount) throws Exception {
-        Log.d(TAG, "---------------Start: " + entityCount);
-
-        long start, time;
-
+    private void oneByOneCrudRun(Firebase simpleEntityRef, int count) throws Exception {
         final List<SimpleEntityNotNull> list = new ArrayList<>();
-        for (int i = 0; i < entityCount; i++) {
+        for (int i = 0; i < count; i++) {
             list.add(SimpleEntityNotNullHelper.createEntity((long) i));
         }
-        System.gc();
 
-        runOneByOne(simpleEntityRef, list, entityCount / 10);
+        startClock();
+        for (int i = 0; i < count; i++) {
+            // use the entity id as its key
+            SimpleEntityNotNull entity = list.get(i);
+            simpleEntityRef.child(String.valueOf(entity.getId())).setValue(entity);
+        }
+        stopClock(LogMessage.ONE_BY_ONE_CREATE);
 
-        System.gc();
+        startClock();
+        for (int i = 0; i < count; i++) {
+            // use the entity id as its key
+            SimpleEntityNotNull entity = list.get(i);
+            simpleEntityRef.child(String.valueOf(entity.getId())).setValue(entity);
+        }
+        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
+
         deleteAll(simpleEntityRef);
+    }
+
+    private void batchCrudRun(Firebase simpleEntityRef, final int count)
+            throws Exception {
+        final List<SimpleEntityNotNull> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(SimpleEntityNotNullHelper.createEntity((long) i));
+        }
 
         // there is no such thing as batch storing of items in Firebase
         // so store the whole list of entities at once
         // https://www.firebase.com/docs/android/guide/understanding-data.html#section-arrays-in-firebase
 
-        start = System.currentTimeMillis();
+        startClock();
         simpleEntityRef.setValue(list);
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Created (batch) " + list.size() + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_CREATE);
 
-        start = System.currentTimeMillis();
+        startClock();
         simpleEntityRef.setValue(list);
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Updated (batch) " + list.size() + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_UPDATE);
 
         final CountDownLatch loadLock = new CountDownLatch(1);
-        start = System.currentTimeMillis();
-        reloaded = new ArrayList<>(entityCount);
+        startClock();
+        reloaded = new ArrayList<>(count);
         simpleEntityRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -224,11 +216,10 @@ public class PerformanceTestFirebase extends ApplicationTestCase<Application> {
             }
         });
         loadLock.await(5 * 60, TimeUnit.SECONDS);
-        time = System.currentTimeMillis() - start;
         long childrenCount = reloaded.size();
-        Log.d(TAG, "Loaded (batch) " + childrenCount + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_READ);
 
-        start = System.currentTimeMillis();
+        startClock();
         for (int i = 0; i < childrenCount; i++) {
             SimpleEntityNotNull entity = reloaded.get(i);
             entity.getId();
@@ -240,42 +231,14 @@ public class PerformanceTestFirebase extends ApplicationTestCase<Application> {
             entity.getSimpleDouble();
             entity.getSimpleString();
         }
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Accessed properties of " + childrenCount + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_ACCESS);
 
+        startClock();
         deleteAll(simpleEntityRef);
-
-        System.gc();
-        Log.d(TAG, "---------------End: " + entityCount);
+        stopClock(LogMessage.BATCH_DELETE);
     }
 
-    protected void runOneByOne(Firebase simpleEntityRef, List<SimpleEntityNotNull> list,
-            int count) {
-        long start;
-        long time;
-        start = System.currentTimeMillis();
-        for (int i = 0; i < count; i++) {
-            // use the entity id as its key
-            SimpleEntityNotNull entity = list.get(i);
-            simpleEntityRef.child(String.valueOf(entity.getId())).setValue(entity);
-        }
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Inserted (one-by-one) " + count + " entities in " + time + " ms");
-
-        start = System.currentTimeMillis();
-        for (int i = 0; i < count; i++) {
-            // use the entity id as its key
-            SimpleEntityNotNull entity = list.get(i);
-            simpleEntityRef.child(String.valueOf(entity.getId())).setValue(entity);
-        }
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Updated (one-by-one) " + count + " entities in " + time + " ms");
-    }
-
-    protected void deleteAll(Firebase simpleEntityRef) throws InterruptedException {
-        long start = System.currentTimeMillis();
+    private void deleteAll(Firebase simpleEntityRef) throws InterruptedException {
         simpleEntityRef.setValue(null);
-        long time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Deleted all entities in " + time + " ms");
     }
 }

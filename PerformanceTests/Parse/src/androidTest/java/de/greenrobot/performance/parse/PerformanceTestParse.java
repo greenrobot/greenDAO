@@ -1,14 +1,12 @@
 package de.greenrobot.performance.parse;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
-import android.util.Log;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import de.greenrobot.performance.BasePerfTestCase;
 import de.greenrobot.performance.StringGenerator;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,25 +14,20 @@ import java.util.List;
 /**
  * https://parse.com/docs/android/guide
  */
-public class PerformanceTestParse extends ApplicationTestCase<Application> {
+public class PerformanceTestParse extends BasePerfTestCase {
 
-    private static final String TAG = "PerfTestParse";
-
-    // reduced batch size due to memory leak when pinning (of bolts.Task?)
-    private static final int BATCH_SIZE = 1000;
     // reduced query count due to slow performance
     private static final int QUERY_COUNT = 100;
-    private static final int RUNS = 8;
 
-    public PerformanceTestParse() {
-        super(Application.class);
+    @Override
+    protected String getLogTag() {
+        return "PerfTestParse";
     }
 
     @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        createApplication();
+    protected int getBatchSize() {
+        // reduced batch size due to memory leak when pinning (of bolts.Task?)
+        return 1000;
     }
 
     @Override
@@ -59,17 +52,11 @@ public class PerformanceTestParse extends ApplicationTestCase<Application> {
         ParseACL.setDefaultACL(defaultACL, true);
     }
 
-    public void testIndexedStringEntityQuery() throws ParseException {
+    @Override
+    protected void doIndexedStringEntityQueries() throws Exception {
         // According to the documentation, Parse does NOT support defining indexes manually
         // or for the local datastore.
         // We still are going to determine query performance WITHOUT AN INDEX.
-
-        //noinspection PointlessBooleanExpression
-        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
-            Log.d(TAG, "Performance tests are disabled.");
-            return;
-        }
-        Log.d(TAG, "--------Indexed Queries: Start");
 
         // set up parse inside of test
         // setting it up in setUp() breaks Parse, as it keeps its init state between tests
@@ -78,32 +65,30 @@ public class PerformanceTestParse extends ApplicationTestCase<Application> {
         setupParse();
 
         for (int i = 0; i < RUNS; i++) {
-            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
-            doIndexedStringEntityQuery();
+            log("----Run " + (i + 1) + " of " + RUNS);
+            indexedStringEntityQueriesRun(getBatchSize());
         }
-
-        Log.d(TAG, "--------Indexed Queries: End");
     }
 
-    private void doIndexedStringEntityQuery() throws ParseException {
+    private void indexedStringEntityQueriesRun(int count) throws ParseException {
         // create entities
-        List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
-        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
-        for (int i = 0; i < BATCH_SIZE; i++) {
+        List<IndexedStringEntity> entities = new ArrayList<>(count);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(count);
+        for (int i = 0; i < count; i++) {
             IndexedStringEntity entity = new IndexedStringEntity();
             entity.setIndexedString(fixedRandomStrings[i]);
             entities.add(entity);
         }
-        Log.d(TAG, "Built entities.");
+        log("Built entities.");
 
         // insert entities
         ParseObject.pinAll(entities);
-        Log.d(TAG, "Inserted entities.");
+        log("Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, count - 1);
 
-        long start = System.currentTimeMillis();
+        startClock();
         for (int i = 0; i < QUERY_COUNT; i++) {
             int nextIndex = randomIndices[i];
 
@@ -112,70 +97,69 @@ public class PerformanceTestParse extends ApplicationTestCase<Application> {
             //noinspection unused
             List<IndexedStringEntity> result = query.find();
         }
-        long time = System.currentTimeMillis() - start;
-        Log.d(TAG,
-                "Queried for " + QUERY_COUNT + " of " + BATCH_SIZE + " UNINDEXED entities in "
-                        + time + " ms.");
+        stopClock(LogMessage.QUERY_INDEXED);
 
         // delete all entities
         ParseObject.unpinAll();
-        Log.d(TAG, "Deleted all entities.");
+        log("Deleted all entities.");
     }
 
-    public void testPerformance() throws Exception {
-        //noinspection PointlessBooleanExpression
-        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
-            Log.d(TAG, "Performance tests are disabled.");
-            return;
-        }
-        Log.d(TAG, "---------------Start");
-
+    @Override
+    protected void doOneByOneAndBatchCrud() throws Exception {
         // set up parse inside of test
         // setting it up in setUp() breaks Parse, as it keeps its init state between tests
         // in hidden ParsePlugins
         setupParse();
 
         for (int i = 0; i < RUNS; i++) {
-            runTests(BATCH_SIZE);
+            log("----Run " + (i + 1) + " of " + RUNS);
+            oneByOneCrudRun(getBatchSize() / 10);
+            batchCrudRun(getBatchSize());
         }
-
-        Log.d(TAG, "---------------End");
     }
 
-    private void runTests(int entityCount) throws ParseException {
-        Log.d(TAG, "---------------Start: " + entityCount);
-
-        long start, time;
-
-        List<ParseObject> list = new ArrayList<>(entityCount);
-        for (int i = 0; i < entityCount; i++) {
+    private void oneByOneCrudRun(int count) throws ParseException {
+        List<ParseObject> list = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
             list.add(createEntity(i));
         }
-        System.gc();
 
-        runOneByOne(list, entityCount / 10);
+        startClock();
+        for (int i = 0; i < count; i++) {
+            list.get(i).pin();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_CREATE);
 
-        System.gc();
+        startClock();
+        for (int i = 0; i < count; i++) {
+            list.get(i).pin();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
+
         deleteAll();
+    }
 
-        start = System.currentTimeMillis();
+    private void batchCrudRun(int count) throws ParseException {
+        List<ParseObject> list = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            list.add(createEntity(i));
+        }
+
+        startClock();
         ParseObject.pinAll(list);
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Created (batch) " + list.size() + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_CREATE);
 
-        start = System.currentTimeMillis();
+        startClock();
         ParseObject.pinAll(list);
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Updated (batch) " + list.size() + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_UPDATE);
 
-        start = System.currentTimeMillis();
+        startClock();
         List<ParseObject> reloaded = ParseQuery.getQuery("SimpleEntity")
                 .fromLocalDatastore()
                 .find();
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Loaded (batch) " + reloaded.size() + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_READ);
 
-        start = System.currentTimeMillis();
+        startClock();
         for (int i = 0; i < reloaded.size(); i++) {
             ParseObject entity = reloaded.get(i);
             entity.getBoolean("simpleBoolean");
@@ -188,38 +172,15 @@ public class PerformanceTestParse extends ApplicationTestCase<Application> {
             entity.getString("simpleString");
             entity.getBytes("simpleByteArray");
         }
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Accessed properties of " + reloaded.size() + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_ACCESS);
 
+        startClock();
         deleteAll();
-
-        System.gc();
-        Log.d(TAG, "---------------End: " + entityCount);
-    }
-
-    private void runOneByOne(List<ParseObject> list, int count) throws ParseException {
-        long start;
-        long time;
-        start = System.currentTimeMillis();
-        for (int i = 0; i < count; i++) {
-            list.get(i).pin();
-        }
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Inserted (one-by-one) " + count + " entities in " + time + " ms");
-
-        start = System.currentTimeMillis();
-        for (int i = 0; i < count; i++) {
-            list.get(i).pin();
-        }
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Updated (one-by-one) " + count + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_DELETE);
     }
 
     private void deleteAll() throws ParseException {
-        long start = System.currentTimeMillis();
         ParseObject.unpinAll();
-        long time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Deleted all entities in " + time + " ms");
     }
 
     private ParseObject createEntity(int nr) {

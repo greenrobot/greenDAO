@@ -1,13 +1,11 @@
 package de.greenrobot.performance.sqlite;
 
-import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.test.ApplicationTestCase;
-import android.util.Log;
+import de.greenrobot.performance.BasePerfTestCase;
 import de.greenrobot.performance.StringGenerator;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,26 +14,14 @@ import java.util.List;
 /**
  * https://bitbucket.org/qbusict/cupboard/wiki/GettingStarted
  */
-public class PerformanceTestSqlite extends ApplicationTestCase<Application> {
-
-    private static final String TAG = "PerfTestSqlite";
-
-    private static final int BATCH_SIZE = 10000;
-    private static final int QUERY_COUNT = 1000;
-    private static final int RUNS = 8;
+public class PerformanceTestSqlite extends BasePerfTestCase {
 
     private static final String DATABASE_NAME = "sqlite.db";
     private static final int DATABASE_VERSION = 1;
 
-    public PerformanceTestSqlite() {
-        super(Application.class);
-    }
-
     @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        createApplication();
+    protected String getLogTag() {
+        return "PerfTestSqlite";
     }
 
     @Override
@@ -45,44 +31,36 @@ public class PerformanceTestSqlite extends ApplicationTestCase<Application> {
         super.tearDown();
     }
 
-    public void testIndexedStringEntityQuery() {
-        //noinspection PointlessBooleanExpression
-        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
-            Log.d(TAG, "Performance tests are disabled.");
-            return;
-        }
-        Log.d(TAG, "--------Indexed Queries: Start");
-
+    @Override
+    protected void doIndexedStringEntityQueries() throws Exception {
         // set up database
         DbHelper dbHelper = new DbHelper(getApplication(), DATABASE_NAME, DATABASE_VERSION);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        Log.d(TAG, "Set up database.");
+        log("Set up database.");
 
         for (int i = 0; i < RUNS; i++) {
-            Log.d(TAG, "----Run " + (i + 1) + " of " + RUNS);
-            doIndexedStringEntityQuery(database);
+            log("----Run " + (i + 1) + " of " + RUNS);
+            indexedStringEntityQueriesRun(database, getBatchSize());
         }
-
-        Log.d(TAG, "--------Indexed Queries: End");
     }
 
-    public void doIndexedStringEntityQuery(SQLiteDatabase database) {
+    private void indexedStringEntityQueriesRun(SQLiteDatabase database, int count) {
         // create entities
-        List<IndexedStringEntity> entities = new ArrayList<>(BATCH_SIZE);
-        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(BATCH_SIZE);
-        for (int i = 0; i < BATCH_SIZE; i++) {
+        List<IndexedStringEntity> entities = new ArrayList<>(count);
+        String[] fixedRandomStrings = StringGenerator.createFixedRandomStrings(count);
+        for (int i = 0; i < count; i++) {
             IndexedStringEntity entity = new IndexedStringEntity();
             entity._id = (long) i;
             entity.indexedString = fixedRandomStrings[i];
             entities.add(entity);
         }
-        Log.d(TAG, "Built entities.");
+        log("Built entities.");
 
         // insert entities
         database.beginTransaction();
         try {
             ContentValues values = new ContentValues();
-            for (int i = 0; i < BATCH_SIZE; i++) {
+            for (int i = 0; i < count; i++) {
                 IndexedStringEntity entity = entities.get(i);
                 values.put(DbHelper.IndexedEntityColumns._ID, entity._id);
                 values.put(DbHelper.IndexedEntityColumns.INDEXED_STRING, entity.indexedString);
@@ -95,12 +73,12 @@ public class PerformanceTestSqlite extends ApplicationTestCase<Application> {
         } finally {
             database.endTransaction();
         }
-        Log.d(TAG, "Inserted entities.");
+        log("Inserted entities.");
 
         // query for entities by indexed string at random
-        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, BATCH_SIZE - 1);
+        int[] randomIndices = StringGenerator.getFixedRandomIndices(QUERY_COUNT, count - 1);
 
-        long start = System.currentTimeMillis();
+        startClock();
         for (int i = 0; i < QUERY_COUNT; i++) {
             int nextIndex = randomIndices[i];
 
@@ -117,56 +95,68 @@ public class PerformanceTestSqlite extends ApplicationTestCase<Application> {
 
             query.close();
         }
-        long time = System.currentTimeMillis() - start;
-        Log.d(TAG,
-                "Queried for " + QUERY_COUNT + " of " + BATCH_SIZE + " indexed entities in " + time
-                        + " ms.");
+        stopClock(LogMessage.QUERY_INDEXED);
 
         // delete all entities
         database.delete(DbHelper.Tables.INDEXED_ENTITY, null, null);
-        Log.d(TAG, "Deleted all entities.");
+        log("Deleted all entities.");
     }
 
-    public void testPerformance() throws Exception {
-        //noinspection PointlessBooleanExpression
-        if (!BuildConfig.RUN_PERFORMANCE_TESTS) {
-            Log.d(TAG, "Performance tests are disabled.");
-            return;
-        }
-        Log.d(TAG, "---------------Start");
-
+    @Override
+    protected void doOneByOneAndBatchCrud() throws Exception {
         // set up database
         DbHelper dbHelper = new DbHelper(getApplication(), DATABASE_NAME, DATABASE_VERSION);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         for (int i = 0; i < RUNS; i++) {
-            runTests(database, BATCH_SIZE);
+            log("----Run " + (i + 1) + " of " + RUNS);
+            oneByOneCrudRun(database, getBatchSize() / 10);
+            batchCrudRun(database, getBatchSize());
         }
-
-        Log.d(TAG, "---------------End");
     }
 
-    private void runTests(SQLiteDatabase database, int entityCount) throws Exception {
-        Log.d(TAG, "---------------Start: " + entityCount);
-
-        long start, time;
-
+    private void oneByOneCrudRun(SQLiteDatabase database, int count) throws SQLException {
         final List<SimpleEntityNotNull> list = new ArrayList<>();
-        for (int i = 0; i < entityCount; i++) {
+        for (int i = 0; i < count; i++) {
             list.add(SimpleEntityNotNullHelper.createEntity((long) i));
         }
-        System.gc();
 
-        runOneByOne(database, list, entityCount / 10);
+        startClock();
+        ContentValues values = new ContentValues();
+        for (int i = 0; i < count; i++) {
+            SimpleEntityNotNull entity = list.get(i);
+            values.put(DbHelper.SimpleEntityColumns._ID, entity.getId());
+            buildContentValues(values, entity);
+            database.insert(DbHelper.Tables.SIMPLE_ENTITY, null, values);
+            values.clear();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_CREATE);
 
-        System.gc();
+        startClock();
+        for (int i = 0; i < count; i++) {
+            SimpleEntityNotNull entity = list.get(i);
+            buildContentValues(values, entity);
+            database.update(DbHelper.Tables.SIMPLE_ENTITY, values,
+                    DbHelper.SimpleEntityColumns._ID + "=" + entity.getId(),
+                    null);
+            values.clear();
+        }
+        stopClock(LogMessage.ONE_BY_ONE_UPDATE);
+
         deleteAll(database);
+    }
 
-        start = System.currentTimeMillis();
+    private void batchCrudRun(SQLiteDatabase database, int count) throws Exception {
+        final List<SimpleEntityNotNull> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(SimpleEntityNotNullHelper.createEntity((long) i));
+        }
+
+        startClock();
         database.beginTransaction();
         try {
             ContentValues values = new ContentValues();
-            for (int i = 0; i < BATCH_SIZE; i++) {
+            for (int i = 0; i < count; i++) {
                 SimpleEntityNotNull entity = list.get(i);
                 values.put(DbHelper.SimpleEntityColumns._ID, entity.getId());
                 buildContentValues(values, entity);
@@ -177,14 +167,13 @@ public class PerformanceTestSqlite extends ApplicationTestCase<Application> {
         } finally {
             database.endTransaction();
         }
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Created (batch) " + list.size() + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_CREATE);
 
-        start = System.currentTimeMillis();
+        startClock();
         database.beginTransaction();
         try {
             ContentValues values = new ContentValues();
-            for (int i = 0; i < BATCH_SIZE; i++) {
+            for (int i = 0; i < count; i++) {
                 SimpleEntityNotNull entity = list.get(i);
                 buildContentValues(values, entity);
                 database.update(DbHelper.Tables.SIMPLE_ENTITY, values,
@@ -196,11 +185,10 @@ public class PerformanceTestSqlite extends ApplicationTestCase<Application> {
         } finally {
             database.endTransaction();
         }
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Updated (batch) " + list.size() + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_UPDATE);
 
-        start = System.currentTimeMillis();
-        List<SimpleEntityNotNull> reloaded = new ArrayList<>(BATCH_SIZE);
+        startClock();
+        List<SimpleEntityNotNull> reloaded = new ArrayList<>(count);
         Cursor query = database.query(DbHelper.Tables.SIMPLE_ENTITY, SimpleQuery.PROJECTION, null,
                 null, null, null, null, null);
         while (query.moveToNext()) {
@@ -218,10 +206,9 @@ public class PerformanceTestSqlite extends ApplicationTestCase<Application> {
             reloaded.add(entity);
         }
         query.close();
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Loaded (batch) " + reloaded.size() + " entities in " + time + " ms");
+        stopClock(LogMessage.BATCH_READ);
 
-        start = System.currentTimeMillis();
+        startClock();
         for (int i = 0; i < reloaded.size(); i++) {
             SimpleEntityNotNull entity = reloaded.get(i);
             entity.getId();
@@ -235,50 +222,15 @@ public class PerformanceTestSqlite extends ApplicationTestCase<Application> {
             entity.getSimpleString();
             entity.getSimpleByteArray();
         }
-        time = System.currentTimeMillis() - start;
+        stopClock(LogMessage.BATCH_ACCESS);
 
-        Log.d(TAG, "Accessed properties of " + reloaded.size() + " entities in " + time + " ms");
-
+        startClock();
         deleteAll(database);
-
-        System.gc();
-        Log.d(TAG, "---------------End: " + entityCount);
+        stopClock(LogMessage.BATCH_DELETE);
     }
 
     private void deleteAll(SQLiteDatabase database) {
-        long start = System.currentTimeMillis();
         database.delete(DbHelper.Tables.SIMPLE_ENTITY, null, null);
-        long time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Deleted all entities in " + time + " ms");
-    }
-
-    private void runOneByOne(SQLiteDatabase database, List<SimpleEntityNotNull> list,
-            int count) throws SQLException {
-        long start;
-        long time;
-        start = System.currentTimeMillis();
-        ContentValues values = new ContentValues();
-        for (int i = 0; i < count; i++) {
-            SimpleEntityNotNull entity = list.get(i);
-            values.put(DbHelper.SimpleEntityColumns._ID, entity.getId());
-            buildContentValues(values, entity);
-            database.insert(DbHelper.Tables.SIMPLE_ENTITY, null, values);
-            values.clear();
-        }
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Inserted (one-by-one) " + count + " entities in " + time + " ms");
-
-        start = System.currentTimeMillis();
-        for (int i = 0; i < count; i++) {
-            SimpleEntityNotNull entity = list.get(i);
-            buildContentValues(values, entity);
-            database.update(DbHelper.Tables.SIMPLE_ENTITY, values,
-                    DbHelper.SimpleEntityColumns._ID + "=" + entity.getId(),
-                    null);
-            values.clear();
-        }
-        time = System.currentTimeMillis() - start;
-        Log.d(TAG, "Updated (one-by-one) " + count + " entities in " + time + " ms");
     }
 
     private void buildContentValues(ContentValues values, SimpleEntityNotNull entity) {
