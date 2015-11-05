@@ -1,4 +1,4 @@
-package de.greenrobot.performance;
+package de.greenrobot.daotest.performance;
 
 import java.util.Random;
 import org.apache.commons.lang3.RandomStringUtils;

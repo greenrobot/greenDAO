@@ -12,7 +12,6 @@ apply plugin: 'com.android.application'
 
 dependencies {
     androidTestCompile project(':DaoCore')
-    androidTestCompile project(':PerformanceTests:Common')
 
     testCompile project(':DaoCore')
     testCompile 'org.robolectric:robolectric:3.0'
