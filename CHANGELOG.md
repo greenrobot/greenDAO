@@ -1,5 +1,13 @@
 Release History
 ---------------
+### V2.1.0 Minor feature release (2015-11-XX, both core and generator)
+* Official Robolectric support: workaround for a broken system call in Robolectric triggered by Query.forCurrentThread
+* CursorQuery (beta, API might change)
+* Deadlock prevention when loading a list of entities while doing concurrent updates
+* Fixed async queries
+* Better Android Studio support
+* Generator: Fixed codeBeforeGetter, added codeBeforeGetterAndSetter
+
 ### V2.0.0 Major feature release (2015-07-30, both core and generator)
 * Join for queries: relate a query to other entities (or joins)
 * To-Many relations using a join entity (useful for M:N relationships)

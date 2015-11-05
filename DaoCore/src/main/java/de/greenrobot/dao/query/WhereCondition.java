@@ -99,7 +99,7 @@ public interface WhereCondition {
                         return 0;
                     } else {
                         throw new DaoException(
-                                "Illegal boolean value: Strings must be \"TRUE\" or \"FALSE\" (case insesnsitive), but was "
+                                "Illegal boolean value: Strings must be \"TRUE\" or \"FALSE\" (case insensitive), but was "
                                         + value);
                     }
                 }

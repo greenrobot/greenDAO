@@ -19,6 +19,8 @@ package de.greenrobot.dao;
 import android.database.CrossProcessCursor;
 import android.database.Cursor;
 import android.database.CursorWindow;
+import android.database.DatabaseUtils;
+
 import de.greenrobot.dao.database.Database;
 import de.greenrobot.dao.database.DatabaseStatement;
 import de.greenrobot.dao.identityscope.IdentityScope;
@@ -32,19 +34,17 @@ import de.greenrobot.dao.query.QueryBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Base class for all DAOs: Implements entity operations like insert, load, delete, and query.
- *
+ * <p>
  * This class is thread-safe.
  *
+ * @param <T> Entity type
+ * @param <K> Primary key (PK) type; use Void if entity does not have exactly one PK
  * @author Markus
- *
- * @param <T>
- *            Entity type
- * @param <K>
- *            Primary key (PK) type; use Void if entity does not have exactly one PK
  */
 /*
  * When operating on TX, statements, or identity scope the following locking order must be met to avoid deadlocks:
@@ -117,8 +117,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Loads and entity for the given PK.
      *
-     * @param key
-     *            a PK value or null
+     * @param key a PK value or null
      * @return The entity or null, if no entity matched the PK value
      */
     public T load(K key) {
@@ -133,13 +132,13 @@ public abstract class AbstractDao<T, K> {
             }
         }
         String sql = statements.getSelectByKey();
-        String[] keyArray = new String[] { key.toString() };
+        String[] keyArray = new String[]{key.toString()};
         Cursor cursor = db.rawQuery(sql, keyArray);
         return loadUniqueAndCloseCursor(cursor);
     }
 
     public T loadByRowId(long rowId) {
-        String[] idArray = new String[] { Long.toString(rowId) };
+        String[] idArray = new String[]{Long.toString(rowId)};
         Cursor cursor = db.rawQuery(statements.getSelectByRowId(), idArray);
         return loadUniqueAndCloseCursor(cursor);
     }
@@ -189,8 +188,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Inserts the given entities in the database using a transaction.
      *
-     * @param entities
-     *            The entities to insert.
+     * @param entities The entities to insert.
      */
     public void insertInTx(Iterable<T> entities) {
         insertInTx(entities, isEntityUpdateable());
@@ -199,8 +197,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Inserts the given entities in the database using a transaction.
      *
-     * @param entities
-     *            The entities to insert.
+     * @param entities The entities to insert.
      */
     public void insertInTx(T... entities) {
         insertInTx(Arrays.asList(entities), isEntityUpdateable());
@@ -210,10 +207,8 @@ public abstract class AbstractDao<T, K> {
      * Inserts the given entities in the database using a transaction. The given entities will become tracked if the PK
      * is set.
      *
-     * @param entities
-     *            The entities to insert.
-     * @param setPrimaryKey
-     *            if true, the PKs of the given will be set after the insert; pass false to improve performance.
+     * @param entities      The entities to insert.
+     * @param setPrimaryKey if true, the PKs of the given will be set after the insert; pass false to improve performance.
      */
     public void insertInTx(Iterable<T> entities, boolean setPrimaryKey) {
         DatabaseStatement stmt = statements.getInsertStatement();
@@ -224,10 +219,8 @@ public abstract class AbstractDao<T, K> {
      * Inserts or replaces the given entities in the database using a transaction. The given entities will become
      * tracked if the PK is set.
      *
-     * @param entities
-     *            The entities to insert.
-     * @param setPrimaryKey
-     *            if true, the PKs of the given will be set after the insert; pass false to improve performance.
+     * @param entities      The entities to insert.
+     * @param setPrimaryKey if true, the PKs of the given will be set after the insert; pass false to improve performance.
      */
     public void insertOrReplaceInTx(Iterable<T> entities, boolean setPrimaryKey) {
         DatabaseStatement stmt = statements.getInsertOrReplaceStatement();
@@ -237,8 +230,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Inserts or replaces the given entities in the database using a transaction.
      *
-     * @param entities
-     *            The entities to insert.
+     * @param entities The entities to insert.
      */
     public void insertOrReplaceInTx(Iterable<T> entities) {
         insertOrReplaceInTx(entities, isEntityUpdateable());
@@ -247,8 +239,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Inserts or replaces the given entities in the database using a transaction.
      *
-     * @param entities
-     *            The entities to insert.
+     * @param entities The entities to insert.
      */
     public void insertOrReplaceInTx(T... entities) {
         insertOrReplaceInTx(Arrays.asList(entities), isEntityUpdateable());
@@ -368,12 +359,18 @@ public abstract class AbstractDao<T, K> {
     /** Reads all available rows from the given cursor and returns a list of entities. */
     protected List<T> loadAllFromCursor(Cursor cursor) {
         int count = cursor.getCount();
+        if (count == 0) {
+            return Collections.EMPTY_LIST;
+        }
         List<T> list = new ArrayList<T>(count);
+        CursorWindow window = null;
+        boolean useFastCursor = false;
         if (cursor instanceof CrossProcessCursor) {
-            CursorWindow window = ((CrossProcessCursor) cursor).getWindow();
-            if (window != null) { // E.g. Roboelectric has no Window at this point
+            window = ((CrossProcessCursor) cursor).getWindow();
+            if (window != null) { // E.g. Robolectric has no Window at this point
                 if (window.getNumRows() == count) {
                     cursor = new FastCursor(window);
+                    useFastCursor = true;
                 } else {
                     DaoLog.d("Window vs. result size: " + window.getNumRows() + "/" + count);
                 }
@@ -385,10 +382,15 @@ public abstract class AbstractDao<T, K> {
                 identityScope.lock();
                 identityScope.reserveRoom(count);
             }
+
             try {
-                do {
-                    list.add(loadCurrent(cursor, 0, false));
-                } while (cursor.moveToNext());
+                if (!useFastCursor && window != null && identityScope != null) {
+                    loadAllUnlockOnWindowBounds(cursor, window, list);
+                } else {
+                    do {
+                        list.add(loadCurrent(cursor, 0, false));
+                    } while (cursor.moveToNext());
+                }
             } finally {
                 if (identityScope != null) {
                     identityScope.unlock();
@@ -396,6 +398,42 @@ public abstract class AbstractDao<T, K> {
             }
         }
         return list;
+    }
+
+    private void loadAllUnlockOnWindowBounds(Cursor cursor, CursorWindow window, List<T> list) {
+        int windowEnd = window.getStartPosition() + window.getNumRows();
+        for (int row = 0; ; row++) {
+            list.add(loadCurrent(cursor, 0, false));
+            row++;
+            if (row >= windowEnd) {
+                window = moveToNextUnlocked(cursor);
+                if(window == null) {
+                    break;
+                }
+                windowEnd = window.getStartPosition() + window.getNumRows();
+            } else {
+                if(!cursor.moveToNext()) {
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Unlock identityScope during cursor.moveToNext() when it is about to fill the window (needs a db connection):
+     * We should not hold the lock while trying to acquire a db connection to avoid deadlocks.
+     */
+    private CursorWindow moveToNextUnlocked(Cursor cursor) {
+        identityScope.unlock();
+        try {
+            if(cursor.moveToNext()) {
+                return ((CrossProcessCursor) cursor).getWindow();
+            } else {
+                return null;
+            }
+        } finally {
+            identityScope.lock();
+        }
     }
 
     /** Internal use only. Considers identity scope. */
@@ -579,8 +617,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Deletes the given entities in the database using a transaction.
      *
-     * @param entities
-     *            The entities to delete.
+     * @param entities The entities to delete.
      */
     public void deleteInTx(Iterable<T> entities) {
         deleteInTxInternal(entities, null);
@@ -589,8 +626,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Deletes the given entities in the database using a transaction.
      *
-     * @param entities
-     *            The entities to delete.
+     * @param entities The entities to delete.
      */
     public void deleteInTx(T... entities) {
         deleteInTxInternal(Arrays.asList(entities), null);
@@ -599,8 +635,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Deletes all entities with the given keys in the database using a transaction.
      *
-     * @param keys
-     *            Keys of the entities to delete.
+     * @param keys Keys of the entities to delete.
      */
     public void deleteByKeyInTx(Iterable<K> keys) {
         deleteInTxInternal(null, keys);
@@ -609,8 +644,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Deletes all entities with the given keys in the database using a transaction.
      *
-     * @param keys
-     *            Keys of the entities to delete.
+     * @param keys Keys of the entities to delete.
      */
     public void deleteByKeyInTx(K... keys) {
         deleteInTxInternal(null, Arrays.asList(keys));
@@ -621,7 +655,7 @@ public abstract class AbstractDao<T, K> {
         assertSinglePk();
         K key = getKeyVerified(entity);
         String sql = statements.getSelectByKey();
-        String[] keyArray = new String[] { key.toString() };
+        String[] keyArray = new String[]{key.toString()};
         Cursor cursor = db.rawQuery(sql, keyArray);
         try {
             boolean available = cursor.moveToFirst();
@@ -682,11 +716,9 @@ public abstract class AbstractDao<T, K> {
     /**
      * Attaches the entity to the identity scope. Calls attachEntity(T entity).
      *
-     * @param key
-     *            Needed only for identity scope, pass null if there's none.
-     * @param entity
-     *            The entitiy to attach
-     * */
+     * @param key    Needed only for identity scope, pass null if there's none.
+     * @param entity The entitiy to attach
+     */
     protected final void attachEntity(K key, T entity, boolean lock) {
         attachEntity(entity);
         if (identityScope != null && key != null) {
@@ -702,17 +734,15 @@ public abstract class AbstractDao<T, K> {
      * Sub classes with relations additionally set the DaoMaster here. Must be called before the entity is attached to
      * the identity scope.
      *
-     * @param entity
-     *            The entitiy to attach
-     * */
+     * @param entity The entitiy to attach
+     */
     protected void attachEntity(T entity) {
     }
 
     /**
      * Updates the given entities in the database using a transaction.
      *
-     * @param entities
-     *            The entities to insert.
+     * @param entities The entities to insert.
      */
     public void updateInTx(Iterable<T> entities) {
         DatabaseStatement stmt = statements.getUpdateStatement();
@@ -753,8 +783,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * Updates the given entities in the database using a transaction.
      *
-     * @param entities
-     *            The entities to update.
+     * @param entities The entities to update.
      */
     public void updateInTx(T... entities) {
         updateInTx(Arrays.asList(entities));

@@ -80,4 +80,12 @@ public class Join<SRC, DST> {
         return whereCollector.combineWhereConditions(" AND ", cond1, cond2, condMore);
     }
 
+    /**
+     * Usually you don't need this value; just in case you are mixing custom
+     * {@link de.greenrobot.dao.query.WhereCondition.StringCondition} into the query, this value allows to reference
+     * the joined (target) table.
+     */
+    public String getTablePrefix() {
+        return tablePrefix;
+    }
 }
