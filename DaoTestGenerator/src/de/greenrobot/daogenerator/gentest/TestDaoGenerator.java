@@ -105,6 +105,9 @@ public class TestDaoGenerator {
 
     protected Entity createTest() {
         Entity testEntity = schema.addEntity("TestEntity");
+        testEntity.setJavaDoc("This entity is used by internal tests of greenDAO.\n" +
+                "(This JavaDoc is defined in the generator project.)");
+        testEntity.setCodeBeforeClass("// This is another test comment, you could also apply annotations like this");
         testEntity.addIdProperty();
         testEntity.addIntProperty("simpleInt").notNull();
         testEntity.addIntProperty("simpleInteger");
