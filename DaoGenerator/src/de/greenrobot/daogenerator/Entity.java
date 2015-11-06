@@ -470,7 +470,7 @@ public class Entity {
     }
 
     public void setJavaDoc(String javaDoc) {
-        this.javaDoc = javaDoc;
+        this.javaDoc = DaoUtil.checkConvertToJavaDoc(javaDoc, "");
     }
 
     public String getCodeBeforeClass() {
@@ -482,10 +482,6 @@ public class Entity {
     }
 
     void init2ndPass() {
-        if (javaDoc != null && !javaDoc.trim().startsWith("/**")) {
-            javaDoc = javaDoc.replace("\n", "\n * ");
-            javaDoc = "/**\n * " + javaDoc + "\n*/";
-        }
         init2ndPassNamesWithDefaults();
 
         for (int i = 0; i < properties.size(); i++) {
