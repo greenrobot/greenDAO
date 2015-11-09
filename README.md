@@ -1,4 +1,4 @@
-**Please help us with this short survey: http://bit.ly/greendao-survey Thank for your support!**
+**Please help us with this short survey: http://bit.ly/greendao-survey Thanks for your support!**
 
 greenDAO
 ========
