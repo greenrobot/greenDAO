@@ -1,6 +1,6 @@
 Release History
 ---------------
-### V2.1.0 Minor feature and bugfix release (2015-11-XX, both core and generator)
+### V2.1.0 Minor feature and bugfix release (2015-11-12, both core and generator)
 * Official Robolectric support: workaround for a broken system call in Robolectric triggered by Query.forCurrentThread
 * QueryBuild now allows to create DISTINCT queries to avoid duplicate entities returned
 * CursorQuery (beta, API might change)
