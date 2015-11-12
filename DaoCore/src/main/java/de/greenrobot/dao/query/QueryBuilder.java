@@ -58,6 +58,7 @@ public class QueryBuilder<T> {
 
     private Integer limit;
     private Integer offset;
+    private boolean distinct;
 
     /** For internal use by greenDAO only. */
     public static <T2> QueryBuilder<T2> internalCreate(AbstractDao<T2, ?> dao) {
@@ -82,6 +83,12 @@ public class QueryBuilder<T> {
         } else if (orderBuilder.length() > 0) {
             orderBuilder.append(",");
         }
+    }
+
+    /** Use a SELECT DISTINCT to avoid duplicate entities returned, e.g. when doing joins. */
+    public QueryBuilder<T> distinct() {
+        distinct = true;
+        return this;
     }
 
     /**
@@ -262,7 +269,7 @@ public class QueryBuilder<T> {
     }
 
     private StringBuilder createSelectBuilder() {
-        String select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns());
+        String select = SqlUtils.createSqlSelect(dao.getTablename(), tablePrefix, dao.getAllColumns(), distinct);
         StringBuilder builder = new StringBuilder(select);
 
         appendJoinsAndWheres(builder, tablePrefix);
@@ -272,7 +279,6 @@ public class QueryBuilder<T> {
         }
         return builder;
     }
-
 
     private int checkAddLimit(StringBuilder builder) {
         int limitPosition = -1;
