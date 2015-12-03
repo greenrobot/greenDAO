@@ -183,6 +183,9 @@ public class Schema {
     void init3rdPass() {
         for (Entity entity : entities) {
             entity.init3rdPass();
+            if (entity.isParcelable()) {
+            	entity.initParcelablePass();
+            }
         }
     }
 

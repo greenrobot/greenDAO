@@ -4,7 +4,7 @@ import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.test.AbstractDaoTest;
 import de.greenrobot.daotest.IndexedStringEntity;
 import de.greenrobot.daotest.IndexedStringEntityDao;
-
+import de.greenrobot.performance.StringGenerator;
 import java.util.ArrayList;
 import java.util.List;
 

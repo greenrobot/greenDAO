@@ -1,10 +1,8 @@
-**Please help us with this short survey: http://bit.ly/greendao-survey Thanks for your support!**
-
 greenDAO
 ========
 greenDAO is a light & fast ORM solution for Android that maps objects to SQLite databases. Being highly optimized for Android, greenDAO offers great performance and consumes minimal memory.
 
-**<font size="+1">Home page, documentation, and support links: http://greenrobot.org/greendao/</font>**
+**<font size="+1">Home page, documentation, and support links: http://greendao-orm.com/</font>**
 
 [![Build Status](https://travis-ci.org/greenrobot/greenDAO.svg?branch=master)](https://travis-ci.org/greenrobot/greenDAO)
 

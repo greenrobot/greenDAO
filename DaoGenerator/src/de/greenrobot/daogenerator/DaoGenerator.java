@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 
 /**
@@ -57,8 +58,9 @@ public class DaoGenerator {
         patternKeepFields = compilePattern("FIELDS");
         patternKeepMethods = compilePattern("METHODS");
 
-        Configuration config = new Configuration(Configuration.VERSION_2_3_23);
+        Configuration config = new Configuration();
         config.setClassForTemplateLoading(this.getClass(), "/");
+        config.setObjectWrapper(new DefaultObjectWrapper());
 
         templateDao = config.getTemplate("dao.ftl");
         templateDaoMaster = config.getTemplate("dao-master.ftl");

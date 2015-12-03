@@ -250,14 +250,4 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         assertNull(entity2);
     }
 
-    public void testDistinct() {
-        TestEntity entity = insert(3).get(1);
-
-        Query<TestEntity> query = dao.queryBuilder().distinct()
-                .where(Properties.SimpleString.eq(entity.getSimpleString())).build();
-        TestEntity entity2 = query.uniqueOrThrow();
-        assertEquals(entity.getId(), entity2.getId());
-        // TODO improve test to check functionality
-    }
-
 }
