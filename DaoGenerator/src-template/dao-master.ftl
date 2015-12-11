@@ -81,6 +81,56 @@ public class DaoMaster extends AbstractDaoMaster {
             dropAllTables(db, true);
             onCreate(db);
         }
+        
+    }
+    
+    /** WARNING: Drops all table on Upgrade! Use only during development. */
+    public static class AutoUpdateOpenHelper extends OpenHelper {
+        public AutoUpdateOpenHelper(Context context, String name, CursorFactory factory) {
+            super(context, name, factory);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			db.beginTransaction();
+        	try {
+<#list schema.entities as entity>
+        		${entity.classNameDao}.updateTable(db, oldVersion, newVersion);
+</#list>
+        		db.setTransactionSuccessful();
+        	} finally {
+        		db.endTransaction();
+        	}        
+        	
+		}
+        
+    }
+
+    /** WARNING: Drops all table on Upgrade! Use only during development. */
+    public static class DevAutoUpdateOpenHelper extends OpenHelper {
+        public DevAutoUpdateOpenHelper(Context context, String name, CursorFactory factory) {
+            super(context, name, factory);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			db.beginTransaction();
+        	try {
+<#list schema.entities as entity>
+        		${entity.classNameDao}.updateTable(db, oldVersion, newVersion);
+</#list>
+        		
+        	} catch (Exception e) {
+        		e.printStackTrace();
+                Log.i("greenDAO", "Upgrading schema from version " + oldVersion + " to " + newVersion + " by dropping all tables");
+                dropAllTables(db, true);
+                onCreate(db);
+        	} finally {
+        		db.endTransaction();
+        	}        
+        	
+		}
+        
     }
 
     public DaoMaster(SQLiteDatabase db) {

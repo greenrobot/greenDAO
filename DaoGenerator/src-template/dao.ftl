@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
@@ -64,6 +65,8 @@ import ${entity.javaPackage}.${entity.className}.Builder;
 public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${entity.pkType}> {
 
     public static final String TABLENAME = "${entity.tableName}";
+    
+    public static final String TAG = "${entity.classNameDao}";
 
     /**
      * Properties of entity ${entity.className}.<br/>
@@ -71,8 +74,15 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     */
     public static class Properties {
 <#list entity.propertiesColumns as property>
-        public final static Property ${property.propertyName?cap_first} = new Property(${property_index}, ${property.javaType}.class, "${property.propertyName}", ${property.primaryKey?string}, "${property.columnName}");
+        public final static Property ${property.propertyName?cap_first} = new Property(${property_index}, ${property.javaType}.class, "${property.propertyName}", ${property.primaryKey?string}, "${property.columnName}", "${property.columnType}", ${property.version});
 </#list>
+
+		public final static Property [] all = {
+<#list entity.propertiesColumns as property>
+        	${property.propertyName?cap_first},
+</#list>
+		};
+		
     };
 
 <#if entity.active>
@@ -114,6 +124,15 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
 </#list>
 </#if>         
     }
+    
+    public static void updateTable(SQLiteDatabase db, int oldVer, int newVer) {
+	    for (Property p : Properties.all) {
+			if (p.version > oldVer) {
+	    		Log.i(TAG, "Alter table " + TABLENAME + " add column '" + p.columnName + "' " + p.sqlType);
+	    		db.execSQL("ALTER TABLE \"" + TABLENAME + "\" ADD \"" + p.columnName + "\" " + p.sqlType);
+	    	}
+	    }
+	}
 
     /** Drops the underlying database table. */
     public static void dropTable(SQLiteDatabase db, boolean ifExists) {

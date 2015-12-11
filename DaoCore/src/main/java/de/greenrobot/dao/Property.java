@@ -33,13 +33,17 @@ public class Property {
     public final String name;
     public final boolean primaryKey;
     public final String columnName;
+    public final String sqlType;
+    public final int version;
 
-    public Property(int ordinal, Class<?> type, String name, boolean primaryKey, String columnName) {
+    public Property(int ordinal, Class<?> type, String name, boolean primaryKey, String columnName, String sqlType, int version) {
         this.ordinal = ordinal;
         this.type = type;
         this.name = name;
         this.primaryKey = primaryKey;
         this.columnName = columnName;
+        this.sqlType = sqlType;
+        this.version = version;
     }
 
     /** Creates an "equal ('=')" condition  for this property. */

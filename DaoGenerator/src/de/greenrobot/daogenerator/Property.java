@@ -134,6 +134,10 @@ public class Property {
         public Property getProperty() {
             return property;
         }
+
+		public void setVersion(int versionDontForgetToBump) {
+			property.version = versionDontForgetToBump;
+		}
     }
 
     private final Schema schema;
@@ -169,6 +173,8 @@ public class Property {
     private String javaType;
     private String parcelableWriteStatement = "";
     private String parcelableReadStatement = "";
+    
+    private int version = -1;
 
     public Property(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
         this.schema = schema;
@@ -279,6 +285,14 @@ public class Property {
 
     public String getDatabaseValueExpressionNotNull() {
         return getDatabaseValueExpression("entity.get" + DaoUtil.capFirst(propertyName) + "()");
+    }
+    
+    /**
+     * version this field was added.  can be used in the onUpgrade callback to auto update.
+     * @return
+     */
+    public String getVersion() {
+    	return String.valueOf(version);
     }
 
     // Got too messy in template:
