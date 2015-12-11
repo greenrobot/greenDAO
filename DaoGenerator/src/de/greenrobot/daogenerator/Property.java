@@ -131,35 +131,13 @@ public class Property {
             return this;
         }
 
-        public PropertyBuilder javaDocField(String javaDoc) {
-            property.javaDocField = checkConvertToJavaDoc(javaDoc);
-            return this;
-        }
-
-        private String checkConvertToJavaDoc(String javaDoc) {
-            return DaoUtil.checkConvertToJavaDoc(javaDoc, "    ");
-        }
-
-        public PropertyBuilder javaDocGetter(String javaDoc) {
-            property.javaDocGetter = checkConvertToJavaDoc(javaDoc);
-            return this;
-        }
-
-        public PropertyBuilder javaDocSetter(String javaDoc) {
-            property.javaDocSetter = checkConvertToJavaDoc(javaDoc);
-            return this;
-        }
-
-        public PropertyBuilder javaDocGetterAndSetter(String javaDoc) {
-            javaDoc = checkConvertToJavaDoc(javaDoc);
-            property.javaDocGetter = javaDoc;
-            property.javaDocSetter = javaDoc;
-            return this;
-        }
-
         public Property getProperty() {
             return property;
         }
+
+		public void setVersion(int versionDontForgetToBump) {
+			property.version = versionDontForgetToBump;
+		}
     }
 
     private final Schema schema;
@@ -179,10 +157,6 @@ public class Property {
     private String codeBeforeGetter;
     private String codeBeforeSetter;
 
-    private String javaDocField;
-    private String javaDocGetter;
-    private String javaDocSetter;
-
     private boolean primaryKey;
     private boolean pkAsc;
     private boolean pkDesc;
@@ -197,6 +171,10 @@ public class Property {
     private int ordinal;
 
     private String javaType;
+    private String parcelableWriteStatement = "";
+    private String parcelableReadStatement = "";
+    
+    private int version = -1;
 
     public Property(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
         this.schema = schema;
@@ -249,7 +227,15 @@ public class Property {
         return javaType;
     }
 
-    public String getJavaTypeInEntity() {
+    public final String getParcelableWriteStatement() {
+		return parcelableWriteStatement;
+	}
+
+	public final String getParcelableReadStatement() {
+		return parcelableReadStatement;
+	}
+
+	public String getJavaTypeInEntity() {
         if (customTypeClassName != null) {
             return customTypeClassName;
         } else {
@@ -293,24 +279,20 @@ public class Property {
         return codeBeforeSetter;
     }
 
-    public String getJavaDocField() {
-        return javaDocField;
-    }
-
-    public String getJavaDocGetter() {
-        return javaDocGetter;
-    }
-
-    public String getJavaDocSetter() {
-        return javaDocSetter;
-    }
-
     public String getDatabaseValueExpression() {
         return getDatabaseValueExpression(propertyName);
     }
 
     public String getDatabaseValueExpressionNotNull() {
         return getDatabaseValueExpression("entity.get" + DaoUtil.capFirst(propertyName) + "()");
+    }
+    
+    /**
+     * version this field was added.  can be used in the onUpgrade callback to auto update.
+     * @return
+     */
+    public String getVersion() {
+    	return String.valueOf(version);
     }
 
     // Got too messy in template:
@@ -326,9 +308,9 @@ public class Property {
         if (customType != null) {
             builder.append(')');
         }
-        if (propertyType == PropertyType.Boolean) {
+        if(propertyType == PropertyType.Boolean) {
             builder.append(" ? 1L: 0L");
-        } else if (propertyType == PropertyType.Date) {
+        } else if(propertyType == PropertyType.Date) {
             builder.append(".getTime()");
         }
         return builder.toString();
@@ -345,15 +327,16 @@ public class Property {
         if (customType != null) {
             builder.append(propertyName).append("Converter.convertToEntityProperty(");
         }
-        if (propertyType == PropertyType.Byte) {
+        if(propertyType == PropertyType.Byte) {
             builder.append("(byte) ");
-        } else if (propertyType == PropertyType.Date) {
+        }else
+        if(propertyType == PropertyType.Date) {
             builder.append("new java.util.Date(");
         }
         builder.append(databaseValue);
-        if (propertyType == PropertyType.Boolean) {
+        if(propertyType == PropertyType.Boolean) {
             builder.append(" != 0");
-        } else if (propertyType == PropertyType.Date) {
+        } else if(propertyType == PropertyType.Date) {
             builder.append(")");
         }
         if (customType != null) {
@@ -411,6 +394,67 @@ public class Property {
 
     void init3ndPass() {
         // Nothing to do so far
+    }
+    
+    void initParcelableMethods() {
+    	switch (propertyType) {
+		case Boolean:
+			if (notNull) {
+				parcelableReadStatement = propertyName + " = in.readByte() != 0;";
+				parcelableWriteStatement = "out.writeByte((byte)(" + propertyName + " ? 1 : 0));";
+			}
+			break;
+		case Byte:
+			if (notNull) {
+				parcelableReadStatement = propertyName + " = in.readByte();";
+				parcelableWriteStatement = "out.writeByte(" + propertyName + ");";
+			}
+			break;
+		case ByteArray:
+			if (notNull) {
+				parcelableReadStatement = propertyName + "in.readByteArray(" + propertyName + ");";
+				parcelableWriteStatement = "out.writeByteArray(" + propertyName + ");";
+			}
+			break;
+		case Date:
+			parcelableReadStatement = propertyName + " = new java.util.Date(in.readLong());";
+			parcelableWriteStatement = "out.writeLong(" + propertyName + " == null ? 0 : " + propertyName + ".getTime());";
+			break;
+		case Double:
+			if (notNull) {
+				parcelableReadStatement = propertyName + " = in.readDouble();";
+				parcelableWriteStatement = "out.writeDouble(" + propertyName + ");";
+			}
+			break;
+		case Float:
+			if (notNull) {
+				parcelableReadStatement = propertyName + " = in.readFloat();";
+				parcelableWriteStatement = "out.writeFloat(" + propertyName + ");";
+			}
+			break;
+		case Int:
+			if (notNull) {
+				parcelableReadStatement = propertyName + " = in.readInt();";
+				parcelableWriteStatement = "out.writeInt(" + propertyName + ");";
+			}
+			break;
+		case Long:
+			if (notNull) {
+				parcelableReadStatement = propertyName + " = in.readLong();";
+				parcelableWriteStatement = "out.writeLong(" + propertyName + ");";
+			}
+			break;
+		case Short:
+			if (notNull) {
+				parcelableReadStatement = propertyName + " = in.readInt();";
+				parcelableWriteStatement = "out.writeInt(" + propertyName + ");";
+			}
+			break;
+		case String:
+			parcelableReadStatement = propertyName + " = in.readString();";
+			parcelableWriteStatement = "out.writeString(" + propertyName + ");";
+			break;
+    	}
     }
 
     @Override
