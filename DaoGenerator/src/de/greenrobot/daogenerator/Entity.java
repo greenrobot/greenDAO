@@ -2,7 +2,7 @@
  * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
- * 
+ *
  * greenDAO Generator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -57,6 +57,7 @@ public class Entity {
 
     private String tableName;
     private String classNameDao;
+    private String daoSuperclass;
     private String classNameTest;
     private String javaPackage;
     private String javaPackageDao;
@@ -319,6 +320,14 @@ public class Entity {
         this.classNameDao = classNameDao;
     }
 
+    public String getDaoSuperclass() {
+        return daoSuperclass;
+    }
+
+    public void setDaoSuperclass(String daoSuperclass) {
+        this.daoSuperclass = daoSuperclass;
+    }
+
     public String getClassNameTest() {
         return classNameTest;
     }
@@ -546,6 +555,9 @@ public class Entity {
 
         if (classNameDao == null) {
             classNameDao = className + "Dao";
+        }
+        if (daoSuperclass == null) {
+            daoSuperclass = "AbstractDao";
         }
         if (classNameTest == null) {
             classNameTest = className + "Test";
