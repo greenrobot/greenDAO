@@ -37,6 +37,8 @@ public class SimpleDaoGeneratorTest {
         Property idProperty = addressEntity.addIdProperty().getProperty();
         addressEntity.addIntProperty("count").index();
         addressEntity.addIntProperty("dummy").notNull();
+        addressEntity.setImplJsonSerializable(true);
+        addressEntity.setImplParcelable(true);
         assertEquals(1, schema.getEntities().size());
         assertEquals(3, addressEntity.getProperties().size());
 

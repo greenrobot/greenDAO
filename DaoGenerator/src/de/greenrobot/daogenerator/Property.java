@@ -257,6 +257,22 @@ public class Property {
         }
     }
 
+    public String getJsonTypeInEntity(){
+        String javaType = getJavaTypeInEntity();
+        if("Integer".equals(javaType)){
+            javaType = "Int";
+        }
+        if(Character.isLowerCase(javaType.charAt(0))){
+            javaType = new StringBuilder().append(Character.toUpperCase(javaType.charAt(0))).append(javaType.substring(1)).toString();
+        }
+
+        return javaType;
+    }
+
+    public String getParcelableTypeInEntity(){
+        return getJsonTypeInEntity();
+    }
+
     public int getOrdinal() {
         return ordinal;
     }
