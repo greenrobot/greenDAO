@@ -697,6 +697,17 @@ public abstract class AbstractDao<T, K> {
         return QueryBuilder.internalCreate(this);
     }
 
+    /**
+     * Instantiates a new entity and attaches it to the DAO session before returning it.
+     * 
+     * @return new attached entity
+     */
+    public T newEntity() {
+      T entity = newEmptyEntity();
+      attachEntity(entity);
+      return entity;
+    }
+
     protected void updateInsideSynchronized(T entity, SQLiteStatement stmt, boolean lock) {
         // To do? Check if it's worth not to bind PKs here (performance).
         bindValues(stmt, entity);
@@ -817,6 +828,9 @@ public abstract class AbstractDao<T, K> {
     public SQLiteDatabase getDatabase() {
         return db;
     }
+
+    /** Instantiates a new empty entity. */
+    abstract protected T newEmptyEntity();
 
     /** Reads the values from the current position of the given cursor and returns a new entity. */
     abstract protected T readEntity(Cursor cursor, int offset);
