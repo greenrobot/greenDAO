@@ -159,6 +159,11 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
 </#list>
     }
 
+    @Override
+    protected ${entity.className} newEmptyEntity() {
+        return new ${entity.className}();
+    }
+
 <#if entity.active>
     @Override
     protected void attachEntity(${entity.className} entity) {
