@@ -67,6 +67,12 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
 
     /** @inheritdoc */
     @Override
+    protected KeepEntity newEmptyEntity() {
+        return new KeepEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public KeepEntity readEntity(Cursor cursor, int offset) {
         KeepEntity entity = new KeepEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0) // id

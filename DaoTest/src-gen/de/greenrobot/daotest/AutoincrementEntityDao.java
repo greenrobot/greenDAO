@@ -67,6 +67,12 @@ public class AutoincrementEntityDao extends AbstractDao<AutoincrementEntity, Lon
 
     /** @inheritdoc */
     @Override
+    protected AutoincrementEntity newEmptyEntity() {
+        return new AutoincrementEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public AutoincrementEntity readEntity(Cursor cursor, int offset) {
         AutoincrementEntity entity = new AutoincrementEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0) // id

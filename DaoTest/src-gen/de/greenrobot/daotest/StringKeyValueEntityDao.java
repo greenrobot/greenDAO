@@ -74,6 +74,12 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
 
     /** @inheritdoc */
     @Override
+    protected StringKeyValueEntity newEmptyEntity() {
+        return new StringKeyValueEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public StringKeyValueEntity readEntity(Cursor cursor, int offset) {
         StringKeyValueEntity entity = new StringKeyValueEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // key

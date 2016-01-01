@@ -90,6 +90,12 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
 
     /** @inheritdoc */
     @Override
+    protected RelationSource2 newEmptyEntity() {
+        return new RelationSource2();
+    }
+
+    /** @inheritdoc */
+    @Override
     public RelationSource2 readEntity(Cursor cursor, int offset) {
         RelationSource2 entity = new RelationSource2( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id

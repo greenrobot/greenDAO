@@ -108,6 +108,12 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
      
     /** @inheritdoc */
     @Override
+    protected SimpleEntityNotNull newEmptyEntity() {
+        return new SimpleEntityNotNull();
+    }
+
+    /** @inheritdoc */
+    @Override
     public void readEntity(Cursor cursor, SimpleEntityNotNull entity, int offset) {
         entity.setId(cursor.getLong(offset + 0));
         entity.setSimpleBoolean(cursor.getShort(offset + 1) != 0);

@@ -78,6 +78,12 @@ public class SqliteMasterDao extends AbstractDao<SqliteMaster, Void> {
 
     /** @inheritdoc */
     @Override
+    protected SqliteMaster newEmptyEntity() {
+        return new SqliteMaster();
+    }
+
+    /** @inheritdoc */
+    @Override
     public SqliteMaster readEntity(Cursor cursor, int offset) {
         SqliteMaster entity = new SqliteMaster( //
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // type

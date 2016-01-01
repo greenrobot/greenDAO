@@ -81,6 +81,12 @@ public class JoinManyToDateEntityDao extends AbstractDao<JoinManyToDateEntity, L
 
     /** @inheritdoc */
     @Override
+    protected JoinManyToDateEntity newEmptyEntity() {
+        return new JoinManyToDateEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public JoinManyToDateEntity readEntity(Cursor cursor, int offset) {
         JoinManyToDateEntity entity = new JoinManyToDateEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id

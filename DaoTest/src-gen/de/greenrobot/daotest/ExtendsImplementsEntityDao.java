@@ -74,6 +74,12 @@ public class ExtendsImplementsEntityDao extends AbstractDao<ExtendsImplementsEnt
 
     /** @inheritdoc */
     @Override
+    protected ExtendsImplementsEntity newEmptyEntity() {
+        return new ExtendsImplementsEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public ExtendsImplementsEntity readEntity(Cursor cursor, int offset) {
         ExtendsImplementsEntity entity = new ExtendsImplementsEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id

@@ -144,6 +144,12 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
 
     /** @inheritdoc */
     @Override
+    protected AbcdefEntity newEmptyEntity() {
+        return new AbcdefEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public AbcdefEntity readEntity(Cursor cursor, int offset) {
         AbcdefEntity entity = new AbcdefEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id

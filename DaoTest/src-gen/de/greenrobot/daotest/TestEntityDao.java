@@ -142,6 +142,12 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         );
         return entity;
     }
+
+    /** @inheritdoc */
+    @Override
+    protected TestEntity newEmptyEntity() {
+        return new TestEntity();
+    }
      
     /** @inheritdoc */
     @Override

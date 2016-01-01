@@ -69,6 +69,12 @@ public class ToOneTarget2Dao extends AbstractDao<ToOneTarget2, Long> {
 
     /** @inheritdoc */
     @Override
+    protected ToOneTarget2 newEmptyEntity() {
+        return new ToOneTarget2();
+    }
+
+    /** @inheritdoc */
+    @Override
     public ToOneTarget2 readEntity(Cursor cursor, int offset) {
         ToOneTarget2 entity = new ToOneTarget2( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0) // id

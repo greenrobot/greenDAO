@@ -89,6 +89,12 @@ public class TreeEntityDao extends AbstractDao<TreeEntity, Long> {
 
     /** @inheritdoc */
     @Override
+    protected TreeEntity newEmptyEntity() {
+        return new TreeEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public TreeEntity readEntity(Cursor cursor, int offset) {
         TreeEntity entity = new TreeEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id

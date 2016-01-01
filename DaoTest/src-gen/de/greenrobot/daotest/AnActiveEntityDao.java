@@ -83,6 +83,12 @@ public class AnActiveEntityDao extends AbstractDao<AnActiveEntity, Long> {
 
     /** @inheritdoc */
     @Override
+    protected AnActiveEntity newEmptyEntity() {
+        return new AnActiveEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public AnActiveEntity readEntity(Cursor cursor, int offset) {
         AnActiveEntity entity = new AnActiveEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id

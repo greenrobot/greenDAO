@@ -78,6 +78,12 @@ public class CustomTypeEntityDao extends AbstractDao<CustomTypeEntity, Long> {
 
     /** @inheritdoc */
     @Override
+    protected CustomTypeEntity newEmptyEntity() {
+        return new CustomTypeEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public CustomTypeEntity readEntity(Cursor cursor, int offset) {
         CustomTypeEntity entity = new CustomTypeEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
