@@ -104,12 +104,12 @@ public class SqlUtils {
     }
 
     /** Creates an select for given columns with a trailing space */
-    public static String createSqlSelect(String tablename, String tableAlias, String[] columns) {
+    public static String createSqlSelect(String tablename, String tableAlias, String[] columns, boolean distinct) {
         if (tableAlias == null || tableAlias.length() < 0) {
             throw new DaoException("Table alias required");
         }
 
-        StringBuilder builder = new StringBuilder("SELECT ");
+        StringBuilder builder = new StringBuilder(distinct ? "SELECT DISTINCT " : "SELECT ");
         SqlUtils.appendColumns(builder, tableAlias, columns).append(" FROM ");
         builder.append('"').append(tablename).append('"').append(' ').append(tableAlias).append(' ');
         return builder.toString();

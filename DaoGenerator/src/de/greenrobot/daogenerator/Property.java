@@ -131,6 +131,32 @@ public class Property {
             return this;
         }
 
+        public PropertyBuilder javaDocField(String javaDoc) {
+            property.javaDocField = checkConvertToJavaDoc(javaDoc);
+            return this;
+        }
+
+        private String checkConvertToJavaDoc(String javaDoc) {
+            return DaoUtil.checkConvertToJavaDoc(javaDoc, "    ");
+        }
+
+        public PropertyBuilder javaDocGetter(String javaDoc) {
+            property.javaDocGetter = checkConvertToJavaDoc(javaDoc);
+            return this;
+        }
+
+        public PropertyBuilder javaDocSetter(String javaDoc) {
+            property.javaDocSetter = checkConvertToJavaDoc(javaDoc);
+            return this;
+        }
+
+        public PropertyBuilder javaDocGetterAndSetter(String javaDoc) {
+            javaDoc = checkConvertToJavaDoc(javaDoc);
+            property.javaDocGetter = javaDoc;
+            property.javaDocSetter = javaDoc;
+            return this;
+        }
+
         public Property getProperty() {
             return property;
         }
@@ -152,6 +178,10 @@ public class Property {
     private String codeBeforeField;
     private String codeBeforeGetter;
     private String codeBeforeSetter;
+
+    private String javaDocField;
+    private String javaDocGetter;
+    private String javaDocSetter;
 
     private boolean primaryKey;
     private boolean pkAsc;
@@ -263,6 +293,18 @@ public class Property {
         return codeBeforeSetter;
     }
 
+    public String getJavaDocField() {
+        return javaDocField;
+    }
+
+    public String getJavaDocGetter() {
+        return javaDocGetter;
+    }
+
+    public String getJavaDocSetter() {
+        return javaDocSetter;
+    }
+
     public String getDatabaseValueExpression() {
         return getDatabaseValueExpression(propertyName);
     }
@@ -284,9 +326,9 @@ public class Property {
         if (customType != null) {
             builder.append(')');
         }
-        if(propertyType == PropertyType.Boolean) {
+        if (propertyType == PropertyType.Boolean) {
             builder.append(" ? 1L: 0L");
-        } else if(propertyType == PropertyType.Date) {
+        } else if (propertyType == PropertyType.Date) {
             builder.append(".getTime()");
         }
         return builder.toString();
@@ -303,16 +345,15 @@ public class Property {
         if (customType != null) {
             builder.append(propertyName).append("Converter.convertToEntityProperty(");
         }
-        if(propertyType == PropertyType.Byte) {
+        if (propertyType == PropertyType.Byte) {
             builder.append("(byte) ");
-        }else
-        if(propertyType == PropertyType.Date) {
+        } else if (propertyType == PropertyType.Date) {
             builder.append("new java.util.Date(");
         }
         builder.append(databaseValue);
-        if(propertyType == PropertyType.Boolean) {
+        if (propertyType == PropertyType.Boolean) {
             builder.append(" != 0");
-        } else if(propertyType == PropertyType.Date) {
+        } else if (propertyType == PropertyType.Date) {
             builder.append(")");
         }
         if (customType != null) {

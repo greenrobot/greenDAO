@@ -86,7 +86,7 @@ public class TableStatements {
     /** ends with an space to simplify appending to this string. */
     public String getSelectAll() {
         if (selectAll == null) {
-            selectAll = SqlUtils.createSqlSelect(tablename, "T", allColumns);
+            selectAll = SqlUtils.createSqlSelect(tablename, "T", allColumns, false);
         }
         return selectAll;
     }
@@ -94,7 +94,7 @@ public class TableStatements {
     /** ends with an space to simplify appending to this string. */
     public String getSelectKeys() {
         if (selectKeys == null) {
-            selectKeys = SqlUtils.createSqlSelect(tablename, "T", pkColumns);
+            selectKeys = SqlUtils.createSqlSelect(tablename, "T", pkColumns, false);
         }
         return selectKeys;
     }

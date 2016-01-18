@@ -17,14 +17,14 @@
  */
 package de.greenrobot.daogenerator;
 
-import de.greenrobot.daogenerator.Property.PropertyBuilder;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import de.greenrobot.daogenerator.Property.PropertyBuilder;
 
 /**
  * Model class for an entity: a Java data object mapped to a data base table. A new entity is added to a {@link Schema}
@@ -64,6 +64,8 @@ public class Entity {
     private Property pkProperty;
     private String pkType;
     private String superclass;
+    private String javaDoc;
+    private String codeBeforeClass;
 
     private boolean protobuf;
     private boolean constructors;
@@ -461,6 +463,22 @@ public class Entity {
 
     public void setSuperclass(String classToExtend) {
         this.superclass = classToExtend;
+    }
+
+    public String getJavaDoc() {
+        return javaDoc;
+    }
+
+    public void setJavaDoc(String javaDoc) {
+        this.javaDoc = DaoUtil.checkConvertToJavaDoc(javaDoc, "");
+    }
+
+    public String getCodeBeforeClass() {
+        return codeBeforeClass;
+    }
+
+    public void setCodeBeforeClass(String codeBeforeClass) {
+        this.codeBeforeClass = codeBeforeClass;
     }
 
     void init2ndPass() {

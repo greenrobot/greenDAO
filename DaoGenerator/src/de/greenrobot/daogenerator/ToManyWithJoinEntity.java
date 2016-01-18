@@ -45,8 +45,8 @@ public class ToManyWithJoinEntity extends ToManyBase {
         return targetProperty;
     }
 
-    void init2ndPass() {
-        super.init2ndPass();
+    void init3rdPass() {
+        super.init3rdPass();
         List<Property> pks = sourceEntity.getPropertiesPk();
         if (pks.isEmpty()) {
             throw new RuntimeException("Source entity has no primary key, but we need it for " + this);
@@ -55,10 +55,6 @@ public class ToManyWithJoinEntity extends ToManyBase {
         if (pks2.isEmpty()) {
             throw new RuntimeException("Target entity has no primary key, but we need it for " + this);
         }
-    }
-
-    void init3rdPass() {
-        super.init3rdPass();
     }
 
 }

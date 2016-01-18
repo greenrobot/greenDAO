@@ -4,8 +4,8 @@ apply plugin: 'signing'
 
 group = 'de.greenrobot'
 archivesBaseName = 'greendao-generator'
-version = '2.1.0-SNAPSHOT'
-sourceCompatibility = 1.6
+version = '2.1.1-SNAPSHOT'
+sourceCompatibility = 1.7
 
 def isSnapshot = version.endsWith('-SNAPSHOT')
 def sonatypeRepositoryUrl
@@ -27,7 +27,7 @@ configurations {
 }
 
 dependencies {
-    compile 'org.freemarker:freemarker:2.3.22'
+    compile 'org.freemarker:freemarker:2.3.23'
     testCompile 'junit:junit:4.12'
     // deployerJars 'org.apache.maven.wagon:wagon-webdav-jackrabbit:2.4'
     deployerJars 'org.apache.maven.wagon:wagon-webdav:1.0-beta-2'
