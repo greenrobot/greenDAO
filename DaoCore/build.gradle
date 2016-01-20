@@ -4,7 +4,7 @@ apply plugin: 'signing'
 
 group = 'de.greenrobot'
 archivesBaseName = 'greendao'
-version = '2.1.0'
+version = '2.1.1-SNAPSHOT'
 sourceCompatibility = 1.6
 
 def isSnapshot = version.endsWith('-SNAPSHOT')
@@ -45,7 +45,7 @@ javadoc {
     failOnError = false
     classpath += configurations.provided
     title = " greenDAO ${version} API"
-	options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2015 <a href="http://greenrobot.de/">greenrobot.de</a>. All Rights Reserved.</i>'
+	options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.de/">greenrobot.de</a>. All Rights Reserved.</i>'
 	excludes = ['de/greenrobot/dao/internal','de/greenrobot/dao/Internal*']
 }
 
