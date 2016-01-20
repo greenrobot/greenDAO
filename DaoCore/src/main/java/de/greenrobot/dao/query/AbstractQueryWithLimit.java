@@ -41,21 +41,21 @@ abstract class AbstractQueryWithLimit<T> extends AbstractQuery<T> {
      * Sets the parameter (0 based) using the position in which it was added during building the query. Note: all
      * standard WHERE parameters come first. After that come the WHERE parameters of joins (if any).
      */
-    public void setParameter(int index, Object parameter) {
+    public AbstractQueryWithLimit<T> setParameter(int index, Object parameter) {
         if (index >= 0 && (index == limitPosition || index == offsetPosition)) {
             throw new IllegalArgumentException("Illegal parameter index: " + index);
         }
-        super.setParameter(index, parameter);
+        return (AbstractQueryWithLimit<T>) super.setParameter(index, parameter);
     }
 
-    public void setParameter(int index, Date parameter) {
+    public AbstractQueryWithLimit<T> setParameter(int index, Date parameter) {
         Long converted = parameter != null ? parameter.getTime() : null;
-        setParameter(index, converted);
+        return setParameter(index, converted);
     }
 
-    public void setParameter(int index, Boolean parameter) {
+    public AbstractQueryWithLimit<T> setParameter(int index, Boolean parameter) {
         Integer converted = parameter != null ? (parameter ? 1 : 0) : null;
-        setParameter(index, converted);
+        return setParameter(index, converted);
     }
 
     /**
