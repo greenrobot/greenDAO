@@ -26,7 +26,6 @@ import android.database.sqlite.SQLiteStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import de.greenrobot.dao.identityscope.IdentityScope;
@@ -36,11 +35,6 @@ import de.greenrobot.dao.internal.FastCursor;
 import de.greenrobot.dao.internal.TableStatements;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Base class for all DAOs: Implements entity operations like insert, load, delete, and query.
