@@ -34,7 +34,6 @@ import de.greenrobot.dao.query.QueryBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -360,7 +359,7 @@ public abstract class AbstractDao<T, K> {
     protected List<T> loadAllFromCursor(Cursor cursor) {
         int count = cursor.getCount();
         if (count == 0) {
-            return Collections.EMPTY_LIST;
+            return new ArrayList<T>();
         }
         List<T> list = new ArrayList<T>(count);
         CursorWindow window = null;
