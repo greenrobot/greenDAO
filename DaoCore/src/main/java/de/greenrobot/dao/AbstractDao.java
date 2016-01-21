@@ -360,7 +360,7 @@ public abstract class AbstractDao<T, K> {
     protected List<T> loadAllFromCursor(Cursor cursor) {
         int count = cursor.getCount();
         if (count == 0) {
-            return Collections.EMPTY_LIST;
+            return new ArrayList<T>(0);
         }
         List<T> list = new ArrayList<T>(count);
         CursorWindow window = null;
