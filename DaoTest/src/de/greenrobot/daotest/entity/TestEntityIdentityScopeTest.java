@@ -50,6 +50,17 @@ public class TestEntityIdentityScopeTest extends TestEntityTest {
         assertNotSame(entity, entity3);
     }
 
+    public void testDetachAll() {
+        TestEntity entity1 = createEntity(null);
+        TestEntity entity2 = createEntity(null);
+        dao.insertInTx(entity1, entity2);
+        dao.detachAll();
+        TestEntity entity1a = dao.load(entity1.getId());
+        TestEntity entity2a = dao.load(entity2.getId());
+        assertNotSame(entity1, entity1a);
+        assertNotSame(entity2, entity2a);
+    }
+
     public void testDetachOther() {
         TestEntity entity = createEntity(null);
         dao.insert(entity);
