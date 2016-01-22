@@ -1,5 +1,9 @@
 Release History
 ---------------
+### V2.x.x Minor feature and bugfix release (2016-??-??))
+* Query.setParameter returns the query to allow a more fluent API
+* New DAO method detachAll to detach all entities of a specific type
+
 ### V2.1.0 Minor feature and bugfix release (2015-11-12, both core and generator)
 * Official Robolectric support: workaround for a broken system call in Robolectric triggered by Query.forCurrentThread
 * QueryBuilder now allows to create DISTINCT queries to avoid duplicate entities returned
