@@ -645,12 +645,13 @@ public class Entity {
         for (Property property : properties) {
             String customType = property.getCustomType();
             if (customType != null) {
+                String importType = DaoUtil.prepareImport(customType);
                 String pack = DaoUtil.getPackageFromFullyQualified(customType);
                 if (!pack.equals(javaPackage)) {
-                    additionalImportsEntity.add(customType);
+                    additionalImportsEntity.add(importType);
                 }
                 if (!pack.equals(javaPackageDao)) {
-                    additionalImportsDao.add(customType);
+                    additionalImportsDao.add(importType);
                 }
             }
 

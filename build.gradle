@@ -6,11 +6,11 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+    gradleVersion = '2.9'
 }
 
 ext {
-    buildToolsVersion = '23.0.1'
+    buildToolsVersion = '23.0.2'
     compileSdkVersion = 23
 
     minSdkVersion = 4

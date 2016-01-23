@@ -1,4 +1,8 @@
 apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = "de.greenrobot.daogenerator.gentest.TestDaoGenerator"
+//outputDir = "../DaoExample/src/main/java-gen"
 
 sourceSets {
     main {

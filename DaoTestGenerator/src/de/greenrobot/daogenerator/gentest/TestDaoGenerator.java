@@ -262,8 +262,14 @@ public class TestDaoGenerator {
     protected void createCustomType() {
         Entity entity = schema.addEntity("CustomTypeEntity");
         entity.addIdProperty();
-        entity.addLongProperty("myCustomTimestamp").customType("de.greenrobot.daotest.customtype.MyTimestamp",
-                "de.greenrobot.daotest.customtype.MyTimestampConverter");
+        entity.addLongProperty("myCustomTimestamp")
+              .customType("de.greenrobot.daotest.customtype.MyTimestamp",
+                      "de.greenrobot.daotest.customtype.MyTimestampConverter");
+
+        final String type = "java.util.List<String>";
+        entity.addByteArrayProperty("serializedStringArray")
+              .customType(type,
+                      "de.greenrobot.daotest.customtype.StringListConverter");
     }
 
     protected void createIndexedString() {

@@ -61,6 +61,15 @@ public class DaoUtil {
         }
     }
 
+    public static String prepareImport(String clazz) {
+        int index = clazz.lastIndexOf('<');
+        if (index != -1) {
+            return clazz.substring(0, index);
+        } else {
+            return clazz;
+        }
+    }
+
     public static byte[] readAllBytes(InputStream in) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         copyAllBytes(in, out);
