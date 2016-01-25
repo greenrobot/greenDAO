@@ -61,12 +61,22 @@ public class DaoUtil {
         }
     }
 
-    public static String prepareImport(String clazz) {
+    public static String dropGeneric(String clazz) {
         int index = clazz.lastIndexOf('<');
         if (index != -1) {
             return clazz.substring(0, index);
         } else {
             return clazz;
+        }
+    }
+
+
+    public static String getClassGenericFromFullyQualified(final String clazz) {
+        int index = clazz.lastIndexOf('<');
+        if (index != -1) {
+            return clazz.substring(index + 1, clazz.length()-1);
+        } else {
+            return null;
         }
     }
 

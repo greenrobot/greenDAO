@@ -266,10 +266,10 @@ public class TestDaoGenerator {
               .customType("de.greenrobot.daotest.customtype.MyTimestamp",
                       "de.greenrobot.daotest.customtype.MyTimestampConverter");
 
-        final String type = "java.util.List<String>";
-        entity.addByteArrayProperty("serializedStringArray")
+        final String type = "java.util.List<de.greenrobot.daotest.customtype.CustomEnum>";
+        entity.addByteArrayProperty("customEnumList")
               .customType(type,
-                      "de.greenrobot.daotest.customtype.StringListConverter");
+                      "de.greenrobot.daotest.customtype.CustomEnumListConverter");
     }
 
     protected void createIndexedString() {

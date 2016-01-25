@@ -103,10 +103,21 @@ public class Property {
         }
 
         public PropertyBuilder customType(String customType, String converter) {
+            String generic = DaoUtil.getClassGenericFromFullyQualified(customType);
             property.customType = customType;
-            property.customTypeClassName = DaoUtil.getClassnameFromFullyQualified(customType);
+            property.customTypeClassImport = DaoUtil.dropGeneric(customType);
+            String simpleClass = DaoUtil.getClassnameFromFullyQualified(property.getCustomTypeClassImport());
+            if (generic != null) {
+                property.customTypeGeneric = generic;
+                property.customTypeClassName = String.format("%s<%s>",
+                        simpleClass, DaoUtil.getClassnameFromFullyQualified(property.getCustomTypeGeneric()));
+            } else {
+                property.customTypeClassName = simpleClass;
+            }
+
             property.converter = converter;
             property.converterClassName = DaoUtil.getClassnameFromFullyQualified(converter);
+
             return this;
         }
 
@@ -172,6 +183,8 @@ public class Property {
 
     private String customType;
     private String customTypeClassName;
+    private String customTypeClassImport;
+    private String customTypeGeneric;
     private String converter;
     private String converterClassName;
 
@@ -271,6 +284,15 @@ public class Property {
 
     public String getCustomTypeClassName() {
         return customTypeClassName;
+    }
+
+
+    public String getCustomTypeClassImport() {
+        return customTypeClassImport;
+    }
+
+    public String getCustomTypeGeneric() {
+        return customTypeGeneric;
     }
 
     public String getConverter() {
