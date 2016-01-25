@@ -258,6 +258,7 @@ public class Entity {
 
     public Entity addImport(String additionalImport) {
         additionalImportsEntity.add(additionalImport);
+        additionalImportsDao.add(additionalImport);
         return this;
     }
 
@@ -642,27 +643,6 @@ public class Entity {
             checkAdditionalImportsEntityTargetEntity(targetEntity);
         }
 
-        for (Property property : properties) {
-            String customType = property.getCustomType();
-            if (customType != null) {
-                String pack = DaoUtil.getPackageFromFullyQualified(customType);
-                if (!pack.equals(javaPackage)) {
-                    additionalImportsEntity.add(customType);
-                }
-                if (!pack.equals(javaPackageDao)) {
-                    additionalImportsDao.add(customType);
-                }
-            }
-
-            String converter = property.getConverter();
-            if (converter != null) {
-                String pack = DaoUtil.getPackageFromFullyQualified(converter);
-                if (!pack.equals(javaPackageDao)) {
-                    additionalImportsDao.add(converter);
-                }
-            }
-
-        }
     }
 
     private void checkAdditionalImportsEntityTargetEntity(Entity targetEntity) {

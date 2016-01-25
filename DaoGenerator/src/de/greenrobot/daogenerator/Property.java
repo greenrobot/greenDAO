@@ -104,9 +104,10 @@ public class Property {
 
         public PropertyBuilder customType(String customType, String converter) {
             property.customType = customType;
-            property.customTypeClassName = DaoUtil.getClassnameFromFullyQualified(customType);
+            property.customTypeClassName =customType;
             property.converter = converter;
             property.converterClassName = DaoUtil.getClassnameFromFullyQualified(converter);
+
             return this;
         }
 
