@@ -109,10 +109,13 @@ public class QueryBuilderOrderTest extends TestEntityTestBase {
 
     public void testOrderRaw() {
         ArrayList<TestEntity> inserted = insert(2);
-        TestEntity entity = inserted.get(0);
         List<TestEntity> result = dao.queryBuilder().orderRaw(Properties.SimpleInteger.columnName + " ASC").list();
         assertEquals(2, result.size());
-        assertEquals(entity.getId(), result.get(0).getId());
+        assertEquals(inserted.get(0).getId(), result.get(0).getId());
+
+        result = dao.queryBuilder().orderRaw(Properties.SimpleInteger.columnName + " DESC").list();
+        assertEquals(2, result.size());
+        assertEquals(inserted.get(1).getId(), result.get(0).getId());
     }
 
     private TestEntity addEntity(List<TestEntity> list, String simpleString) {

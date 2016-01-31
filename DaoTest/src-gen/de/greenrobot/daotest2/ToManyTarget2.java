@@ -5,7 +5,7 @@ package de.greenrobot.daotest2;
 // KEEP INCLUDES - put your custom includes here
 // KEEP INCLUDES END
 /**
- * Entity mapped to table TO_MANY_TARGET2.
+ * Entity mapped to table "TO_MANY_TARGET2".
  */
 public class ToManyTarget2 {
 

@@ -1,3 +1,18 @@
+subprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+}
+
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.12'
+    gradleVersion = '2.4'
+}
+
+ext {
+    buildToolsVersion = '23.0.1'
+    compileSdkVersion = 23
+
+    minSdkVersion = 4
+    targetSdkVersion = 19
 }

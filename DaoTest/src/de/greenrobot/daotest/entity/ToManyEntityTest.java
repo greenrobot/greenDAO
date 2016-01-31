@@ -17,6 +17,7 @@
  */
 package de.greenrobot.daotest.entity;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,9 @@ import java.util.Map;
 import de.greenrobot.dao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
+import de.greenrobot.daotest.DateEntity;
+import de.greenrobot.daotest.DateEntityDao;
+import de.greenrobot.daotest.JoinManyToDateEntity;
 import de.greenrobot.daotest.ToManyEntity;
 import de.greenrobot.daotest.ToManyEntityDao;
 import de.greenrobot.daotest.ToManyTargetEntity;
@@ -60,40 +64,6 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         ToManyEntity testEntity = toManyEntityDao.load(id);
         List<ToManyTargetEntity> resolvedToMany = testEntity.getToManyTargetEntityList();
         assertSameEntities(targetEntities, resolvedToMany);
-    }
-
-    private void assertSameEntities(ToManyTargetEntity[] targetEntities, List<ToManyTargetEntity> resolvedToMany) {
-        int count = targetEntities.length;
-        assertEquals(count, resolvedToMany.size());
-
-        Map<Long, ToManyTargetEntity> resolvedMap = new HashMap<Long, ToManyTargetEntity>();
-        for (ToManyTargetEntity resolvedEntity : resolvedToMany) {
-            resolvedMap.put(resolvedEntity.getId(), resolvedEntity);
-        }
-        for (int i = 0; i < count; i++) {
-            long entityId = (long) targetEntities[i].getId();
-            assertTrue("ID=" + entityId, resolvedMap.containsKey(entityId));
-            assertSame(targetEntities[i], resolvedMap.get(entityId));
-        }
-    }
-
-    private ToManyTargetEntity[] prepareToMany(long id, int count) {
-        ToManyEntity entity = new ToManyEntity(id);
-        daoSession.insert(entity);
-        return insertTargetEntitites(id, count, null);
-    }
-
-    private ToManyTargetEntity[] insertTargetEntitites(Long toManyId, int count, String joinProperty) {
-        ToManyTargetEntity[] targetEntities = new ToManyTargetEntity[count];
-        for (int i = 0; i < count; i++) {
-            ToManyTargetEntity target = new ToManyTargetEntity();
-            target.setToManyId(toManyId);
-            target.setToManyIdDesc(toManyId);
-            target.setTargetJoinProperty(joinProperty);
-            targetEntities[i] = target;
-        }
-        toManyTargetEntityDao.insertInTx(targetEntities);
-        return targetEntities;
     }
 
     public void testGetToManyTwice() {
@@ -154,7 +124,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         ToManyEntity entity = new ToManyEntity(1l);
         entity.setSourceJoinProperty("JOIN ME");
         daoSession.insert(entity);
-        insertTargetEntitites(null, 3, "JOIN ME");
+        insertTargetEntities(null, 3, "JOIN ME");
 
         ToManyEntity testEntity = toManyEntityDao.load(1l);
         List<ToManyTargetEntity> targetEntities = testEntity.getToManyByJoinProperty();
@@ -176,7 +146,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         ToManyEntity entity = new ToManyEntity(1l);
         entity.setSourceJoinProperty("JOIN ME");
         daoSession.insert(entity);
-        insertTargetEntitites(1l, 3, "JOIN ME");
+        insertTargetEntities(1l, 3, "JOIN ME");
 
         ToManyEntity testEntity = toManyEntityDao.load(1l);
         List<ToManyTargetEntity> targetEntities = testEntity.getToManyJoinTwo();
@@ -193,5 +163,67 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         assertFalse(middleEntity.getId() == targetEntities.get(0).getId());
         assertFalse(middleEntity.getId() == targetEntities.get(1).getId());
     }
+
+    public void testToManyWithJoin() {
+        ToManyEntity entity = new ToManyEntity(1l);
+        daoSession.insert(entity);
+        List<DateEntity> dateEntities = entity.getDateEntityList();
+        assertEquals(0, dateEntities.size());
+
+        DateEntityDao dateDao = daoSession.getDateEntityDao();
+        Date now = new Date();
+        DateEntity date1 = new DateEntity(1L, null, now);
+        DateEntity date2 = new DateEntity(2L, null, now);
+        DateEntity date3 = new DateEntity(3L, null, now);
+        DateEntity date4 = new DateEntity(4L, null, now);
+        dateDao.insertInTx(date1, date2, date3, date4);
+
+        daoSession.insert(new JoinManyToDateEntity(1L,2L,1L));
+        daoSession.insert(new JoinManyToDateEntity(2L,1L,3L));
+        entity.resetDateEntityList();
+        dateEntities = entity.getDateEntityList();
+        assertEquals(1, dateEntities.size());
+        assertEquals(3L, (long) dateEntities.get(0).getId());
+
+        daoSession.insert(new JoinManyToDateEntity(3L, 1L, 4L));
+        entity.resetDateEntityList();
+        dateEntities = entity.getDateEntityList();
+        assertEquals(2, dateEntities.size());
+    }
+
+    private void assertSameEntities(ToManyTargetEntity[] targetEntities, List<ToManyTargetEntity> resolvedToMany) {
+        int count = targetEntities.length;
+        assertEquals(count, resolvedToMany.size());
+
+        Map<Long, ToManyTargetEntity> resolvedMap = new HashMap<Long, ToManyTargetEntity>();
+        for (ToManyTargetEntity resolvedEntity : resolvedToMany) {
+            resolvedMap.put(resolvedEntity.getId(), resolvedEntity);
+        }
+        for (int i = 0; i < count; i++) {
+            long entityId = (long) targetEntities[i].getId();
+            assertTrue("ID=" + entityId, resolvedMap.containsKey(entityId));
+            assertSame(targetEntities[i], resolvedMap.get(entityId));
+        }
+    }
+
+    private ToManyTargetEntity[] prepareToMany(long id, int count) {
+        ToManyEntity entity = new ToManyEntity(id);
+        daoSession.insert(entity);
+        return insertTargetEntities(id, count, null);
+    }
+
+    private ToManyTargetEntity[] insertTargetEntities(Long toManyId, int count, String joinProperty) {
+        ToManyTargetEntity[] targetEntities = new ToManyTargetEntity[count];
+        for (int i = 0; i < count; i++) {
+            ToManyTargetEntity target = new ToManyTargetEntity();
+            target.setToManyId(toManyId);
+            target.setToManyIdDesc(toManyId);
+            target.setTargetJoinProperty(joinProperty);
+            targetEntities[i] = target;
+        }
+        toManyTargetEntityDao.insertInTx(targetEntities);
+        return targetEntities;
+    }
+
 
 }

@@ -5,6 +5,7 @@ import java.util.concurrent.CountDownLatch;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.SystemClock;
+
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.query.DeleteQuery;
 import de.greenrobot.dao.query.Query;
@@ -209,17 +210,14 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<DaoMaster, 
         latchThreadsDone.await();
     }
 
-    // No connection for read can be acquired while TX is active; this will deadlock!
-    public void _testConcurrentLockAndQueryDuringTx() throws InterruptedException {
+    public void testConcurrentLockAndQueryDuringTx() throws InterruptedException {
         final TestEntity entity = createEntity(null);
         dao.insert(entity);
         final Query<TestEntity> query = dao.queryBuilder().build();
         Runnable runnable1 = new Runnable() {
             @Override
             public void run() {
-                synchronized (query) {
-                    query.list();
-                }
+                query.forCurrentThread().list();
             }
         };
 
@@ -229,9 +227,7 @@ public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<DaoMaster, 
         doTx(new Runnable() {
             @Override
             public void run() {
-                synchronized (query) {
-                    query.list();
-                }
+                query.list();
             }
         });
         latchThreadsDone.await();

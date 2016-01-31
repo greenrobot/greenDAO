@@ -92,7 +92,7 @@ public class QueryLimitOffsetTest extends TestEntityTestBase {
     public void testQueryLimitAndSetParameter() {
         Query<TestEntity> query = dao.queryBuilder().limit(5).offset(1).build();
         try{
-            query.setParameter(0, null);
+            query.setParameter(0, (Object) null);
             fail("Offset/limit parameters must not interfere with user parameters");
         } catch(RuntimeException expected) {
             //OK

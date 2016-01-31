@@ -3,7 +3,8 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'de.greenrobot'
-version = '1.3.8-SNAPSHOT'
+archivesBaseName = 'greendao'
+version = '2.1.1-SNAPSHOT'
 sourceCompatibility = 1.6
 
 def isSnapshot = version.endsWith('-SNAPSHOT')
@@ -17,7 +18,6 @@ if(isSnapshot) {
 repositories {
     mavenCentral()
 }
-
 
 // provided is not supported in Gradle 1.4, see http://issues.gradle.org/browse/GRADLE-784
 // Like this, it won't appear at all in the POM
@@ -38,16 +38,14 @@ dependencies {
 sourceSets {
     main {
         compileClasspath += configurations.provided
-        java {
-            srcDir 'src'
-        }
     }
 }
 
 javadoc {
+    failOnError = false
     classpath += configurations.provided
     title = " greenDAO ${version} API"
-	options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2013 <a href="http://greenrobot.de/">greenrobot.de</a>. All Rights Reserved.</i>'
+	options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.de/">greenrobot.de</a>. All Rights Reserved.</i>'
 	excludes = ['de/greenrobot/dao/internal','de/greenrobot/dao/Internal*']
 }
 

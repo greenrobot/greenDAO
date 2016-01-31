@@ -1,6 +1,6 @@
 <#--
 
-Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)     
+Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
                                                                            
 This file is part of greenDAO Generator.                                   
                                                                            
@@ -34,7 +34,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
             builder.append(" FROM ${entity.tableName} T");
 <#list entity.toOneRelations as toOne>
             builder.append(" LEFT JOIN ${toOne.targetEntity.tableName} T${toOne_index}<#--
---> ON T.'${toOne.fkProperties[0].columnName}'=T${toOne_index}.'${toOne.targetEntity.pkProperty.columnName}'");
+--> ON T.\"${toOne.fkProperties[0].columnName}\"=T${toOne_index}.\"${toOne.targetEntity.pkProperty.columnName}\"");
 </#list>
             builder.append(' ');
             selectDeep = builder.toString();

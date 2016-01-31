@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -180,9 +180,9 @@ public class Schema {
         }
     }
 
-    void init3ndPass() {
+    void init3rdPass() {
         for (Entity entity : entities) {
-            entity.init3ndPass();
+            entity.init3rdPass();
         }
     }
 

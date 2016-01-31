@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
+import de.greenrobot.dao.query.WhereCondition;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
@@ -135,7 +137,11 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         testEntity.setSimpleDate(date);
         dao.update(testEntity);
 
-        TestEntity testEntity2 = dao.queryBuilder().where(Properties.SimpleDate.eq(date)).uniqueOrThrow();
+        Query<TestEntity> queryDate = dao.queryBuilder().where(Properties.SimpleDate.eq(date)).build();
+        TestEntity testEntity2 = queryDate.uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
+        queryDate.setParameter(0, date);
+        testEntity2 = queryDate.uniqueOrThrow();
         assertEquals(testEntity.getId(), testEntity2.getId());
 
         testEntity2 = dao.queryBuilder().where(Properties.SimpleDate.eq(date.getTime())).uniqueOrThrow();
@@ -149,7 +155,11 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         testEntity.setSimpleBoolean(true);
         dao.update(testEntity);
 
-        TestEntity testEntity2 = dao.queryBuilder().where(Properties.SimpleBoolean.eq(true)).uniqueOrThrow();
+        Query<TestEntity> queryBoolean = dao.queryBuilder().where(Properties.SimpleBoolean.eq(true)).build();
+        TestEntity testEntity2 = queryBoolean.uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
+        queryBoolean.setParameter(0, true);
+        testEntity2 = queryBoolean.uniqueOrThrow();
         assertEquals(testEntity.getId(), testEntity2.getId());
 
         testEntity2 = dao.queryBuilder().where(Properties.SimpleBoolean.eq(Boolean.TRUE)).uniqueOrThrow();
@@ -160,6 +170,31 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
 
         testEntity2 = dao.queryBuilder().where(Properties.SimpleBoolean.eq("truE")).uniqueOrThrow();
         assertEquals(testEntity.getId(), testEntity2.getId());
+    }
+
+    // TODO fix byte arrays? Android is doing String args everywhere
+    public void testEqByteArray() {
+        ArrayList<TestEntity> inserted = insert(3);
+        TestEntity testEntity = inserted.get(1);
+
+        byte[] byteArray = {96, 77, 37, -21};
+        testEntity.setSimpleByteArray(byteArray);
+        dao.update(testEntity);
+
+        // Unsupported: Query<TestEntity> query = dao.queryBuilder().where(Properties.SimpleByteArray.eq(byteArray)).build();
+
+        // Works, but probably voids any index on BLOBs (Note: there's no hex2blob function and X'?' is bad syntax):
+        // String conditionString = "HEX(" + Properties.SimpleByteArray.columnName + ")=?";
+        // WhereCondition condition = new WhereCondition.StringCondition(conditionString, SqlUtils.toHex(byteArray));
+
+        String conditionString = Properties.SimpleByteArray.columnName + '=' + SqlUtils.escapeBlobArgument(byteArray);
+        WhereCondition condition = new WhereCondition.StringCondition(conditionString);
+        Query<TestEntity> query = dao.queryBuilder().where(condition).build();
+        TestEntity testEntity2 = query.uniqueOrThrow();
+        assertEquals(testEntity.getId(), testEntity2.getId());
+
+        // Unsupported: query.setParameter(0, new byte[]{96, 77, 37, -21, 99});
+        // Unsupported: assertNull(query.unique());
     }
 
     public void testIsNullIsNotNull() {
@@ -201,18 +236,28 @@ public class QueryBuilderSimpleTest extends TestEntityTestBase {
         Query<TestEntity> query = dao.queryBuilder().where(Properties.SimpleString.like("%robot")).build();
         TestEntity entity2 = query.uniqueOrThrow();
         assertEquals(entity.getId(), entity2.getId());
-        
+
         query.setParameter(0, "green%");
         entity2 = query.uniqueOrThrow();
         assertEquals(entity.getId(), entity2.getId());
-        
+
         query.setParameter(0, "%enrob%");
         entity2 = query.uniqueOrThrow();
         assertEquals(entity.getId(), entity2.getId());
-        
+
         query.setParameter(0, "%nothere%");
         entity2 = query.unique();
         assertNull(entity2);
+    }
+
+    public void testDistinct() {
+        TestEntity entity = insert(3).get(1);
+
+        Query<TestEntity> query = dao.queryBuilder().distinct()
+                .where(Properties.SimpleString.eq(entity.getSimpleString())).build();
+        TestEntity entity2 = query.uniqueOrThrow();
+        assertEquals(entity.getId(), entity2.getId());
+        // TODO improve test to check functionality
     }
 
 }

@@ -1,12 +1,19 @@
 language: android
+# Use the Travis Container-Based Infrastructure
+sudo: false
 jdk:
   - oraclejdk7
 env:
+  global:
+    # increase adb timeout (2 minutes by default)
+    - ADB_INSTALL_TIMEOUT=8
   matrix:
-    - ANDROID_SDKS=android-19,sysimg-19  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
+    - ANDROID_SDKS=android-23,sysimg-23  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
 android:
   components:
-    - build-tools-19.1.0
+    - build-tools-23.0.1
+    - android-23
+    - extra-android-m2repository
 before_install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
