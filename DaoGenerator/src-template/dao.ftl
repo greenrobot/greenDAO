@@ -171,9 +171,9 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
     @Override
     public ${entity.pkType} readKey(Cursor cursor, int offset) {
 <#if entity.pkProperty??>
-        return <#if !entity.pkProperty.notNull>cursor.isNull(offset + ${entity.pkProperty.ordinal}) ? null : </#if><#if
+        return <#if !entity.pkProperty.notNull>cursor.isNull(offset${(entity.pkProperty.ordinal != 0)?then(' + '+entity.pkProperty.ordinal+'', '')}) ? null : </#if><#if
             entity.pkProperty.propertyType == "Byte">(byte) </#if><#if
-            entity.pkProperty.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[entity.pkProperty.propertyType]}(offset + ${entity.pkProperty.ordinal})<#if
+            entity.pkProperty.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[entity.pkProperty.propertyType]}(offset${(entity.pkProperty.ordinal != 0)?then(' + '+entity.pkProperty.ordinal+'', '')})<#if
             entity.pkProperty.propertyType == "Boolean"> != 0</#if><#if
             entity.pkProperty.propertyType == "Date">)</#if>;
 <#else>
@@ -188,8 +188,8 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
         Builder builder = ${entity.className}.newBuilder();
 <#list entity.properties as property>
 <#if !property.notNull>
-        if (!cursor.isNull(offset + ${property_index})) {
-    </#if>        builder.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(offset + ${property_index}));
+        if (!cursor.isNull(offset${(property_index != 0)?then(' + '+property_index+'', '')})) {
+    </#if>        builder.set${property.propertyName?cap_first}(cursor.get${toCursorType[property.propertyType]}(offset${(property_index != 0)?then(' + '+property_index+'', '')}));
 <#if !property.notNull>
         }
 </#if>        
@@ -201,8 +201,8 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
 -->
         ${entity.className} entity = new ${entity.className}( //
 <#list entity.properties as property>
-            <#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#--
-            -->${property.getEntityValueExpression("cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})")}<#--
+            <#if !property.notNull>cursor.isNull(offset${(property_index != 0)?then(' + '+property_index+'', '')}) ? null : </#if><#--
+            -->${property.getEntityValueExpression("cursor.get${toCursorType[property.propertyType]}(offset${(property_index != 0)?then(' + '+property_index+'', '')})")}<#--
             --><#if property_has_next>,</#if> // ${property.propertyName}
 </#list>        
         );
@@ -224,8 +224,8 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
         throw new UnsupportedOperationException("Protobuf objects cannot be modified");
 <#else> 
 <#list entity.properties as property>
-        entity.set${property.propertyName?cap_first}(<#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#--
-            -->${property.getEntityValueExpression("cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})")});
+        entity.set${property.propertyName?cap_first}(<#if !property.notNull>cursor.isNull(offset${(property_index != 0)?then(' + '+property_index+'', '')}) ? null : </#if><#--
+            -->${property.getEntityValueExpression("cursor.get${toCursorType[property.propertyType]}(offset${(property_index != 0)?then(' + '+property_index+'', '')})")});
 </#list>
 </#if>
      }
