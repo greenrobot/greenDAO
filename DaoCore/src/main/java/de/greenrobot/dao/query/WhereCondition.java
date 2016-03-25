@@ -15,6 +15,7 @@
  */
 package de.greenrobot.dao.query;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -61,9 +62,7 @@ public interface WhereCondition {
             if (hasSingleValue) {
                 valuesTarget.add(value);
             } else if (values != null) {
-                for (Object value : values) {
-                    valuesTarget.add(value);
-                }
+                Collections.addAll(valuesTarget, values);
             }
         }
     }
