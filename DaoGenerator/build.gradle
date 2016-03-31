@@ -2,9 +2,9 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-group = 'de.greenrobot'
+group = 'org.greenrobot'
 archivesBaseName = 'greendao-generator'
-version = '2.1.1-SNAPSHOT'
+version = '2.2.0-SNAPSHOT'
 sourceCompatibility = 1.7
 
 def isSnapshot = version.endsWith('-SNAPSHOT')
@@ -19,10 +19,7 @@ repositories {
     mavenCentral()
 }
 
-// provided is not supported in Gradle 1.4, see http://issues.gradle.org/browse/GRADLE-784
-// Like this, it won't appear at all in the POM
 configurations {
-    provided
     deployerJars
 }
 
@@ -63,7 +60,7 @@ javadoc {
     title = "greenDAO Generator ${version} API"
     // Unfinished APIs:
     excludes = ['de/greenrobot/daogenerator/Query*']
-    options.bottom = 'Available under the GPLv3 - <i>Copyright &#169; 2011-2015 <a href="http://greenrobot.de/">greenrobot.de</a>. All Rights Reserved.</i>'
+    options.bottom = 'Available under the GPLv3 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -113,7 +110,7 @@ uploadArchives {
                name 'greenDAO Generator'
                packaging 'jar'
                description 'Code generator for greenDAO, the light and fast ORM for Android'
-               url 'http://greendao-orm.com'
+               url 'http://greenrobot.org/greendao'
 
                scm {
                    url 'https://github.com/greenrobot/greenDAO'
@@ -143,7 +140,7 @@ uploadArchives {
                
                organization {
                    name 'greenrobot'
-                   url 'http://greenrobot.de'
+                   url 'http://greenrobot.org'
                }
            }
         }

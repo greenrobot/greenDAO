@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -50,7 +50,7 @@ public class DaoGenerator {
 
     public DaoGenerator() throws IOException {
         System.out.println("greenDAO Generator");
-        System.out.println("Copyright 2011-2015 Markus Junginger, greenrobot.de. Licensed under GPL V3.");
+        System.out.println("Copyright 2011-2016 Markus Junginger, greenrobot.de. Licensed under GPL V3.");
         System.out.println("This program comes with ABSOLUTELY NO WARRANTY");
 
         patternKeepIncludes = compilePattern("INCLUDES");
