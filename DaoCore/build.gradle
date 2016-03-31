@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'idea'
 
 group = 'de.greenrobot'
 archivesBaseName = 'greendao'
@@ -38,6 +39,12 @@ dependencies {
 sourceSets {
     main {
         compileClasspath += configurations.provided
+    }
+}
+
+idea {
+    module {
+        scopes.PROVIDED.plus += [configurations.provided]
     }
 }
 
