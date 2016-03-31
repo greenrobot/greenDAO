@@ -1,11 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'idea'
 
-group = 'de.greenrobot'
+group = 'org.greenrobot'
 archivesBaseName = 'greendao'
-version = '2.1.1-SNAPSHOT'
+version = '2.2.0-SNAPSHOT'
 sourceCompatibility = 1.6
 
 def isSnapshot = version.endsWith('-SNAPSHOT')
@@ -20,39 +19,23 @@ repositories {
     mavenCentral()
 }
 
-// provided is not supported in Gradle 1.4, see http://issues.gradle.org/browse/GRADLE-784
-// Like this, it won't appear at all in the POM
 configurations {
-    provided
     deployerJars
 }
 
 dependencies {
-    provided 'com.google.android:android:4.1.1.4'
-    provided 'com.google.android:android-test:4.1.1.4'
-    provided 'com.google.android:annotations:4.1.1.4'
-    provided 'com.google.android:support-v4:r7'
+    compileOnly 'com.google.android:android:4.1.1.4'
+    compileOnly 'com.google.android:android-test:4.1.1.4'
+    compileOnly 'com.google.android:annotations:4.1.1.4'
+    compileOnly 'com.google.android:support-v4:r7'
     // deployerJars 'org.apache.maven.wagon:wagon-webdav-jackrabbit:2.4'
     deployerJars 'org.apache.maven.wagon:wagon-webdav:1.0-beta-2'
 }
 
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-    }
-}
-
-idea {
-    module {
-        scopes.PROVIDED.plus += [configurations.provided]
-    }
-}
-
 javadoc {
     failOnError = false
-    classpath += configurations.provided
     title = " greenDAO ${version} API"
-	options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.de/">greenrobot.de</a>. All Rights Reserved.</i>'
+	options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
 	excludes = ['de/greenrobot/dao/internal','de/greenrobot/dao/Internal*']
 }
 
@@ -103,7 +86,7 @@ uploadArchives {
                name 'greenDAO'
                packaging 'jar'
                description 'greenDAO is a light and fast ORM for Android'
-               url 'http://greendao-orm.com'
+               url 'http://greenrobot.org/greendao'
 
                scm {
                    url 'https://github.com/greenrobot/greenDAO'
@@ -133,7 +116,7 @@ uploadArchives {
                
                organization {
                    name 'greenrobot'
-                   url 'http://greenrobot.de'
+                   url 'http://greenrobot.org'
                }
            }
         }
