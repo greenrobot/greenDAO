@@ -11,32 +11,13 @@ buildscript {
 apply plugin: 'com.android.application'
 
 dependencies {
-    androidTestCompile project(':DaoCore')
-
-    testCompile project(':DaoCore')
+    compile project(':DaoCore')
     testCompile 'org.robolectric:robolectric:3.0'
 }
 
 android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
-
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            // Workaround: assets.srcDirs in androidTest doesn't seem to work currently
-            assets.srcDirs = ['assets']
-        }
-
-        androidTest {
-            assets.srcDirs = ['assets']
-            java.srcDirs = ['src', 'src-gen']
-        }
-
-        unitTest {
-            java.srcDirs = ['src-unit-test']
-        }
-    }
 
     defaultConfig {
         testApplicationId "de.greenrobot.daotest"
