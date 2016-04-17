@@ -1,13 +1,9 @@
 package de.greenrobot.encryption;
 
-import android.database.sqlite.SQLiteDatabase;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import de.greenrobot.dao.database.AndroidSQLiteDatabase;
 import de.greenrobot.dao.database.Database;
 import de.greenrobot.daotest.SimpleEntity;
 
@@ -18,13 +14,15 @@ public class EncryptedDataFileTest extends EncryptionSimpleEntityTest {
     @Override
     protected Database createDatabase() {
         getContext().deleteDatabase(ENCRYPTED_DB_FILE);
-        return EncryptedDbFactory.createDatabase(getContext(), ENCRYPTED_DB_FILE, "password");
+        return EncryptedDbUtils.createDatabase(getContext(), ENCRYPTED_DB_FILE, "password");
         // You can do a sanity check by disabling encryption and see the test fail:
         // SQLiteDatabase sqLiteDatabase = getContext().openOrCreateDatabase(ENCRYPTED_DB_FILE, 0, null);
-        // return new AndroidSQLiteDatabase(sqLiteDatabase);
+        // return new StandardDatabase(sqLiteDatabase);
     }
 
-    public void testEncryptedFile() throws IOException {
+    public void testFileisEncrypted() throws IOException {
+        EncryptedDbUtils.assertEncryptedDbUsed(db);
+
         SimpleEntity simpleEntity = createEntityWithRandomPk();
         String text = "Catch me if you can";
         simpleEntity.setSimpleString(text);
@@ -41,4 +39,7 @@ public class EncryptedDataFileTest extends EncryptionSimpleEntityTest {
         assertFalse(contents, contents.contains(text));
     }
 
+    public void testEncryptedDbUsed() {
+        EncryptedDbUtils.assertEncryptedDbUsed(db);
+    }
 }

@@ -47,7 +47,7 @@ public abstract class DatabaseOpenHelper extends AbstractDatabaseOpenHelper {
     }
 
     protected Database wrap(SQLiteDatabase sqLiteDatabase) {
-        return new AndroidSQLiteDatabase(sqLiteDatabase);
+        return new StandardDatabase(sqLiteDatabase);
     }
 
     private class Adapter extends SQLiteOpenHelper {

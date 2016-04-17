@@ -66,7 +66,7 @@ public abstract class EncryptedDatabaseOpenHelper extends AbstractDatabaseOpenHe
     }
 
     protected Database wrap(SQLiteDatabase sqLiteDatabase) {
-        return new SQLCipherDatabase(sqLiteDatabase);
+        return new EncryptedDatabase(sqLiteDatabase);
     }
 
     private class Adapter extends SQLiteOpenHelper {

@@ -19,10 +19,10 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-public class AndroidSQLiteDatabase implements Database {
+public class StandardDatabase implements Database {
     private final SQLiteDatabase delegate;
 
-    public AndroidSQLiteDatabase(SQLiteDatabase delegate) {
+    public StandardDatabase(SQLiteDatabase delegate) {
         this.delegate = delegate;
     }
 
@@ -63,7 +63,7 @@ public class AndroidSQLiteDatabase implements Database {
 
     @Override
     public DatabaseStatement compileStatement(String sql) {
-        return new AndroidSQLiteStatement(delegate.compileStatement(sql));
+        return new StandardDatabaseStatement(delegate.compileStatement(sql));
     }
 
     @Override

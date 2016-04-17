@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ import android.database.Cursor;
 import android.database.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 
-public class SQLCipherDatabase implements Database {
+public class EncryptedDatabase implements Database {
     private final SQLiteDatabase delegate;
 
-    public SQLCipherDatabase(SQLiteDatabase delegate) {
+    public EncryptedDatabase(SQLiteDatabase delegate) {
         this.delegate = delegate;
     }
 
@@ -63,7 +63,7 @@ public class SQLCipherDatabase implements Database {
 
     @Override
     public DatabaseStatement compileStatement(String sql) {
-        return new SQLCipherStatement(delegate.compileStatement(sql));
+        return new EncryptedDatabaseStatement(delegate.compileStatement(sql));
     }
 
     @Override

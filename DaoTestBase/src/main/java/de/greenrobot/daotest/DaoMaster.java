@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.util.Log;
 
 import de.greenrobot.dao.AbstractDaoMaster;
-import de.greenrobot.dao.database.AndroidSQLiteDatabase;
+import de.greenrobot.dao.database.StandardDatabase;
 import de.greenrobot.dao.database.Database;
 import de.greenrobot.dao.database.EncryptedDatabaseOpenHelper;
 import de.greenrobot.dao.database.DatabaseOpenHelper;
@@ -144,7 +144,7 @@ public class DaoMaster extends AbstractDaoMaster {
     }
 
     public DaoMaster(SQLiteDatabase db) {
-        this(new AndroidSQLiteDatabase(db));
+        this(new StandardDatabase(db));
     }
 
     public DaoMaster(Database db) {

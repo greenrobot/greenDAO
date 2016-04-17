@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,9 @@ package de.greenrobot.dao;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.database.sqlite.SQLiteDatabase;
 import de.greenrobot.dao.database.Database;
 import de.greenrobot.dao.identityscope.IdentityScopeType;
 import de.greenrobot.dao.internal.DaoConfig;
-import de.greenrobot.dao.database.AndroidSQLiteDatabase;
 
 /**
  * The master of dao will guide you: start dao sessions with the master.

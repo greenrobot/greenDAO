@@ -22,7 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.DbUtils;
-import de.greenrobot.dao.database.AndroidSQLiteDatabase;
+import de.greenrobot.dao.database.StandardDatabase;
 import de.greenrobot.dao.database.Database;
 
 import java.util.Random;
@@ -100,7 +100,7 @@ public abstract class DbTest extends AndroidTestCase {
             getContext().deleteDatabase(DB_NAME);
             sqLiteDatabase = getContext().openOrCreateDatabase(DB_NAME, 0, null);
         }
-        return new AndroidSQLiteDatabase(sqLiteDatabase);
+        return new StandardDatabase(sqLiteDatabase);
     }
 
     @Override
@@ -117,8 +117,8 @@ public abstract class DbTest extends AndroidTestCase {
     }
 
     protected void logTableDump(String tablename) {
-        if (db instanceof AndroidSQLiteDatabase) {
-            DbUtils.logTableDump(((AndroidSQLiteDatabase) db).getSQLiteDatabase(), tablename);
+        if (db instanceof StandardDatabase) {
+            DbUtils.logTableDump(((StandardDatabase) db).getSQLiteDatabase(), tablename);
         } else {
             DaoLog.w("Table dump unsupported for " + db);
         }

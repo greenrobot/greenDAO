@@ -17,10 +17,10 @@ package de.greenrobot.dao.database;
 
 import android.database.sqlite.SQLiteStatement;
 
-public class AndroidSQLiteStatement implements DatabaseStatement {
+public class StandardDatabaseStatement implements DatabaseStatement {
     private final SQLiteStatement delegate;
 
-    public AndroidSQLiteStatement(SQLiteStatement delegate) {
+    public StandardDatabaseStatement(SQLiteStatement delegate) {
         this.delegate = delegate;
     }
 

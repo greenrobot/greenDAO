@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.database.AndroidSQLiteDatabase;
+import de.greenrobot.dao.database.StandardDatabase;
 import de.greenrobot.dao.database.Database;
 
 import ${schema.defaultJavaPackageDao}.DaoSession;
@@ -192,7 +192,7 @@ import ${entity.javaPackageDao}.${entity.classNameDao};
     }
 
     Database db = getDatabase();
-    Cursor cursor = queryBuilder.query(((AndroidSQLiteDatabase) db).getSQLiteDatabase(), projection, selection,
+    Cursor cursor = queryBuilder.query(((StandardDatabase) db).getSQLiteDatabase(), projection, selection,
     selectionArgs, null, null, sortOrder);
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
 

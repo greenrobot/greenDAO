@@ -9,17 +9,19 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.database.AndroidSQLiteDatabase;
+import de.greenrobot.dao.database.StandardDatabase;
 import de.greenrobot.dao.database.Database;
 
+import de.greenrobot.daotest.DaoSession;
 import de.greenrobot.daotest.SimpleEntityDao;
 
-/* Copy this code snippet into your AndroidManifest.xml inside the <application> element:
+/* Copy this code snippet into your AndroidManifest.xml inside the
+<application> element:
 
     <provider
-        android:name="de.greenrobot.daotest.SimpleEntityContentProvider"
-        android:authorities="de.greenrobot.daotest" />
-*/
+            android:name="de.greenrobot.daotest.SimpleEntityContentProvider"
+            android:authorities="de.greenrobot.daotest.provider"/>
+    */
 
 public class SimpleEntityContentProvider extends ContentProvider {
 
@@ -104,7 +106,7 @@ public class SimpleEntityContentProvider extends ContentProvider {
         }
 
         Database db = getDatabase();
-        Cursor cursor = queryBuilder.query(((AndroidSQLiteDatabase) db).getSQLiteDatabase(), projection, selection,
+        Cursor cursor = queryBuilder.query(((StandardDatabase) db).getSQLiteDatabase(), projection, selection,
                 selectionArgs, null, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
