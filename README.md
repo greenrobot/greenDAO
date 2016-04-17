@@ -25,13 +25,14 @@ greenDAO is available on Maven Central. Please ensure that you are using the lat
 
 Gradle dependency for your Android app:
 ```
-    compile 'de.greenrobot:greendao:2.1.0'
+    compile 'de.greenrobot:greendao:2.2.0'
 ```
 
 Gradle dependency for your Java generator project:
 ```
-    compile 'de.greenrobot:greendao-generator:2.1.0'
+    compile 'de.greenrobot:greendao-generator:2.2.0'
 ```
+*Note:* to use encrypted databases using SQLCipher, you need to reference different artifacts (postfix '-encryption'). For all details, please refer to the documentation on []database encryption](http://greenrobot.org/greendao/documentation/database-encryption/).
 
 Homepage, Documentation, Links
 ------------------------------
@@ -41,7 +42,7 @@ For more details on greenDAO please check [greenDAO's website](http://greenrobot
 
 [Documentation](http://greenrobot.org/greendao/documentation/)
 
-[Changelog](CHANGELOG.md)
+[Changelog](http://greenrobot.org/greendao/changelog/)
 
 [Technical FAQ](http://greenrobot.org/greendao/documentation/technical-faq/)
 
@@ -62,7 +63,7 @@ More Open Source by greenrobot
 ==============================
 [__EventBus__](https://github.com/greenrobot/EventBus) is a central publish/subscribe bus for Android with optional delivery threads, priorities, and sticky events. A great tool to decouple components (e.g. Activities, Fragments, logic components) from each other.
 
-[__greenrobot-common__](https://github.com/greenrobot/greenrobot-common) is a set of utility classes and hash functions for Android & Java projects.
+[__Essentials__](https://github.com/greenrobot/essentials) is a set of utility classes and hash functions for Android & Java projects.
 
 [Follow us on Google+](https://plus.google.com/b/114381455741141514652/+GreenrobotDe/posts) to stay up to date.
 
