@@ -15,12 +15,8 @@
  */
 package de.greenrobot.daoexample;
 
-import java.text.DateFormat;
-import java.util.Date;
-
 import android.app.ListActivity;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -33,11 +29,19 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import de.greenrobot.daoexample.DaoMaster.DevOpenHelper;
+
+import net.sqlcipher.database.SQLiteDatabase;
+
+import java.text.DateFormat;
+import java.util.Date;
+
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.EncryptedDatabase;
+import de.greenrobot.daoexample.DaoMaster.EncryptedDevOpenHelper;
 
 public class NoteActivity extends ListActivity {
 
-    private SQLiteDatabase db;
+    private Database db;
 
     private EditText editText;
 
@@ -53,17 +57,19 @@ public class NoteActivity extends ListActivity {
 
         setContentView(R.layout.main);
 
-        DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "notes-db", null);
-        db = helper.getWritableDatabase();
+        // Note: db setup is better done in Application
+        EncryptedDevOpenHelper helper = new EncryptedDevOpenHelper(this, "notes-db-encrypted");
+        db = helper.getWritableDatabase("super-secret");
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
         noteDao = daoSession.getNoteDao();
 
         String textColumn = NoteDao.Properties.Text.columnName;
         String orderBy = textColumn + " COLLATE LOCALIZED ASC";
-        cursor = db.query(noteDao.getTablename(), noteDao.getAllColumns(), null, null, null, null, orderBy);
-        String[] from = { textColumn, NoteDao.Properties.Comment.columnName };
-        int[] to = { android.R.id.text1, android.R.id.text2 };
+        SQLiteDatabase sqLiteDatabase = ((EncryptedDatabase) db).getSQLiteDatabase();
+        cursor = sqLiteDatabase.query(noteDao.getTablename(), noteDao.getAllColumns(), null, null, null, null, orderBy);
+        String[] from = {textColumn, NoteDao.Properties.Comment.columnName};
+        int[] to = {android.R.id.text1, android.R.id.text2};
 
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, cursor, from,
                 to);

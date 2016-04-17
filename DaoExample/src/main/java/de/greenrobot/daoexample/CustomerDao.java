@@ -1,12 +1,12 @@
 package de.greenrobot.daoexample;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
 
 import de.greenrobot.daoexample.Customer;
 
@@ -40,7 +40,7 @@ public class CustomerDao extends AbstractDao<Customer, Long> {
     }
 
     /** Creates the underlying database table. */
-    public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"CUSTOMER\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
@@ -48,14 +48,14 @@ public class CustomerDao extends AbstractDao<Customer, Long> {
     }
 
     /** Drops the underlying database table. */
-    public static void dropTable(SQLiteDatabase db, boolean ifExists) {
+    public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"CUSTOMER\"";
         db.execSQL(sql);
     }
 
     /** @inheritdoc */
     @Override
-    protected void bindValues(SQLiteStatement stmt, Customer entity) {
+    protected void bindValues(DatabaseStatement stmt, Customer entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();
