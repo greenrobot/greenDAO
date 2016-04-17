@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.greenrobot'
-archivesBaseName = 'greendao-generator'
+archivesBaseName = 'greendao-generator-encryption'
 version = '2.2.0'
 sourceCompatibility = 1.7
 
