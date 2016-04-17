@@ -25,12 +25,12 @@ greenDAO is available on Maven Central. Please ensure that you are using the lat
 
 Gradle dependency for your Android app:
 ```
-    compile 'de.greenrobot:greendao:2.2.0'
+    compile 'org.greenrobot:greendao:2.2.0'
 ```
 
 Gradle dependency for your Java generator project:
 ```
-    compile 'de.greenrobot:greendao-generator:2.2.0'
+    compile 'org.greenrobot:greendao-generator:2.2.0'
 ```
 *Note:* to use encrypted databases using SQLCipher, you need to reference different artifacts (postfix '-encryption'). For all details, please refer to the documentation on []database encryption](http://greenrobot.org/greendao/documentation/database-encryption/).
 
