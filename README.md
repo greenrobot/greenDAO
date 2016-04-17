@@ -21,7 +21,7 @@ greenDAO's unique set of features:
 
 Add greenDAO to your project
 ----------------------------
-greenDAO is available on Maven Central. Please ensure that you are using the latest versions by [checking here](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22de.greenrobot%22%20AND%20a%3A%22greendao%22) [and here](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22de.greenrobot%22%20AND%20a%3A%22greendao-generator%22)
+greenDAO is available on Maven Central. Please ensure that you are using the latest versions by [checking here](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.greenrobot%22%20AND%20a%3A%22greendao%22) [and here](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.greenrobot%22%20AND%20a%3A%22greendao-generator%22)
 
 Gradle dependency for your Android app:
 ```
@@ -32,7 +32,7 @@ Gradle dependency for your Java generator project:
 ```
     compile 'org.greenrobot:greendao-generator:2.2.0'
 ```
-*Note:* to use encrypted databases using SQLCipher, you need to reference different artifacts (postfix '-encryption'). For all details, please refer to the documentation on []database encryption](http://greenrobot.org/greendao/documentation/database-encryption/).
+*Note:* to use encrypted databases using SQLCipher, you need to reference different artifacts (postfix '-encryption'). For all details, please refer to the documentation on [database encryption](http://greenrobot.org/greendao/documentation/database-encryption/).
 
 Homepage, Documentation, Links
 ------------------------------
