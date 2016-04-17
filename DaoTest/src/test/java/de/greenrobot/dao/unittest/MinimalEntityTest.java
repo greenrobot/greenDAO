@@ -1,7 +1,5 @@
 package de.greenrobot.dao.unittest;
 
-import android.database.sqlite.SQLiteDatabase;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,8 +9,10 @@ import org.robolectric.annotation.Config;
 
 import java.util.concurrent.CountDownLatch;
 
+import de.greenrobot.dao.database.Database;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.daotest.dummyapp.BuildConfig;
+
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,8 +27,8 @@ public class MinimalEntityTest {
 
     @Before
     public void setUp() {
-        DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(RuntimeEnvironment.application, null, null);
-        SQLiteDatabase db = openHelper.getWritableDatabase();
+        DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(RuntimeEnvironment.application, null);
+        Database db = openHelper.getWritableDatabase();
         daoSession = new DaoMaster(db).newSession();
         minimalEntityDao = daoSession.getMinimalEntityDao();
     }
