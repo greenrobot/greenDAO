@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
 public @interface ToMany {
-    /** Name of the property in target entity which holds id of the source (current) entity */
+    /** Name of the property inside the target entity which holds id of the source (current) entity */
     String mappedBy();
 }
