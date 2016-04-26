@@ -17,10 +17,14 @@ You should have received a copy of the GNU General Public License
 along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<#-- @ftlvariable name="entity" type="de.greenrobot.daogenerator.Entity" -->
+
 <#assign toBindType = {"Boolean":"Long", "Byte":"Long", "Short":"Long", "Int":"Long", "Long":"Long", "Float":"Double", "Double":"Double", "String":"String", "ByteArray":"Blob" }/>
 <#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob" }/>
 <#assign complexTypes = ["String", "ByteArray", "Date"]/>
 package ${entity.javaPackage};
+
+import org.greenrobot.greendao.annotations.*;
 
 <#if entity.toManyRelations?has_content>
 import java.util.List;
@@ -55,6 +59,7 @@ ${entity.javaDoc}
 <#if entity.codeBeforeClass ??>
 ${entity.codeBeforeClass}
 </#if>
+@Entity
 public class ${entity.className}<#if
 entity.superclass?has_content> extends ${entity.superclass} </#if><#if
 entity.interfacesToImplement?has_content> implements <#list entity.interfacesToImplement
@@ -75,21 +80,43 @@ ${property.javaDocField}
 
 <#if entity.active>
     /** Used to resolve relations */
+    @Generated
     private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
+    @Generated
     private transient ${entity.classNameDao} myDao;
 
 <#list entity.toOneRelations as toOne>
-    private ${toOne.targetEntity.className} ${toOne.name};
 <#if toOne.useFkProperty>
+    @ToOne(foreignKey = "${toOne.fkProperties[0].propertyName}")
+    private ${toOne.targetEntity.className} ${toOne.name};
+
+    @Generated
     private ${toOne.resolvedKeyJavaType[0]} ${toOne.name}__resolvedKey;
 <#else>
+    @ToOne(mappedBy = "${toOne.fkProperties[0].propertyName}", unique = ${toOne.fkProperties[0].unique?then("true", "false")})
+    private ${toOne.targetEntity.className} ${toOne.name};
+
+    @Generated
     private boolean ${toOne.name}__refreshed;
 </#if>
 
 </#list>
 <#list entity.toManyRelations as toMany>
+<#if toMany.sourceProperties??>
+    @ToMany(joinOn = {
+<#list toMany.sourceProperties as sourceProperty>
+        @JoinOn(source = "${sourceProperty.propertyName}", target = "${toMany.targetProperties[sourceProperty_index].propertyName}")<#sep>,
+</#list>
+
+    })
+<#elseif toMany.targetProperties??>
+    @ToMany(mappedBy = "${toMany.targetProperties[0]}")
+<#else>
+    @ToMany
+    @JoinEntity(entity = ${toMany.joinEntity.className}.class, sourceProperty = "${toMany.sourceProperty.propertyName}", targetProperty = "${toMany.targetProperty.propertyName}")
+</#if>
     private List<${toMany.targetEntity.className}> ${toMany.name};
 </#list>
 
@@ -112,6 +139,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
     }
 </#if>
 
+    @Generated
     public ${entity.className}(<#list entity.properties as
 property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
 <#list entity.properties as property>
@@ -122,6 +150,7 @@ property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_
 
 <#if entity.active>
     /** called by internal mechanisms, do not call yourself. */
+    @Generated
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.get${entity.classNameDao?cap_first}() : null;
@@ -163,6 +192,7 @@ ${property.javaDocSetter}
 -->
 <#list entity.toOneRelations as toOne>
     /** To-one relationship, resolved on first access. */
+    @Generated
     public ${toOne.targetEntity.className} get${toOne.name?cap_first}() {
 <#if toOne.useFkProperty>
         ${toOne.fkProperties[0].javaType} __key = this.${toOne.fkProperties[0].propertyName};
@@ -194,11 +224,13 @@ ${property.javaDocSetter}
 <#if !toOne.useFkProperty>
 
     /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
+    @Generated
     public ${toOne.targetEntity.className} peak${toOne.name?cap_first}() {
         return ${toOne.name};
     }
 </#if>
 
+    @Generated
     public void set${toOne.name?cap_first}(${toOne.targetEntity.className} ${toOne.name}) {
 <#if toOne.fkProperties[0].notNull>
         if (${toOne.name} == null) {
@@ -224,6 +256,7 @@ ${property.javaDocSetter}
 -->
 <#list entity.toManyRelations as toMany>
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    @Generated
     public List<${toMany.targetEntity.className}> get${toMany.name?cap_first}() {
         if (${toMany.name} == null) {
             if (daoSession == null) {
@@ -243,6 +276,7 @@ ${property.javaDocSetter}
     }
 
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated
     public synchronized void reset${toMany.name?cap_first}() {
         ${toMany.name} = null;
     }
@@ -254,7 +288,11 @@ ${property.javaDocSetter}
 ##########################################
 -->
 <#if entity.active>
-    /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */
+    /**
+    * Convenient call for {@link de.greenrobot.dao.AbstractDao#delete(Object)}.
+    * Entity must attached to an entity context.
+    */
+    @Generated
     public void delete() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
@@ -262,7 +300,11 @@ ${property.javaDocSetter}
         myDao.delete(this);
     }
 
-    /** Convenient call for {@link AbstractDao#update(Object)}. Entity must attached to an entity context. */
+    /**
+    * Convenient call for {@link de.greenrobot.dao.AbstractDao#update(Object)}.
+    * Entity must attached to an entity context.
+    */
+    @Generated
     public void update() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
@@ -270,7 +312,11 @@ ${property.javaDocSetter}
         myDao.update(this);
     }
 
-    /** Convenient call for {@link AbstractDao#refresh(Object)}. Entity must attached to an entity context. */
+    /**
+    * Convenient call for {@link de.greenrobot.dao.AbstractDao#refresh(Object)}.
+    * Entity must attached to an entity context.
+    */
+    @Generated
     public void refresh() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");

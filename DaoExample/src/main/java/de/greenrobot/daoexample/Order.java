@@ -1,5 +1,7 @@
 package de.greenrobot.daoexample;
 
+import org.greenrobot.greendao.annotations.*;
+
 import de.greenrobot.daoexample.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -7,6 +9,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table "ORDERS".
  */
+@Entity
 public class Order {
 
     private Long id;
@@ -14,12 +17,17 @@ public class Order {
     private long customerId;
 
     /** Used to resolve relations */
+    @Generated
     private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
+    @Generated
     private transient OrderDao myDao;
 
+    @ToOne(foreignKey = "customerId")
     private Customer customer;
+
+    @Generated
     private Long customer__resolvedKey;
 
 
@@ -30,6 +38,7 @@ public class Order {
         this.id = id;
     }
 
+    @Generated
     public Order(Long id, java.util.Date date, long customerId) {
         this.id = id;
         this.date = date;
@@ -37,6 +46,7 @@ public class Order {
     }
 
     /** called by internal mechanisms, do not call yourself. */
+    @Generated
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getOrderDao() : null;
@@ -67,6 +77,7 @@ public class Order {
     }
 
     /** To-one relationship, resolved on first access. */
+    @Generated
     public Customer getCustomer() {
         long __key = this.customerId;
         if (customer__resolvedKey == null || !customer__resolvedKey.equals(__key)) {
@@ -83,6 +94,7 @@ public class Order {
         return customer;
     }
 
+    @Generated
     public void setCustomer(Customer customer) {
         if (customer == null) {
             throw new DaoException("To-one property 'customerId' has not-null constraint; cannot set to-one to null");
@@ -94,7 +106,11 @@ public class Order {
         }
     }
 
-    /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */
+    /**
+    * Convenient call for {@link de.greenrobot.dao.AbstractDao#delete(Object)}.
+    * Entity must attached to an entity context.
+    */
+    @Generated
     public void delete() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
@@ -102,7 +118,11 @@ public class Order {
         myDao.delete(this);
     }
 
-    /** Convenient call for {@link AbstractDao#update(Object)}. Entity must attached to an entity context. */
+    /**
+    * Convenient call for {@link de.greenrobot.dao.AbstractDao#update(Object)}.
+    * Entity must attached to an entity context.
+    */
+    @Generated
     public void update() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
@@ -110,7 +130,11 @@ public class Order {
         myDao.update(this);
     }
 
-    /** Convenient call for {@link AbstractDao#refresh(Object)}. Entity must attached to an entity context. */
+    /**
+    * Convenient call for {@link de.greenrobot.dao.AbstractDao#refresh(Object)}.
+    * Entity must attached to an entity context.
+    */
+    @Generated
     public void refresh() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
