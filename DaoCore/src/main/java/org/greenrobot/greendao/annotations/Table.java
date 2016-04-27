@@ -18,8 +18,8 @@ public @interface Table {
     String name() default "";
 
     /**
-     * Multi-column indexes for the table
-     * To create a single-column index use {@link Column#index()} instead
+     * Indexes for the table
+     * To create a single-column index consider using {@link Index} on the property itself
      */
     Index[] indexes() default {};
 }
