@@ -13,6 +13,7 @@ import de.greenrobot.dao.DaoException;
 @Entity
 public class Customer {
 
+    @Id(autoincrement = true)
     private Long id;
 
     @NotNull

@@ -65,11 +65,13 @@ public class ${entity.className}<#if
 entity.superclass?has_content> extends ${entity.superclass} </#if><#if
 entity.interfacesToImplement?has_content> implements <#list entity.interfacesToImplement
 as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
-
 <#list entity.properties as property>
 <#assign notNull = property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
-<#if notNull||property.unique||property.index??>
+<#if property.primaryKey||notNull||property.unique||property.index??>
 
+</#if>
+<#if property.primaryKey>
+    @Id<#if property.autoincrement>(autoincrement = true)</#if>
 </#if>
 <#if notNull>
     @NotNull

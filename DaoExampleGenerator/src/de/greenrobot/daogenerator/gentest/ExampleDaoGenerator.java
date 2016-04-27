@@ -49,7 +49,7 @@ public class ExampleDaoGenerator {
 
     private static void addCustomerOrder(Schema schema) {
         Entity customer = schema.addEntity("Customer");
-        customer.addIdProperty();
+        customer.addIdProperty().autoincrement();
         customer.addStringProperty("name").notNull().unique();
 
         Entity order = schema.addEntity("Order");

@@ -9,6 +9,7 @@ import org.greenrobot.greendao.annotations.*;
 @Entity
 public class Note {
 
+    @Id
     private Long id;
 
     @NotNull

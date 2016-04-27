@@ -11,6 +11,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
 public @interface Id {
-    /** Specifies that id should be auto-incremented (works only for Long/long fields) */
+    /**
+     * Specifies that id should be auto-incremented (works only for Long/long fields)
+     * Autoincrement on SQLite introduces additional resources usage and usually can be avoided
+     * @see <a href="https://www.sqlite.org/autoinc.html">https://www.sqlite.org/autoinc.html</a> for details
+     * */
     boolean autoincrement() default false;
 }
