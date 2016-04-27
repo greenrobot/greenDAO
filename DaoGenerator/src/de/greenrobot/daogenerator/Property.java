@@ -198,6 +198,13 @@ public class Property {
 
     private String javaType;
 
+    /**
+     * Index, which has only this property
+     * Can be added by user via {@link PropertyBuilder} or via {@link Entity#addIndex(Index)}
+     * Initialized in 2nd pass
+     */
+    private Index index;
+
     public Property(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
         this.schema = schema;
         this.entity = entity;
@@ -364,6 +371,14 @@ public class Property {
 
     public Entity getEntity() {
         return entity;
+    }
+
+    public Index getIndex() {
+        return index;
+    }
+
+    public void setIndex(Index index) {
+        this.index = index;
     }
 
     void init2ndPass() {

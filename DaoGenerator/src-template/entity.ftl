@@ -68,14 +68,20 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 
 <#list entity.properties as property>
 <#assign notNull = property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
-<#if notNull||property.unique>
+<#if notNull||property.unique||property.index??>
 
 </#if>
 <#if notNull>
     @NotNull
 </#if>
-<#if property.unique>
-    @Column(<#if property.unique>unique = true</#if>)
+<#if ((property.index.nonDefaultName)!false) && (property.unique || (property.index.unique)!false)>
+    @Index(name = "${property.index.name}", unique = true)
+<#elseif (property.index.nonDefaultName)!false>
+    @Index(name = "${property.index.name}")
+<#elseif property.unique || ((property.index.unique)!false)>
+    @Index(unique = true)
+<#elseif property.index??>
+    @Index
 </#if>
 <#if property.javaDocField ??>
 ${property.javaDocField}

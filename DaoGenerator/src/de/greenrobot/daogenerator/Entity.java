@@ -495,6 +495,14 @@ public class Entity {
             }
         }
 
+        for (int i = 0; i < indexes.size(); i++) {
+            final Index index = indexes.get(i);
+            if (index.getProperties().size() == 1) {
+                final Property property = index.getProperties().get(0);
+                property.setIndex(index);
+            }
+        }
+
         if (propertiesPk.size() == 1) {
             pkProperty = propertiesPk.get(0);
             pkType = schema.mapToJavaTypeNullable(pkProperty.getPropertyType());
@@ -583,7 +591,7 @@ public class Entity {
                     }
                 }
                 // TODO can this get too long? how to shorten reliably without depending on the order (i)
-                index.setName(indexName);
+                index.setDefaultName(indexName);
             }
         }
     }
