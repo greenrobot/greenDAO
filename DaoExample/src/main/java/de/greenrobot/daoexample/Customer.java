@@ -14,7 +14,8 @@ import de.greenrobot.dao.DaoException;
 public class Customer {
 
     private Long id;
-    /** Not-null value. */
+
+    @NotNull
     private String name;
 
     /** Used to resolve relations */
@@ -58,13 +59,13 @@ public class Customer {
         this.id = id;
     }
 
-    /** Not-null value. */
+    @NotNull
     public String getName() {
         return name;
     }
 
     /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setName(String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 

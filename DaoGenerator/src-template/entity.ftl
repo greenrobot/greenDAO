@@ -18,10 +18,11 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
 <#-- @ftlvariable name="entity" type="de.greenrobot.daogenerator.Entity" -->
+<#-- @ftlvariable name="schema" type="de.greenrobot.daogenerator.Schema" -->
 
 <#assign toBindType = {"Boolean":"Long", "Byte":"Long", "Short":"Long", "Int":"Long", "Long":"Long", "Float":"Double", "Double":"Double", "String":"String", "ByteArray":"Blob" }/>
 <#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob" }/>
-<#assign complexTypes = ["String", "ByteArray", "Date"]/>
+<#assign primitiveTypes = ["boolean", "byte", "int", "long", "float", "double", "short"]/>
 package ${entity.javaPackage};
 
 import org.greenrobot.greendao.annotations.*;
@@ -66,8 +67,9 @@ entity.interfacesToImplement?has_content> implements <#list entity.interfacesToI
 as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 
 <#list entity.properties as property>
-<#if property.notNull && complexTypes?seq_contains(property.propertyType)>
-    /** Not-null value. */
+<#if property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
+
+    @NotNull
 </#if>
 <#if property.javaDocField ??>
 ${property.javaDocField}
@@ -158,8 +160,8 @@ property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_
 
 </#if>
 <#list entity.properties as property>
-<#if property.notNull && complexTypes?seq_contains(property.propertyType)>
-    /** Not-null value. */
+<#if property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
+    @NotNull
 </#if>
 <#if property.javaDocGetter ??>
 ${property.javaDocGetter}
@@ -171,7 +173,7 @@ ${property.javaDocGetter}
         return ${property.propertyName};
     }
 
-<#if property.notNull && complexTypes?seq_contains(property.propertyType)>
+<#if property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
     /** Not-null value; ensure this value is available before it is saved to the database. */
 </#if>
 <#if property.javaDocSetter ??>
@@ -180,7 +182,7 @@ ${property.javaDocSetter}
 <#if property.codeBeforeSetter ??>
     ${property.codeBeforeSetter}
 </#if>
-    public void set${property.propertyName?cap_first}(${property.javaTypeInEntity} ${property.propertyName}) {
+    public void set${property.propertyName?cap_first}(<#if property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>@NotNull </#if>${property.javaTypeInEntity} ${property.propertyName}) {
         this.${property.propertyName} = ${property.propertyName};
     }
 
@@ -231,7 +233,7 @@ ${property.javaDocSetter}
 </#if>
 
     @Generated
-    public void set${toOne.name?cap_first}(${toOne.targetEntity.className} ${toOne.name}) {
+    public void set${toOne.name?cap_first}(<#if toOne.fkProperties[0].notNull && !primitiveTypes?seq_contains(toOne.fkProperties[0].javaTypeInEntity)>@NotNull </#if>${toOne.targetEntity.className} ${toOne.name}) {
 <#if toOne.fkProperties[0].notNull>
         if (${toOne.name} == null) {
             throw new DaoException("To-one property '${toOne.fkProperties[0].propertyName}' has not-null constraint; cannot set to-one to null");

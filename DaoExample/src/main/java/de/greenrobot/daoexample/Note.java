@@ -10,7 +10,8 @@ import org.greenrobot.greendao.annotations.*;
 public class Note {
 
     private Long id;
-    /** Not-null value. */
+
+    @NotNull
     private String text;
     private String comment;
     private java.util.Date date;
@@ -38,13 +39,13 @@ public class Note {
         this.id = id;
     }
 
-    /** Not-null value. */
+    @NotNull
     public String getText() {
         return text;
     }
 
     /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setText(String text) {
+    public void setText(@NotNull String text) {
         this.text = text;
     }
 
