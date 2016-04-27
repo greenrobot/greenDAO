@@ -103,7 +103,7 @@ ${property.javaDocField}
     @Generated
     private ${toOne.resolvedKeyJavaType[0]} ${toOne.name}__resolvedKey;
 <#else>
-    @ToOne(mappedBy = "${toOne.fkProperties[0].propertyName}", unique = ${toOne.fkProperties[0].unique?then("true", "false")})
+    @ToOne(mappedBy = "${toOne.fkProperties[0].propertyName}"<#if toOne.fkProperties[0].unique>, unique = true</#if>)
     private ${toOne.targetEntity.className} ${toOne.name};
 
     @Generated
