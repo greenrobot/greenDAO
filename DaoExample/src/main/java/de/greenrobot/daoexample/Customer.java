@@ -16,6 +16,7 @@ public class Customer {
     private Long id;
 
     @NotNull
+    @Column(unique = true)
     private String name;
 
     /** Used to resolve relations */

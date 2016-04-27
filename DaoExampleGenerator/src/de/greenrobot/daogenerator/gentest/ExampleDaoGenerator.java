@@ -50,7 +50,7 @@ public class ExampleDaoGenerator {
     private static void addCustomerOrder(Schema schema) {
         Entity customer = schema.addEntity("Customer");
         customer.addIdProperty();
-        customer.addStringProperty("name").notNull();
+        customer.addStringProperty("name").notNull().unique();
 
         Entity order = schema.addEntity("Order");
         order.setTableName("ORDERS"); // "ORDER" is a reserved keyword

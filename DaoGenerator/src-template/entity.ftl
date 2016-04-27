@@ -67,9 +67,15 @@ entity.interfacesToImplement?has_content> implements <#list entity.interfacesToI
 as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 
 <#list entity.properties as property>
-<#if property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
+<#assign notNull = property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
+<#if notNull||property.unique>
 
+</#if>
+<#if notNull>
     @NotNull
+</#if>
+<#if property.unique>
+    @Column(<#if property.unique>unique = true</#if>)
 </#if>
 <#if property.javaDocField ??>
 ${property.javaDocField}
