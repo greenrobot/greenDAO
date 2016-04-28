@@ -243,6 +243,14 @@ public class Property {
         return primaryKey;
     }
 
+    public boolean isPkAsc() {
+        return pkAsc;
+    }
+
+    public boolean isPkDesc() {
+        return pkDesc;
+    }
+
     public boolean isAutoincrement() {
         return pkAutoincrement;
     }

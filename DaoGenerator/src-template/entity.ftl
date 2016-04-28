@@ -85,7 +85,15 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 
 </#if>
 <#if property.primaryKey>
-    @Id<#if property.autoincrement>(autoincrement = true)</#if>
+<#if property.autoincrement && property.pkDesc>
+    @Id(autoincrement = true, orderDesc = true)
+<#elseif property.autoincrement>
+    @Id(autoincrement = true)
+<#elseif property.pkDesc>
+    @Id(orderDesc = true)
+<#else>
+    @Id
+</#if>
 </#if>
 <#if property.nonDefaultColumnName>
     @Column(name = "${property.columnName}")

@@ -17,4 +17,9 @@ public @interface Id {
      * @see <a href="https://www.sqlite.org/autoinc.html">https://www.sqlite.org/autoinc.html</a> for details
      * */
     boolean autoincrement() default false;
+
+    /**
+     * Whether the primary key should be in descending order
+     */
+    boolean orderDesc() default false;
 }
