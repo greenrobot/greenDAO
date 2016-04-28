@@ -17,6 +17,7 @@ package de.greenrobot.daogenerator.gentest;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
+import de.greenrobot.daogenerator.Index;
 import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
 import de.greenrobot.daogenerator.ToMany;
@@ -42,9 +43,15 @@ public class ExampleDaoGenerator {
     private static void addNote(Schema schema) {
         Entity note = schema.addEntity("Note");
         note.addIdProperty();
-        note.addStringProperty("text").notNull();
+        final Property text = note.addStringProperty("text").notNull().getProperty();
         note.addStringProperty("comment");
-        note.addDateProperty("date");
+        final Property date = note.addDateProperty("date").getProperty();
+
+        final Index index = new Index();
+        index.addProperty(text);
+        index.addPropertyDesc(date);
+        index.makeUnique();
+        note.addIndex(index);
     }
 
     private static void addCustomerOrder(Schema schema) {

@@ -688,6 +688,21 @@ public class Entity {
         }
     }
 
+    public List<Index> getMultiIndexes() {
+        final List<Index> indexes = this.indexes;
+        if (!indexes.isEmpty()) {
+            final List<Index> result = new ArrayList<>();
+            for (final Index index : indexes) {
+                if (index.getProperties().size() > 1) {
+                    result.add(index);
+                }
+            }
+            return result;
+        } else {
+            return indexes;
+        }
+    }
+
     @Override
     public String toString() {
         return "Entity " + className + " (package: " + javaPackage + ")";

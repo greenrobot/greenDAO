@@ -46,6 +46,9 @@ public class NoteDao extends AbstractDao<Note, Long> {
                 "\"TEXT\" TEXT NOT NULL ," + // 1: text
                 "\"COMMENT\" TEXT," + // 2: comment
                 "\"DATE\" INTEGER);"); // 3: date
+        // Add Indexes
+        db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_NOTE_TEXT_DATE_DESC ON NOTE" +
+                " (\"TEXT\",\"DATE\");");
     }
 
     /** Drops the underlying database table. */

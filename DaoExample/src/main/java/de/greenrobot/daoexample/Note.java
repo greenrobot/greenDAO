@@ -7,6 +7,9 @@ import org.greenrobot.greendao.annotations.*;
  * Entity mapped to table "NOTE".
  */
 @Entity
+@Table(indexes = {
+    @Index(value = "text, date DESC", unique = true)
+})
 public class Note {
 
     @Id

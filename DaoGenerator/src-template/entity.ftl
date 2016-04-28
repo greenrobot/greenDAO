@@ -61,6 +61,15 @@ ${entity.javaDoc}
 ${entity.codeBeforeClass}
 </#if>
 @Entity
+<#assign multiIndexes = entity.multiIndexes>
+<#if (multiIndexes?size > 0)>
+@Table(indexes = {
+<#list multiIndexes as index>
+    @Index(value = "${index.indexSpec}"<#if index.nonDefaultName>, name = "${index.name}"</#if><#if index.unique>, unique = true</#if>)<#sep>,
+</#list>
+
+})
+</#if>
 public class ${entity.className}<#if
 entity.superclass?has_content> extends ${entity.superclass} </#if><#if
 entity.interfacesToImplement?has_content> implements <#list entity.interfacesToImplement
