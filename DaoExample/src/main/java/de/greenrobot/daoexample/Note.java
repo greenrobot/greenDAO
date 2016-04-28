@@ -13,6 +13,7 @@ import org.greenrobot.greendao.annotations.*;
 public class Note {
 
     @Id
+    @Column(name = "_id")
     private Long id;
 
     @NotNull

@@ -29,6 +29,7 @@ public class Property {
 
         public PropertyBuilder columnName(String columnName) {
             property.columnName = columnName;
+            property.nonDefaultColumnName = columnName != null;
             return this;
         }
 
@@ -198,6 +199,8 @@ public class Property {
 
     private String javaType;
 
+    private boolean nonDefaultColumnName;
+
     /**
      * Index, which has only this property
      * Can be added by user via {@link PropertyBuilder} or via {@link Entity#addIndex(Index)}
@@ -226,6 +229,10 @@ public class Property {
 
     public String getColumnName() {
         return columnName;
+    }
+
+    public boolean isNonDefaultColumnName() {
+        return nonDefaultColumnName;
     }
 
     public String getColumnType() {
@@ -388,6 +395,7 @@ public class Property {
         }
         if (columnName == null) {
             columnName = DaoUtil.dbName(propertyName);
+            nonDefaultColumnName = false;
         }
         if (notNull) {
             javaType = schema.mapToJavaTypeNotNull(propertyType);

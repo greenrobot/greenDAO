@@ -14,6 +14,7 @@ import de.greenrobot.dao.DaoException;
 public class Order {
 
     @Id
+    @Column(name = "_id")
     private Long id;
     private java.util.Date date;
     private long customerId;

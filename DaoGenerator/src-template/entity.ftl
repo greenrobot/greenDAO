@@ -81,11 +81,14 @@ entity.interfacesToImplement?has_content> implements <#list entity.interfacesToI
 as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 <#list entity.properties as property>
 <#assign notNull = property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
-<#if property.primaryKey||notNull||property.unique||property.index??>
+<#if property.primaryKey||notNull||property.unique||property.index??||property.nonDefaultColumnName>
 
 </#if>
 <#if property.primaryKey>
     @Id<#if property.autoincrement>(autoincrement = true)</#if>
+</#if>
+<#if property.nonDefaultColumnName>
+    @Column(name = "${property.columnName}")
 </#if>
 <#if notNull>
     @NotNull
