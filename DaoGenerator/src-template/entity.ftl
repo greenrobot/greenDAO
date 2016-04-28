@@ -23,6 +23,13 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 <#assign toBindType = {"Boolean":"Long", "Byte":"Long", "Short":"Long", "Int":"Long", "Long":"Long", "Float":"Double", "Double":"Double", "String":"String", "ByteArray":"Blob" }/>
 <#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob" }/>
 <#assign primitiveTypes = ["boolean", "byte", "int", "long", "float", "double", "short"]/>
+<#macro multiIndexes>
+{
+<#list entity.multiIndexes as index>
+    @Index(value = "${index.indexSpec}"<#if index.nonDefaultName>, name = "${index.name}"</#if><#if index.unique>, unique = true</#if>)<#sep>,
+</#list>
+
+}</#macro>
 package ${entity.javaPackage};
 
 import org.greenrobot.greendao.annotations.*;
@@ -61,14 +68,12 @@ ${entity.javaDoc}
 ${entity.codeBeforeClass}
 </#if>
 @Entity
-<#assign multiIndexes = entity.multiIndexes>
-<#if (multiIndexes?size > 0)>
-@Table(indexes = {
-<#list multiIndexes as index>
-    @Index(value = "${index.indexSpec}"<#if index.nonDefaultName>, name = "${index.name}"</#if><#if index.unique>, unique = true</#if>)<#sep>,
-</#list>
-
-})
+<#if entity.nonDefaultTableName && (entity.multiIndexes?size > 0)>
+@Table(name = "${entity.tableName}", indexes = <@multiIndexes/>)
+<#elseif entity.nonDefaultTableName>
+@Table(name = "${entity.tableName}")
+<#elseif (entity.multiIndexes?size > 0)>
+@Table(indexes = <@multiIndexes/>)
 </#if>
 public class ${entity.className}<#if
 entity.superclass?has_content> extends ${entity.superclass} </#if><#if

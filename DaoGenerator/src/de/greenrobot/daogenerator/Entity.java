@@ -47,6 +47,7 @@ public class Entity {
     private final List<Property> propertiesNonPk;
     private final Set<String> propertyNames;
     private final List<Index> indexes;
+    private final List<Index> multiIndexes;
     private final List<ToOne> toOneRelations;
     private final List<ToManyBase> toManyRelations;
     private final List<ToManyBase> incomingToManyRelations;
@@ -56,6 +57,7 @@ public class Entity {
     private final List<ContentProvider> contentProviders;
 
     private String tableName;
+    private boolean nonDefaultTableName;
     private String classNameDao;
     private String classNameTest;
     private String javaPackage;
@@ -83,6 +85,7 @@ public class Entity {
         propertiesNonPk = new ArrayList<Property>();
         propertyNames = new HashSet<String>();
         indexes = new ArrayList<Index>();
+        multiIndexes = new ArrayList<Index>();
         toOneRelations = new ArrayList<ToOne>();
         toManyRelations = new ArrayList<ToManyBase>();
         incomingToManyRelations = new ArrayList<ToManyBase>();
@@ -281,6 +284,7 @@ public class Entity {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+        this.nonDefaultTableName = tableName != null;
     }
 
     public String getClassName() {
@@ -497,9 +501,12 @@ public class Entity {
 
         for (int i = 0; i < indexes.size(); i++) {
             final Index index = indexes.get(i);
-            if (index.getProperties().size() == 1) {
+            final int propertiesSize = index.getProperties().size();
+            if (propertiesSize == 1) {
                 final Property property = index.getProperties().get(0);
                 property.setIndex(index);
+            } else if (propertiesSize > 1) {
+                multiIndexes.add(index);
             }
         }
 
@@ -550,6 +557,7 @@ public class Entity {
     protected void init2ndPassNamesWithDefaults() {
         if (tableName == null) {
             tableName = DaoUtil.dbName(className);
+            nonDefaultTableName = false;
         }
 
         if (classNameDao == null) {
@@ -689,18 +697,11 @@ public class Entity {
     }
 
     public List<Index> getMultiIndexes() {
-        final List<Index> indexes = this.indexes;
-        if (!indexes.isEmpty()) {
-            final List<Index> result = new ArrayList<>();
-            for (final Index index : indexes) {
-                if (index.getProperties().size() > 1) {
-                    result.add(index);
-                }
-            }
-            return result;
-        } else {
-            return indexes;
-        }
+        return multiIndexes;
+    }
+
+    public boolean isNonDefaultTableName() {
+        return nonDefaultTableName;
     }
 
     @Override
