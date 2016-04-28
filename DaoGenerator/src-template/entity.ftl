@@ -67,7 +67,7 @@ ${entity.javaDoc}
 <#if entity.codeBeforeClass ??>
 ${entity.codeBeforeClass}
 </#if>
-@Entity
+@Entity<#if entity.active>(active = true)</#if>
 <#if entity.nonDefaultTableName && (entity.multiIndexes?size > 0)>
 @Table(name = "${entity.tableName}", indexes = <@multiIndexes/>)
 <#elseif entity.nonDefaultTableName>

@@ -9,7 +9,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table "ORDERS".
  */
-@Entity
+@Entity(active = true)
 @Table(name = "ORDERS")
 public class Order {
 

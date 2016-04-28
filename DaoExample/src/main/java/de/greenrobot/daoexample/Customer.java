@@ -10,7 +10,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table "CUSTOMER".
  */
-@Entity
+@Entity(active = true)
 public class Customer {
 
     @Id(autoincrement = true)
