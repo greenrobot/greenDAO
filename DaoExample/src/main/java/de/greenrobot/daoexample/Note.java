@@ -21,6 +21,9 @@ public class Note {
     private String comment;
     private java.util.Date date;
 
+    @Convert(converter = de.greenrobot.daoexample.NoteTypeConverter.class, columnType = String.class)
+    private NoteType type;
+
     public Note() {
     }
 
@@ -29,11 +32,12 @@ public class Note {
     }
 
     @Generated
-    public Note(Long id, String text, String comment, java.util.Date date) {
+    public Note(Long id, String text, String comment, java.util.Date date, NoteType type) {
         this.id = id;
         this.text = text;
         this.comment = comment;
         this.date = date;
+        this.type = type;
     }
 
     public Long getId() {
@@ -68,6 +72,14 @@ public class Note {
 
     public void setDate(java.util.Date date) {
         this.date = date;
+    }
+
+    public NoteType getType() {
+        return type;
+    }
+
+    public void setType(NoteType type) {
+        this.type = type;
     }
 
 }

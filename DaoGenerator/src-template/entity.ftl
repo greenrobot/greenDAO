@@ -81,7 +81,7 @@ entity.interfacesToImplement?has_content> implements <#list entity.interfacesToI
 as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 <#list entity.properties as property>
 <#assign notNull = property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
-<#if property.primaryKey||notNull||property.unique||property.index??||property.nonDefaultColumnName>
+<#if property.primaryKey||notNull||property.unique||property.index??||property.nonDefaultColumnName||property.converter??>
 
 </#if>
 <#if property.primaryKey>
@@ -89,6 +89,9 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 </#if>
 <#if property.nonDefaultColumnName>
     @Column(name = "${property.columnName}")
+</#if>
+<#if property.converter??>
+    @Convert(converter = ${property.converter}.class, columnType = ${property.javaType}.class)
 </#if>
 <#if notNull>
     @NotNull

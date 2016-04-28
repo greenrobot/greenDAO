@@ -46,6 +46,8 @@ public class ExampleDaoGenerator {
         final Property text = note.addStringProperty("text").notNull().getProperty();
         note.addStringProperty("comment");
         final Property date = note.addDateProperty("date").getProperty();
+        note.addStringProperty("type")
+            .customType("de.greenrobot.daoexample.NoteType", "de.greenrobot.daoexample.NoteTypeConverter");
 
         final Index index = new Index();
         index.addProperty(text);

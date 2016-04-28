@@ -27,8 +27,10 @@ public class NoteDao extends AbstractDao<Note, Long> {
         public final static Property Text = new Property(1, String.class, "text", false, "TEXT");
         public final static Property Comment = new Property(2, String.class, "comment", false, "COMMENT");
         public final static Property Date = new Property(3, java.util.Date.class, "date", false, "DATE");
+        public final static Property Type = new Property(4, String.class, "type", false, "TYPE");
     };
 
+    private final NoteTypeConverter typeConverter = new NoteTypeConverter();
 
     public NoteDao(DaoConfig config) {
         super(config);
@@ -45,7 +47,8 @@ public class NoteDao extends AbstractDao<Note, Long> {
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"TEXT\" TEXT NOT NULL ," + // 1: text
                 "\"COMMENT\" TEXT," + // 2: comment
-                "\"DATE\" INTEGER);"); // 3: date
+                "\"DATE\" INTEGER," + // 3: date
+                "\"TYPE\" TEXT);"); // 4: type
         // Add Indexes
         db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_NOTE_TEXT_DATE_DESC ON NOTE" +
                 " (\"TEXT\",\"DATE\");");
@@ -77,6 +80,11 @@ public class NoteDao extends AbstractDao<Note, Long> {
         if (date != null) {
             stmt.bindLong(4, date.getTime());
         }
+ 
+        NoteType type = entity.getType();
+        if (type != null) {
+            stmt.bindString(5, typeConverter.convertToDatabaseValue(type));
+        }
     }
 
     /** @inheritdoc */
@@ -92,7 +100,8 @@ public class NoteDao extends AbstractDao<Note, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // text
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // comment
-            cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)) // date
+            cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)), // date
+            cursor.isNull(offset + 4) ? null : typeConverter.convertToEntityProperty(cursor.getString(offset + 4)) // type
         );
         return entity;
     }
@@ -104,6 +113,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
         entity.setText(cursor.getString(offset + 1));
         entity.setComment(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setDate(cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)));
+        entity.setType(cursor.isNull(offset + 4) ? null : typeConverter.convertToEntityProperty(cursor.getString(offset + 4)));
      }
     
     /** @inheritdoc */
