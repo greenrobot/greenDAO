@@ -32,6 +32,7 @@ public class Customer {
     @ToMany(joinOn = {
         @JoinOn(source = "id", target = "customerId")
     })
+    @OrderBy("date ASC")
     private List<Order> orders;
 
     public Customer() {

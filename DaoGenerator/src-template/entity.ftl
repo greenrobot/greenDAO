@@ -26,7 +26,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 <#macro multiIndexes>
 {
 <#list entity.multiIndexes as index>
-    @Index(value = "${index.indexSpec}"<#if index.nonDefaultName>, name = "${index.name}"</#if><#if index.unique>, unique = true</#if>)<#sep>,
+    @Index(value = "${index.orderSpec}"<#if index.nonDefaultName>, name = "${index.name}"</#if><#if index.unique>, unique = true</#if>)<#sep>,
 </#list>
 
 }</#macro>
@@ -152,6 +152,10 @@ ${property.javaDocField}
 <#else>
     @ToMany
     @JoinEntity(entity = ${toMany.joinEntity.className}.class, sourceProperty = "${toMany.sourceProperty.propertyName}", targetProperty = "${toMany.targetProperty.propertyName}")
+</#if>
+<#assign orderSpec = toMany.orderSpec>
+<#if orderSpec??>
+    @OrderBy("${orderSpec}")
 </#if>
     private List<${toMany.targetEntity.className}> ${toMany.name};
 </#list>

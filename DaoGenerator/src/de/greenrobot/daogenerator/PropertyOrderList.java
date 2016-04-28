@@ -83,4 +83,22 @@ public class PropertyOrderList {
         return properties.isEmpty();
     }
 
+    public String getOrderSpec() {
+        final List<Property> properties = getProperties();
+        final List<String> propertiesOrder = getPropertiesOrder();
+        final StringBuilder builder = new StringBuilder();
+        final int size = properties.size();
+        for (int i = 0; i < size; i++) {
+            final Property property = properties.get(i);
+            final String order = propertiesOrder.get(i);
+            builder.append(property.getPropertyName());
+            if (order != null) {
+                builder.append(' ').append(order);
+            }
+            if (i < size - 1) {
+                builder.append(", ");
+            }
+        }
+        return builder.toString();
+    }
 }

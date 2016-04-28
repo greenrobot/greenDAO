@@ -78,6 +78,15 @@ public abstract class ToManyBase {
         }
     }
 
+    /** order spec to be used in generated @OrderBy annotation */
+    public String getOrderSpec() {
+        if (propertyOrderList.isEmpty()) {
+            return null;
+        } else {
+            return propertyOrderList.getOrderSpec();
+        }
+    }
+
     void init2ndPass() {
         if (name == null) {
             char[] nameCharArray = targetEntity.getClassName().toCharArray();

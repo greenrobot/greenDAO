@@ -18,8 +18,6 @@
 package de.greenrobot.daogenerator;
 
 
-import java.util.List;
-
 public class Index extends PropertyOrderList {
     private String name;
     private boolean unique;
@@ -52,24 +50,5 @@ public class Index extends PropertyOrderList {
     void setDefaultName(String name) {
         this.name = name;
         this.nonDefaultName = false;
-    }
-
-    public String getIndexSpec() {
-        final List<Property> properties = getProperties();
-        final List<String> propertiesOrder = getPropertiesOrder();
-        final StringBuilder builder = new StringBuilder();
-        final int size = properties.size();
-        for (int i = 0; i < size; i++) {
-            final Property property = properties.get(i);
-            final String order = propertiesOrder.get(i);
-            builder.append(property.getPropertyName());
-            if (order != null) {
-                builder.append(' ').append(order);
-            }
-            if (i < size - 1) {
-                builder.append(", ");
-            }
-        }
-        return builder.toString();
     }
 }

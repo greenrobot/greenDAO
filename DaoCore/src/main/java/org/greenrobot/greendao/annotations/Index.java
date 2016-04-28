@@ -16,8 +16,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Index {
     /**
-     * Comma-separated list of properties that should be indexed, e.g. "columnA, columnB, columnC"
-     * To specify order, add ASC or DESC after column name, e.g.: "columnA DESC, columnB ASC, columnC DESC"
+     * Comma-separated list of properties that should be indexed, e.g. "propertyA, propertyB, propertyC"
+     * To specify order, add ASC or DESC after column name, e.g.: "propertyA DESC, propertyB ASC"
      * This should be only set if this annotation is used in {@link Table#indexes()}
      */
     String value() default "";
