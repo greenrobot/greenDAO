@@ -137,13 +137,13 @@ ${property.javaDocField}
     private ${toOne.targetEntity.className} ${toOne.name};
 
     @Generated
-    private ${toOne.resolvedKeyJavaType[0]} ${toOne.name}__resolvedKey;
+    private transient ${toOne.resolvedKeyJavaType[0]} ${toOne.name}__resolvedKey;
 <#else>
     @ToOne(mappedBy = "${toOne.fkProperties[0].propertyName}"<#if toOne.fkProperties[0].unique>, unique = true</#if>)
     private ${toOne.targetEntity.className} ${toOne.name};
 
     @Generated
-    private boolean ${toOne.name}__refreshed;
+    private transient boolean ${toOne.name}__refreshed;
 </#if>
 
 </#list>
