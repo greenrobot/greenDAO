@@ -116,7 +116,7 @@ public class NoteActivity extends ListActivity {
 
         final DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
         String comment = "Added on " + df.format(new Date());
-        Note note = new Note(null, noteText, comment, new Date());
+        Note note = new Note(null, noteText, comment, new Date(), NoteType.TEXT);
         noteDao.insert(note);
         Log.d("DaoExample", "Inserted new note, ID: " + note.getId());
 
