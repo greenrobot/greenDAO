@@ -662,10 +662,10 @@ public class Entity {
             String customType = property.getCustomType();
             if (customType != null) {
                 String pack = DaoUtil.getPackageFromFullyQualified(customType);
-                if (!pack.equals(javaPackage)) {
+                if (pack != null && !pack.equals(javaPackage)) {
                     additionalImportsEntity.add(customType);
                 }
-                if (!pack.equals(javaPackageDao)) {
+                if (pack != null && !pack.equals(javaPackageDao)) {
                     additionalImportsDao.add(customType);
                 }
             }
@@ -673,7 +673,7 @@ public class Entity {
             String converter = property.getConverter();
             if (converter != null) {
                 String pack = DaoUtil.getPackageFromFullyQualified(converter);
-                if (!pack.equals(javaPackageDao)) {
+                if (pack != null && !pack.equals(javaPackageDao)) {
                     additionalImportsDao.add(converter);
                 }
             }
