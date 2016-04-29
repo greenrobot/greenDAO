@@ -31,7 +31,7 @@ public class Order {
     private Customer customer;
 
     @Generated
-    private Long customer__resolvedKey;
+    private transient Long customer__resolvedKey;
 
 
     public Order() {
