@@ -404,6 +404,8 @@ public class Property {
         if (columnName == null) {
             columnName = DaoUtil.dbName(propertyName);
             nonDefaultColumnName = false;
+        } else if (primaryKey && propertyType == PropertyType.Long && columnName.equals("_id")) {
+            nonDefaultColumnName = false;
         }
         if (notNull) {
             javaType = schema.mapToJavaTypeNotNull(propertyType);

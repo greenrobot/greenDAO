@@ -14,7 +14,6 @@ import de.greenrobot.dao.DaoException;
 public class Customer {
 
     @Id(autoincrement = true)
-    @Column(name = "_id")
     private Long id;
 
     @NotNull
