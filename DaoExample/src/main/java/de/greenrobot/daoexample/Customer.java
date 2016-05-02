@@ -18,7 +18,7 @@ public class Customer {
     private Long id;
 
     @NotNull
-    @Index(unique = true)
+    @Unique
     private String name;
 
     /** Used to resolve relations */

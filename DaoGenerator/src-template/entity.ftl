@@ -104,11 +104,14 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 <#if notNull>
     @NotNull
 </#if>
-<#if ((property.index.nonDefaultName)!false) && (property.unique || (property.index.unique)!false)>
+<#if property.unique>
+    @Unique
+</#if>
+<#if ((property.index.nonDefaultName)!false) && (property.index.unique)!false>
     @Index(name = "${property.index.name}", unique = true)
 <#elseif (property.index.nonDefaultName)!false>
     @Index(name = "${property.index.name}")
-<#elseif property.unique || ((property.index.unique)!false)>
+<#elseif (property.index.unique)!false>
     @Index(unique = true)
 <#elseif property.index??>
     @Index
