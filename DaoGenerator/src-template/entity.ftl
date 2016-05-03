@@ -84,6 +84,12 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 <#if property.primaryKey||notNull||property.unique||property.index??||property.nonDefaultColumnName||property.converter??>
 
 </#if>
+<#if property.javaDocField ??>
+${property.javaDocField}
+</#if>
+<#if property.codeBeforeField ??>
+${property.codeBeforeField}
+</#if>
 <#if property.primaryKey>
 <#if property.autoincrement && property.pkDesc>
     @Id(autoincrement = true, orderDesc = true)
@@ -115,12 +121,6 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
     @Index(unique = true)
 <#elseif property.index??>
     @Index
-</#if>
-<#if property.javaDocField ??>
-${property.javaDocField}
-</#if>
-<#if property.codeBeforeField ??>
-     ${property.codeBeforeField}
 </#if>
     private ${property.javaTypeInEntity} ${property.propertyName};
 </#list>
@@ -210,14 +210,14 @@ property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_
 
 </#if>
 <#list entity.properties as property>
-<#if property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
-    @NotNull
-</#if>
 <#if property.javaDocGetter ??>
 ${property.javaDocGetter}
 </#if>
 <#if property.codeBeforeGetter ??>
     ${property.codeBeforeGetter}
+</#if>
+<#if property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
+    @NotNull
 </#if>
     public ${property.javaTypeInEntity} get${property.propertyName?cap_first}() {
         return ${property.propertyName};
