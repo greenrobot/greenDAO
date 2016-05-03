@@ -164,8 +164,8 @@ ${property.javaDocField}
     @ToMany
     @JoinEntity(entity = ${toMany.joinEntity.className}.class, sourceProperty = "${toMany.sourceProperty.propertyName}", targetProperty = "${toMany.targetProperty.propertyName}")
 </#if>
-<#assign orderSpec = toMany.orderSpec>
-<#if orderSpec??>
+<#assign orderSpec = (toMany.orderSpec)!"0">
+<#if orderSpec != "0">
     @OrderBy("${orderSpec}")
 </#if>
     private List<${toMany.targetEntity.className}> ${toMany.name};
