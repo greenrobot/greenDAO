@@ -34,6 +34,7 @@ public class Customer {
     @OrderBy("date ASC")
     private List<Order> orders;
 
+    @Generated
     public Customer() {
     }
 

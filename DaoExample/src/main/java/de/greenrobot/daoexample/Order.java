@@ -32,7 +32,7 @@ public class Order {
     @Generated
     private transient Long customer__resolvedKey;
 
-
+    @Generated
     public Order() {
     }
 

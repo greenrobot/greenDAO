@@ -142,7 +142,16 @@ ${property.codeBeforeField}
     @Generated
     private transient ${toOne.resolvedKeyJavaType[0]} ${toOne.name}__resolvedKey;
 <#else>
-    @ToOne(mappedBy = "${toOne.fkProperties[0].propertyName}"<#if toOne.fkProperties[0].unique>, unique = true</#if>)
+    @ToOne
+<#if toOne.fkProperties[0].nonDefaultColumnName>
+    @Column(name = "${toOne.fkProperties[0].columnName}")
+</#if>
+<#if toOne.fkProperties[0].unique>
+    @Unique
+</#if>
+<#if toOne.fkProperties[0].notNull>
+    @NotNull
+</#if>
     private ${toOne.targetEntity.className} ${toOne.name};
 
     @Generated

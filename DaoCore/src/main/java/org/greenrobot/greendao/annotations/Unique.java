@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Marks property should have a UNIQUE constraint during table creation.
+ * This annotation is also applicable with @ToOne without additional foreign key property
  *
  * <p>
  * To have a unique constraint after table creation you can use {@link Index#unique()}

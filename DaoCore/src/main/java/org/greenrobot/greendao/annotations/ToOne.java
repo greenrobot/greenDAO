@@ -6,25 +6,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines *-to-1 relation
+ * Defines *-to-1 relation with base on existing property as foreign key or with base on
+ * automatically created backing column
+ *
+ * In case foreignKey is not specified, the following annotations can be applied together with @ToOne:
+ * - {@link Column} to specify backing column name
+ * - {@link Unique} to put the unique constraint on backing column during table creation
+ * - {@link NotNull} to put the NOT NULL constraint on backing column during table creation
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
 public @interface ToOne {
     /**
      * Name of the property inside the current entity which holds the key of related entity
-     * You should specify either foreignKey or {@link #mappedBy}
+     * If nothing is specified, then additional column is automatically created to hold the key
      */
     String foreignKey() default "";
-
-    /**
-     * Name of the property inside the target entity which holds id of the source (current) entity
-     * You should specify either {@link #foreignKey} or mappedBy
-     */
-    String mappedBy() default "";
-
-    /**
-     * Whether the relation is unique. Applicable only if {@link #mappedBy} is in use
-     */
-    boolean unique() default false;
 }

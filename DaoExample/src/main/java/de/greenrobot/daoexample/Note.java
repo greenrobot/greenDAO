@@ -23,6 +23,7 @@ public class Note {
     @Convert(converter = de.greenrobot.daoexample.NoteTypeConverter.class, columnType = String.class)
     private NoteType type;
 
+    @Generated
     public Note() {
     }
 
