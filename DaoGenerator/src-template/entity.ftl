@@ -88,7 +88,7 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 ${property.javaDocField}
 </#if>
 <#if property.codeBeforeField ??>
-${property.codeBeforeField}
+    ${property.codeBeforeField}
 </#if>
 <#if property.primaryKey>
 <#if property.autoincrement && property.pkDesc>
