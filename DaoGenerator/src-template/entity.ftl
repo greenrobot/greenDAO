@@ -133,8 +133,8 @@ ${property.codeBeforeField}
     /** Used for active entity operations. */
     @Generated
     private transient ${entity.classNameDao} myDao;
-
 <#list entity.toOneRelations as toOne>
+
 <#if toOne.useFkProperty>
     @ToOne(foreignKey = "${toOne.fkProperties[0].propertyName}")
     private ${toOne.targetEntity.className} ${toOne.name};
@@ -148,9 +148,9 @@ ${property.codeBeforeField}
     @Generated
     private transient boolean ${toOne.name}__refreshed;
 </#if>
-
 </#list>
 <#list entity.toManyRelations as toMany>
+
 <#if toMany.sourceProperties??>
     @ToMany(joinOn = {
 <#list toMany.sourceProperties as sourceProperty>
