@@ -178,6 +178,7 @@ ${keepFields!}    // KEEP FIELDS END
 
 </#if>
 <#if entity.constructors>
+    @Generated
     public ${entity.className}() {
     }
 <#if entity.propertiesPk?has_content && entity.propertiesPk?size != entity.properties?size>
