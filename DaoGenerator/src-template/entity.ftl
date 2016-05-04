@@ -69,11 +69,13 @@ ${entity.codeBeforeClass}
 </#if>
 @Entity<#if entity.active>(active = true)</#if>
 <#if entity.nonDefaultTableName && (entity.multiIndexes?size > 0)>
-@Table(name = "${entity.tableName}", indexes = <@multiIndexes/>)
+@Table(name = "${entity.tableName}", indexes = <@multiIndexes/><#if entity.skipTableCreation>, create = false</#if>)
 <#elseif entity.nonDefaultTableName>
-@Table(name = "${entity.tableName}")
+@Table(name = "${entity.tableName}"<#if entity.skipTableCreation>, create = false</#if>)
 <#elseif (entity.multiIndexes?size > 0)>
-@Table(indexes = <@multiIndexes/>)
+@Table(indexes = <@multiIndexes/><#if entity.skipTableCreation>, create = false</#if>)
+<#elseif entity.skipTableCreation>
+@Table(create = false)
 </#if>
 public class ${entity.className}<#if
 entity.superclass?has_content> extends ${entity.superclass} </#if><#if

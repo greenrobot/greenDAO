@@ -22,4 +22,10 @@ public @interface Table {
      * To create a single-column index consider using {@link Index} on the property itself
      */
     Index[] indexes() default {};
+
+    /**
+     * Whether corresponding table should be automatically created
+     * Disabling creation can be useful for SQLITE_MASTER table
+     */
+    boolean create() default true;
 }
