@@ -53,7 +53,7 @@ public class PropertyOrderList {
         return properties;
     }
 
-    List<String> getPropertiesOrder() {
+    public List<String> getPropertiesOrder() {
         return propertiesOrder;
     }
 

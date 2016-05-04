@@ -51,7 +51,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
                 "\"TYPE\" TEXT);"); // 4: type
         // Add Indexes
         db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_NOTE_TEXT_DATE_DESC ON NOTE" +
-                " (\"TEXT\",\"DATE\");");
+                " (\"TEXT\",\"DATE\" DESC);");
     }
 
     /** Drops the underlying database table. */
