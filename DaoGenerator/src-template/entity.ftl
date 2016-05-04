@@ -67,7 +67,15 @@ ${entity.javaDoc}
 <#if entity.codeBeforeClass ??>
 ${entity.codeBeforeClass}
 </#if>
-@Entity<#if entity.active>(active = true)</#if>
+<#if entity.active && schema.name != "default">
+@Entity(schema = "${schema.name}", active = true)
+<#elseif entity.active>
+@Entity(active = true)
+<#elseif schema.name != "default">
+@Entity(schema = "${schema.name}")
+<#else>
+@Entity
+</#if>
 <#if entity.nonDefaultTableName && (entity.multiIndexes?size > 0)>
 @Table(name = "${entity.tableName}", indexes = <@multiIndexes/><#if entity.skipTableCreation>, create = false</#if>)
 <#elseif entity.nonDefaultTableName>
