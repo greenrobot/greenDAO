@@ -30,7 +30,7 @@ Gradle dependency for your Android app:
 
 Gradle dependency for your Java generator project:
 ```
-    compile 'org.greenrobot:greendao-generator:2.2.0'
+    provided 'org.greenrobot:greendao-generator:2.2.0'
 ```
 *Note:* to use encrypted databases using SQLCipher, you need to reference different artifacts (postfix '-encryption'). For all details, please refer to the documentation on [database encryption](http://greenrobot.org/greendao/documentation/database-encryption/).
 
