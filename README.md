@@ -33,7 +33,7 @@ Gradle dependency for your Java generator project:
     compile 'org.greenrobot:greendao-generator:2.2.0'
 ```
 
-*Hint:* Use 'provided' if you are using the generator dependency in your Android project (in Android Studio for example), so it won't be included to your APK:
+*Hint:* Use 'provided' if you are using the generator dependency in your Android project (in Android Studio for example), so it won't be included in your APK:
 ```
     provided 'org.greenrobot:greendao-generator:2.2.0'
 ```
