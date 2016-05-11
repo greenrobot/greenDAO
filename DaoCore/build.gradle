@@ -5,7 +5,8 @@ apply plugin: 'signing'
 group = 'org.greenrobot'
 archivesBaseName = 'greendao'
 version = '3.0.0-2-SNAPSHOT'
-sourceCompatibility = 1.6
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 def isSnapshot = version.endsWith('-SNAPSHOT')
 def sonatypeRepositoryUrl
