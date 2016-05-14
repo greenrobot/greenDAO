@@ -4,3 +4,4 @@
 out/
 build/
 local.properties
+gradle.properties
