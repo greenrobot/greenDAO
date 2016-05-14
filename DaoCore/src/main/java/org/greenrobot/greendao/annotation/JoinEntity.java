@@ -1,4 +1,4 @@
-package org.greenrobot.greendao.annotations;
+package org.greenrobot.greendao.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

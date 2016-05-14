@@ -1,4 +1,4 @@
-package org.greenrobot.greendao.annotations;
+package org.greenrobot.greendao.annotation;
 
 import de.greenrobot.dao.converter.PropertyConverter;
 

@@ -32,7 +32,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 }</#macro>
 package ${entity.javaPackage};
 
-import org.greenrobot.greendao.annotations.*;
+import org.greenrobot.greendao.annotation.*;
 
 <#if entity.toManyRelations?has_content>
 import java.util.List;
