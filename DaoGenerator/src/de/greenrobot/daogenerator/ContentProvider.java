@@ -2,6 +2,7 @@ package de.greenrobot.daogenerator;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class ContentProvider {
     private final List<Entity> entities;
     private String authority;

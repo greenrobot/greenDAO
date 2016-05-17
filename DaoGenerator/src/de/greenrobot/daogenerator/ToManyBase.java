@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -18,6 +18,7 @@
 package de.greenrobot.daogenerator;
 
 /** Base class for to-many relationship from source entities to target entities. */
+@SuppressWarnings("unused")
 public abstract class ToManyBase {
     @SuppressWarnings("unused")
     private final Schema schema;

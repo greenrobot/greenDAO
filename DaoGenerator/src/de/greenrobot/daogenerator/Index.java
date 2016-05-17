@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -17,7 +17,7 @@
  */
 package de.greenrobot.daogenerator;
 
-
+@SuppressWarnings("unused")
 public class Index extends PropertyOrderList {
     private String name;
     private boolean unique;

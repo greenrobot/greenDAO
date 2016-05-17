@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -20,8 +20,8 @@ package de.greenrobot.daogenerator;
 import java.util.List;
 
 /** To-many relationship from a source entity to many target entities. */
+@SuppressWarnings("unused")
 public class ToMany extends ToManyBase {
-    @SuppressWarnings("unused")
     private Property[] sourceProperties;
     private final Property[] targetProperties;
 

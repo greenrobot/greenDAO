@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -18,6 +18,7 @@
 package de.greenrobot.daogenerator;
 
 /** Model class for an entity's property: a Java property mapped to a data base column. */
+@SuppressWarnings("unused")
 public class Property {
 
     public static class PropertyBuilder {

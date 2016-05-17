@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -27,6 +27,7 @@ import java.util.Map;
  * 
  * @see <a href="http://greendao-orm.com/documentation/modelling-entities/">Modelling Entities (Documentation page)</a>
  */
+@SuppressWarnings("unused")
 public class Schema {
     private final int version;
     private final String defaultJavaPackage;
@@ -44,7 +45,7 @@ public class Schema {
         this.name = name;
         this.version = version;
         this.defaultJavaPackage = defaultJavaPackage;
-        this.entities = new ArrayList<Entity>();
+        this.entities = new ArrayList<>();
         initTypeMappings();
     }
 
@@ -61,7 +62,7 @@ public class Schema {
     }
 
     private void initTypeMappings() {
-        propertyToDbType = new HashMap<PropertyType, String>();
+        propertyToDbType = new HashMap<>();
         propertyToDbType.put(PropertyType.Boolean, "INTEGER");
         propertyToDbType.put(PropertyType.Byte, "INTEGER");
         propertyToDbType.put(PropertyType.Short, "INTEGER");
@@ -73,7 +74,7 @@ public class Schema {
         propertyToDbType.put(PropertyType.ByteArray, "BLOB");
         propertyToDbType.put(PropertyType.Date, "INTEGER");
 
-        propertyToJavaTypeNotNull = new HashMap<PropertyType, String>();
+        propertyToJavaTypeNotNull = new HashMap<>();
         propertyToJavaTypeNotNull.put(PropertyType.Boolean, "boolean");
         propertyToJavaTypeNotNull.put(PropertyType.Byte, "byte");
         propertyToJavaTypeNotNull.put(PropertyType.Short, "short");
@@ -85,7 +86,7 @@ public class Schema {
         propertyToJavaTypeNotNull.put(PropertyType.ByteArray, "byte[]");
         propertyToJavaTypeNotNull.put(PropertyType.Date, "java.util.Date");
 
-        propertyToJavaTypeNullable = new HashMap<PropertyType, String>();
+        propertyToJavaTypeNullable = new HashMap<>();
         propertyToJavaTypeNullable.put(PropertyType.Boolean, "Boolean");
         propertyToJavaTypeNullable.put(PropertyType.Byte, "Byte");
         propertyToJavaTypeNullable.put(PropertyType.Short, "Short");

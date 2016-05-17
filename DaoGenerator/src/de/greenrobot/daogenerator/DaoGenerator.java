@@ -109,7 +109,7 @@ public class DaoGenerator {
                 }
             }
             for (ContentProvider contentProvider : entity.getContentProviders()) {
-                Map<String, Object> additionalObjectsForTemplate = new HashMap<String, Object>();
+                Map<String, Object> additionalObjectsForTemplate = new HashMap<>();
                 additionalObjectsForTemplate.put("contentProvider", contentProvider);
                 generate(templateContentProvider, outDirFile, entity.getJavaPackage(), entity.getClassName()
                         + "ContentProvider", schema, entity, additionalObjectsForTemplate);
@@ -138,7 +138,7 @@ public class DaoGenerator {
 
     private void generate(Template template, File outDirFile, String javaPackage, String javaClassName, Schema schema,
                           Entity entity, Map<String, Object> additionalObjectsForTemplate) throws Exception {
-        Map<String, Object> root = new HashMap<String, Object>();
+        Map<String, Object> root = new HashMap<>();
         root.put("schema", schema);
         root.put("entity", entity);
         if (additionalObjectsForTemplate != null) {
@@ -146,6 +146,7 @@ public class DaoGenerator {
         }
         try {
             File file = toJavaFilename(outDirFile, javaPackage, javaClassName);
+            //noinspection ResultOfMethodCallIgnored
             file.getParentFile().mkdirs();
 
             if (entity != null && entity.getHasKeepSections()) {
@@ -198,8 +199,7 @@ public class DaoGenerator {
     protected File toJavaFilename(File outDirFile, String javaPackage, String javaClassName) {
         String packageSubPath = javaPackage.replace('.', '/');
         File packagePath = new File(outDirFile, packageSubPath);
-        File file = new File(packagePath, javaClassName + ".java");
-        return file;
+        return new File(packagePath, javaClassName + ".java");
     }
 
 }

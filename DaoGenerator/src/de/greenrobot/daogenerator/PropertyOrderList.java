@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -25,8 +25,8 @@ public class PropertyOrderList {
     private List<String> propertiesOrder;
 
     public PropertyOrderList() {
-        properties = new ArrayList<Property>();
-        propertiesOrder = new ArrayList<String>();
+        properties = new ArrayList<>();
+        propertiesOrder = new ArrayList<>();
     }
 
     public void addProperty(Property property) {
@@ -44,6 +44,7 @@ public class PropertyOrderList {
         propertiesOrder.add("DESC");
     }
 
+    @SuppressWarnings("unused")
     public void addOrderRaw(String order) {
         properties.add(null);
         propertiesOrder.add(order);

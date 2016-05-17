@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -18,6 +18,7 @@
 package de.greenrobot.daogenerator;
 
 /** To-one relationship from a source entity to one (or zero) target entity. */
+@SuppressWarnings("unused")
 public class ToOne {
     private final Schema schema;
     private final Entity sourceEntity;
