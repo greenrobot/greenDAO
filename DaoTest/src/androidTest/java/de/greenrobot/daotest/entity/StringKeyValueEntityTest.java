@@ -1,7 +1,7 @@
 package de.greenrobot.daotest.entity;
 
 import junit.framework.Assert;
-import de.greenrobot.dao.test.AbstractDaoTestStringPk;
+import org.greenrobot.greendao.test.AbstractDaoTestStringPk;
 import de.greenrobot.daotest.StringKeyValueEntity;
 import de.greenrobot.daotest.StringKeyValueEntityDao;
 

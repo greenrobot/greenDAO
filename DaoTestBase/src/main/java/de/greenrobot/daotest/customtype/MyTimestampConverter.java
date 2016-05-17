@@ -1,6 +1,6 @@
 package de.greenrobot.daotest.customtype;
 
-import de.greenrobot.dao.converter.PropertyConverter;
+import org.greenrobot.greendao.converter.PropertyConverter;
 
 public class MyTimestampConverter implements PropertyConverter<MyTimestamp, Long> {
     @Override

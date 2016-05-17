@@ -17,9 +17,9 @@
  */
 package de.greenrobot.daotest.query;
 
-import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.query.CountQuery;
-import de.greenrobot.dao.query.QueryBuilder;
+import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.query.CountQuery;
+import org.greenrobot.greendao.query.QueryBuilder;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;

@@ -1,6 +1,6 @@
 package de.greenrobot.daotest.entity;
 
-import de.greenrobot.dao.test.AbstractDaoTestLongPk;
+import org.greenrobot.greendao.test.AbstractDaoTestLongPk;
 import de.greenrobot.daotest.CustomTypeEntity;
 import de.greenrobot.daotest.CustomTypeEntityDao;
 import de.greenrobot.daotest.customtype.MyTimestamp;

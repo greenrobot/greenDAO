@@ -20,8 +20,8 @@ package de.greenrobot.daotest;
 import java.io.IOException;
 
 import android.database.Cursor;
-import de.greenrobot.dao.DbUtils;
-import de.greenrobot.dao.test.DbTest;
+import org.greenrobot.greendao.DbUtils;
+import org.greenrobot.greendao.test.DbTest;
 
 public class DbUtilsTest extends DbTest {
     public void testExecuteSqlScript() throws IOException {

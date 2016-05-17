@@ -24,8 +24,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import de.greenrobot.dao.AbstractDaoMaster;
-import de.greenrobot.dao.identityscope.IdentityScopeType;
+import org.greenrobot.greendao.AbstractDaoMaster;
+import org.greenrobot.greendao.identityscope.IdentityScopeType;
 
 <#list schema.entities as entity>
 import ${entity.javaPackageDao}.${entity.classNameDao};

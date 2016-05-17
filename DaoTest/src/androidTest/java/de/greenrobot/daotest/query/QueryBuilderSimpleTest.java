@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import de.greenrobot.dao.internal.SqlUtils;
-import de.greenrobot.dao.query.Query;
-import de.greenrobot.dao.query.QueryBuilder;
-import de.greenrobot.dao.query.WhereCondition;
+import org.greenrobot.greendao.internal.SqlUtils;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
+import org.greenrobot.greendao.query.WhereCondition;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;

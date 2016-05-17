@@ -18,8 +18,8 @@
 package de.greenrobot.daotest.query;
 
 import android.database.Cursor;
-import de.greenrobot.dao.query.CursorQuery;
-import de.greenrobot.dao.query.QueryBuilder;
+import org.greenrobot.greendao.query.CursorQuery;
+import org.greenrobot.greendao.query.QueryBuilder;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
 

@@ -1,7 +1,7 @@
 package de.greenrobot.daotest.performance;
 
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.test.AbstractDaoTest;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.test.AbstractDaoTest;
 import de.greenrobot.daotest.IndexedStringEntity;
 import de.greenrobot.daotest.IndexedStringEntityDao;
 

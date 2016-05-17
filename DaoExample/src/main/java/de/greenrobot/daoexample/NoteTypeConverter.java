@@ -1,6 +1,6 @@
 package de.greenrobot.daoexample;
 
-import de.greenrobot.dao.converter.PropertyConverter;
+import org.greenrobot.greendao.converter.PropertyConverter;
 
 public class NoteTypeConverter implements PropertyConverter<NoteType, String> {
     @Override

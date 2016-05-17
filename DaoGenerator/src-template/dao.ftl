@@ -34,15 +34,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Property;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.Property;
 <#if entity.toOneRelations?has_content>
-import de.greenrobot.dao.internal.SqlUtils;
+import org.greenrobot.greendao.internal.SqlUtils;
 </#if>
-import de.greenrobot.dao.internal.DaoConfig;
+import org.greenrobot.greendao.internal.DaoConfig;
 <#if entity.incomingToManyRelations?has_content>
-import de.greenrobot.dao.query.Query;
-import de.greenrobot.dao.query.QueryBuilder;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 </#if>
 
 <#if entity.javaPackageDao != schema.defaultJavaPackageDao>

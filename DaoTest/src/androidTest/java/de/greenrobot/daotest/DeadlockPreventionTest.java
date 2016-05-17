@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import de.greenrobot.dao.test.AbstractDaoSessionTest;
+import org.greenrobot.greendao.test.AbstractDaoSessionTest;
 
 /**
  * Test to reproduce https://github.com/greenrobot/greenDAO/issues/223 (works at least on a Android 2.3 emulator).

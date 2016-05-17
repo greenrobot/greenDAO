@@ -17,7 +17,7 @@
  */
 package de.greenrobot.daotest;
 
-import de.greenrobot.dao.test.AbstractDaoSessionTest;
+import org.greenrobot.greendao.test.AbstractDaoSessionTest;
 
 public class DaoSessionTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
 

@@ -17,7 +17,7 @@
  */
 package de.greenrobot.daotest.entity;
 
-import de.greenrobot.dao.identityscope.IdentityScopeLong;
+import org.greenrobot.greendao.identityscope.IdentityScopeLong;
 import de.greenrobot.daotest.TestEntity;
 
 public class TestEntityIdentityScopeTest extends TestEntityTest {

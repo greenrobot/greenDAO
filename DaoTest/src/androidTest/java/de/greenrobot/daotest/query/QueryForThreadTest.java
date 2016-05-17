@@ -21,10 +21,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import android.util.SparseArray;
-import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.query.Query;
-import de.greenrobot.dao.query.QueryBuilder;
+import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;

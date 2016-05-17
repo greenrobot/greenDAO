@@ -17,8 +17,8 @@
  */
 package de.greenrobot.daotest.entity;
 
-import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.test.AbstractDaoTestLongPk;
+import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.test.AbstractDaoTestLongPk;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao;
 

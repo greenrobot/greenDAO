@@ -11,7 +11,7 @@ import org.robolectric.annotation.Config;
 
 import java.util.concurrent.CountDownLatch;
 
-import de.greenrobot.dao.query.Query;
+import org.greenrobot.greendao.query.Query;
 import de.greenrobot.daotest.dummyapp.BuildConfig;
 
 import static org.junit.Assert.assertEquals;

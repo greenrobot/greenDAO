@@ -3,8 +3,8 @@ package de.greenrobot.daotest;
 import java.util.List;
 
 import junit.framework.Assert;
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.test.AbstractDaoTest;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.test.AbstractDaoTest;
 import de.greenrobot.daotest.SqliteMasterDao.Properties;
 
 public class IndexTest extends AbstractDaoTest<SqliteMasterDao, SqliteMaster, Void> {

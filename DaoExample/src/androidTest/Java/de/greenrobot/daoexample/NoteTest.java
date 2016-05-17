@@ -15,7 +15,7 @@
  */
 package de.greenrobot.daoexample;
 
-import de.greenrobot.dao.test.AbstractDaoTestLongPk;
+import org.greenrobot.greendao.test.AbstractDaoTestLongPk;
 
 public class NoteTest extends AbstractDaoTestLongPk<NoteDao, Note> {
 

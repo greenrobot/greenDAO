@@ -20,7 +20,7 @@ package de.greenrobot.daotest.contentprovider;
 import android.database.Cursor;
 import android.test.suitebuilder.annotation.Suppress;
 
-import de.greenrobot.dao.test.AbstractDaoSessionTest;
+import org.greenrobot.greendao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
 import de.greenrobot.daotest.SimpleEntity;

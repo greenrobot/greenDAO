@@ -6,10 +6,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.SystemClock;
 
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.query.DeleteQuery;
-import de.greenrobot.dao.query.Query;
-import de.greenrobot.dao.test.AbstractDaoSessionTest;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.query.DeleteQuery;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.test.AbstractDaoSessionTest;
 
 public class DaoSessionConcurrentTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
     class TestThread extends Thread {

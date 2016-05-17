@@ -1,6 +1,6 @@
 package org.greenrobot.greendao.annotation;
 
-import de.greenrobot.dao.converter.PropertyConverter;
+import org.greenrobot.greendao.converter.PropertyConverter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

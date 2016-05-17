@@ -1,6 +1,6 @@
 package de.greenrobot.daotest.async;
 
-import de.greenrobot.dao.async.AsyncOperation;
+import org.greenrobot.greendao.async.AsyncOperation;
 import de.greenrobot.daotest.SimpleEntity;
 
 public class MergeTxAsyncTest extends AbstractAsyncTest {

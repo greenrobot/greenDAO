@@ -15,7 +15,7 @@ package de.greenrobot.daotest.performance.target;
 
 import java.util.Iterator;
 
-import de.greenrobot.dao.DaoLog;
+import org.greenrobot.greendao.DaoLog;
 
 /**
  * An long to object hashmap, taken from Amarena2D (thanks Christoph :p).

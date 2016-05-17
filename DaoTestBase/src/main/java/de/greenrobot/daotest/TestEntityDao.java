@@ -4,9 +4,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Property;
-import de.greenrobot.dao.internal.DaoConfig;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.internal.DaoConfig;
 
 import de.greenrobot.daotest.TestEntity;
 
@@ -62,7 +62,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         db.execSQL("CREATE INDEX " + constraint + "IDX_TEST_ENTITY_INDEXED_STRING ON TEST_ENTITY" +
                 " (\"INDEXED_STRING\");");
         db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_TEST_ENTITY_INDEXED_STRING_ASC_UNIQUE ON TEST_ENTITY" +
-                " (\"INDEXED_STRING_ASC_UNIQUE\");");
+                " (\"INDEXED_STRING_ASC_UNIQUE\" ASC);");
     }
 
     /** Drops the underlying database table. */

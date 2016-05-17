@@ -15,7 +15,7 @@
  */
 package de.greenrobot.daotest.customtype;
 
-import de.greenrobot.dao.converter.PropertyConverter;
+import org.greenrobot.greendao.converter.PropertyConverter;
 
 import java.util.ArrayList;
 import java.util.List;

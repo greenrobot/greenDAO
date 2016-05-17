@@ -17,7 +17,7 @@
  */
 package de.greenrobot.daotest.performance;
 
-import de.greenrobot.dao.identityscope.IdentityScopeLong;
+import org.greenrobot.greendao.identityscope.IdentityScopeLong;
 import de.greenrobot.daotest.SimpleEntityNotNull;
 
 public class PerformanceTestNotNullIdentityScope extends PerformanceTestNotNull {

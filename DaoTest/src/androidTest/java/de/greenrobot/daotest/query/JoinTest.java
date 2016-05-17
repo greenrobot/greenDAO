@@ -15,11 +15,11 @@
  */
 package de.greenrobot.daotest.query;
 
-import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.query.Join;
-import de.greenrobot.dao.query.Query;
-import de.greenrobot.dao.query.QueryBuilder;
-import de.greenrobot.dao.test.AbstractDaoSessionTest;
+import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.query.Join;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
+import org.greenrobot.greendao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
 import de.greenrobot.daotest.RelationEntity;

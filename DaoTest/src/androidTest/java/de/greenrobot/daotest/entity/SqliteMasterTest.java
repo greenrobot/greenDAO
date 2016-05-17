@@ -2,8 +2,8 @@ package de.greenrobot.daotest.entity;
 
 import java.util.List;
 
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.test.AbstractDaoTest;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.test.AbstractDaoTest;
 import de.greenrobot.daotest.SqliteMaster;
 import de.greenrobot.daotest.SqliteMasterDao;
 import de.greenrobot.daotest.SqliteMasterDao.Properties;

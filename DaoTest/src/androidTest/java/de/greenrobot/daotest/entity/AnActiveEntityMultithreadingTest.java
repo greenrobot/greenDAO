@@ -21,8 +21,8 @@ import java.lang.reflect.Field;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.test.AbstractDaoSessionTest;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.AnActiveEntity;
 import de.greenrobot.daotest.AnActiveEntityDao;
 import de.greenrobot.daotest.DaoMaster;

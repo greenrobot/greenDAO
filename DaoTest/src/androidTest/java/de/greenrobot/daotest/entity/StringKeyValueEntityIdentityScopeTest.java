@@ -17,7 +17,7 @@
  */
 package de.greenrobot.daotest.entity;
 
-import de.greenrobot.dao.identityscope.IdentityScopeObject;
+import org.greenrobot.greendao.identityscope.IdentityScopeObject;
 import de.greenrobot.daotest.StringKeyValueEntity;
 
 public class StringKeyValueEntityIdentityScopeTest extends StringKeyValueEntityTest {

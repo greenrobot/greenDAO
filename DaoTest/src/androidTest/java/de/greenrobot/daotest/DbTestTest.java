@@ -1,7 +1,7 @@
 package de.greenrobot.daotest;
 
 import android.app.Application;
-import de.greenrobot.dao.test.DbTest;
+import org.greenrobot.greendao.test.DbTest;
 import junit.framework.AssertionFailedError;
 
 public class DbTestTest extends DbTest {

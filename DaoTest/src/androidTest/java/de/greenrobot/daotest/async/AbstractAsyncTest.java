@@ -3,10 +3,10 @@ package de.greenrobot.daotest.async;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import de.greenrobot.dao.async.AsyncOperation;
-import de.greenrobot.dao.async.AsyncOperationListener;
-import de.greenrobot.dao.async.AsyncSession;
-import de.greenrobot.dao.test.AbstractDaoSessionTest;
+import org.greenrobot.greendao.async.AsyncOperation;
+import org.greenrobot.greendao.async.AsyncOperationListener;
+import org.greenrobot.greendao.async.AsyncSession;
+import org.greenrobot.greendao.test.AbstractDaoSessionTest;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
 

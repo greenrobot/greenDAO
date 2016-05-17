@@ -5,11 +5,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Property;
-import de.greenrobot.dao.internal.DaoConfig;
-import de.greenrobot.dao.query.Query;
-import de.greenrobot.dao.query.QueryBuilder;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.internal.DaoConfig;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import de.greenrobot.daotest.DateEntity;
 

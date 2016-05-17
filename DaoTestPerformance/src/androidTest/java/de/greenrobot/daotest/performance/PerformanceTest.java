@@ -22,9 +22,9 @@ import java.util.Date;
 import java.util.List;
 
 import android.os.Debug;
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.test.AbstractDaoTest;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.test.AbstractDaoTest;
 
 public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
         extends AbstractDaoTest<D, T, K> {

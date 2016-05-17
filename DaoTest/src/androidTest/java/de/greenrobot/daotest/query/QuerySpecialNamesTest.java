@@ -17,8 +17,8 @@
  */
 package de.greenrobot.daotest.query;
 
-import de.greenrobot.dao.query.QueryBuilder;
-import de.greenrobot.dao.test.AbstractDaoTest;
+import org.greenrobot.greendao.query.QueryBuilder;
+import org.greenrobot.greendao.test.AbstractDaoTest;
 import de.greenrobot.daotest.SpecialNamesEntity;
 import de.greenrobot.daotest.SpecialNamesEntityDao;
 import de.greenrobot.daotest.SpecialNamesEntityDao.Properties;

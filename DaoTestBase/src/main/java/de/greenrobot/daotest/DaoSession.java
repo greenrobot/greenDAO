@@ -4,10 +4,10 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.Map;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.AbstractDaoSession;
-import de.greenrobot.dao.identityscope.IdentityScopeType;
-import de.greenrobot.dao.internal.DaoConfig;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.AbstractDaoSession;
+import org.greenrobot.greendao.identityscope.IdentityScopeType;
+import org.greenrobot.greendao.internal.DaoConfig;
 
 import de.greenrobot.daotest.SimpleEntity;
 import de.greenrobot.daotest.SimpleEntityNotNull;

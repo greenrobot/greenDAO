@@ -19,7 +19,7 @@ package de.greenrobot.daotest.entity;
  */
 import java.util.Arrays;
 
-import de.greenrobot.dao.test.AbstractDaoTestLongPk;
+import org.greenrobot.greendao.test.AbstractDaoTestLongPk;
 import de.greenrobot.daotest.SimpleEntity;
 import de.greenrobot.daotest.SimpleEntityDao;
 

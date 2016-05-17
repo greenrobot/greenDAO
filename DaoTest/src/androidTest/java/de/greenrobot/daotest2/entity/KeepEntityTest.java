@@ -18,7 +18,7 @@
 package de.greenrobot.daotest2.entity;
 
 import android.os.Build;
-import de.greenrobot.dao.test.AbstractDaoTestLongPk;
+import org.greenrobot.greendao.test.AbstractDaoTestLongPk;
 import de.greenrobot.daotest2.KeepEntity;
 import de.greenrobot.daotest2.dao.KeepEntityDao;
 

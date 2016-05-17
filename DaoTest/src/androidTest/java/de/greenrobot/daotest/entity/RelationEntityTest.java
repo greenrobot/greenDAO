@@ -19,8 +19,8 @@ package de.greenrobot.daotest.entity;
 
 import java.util.List;
 
-import de.greenrobot.dao.identityscope.IdentityScopeType;
-import de.greenrobot.dao.test.AbstractDaoTestLongPk;
+import org.greenrobot.greendao.identityscope.IdentityScopeType;
+import org.greenrobot.greendao.test.AbstractDaoTestLongPk;
 import de.greenrobot.daotest.DaoMaster;
 import de.greenrobot.daotest.DaoSession;
 import de.greenrobot.daotest.RelationEntity;

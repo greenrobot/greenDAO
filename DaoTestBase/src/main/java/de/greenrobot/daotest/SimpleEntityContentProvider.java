@@ -9,21 +9,22 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
-import de.greenrobot.dao.DaoLog;
+import org.greenrobot.greendao.DaoLog;
 
+import de.greenrobot.daotest.DaoSession;
 import de.greenrobot.daotest.SimpleEntityDao;
 
 /* Copy this code snippet into your AndroidManifest.xml inside the <application> element:
 
     <provider
         android:name="de.greenrobot.daotest.SimpleEntityContentProvider"
-        android:authorities="de.greenrobot.daotest" />
+        android:authorities="de.greenrobot.daotest.provider" />
 */
 
 public class SimpleEntityContentProvider extends ContentProvider {
 
-    public static final String AUTHORITY = "de.greenrobot.daotest";
-    public static final String BASE_PATH = "SimpleEntity";
+    public static final String AUTHORITY = "de.greenrobot.daotest.provider";
+    public static final String BASE_PATH = "";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
             + "/" + BASE_PATH;
@@ -81,7 +82,7 @@ public class SimpleEntityContentProvider extends ContentProvider {
             String[] selectionArgs) {
         throw new UnsupportedOperationException("This content provider is readonly");
     }
- 
+
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
             String[] selectionArgs, String sortOrder) {

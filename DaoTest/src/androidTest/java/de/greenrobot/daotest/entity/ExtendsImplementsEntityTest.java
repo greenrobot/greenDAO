@@ -2,7 +2,7 @@ package de.greenrobot.daotest.entity;
 
 import java.io.Serializable;
 
-import de.greenrobot.dao.test.AbstractDaoTestLongPk;
+import org.greenrobot.greendao.test.AbstractDaoTestLongPk;
 import de.greenrobot.daotest.ExtendsImplementsEntity;
 import de.greenrobot.daotest.ExtendsImplementsEntityDao;
 import de.greenrobot.daotest.TestInterface;

@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.query.CloseableListIterator;
-import de.greenrobot.dao.query.LazyList;
+import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.query.CloseableListIterator;
+import org.greenrobot.greendao.query.LazyList;
 import de.greenrobot.daotest.TestEntity;
 import de.greenrobot.daotest.TestEntityDao.Properties;
 import de.greenrobot.daotest.entity.TestEntityTestBase;
