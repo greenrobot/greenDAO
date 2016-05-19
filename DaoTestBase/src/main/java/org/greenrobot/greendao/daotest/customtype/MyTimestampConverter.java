@@ -1,4 +1,4 @@
-package de.greenrobot.daotest.customtype;
+package org.greenrobot.greendao.daotest.customtype;
 
 import org.greenrobot.greendao.converter.PropertyConverter;
 

@@ -8,6 +8,8 @@ import android.util.Log;
 import org.greenrobot.greendao.AbstractDaoMaster;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 
+import org.greenrobot.greendao.daotest2.dao.KeepEntityDao;
+import org.greenrobot.greendao.daotest2.dao.ToManyTarget2Dao;
 import org.greenrobot.greendao.daotest2.to1_specialdao.ToOneTarget2Dao;
 import org.greenrobot.greendao.daotest2.specialdao.RelationSource2Dao;
 

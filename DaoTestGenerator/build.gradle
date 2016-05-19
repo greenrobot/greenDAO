@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = "de.greenrobot.daogenerator.gentest.TestDaoGenerator"
+mainClassName = "org.greenrobot.greendao.generator.gentest.TestDaoGenerator"
 
 sourceSets {
     main {

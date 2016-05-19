@@ -11,16 +11,19 @@ import android.net.Uri;
 
 import org.greenrobot.greendao.DaoLog;
 
+import org.greenrobot.greendao.daotest.DaoSession;
+import org.greenrobot.greendao.daotest.SimpleEntityDao;
+
 /* Copy this code snippet into your AndroidManifest.xml inside the <application> element:
 
     <provider
-        android:name="de.greenrobot.daotest.SimpleEntityContentProvider"
-        android:authorities="de.greenrobot.daotest.provider" />
+        android:name="org.greenrobot.greendao.daotest.SimpleEntityContentProvider"
+        android:authorities="org.greenrobot.greendao.daotest.provider" />
 */
 
 public class SimpleEntityContentProvider extends ContentProvider {
 
-    public static final String AUTHORITY = "de.greenrobot.daotest.provider";
+    public static final String AUTHORITY = "org.greenrobot.greendao.daotest.provider";
     public static final String BASE_PATH = "";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE

@@ -137,7 +137,7 @@ public class RelationSource2 {
     }
 
     /**
-    * Convenient call for {@link de.greenrobot.dao.AbstractDao#delete(Object)}.
+    * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
     * Entity must attached to an entity context.
     */
     @Generated
@@ -149,7 +149,7 @@ public class RelationSource2 {
     }
 
     /**
-    * Convenient call for {@link de.greenrobot.dao.AbstractDao#update(Object)}.
+    * Convenient call for {@link org.greenrobot.greendao.AbstractDao#update(Object)}.
     * Entity must attached to an entity context.
     */
     @Generated
@@ -161,7 +161,7 @@ public class RelationSource2 {
     }
 
     /**
-    * Convenient call for {@link de.greenrobot.dao.AbstractDao#refresh(Object)}.
+    * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
     * Entity must attached to an entity context.
     */
     @Generated

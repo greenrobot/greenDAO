@@ -14,6 +14,8 @@ import org.greenrobot.greendao.daotest2.ToManyTarget2;
 import org.greenrobot.greendao.daotest2.to1_specialentity.ToOneTarget2;
 import org.greenrobot.greendao.daotest2.specialentity.RelationSource2;
 
+import org.greenrobot.greendao.daotest2.dao.KeepEntityDao;
+import org.greenrobot.greendao.daotest2.dao.ToManyTarget2Dao;
 import org.greenrobot.greendao.daotest2.to1_specialdao.ToOneTarget2Dao;
 import org.greenrobot.greendao.daotest2.specialdao.RelationSource2Dao;
 
@@ -22,7 +24,7 @@ import org.greenrobot.greendao.daotest2.specialdao.RelationSource2Dao;
 /**
  * {@inheritDoc}
  * 
- * @see de.greenrobot.dao.AbstractDaoSession
+ * @see org.greenrobot.greendao.AbstractDaoSession
  */
 public class DaoSession extends AbstractDaoSession {
 
