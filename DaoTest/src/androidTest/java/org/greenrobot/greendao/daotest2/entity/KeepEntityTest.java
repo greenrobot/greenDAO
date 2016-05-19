@@ -15,18 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daotest.performance;
+package org.greenrobot.greendao.daotest2.entity;
 
-import org.greenrobot.greendao.identityscope.IdentityScopeLong;
-import org.greenrobot.greendao.daotest.SimpleEntityNotNull;
+import android.os.Build;
+import org.greenrobot.greendao.test.AbstractDaoTestLongPk;
+import org.greenrobot.greendao.daotest2.KeepEntity;
+import org.greenrobot.greendao.daotest2.dao.KeepEntityDao;
 
-public class PerformanceTestNotNullIdentityScope extends PerformanceTestNotNull {
+public class KeepEntityTest extends AbstractDaoTestLongPk<KeepEntityDao, KeepEntity> {
+
+    public KeepEntityTest() {
+        super(KeepEntityDao.class);
+    }
 
     @Override
-    protected void setUp() throws Exception {
-        IdentityScopeLong<SimpleEntityNotNull> identityScope = new IdentityScopeLong< SimpleEntityNotNull>();
-        setIdentityScopeBeforeSetUp(identityScope);
-        super.setUp();
+    protected KeepEntity createEntity(Long key) {
+        KeepEntity entity = new KeepEntity();
+        entity.setId(key);
+        return entity;
+    }
+
+    public void testKeepSectionAvailable() {
+        KeepEntity keepEntity = new KeepEntity(42l);
+        assertEquals("KeepEntity ID=42 (extra="+Build.VERSION.SDK+")", keepEntity.toString());
     }
 
 }

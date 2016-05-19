@@ -15,18 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daotest.performance;
+package org.greenrobot.greendao.daotest;
 
-import org.greenrobot.greendao.identityscope.IdentityScopeLong;
-import org.greenrobot.greendao.daotest.SimpleEntityNotNull;
+import java.io.IOException;
 
-public class PerformanceTestNotNullIdentityScope extends PerformanceTestNotNull {
+import android.database.Cursor;
+import org.greenrobot.greendao.DbUtils;
+import org.greenrobot.greendao.test.DbTest;
 
-    @Override
-    protected void setUp() throws Exception {
-        IdentityScopeLong<SimpleEntityNotNull> identityScope = new IdentityScopeLong< SimpleEntityNotNull>();
-        setIdentityScopeBeforeSetUp(identityScope);
-        super.setUp();
+public class DbUtilsTest extends DbTest {
+    public void testExecuteSqlScript() throws IOException {
+        DbUtils.executeSqlScript(getContext(), db, "minimal-entity.sql");
+        Cursor cursor = db.rawQuery("SELECT count(*) from MINIMAL_ENTITY", null);
+        try {
+            cursor.moveToFirst();
+            assertEquals(5, cursor.getInt(0));
+        } finally {
+            cursor.close();
+        }
     }
 
 }

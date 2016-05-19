@@ -15,18 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daotest.performance;
+package org.greenrobot.greendao.daotest.entity;
 
-import org.greenrobot.greendao.identityscope.IdentityScopeLong;
-import org.greenrobot.greendao.daotest.SimpleEntityNotNull;
+import org.greenrobot.greendao.test.AbstractDaoTestLongPk;
+import org.greenrobot.greendao.daotest.ToManyTargetEntity;
+import org.greenrobot.greendao.daotest.ToManyTargetEntityDao;
 
-public class PerformanceTestNotNullIdentityScope extends PerformanceTestNotNull {
+public class ToManyTargetEntityTest extends AbstractDaoTestLongPk<ToManyTargetEntityDao, ToManyTargetEntity> {
+
+    public ToManyTargetEntityTest() {
+        super(ToManyTargetEntityDao.class);
+    }
 
     @Override
-    protected void setUp() throws Exception {
-        IdentityScopeLong<SimpleEntityNotNull> identityScope = new IdentityScopeLong< SimpleEntityNotNull>();
-        setIdentityScopeBeforeSetUp(identityScope);
-        super.setUp();
+    protected ToManyTargetEntity createEntity(Long key) {
+        ToManyTargetEntity entity = new ToManyTargetEntity();
+        entity.setId(key);
+        return entity;
     }
 
 }

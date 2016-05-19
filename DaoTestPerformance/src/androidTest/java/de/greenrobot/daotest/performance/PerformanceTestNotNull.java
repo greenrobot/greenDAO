@@ -17,8 +17,8 @@
  */
 package de.greenrobot.daotest.performance;
 
-import de.greenrobot.daotest.SimpleEntityNotNull;
-import de.greenrobot.daotest.SimpleEntityNotNullDao;
+import org.greenrobot.greendao.daotest.SimpleEntityNotNull;
+import org.greenrobot.greendao.daotest.SimpleEntityNotNullDao;
 import de.greenrobot.daotest.entity.SimpleEntityNotNullHelper;
 import java.util.List;
 

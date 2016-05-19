@@ -20,7 +20,7 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        testApplicationId "de.greenrobot.daotest"
+        testApplicationId "org.greenrobot.greendao.daotest"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 }

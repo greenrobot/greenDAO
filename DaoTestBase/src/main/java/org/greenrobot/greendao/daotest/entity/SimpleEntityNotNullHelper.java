@@ -15,18 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daotest.performance;
+package de.greenrobot.daotest.entity;
 
-import org.greenrobot.greendao.identityscope.IdentityScopeLong;
 import org.greenrobot.greendao.daotest.SimpleEntityNotNull;
 
-public class PerformanceTestNotNullIdentityScope extends PerformanceTestNotNull {
 
-    @Override
-    protected void setUp() throws Exception {
-        IdentityScopeLong<SimpleEntityNotNull> identityScope = new IdentityScopeLong< SimpleEntityNotNull>();
-        setIdentityScopeBeforeSetUp(identityScope);
-        super.setUp();
+public class SimpleEntityNotNullHelper {
+    public static SimpleEntityNotNull createEntity(Long key) {
+        if (key == null) {
+            return null;
+        }
+        SimpleEntityNotNull entity = new SimpleEntityNotNull();
+        entity.setId(key);
+        entity.setSimpleBoolean(true);
+        entity.setSimpleByte(Byte.MAX_VALUE);
+        entity.setSimpleShort(Short.MAX_VALUE);
+        entity.setSimpleInt(Integer.MAX_VALUE);
+        entity.setSimpleLong(Long.MAX_VALUE);
+        entity.setSimpleFloat(Float.MAX_VALUE);
+        entity.setSimpleDouble(Double.MAX_VALUE);
+        entity.setSimpleString("greenrobot greenDAO");
+        byte[] bytes = { 42, -17, 23, 0, 127, -128 };
+        entity.setSimpleByteArray(bytes);
+        return entity;
     }
-
 }
