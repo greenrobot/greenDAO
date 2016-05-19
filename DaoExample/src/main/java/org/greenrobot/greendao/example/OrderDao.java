@@ -1,4 +1,4 @@
-package de.greenrobot.daoexample;
+package org.greenrobot.greendao.example;
 
 import java.util.List;
 import java.util.ArrayList;

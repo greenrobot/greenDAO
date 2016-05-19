@@ -1,4 +1,4 @@
-package de.greenrobot.daoexample;
+package org.greenrobot.greendao.example;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.greenrobot.daoexample;
+package org.greenrobot.greendao.example;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -33,7 +33,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import de.greenrobot.daoexample.DaoMaster.DevOpenHelper;
+import org.greenrobot.greendao.example.DaoMaster.DevOpenHelper;
 
 public class NoteActivity extends ListActivity {
 

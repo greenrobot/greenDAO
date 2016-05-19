@@ -1,4 +1,4 @@
-package de.greenrobot.daoexample;
+package org.greenrobot.greendao.example;
 
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
@@ -26,7 +26,7 @@ public class Note {
     private String comment;
     private java.util.Date date;
 
-    @Convert(converter = de.greenrobot.daoexample.NoteTypeConverter.class, columnType = String.class)
+    @Convert(converter = NoteTypeConverter.class, columnType = String.class)
     private NoteType type;
 
     @Generated

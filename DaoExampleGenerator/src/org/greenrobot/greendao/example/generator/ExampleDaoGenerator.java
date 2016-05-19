@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.greenrobot.daogenerator.gentest;
+package org.greenrobot.greendao.example.generator;
 
 import org.greenrobot.greendao.generator.DaoGenerator;
 import org.greenrobot.greendao.generator.Entity;
@@ -32,7 +32,7 @@ import org.greenrobot.greendao.generator.ToMany;
 public class ExampleDaoGenerator {
 
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(1000, "de.greenrobot.daoexample");
+        Schema schema = new Schema(1000, "org.greenrobot.greendao.example");
 
         addNote(schema);
         addCustomerOrder(schema);
@@ -47,7 +47,7 @@ public class ExampleDaoGenerator {
         note.addStringProperty("comment");
         final Property date = note.addDateProperty("date").getProperty();
         note.addStringProperty("type")
-            .customType("de.greenrobot.daoexample.NoteType", "de.greenrobot.daoexample.NoteTypeConverter");
+            .customType("org.greenrobot.greendao.example.NoteType", "org.greenrobot.greendao.example.NoteTypeConverter");
 
         final Index index = new Index();
         index.addProperty(text);

@@ -1,8 +1,12 @@
-package de.greenrobot.daoexample;
+package org.greenrobot.greendao.example;
 
 import java.util.Date;
 import java.util.List;
 
+import org.greenrobot.greendao.example.Customer;
+import org.greenrobot.greendao.example.DaoMaster;
+import org.greenrobot.greendao.example.DaoSession;
+import org.greenrobot.greendao.example.Order;
 import org.greenrobot.greendao.test.AbstractDaoSessionTest;
 
 public class CustomerOrderTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {

@@ -1,4 +1,4 @@
-package de.greenrobot.daoexample;
+package org.greenrobot.greendao.example;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.annotation.Entity;
