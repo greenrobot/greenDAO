@@ -1,4 +1,4 @@
-package de.greenrobot.daogenerator;
+package org.greenrobot.greendao.generator;
 
 import java.util.List;
 

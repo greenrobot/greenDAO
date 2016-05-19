@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daogenerator;
+package org.greenrobot.greendao.generator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,8 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import de.greenrobot.daogenerator.Property.PropertyBuilder;
 
 /**
  * Model class for an entity: a Java data object mapped to a data base table. A new entity is added to a {@link Schema}
@@ -96,58 +94,58 @@ public class Entity {
         constructors = true;
     }
 
-    public PropertyBuilder addBooleanProperty(String propertyName) {
+    public Property.PropertyBuilder addBooleanProperty(String propertyName) {
         return addProperty(PropertyType.Boolean, propertyName);
     }
 
-    public PropertyBuilder addByteProperty(String propertyName) {
+    public Property.PropertyBuilder addByteProperty(String propertyName) {
         return addProperty(PropertyType.Byte, propertyName);
     }
 
-    public PropertyBuilder addShortProperty(String propertyName) {
+    public Property.PropertyBuilder addShortProperty(String propertyName) {
         return addProperty(PropertyType.Short, propertyName);
     }
 
-    public PropertyBuilder addIntProperty(String propertyName) {
+    public Property.PropertyBuilder addIntProperty(String propertyName) {
         return addProperty(PropertyType.Int, propertyName);
     }
 
-    public PropertyBuilder addLongProperty(String propertyName) {
+    public Property.PropertyBuilder addLongProperty(String propertyName) {
         return addProperty(PropertyType.Long, propertyName);
     }
 
-    public PropertyBuilder addFloatProperty(String propertyName) {
+    public Property.PropertyBuilder addFloatProperty(String propertyName) {
         return addProperty(PropertyType.Float, propertyName);
     }
 
-    public PropertyBuilder addDoubleProperty(String propertyName) {
+    public Property.PropertyBuilder addDoubleProperty(String propertyName) {
         return addProperty(PropertyType.Double, propertyName);
     }
 
-    public PropertyBuilder addByteArrayProperty(String propertyName) {
+    public Property.PropertyBuilder addByteArrayProperty(String propertyName) {
         return addProperty(PropertyType.ByteArray, propertyName);
     }
 
-    public PropertyBuilder addStringProperty(String propertyName) {
+    public Property.PropertyBuilder addStringProperty(String propertyName) {
         return addProperty(PropertyType.String, propertyName);
     }
 
-    public PropertyBuilder addDateProperty(String propertyName) {
+    public Property.PropertyBuilder addDateProperty(String propertyName) {
         return addProperty(PropertyType.Date, propertyName);
     }
 
-    public PropertyBuilder addProperty(PropertyType propertyType, String propertyName) {
+    public Property.PropertyBuilder addProperty(PropertyType propertyType, String propertyName) {
         if (!propertyNames.add(propertyName)) {
             throw new RuntimeException("Property already defined: " + propertyName);
         }
-        PropertyBuilder builder = new Property.PropertyBuilder(schema, this, propertyType, propertyName);
+        Property.PropertyBuilder builder = new Property.PropertyBuilder(schema, this, propertyType, propertyName);
         properties.add(builder.getProperty());
         return builder;
     }
 
     /** Adds a standard _id column required by standard Android classes, e.g. list adapters. */
-    public PropertyBuilder addIdProperty() {
-        PropertyBuilder builder = addLongProperty("id");
+    public Property.PropertyBuilder addIdProperty() {
+        Property.PropertyBuilder builder = addLongProperty("id");
         builder.columnName("_id").primaryKey();
         return builder;
     }
@@ -225,7 +223,7 @@ public class Entity {
 
     public ToOne addToOneWithoutProperty(String name, Entity target, String fkColumnName, boolean notNull,
                                          boolean unique) {
-        PropertyBuilder propertyBuilder = new PropertyBuilder(schema, this, null, name);
+        Property.PropertyBuilder propertyBuilder = new Property.PropertyBuilder(schema, this, null, name);
         if (notNull) {
             propertyBuilder.notNull();
         }

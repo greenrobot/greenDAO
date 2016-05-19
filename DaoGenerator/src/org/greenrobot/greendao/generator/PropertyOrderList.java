@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daogenerator;
+package org.greenrobot.greendao.generator;
 
 import java.util.ArrayList;
 import java.util.List;
