@@ -1,9 +1,9 @@
-package de.greenrobot.daotest.performance;
+package org.greenrobot.greendao.performance;
 
 import org.greenrobot.greendao.DaoLog;
-import org.greenrobot.greendao.test.AbstractDaoTest;
 import org.greenrobot.greendao.daotest.IndexedStringEntity;
 import org.greenrobot.greendao.daotest.IndexedStringEntityDao;
+import org.greenrobot.greendao.test.AbstractDaoTest;
 
 import java.util.ArrayList;
 import java.util.List;

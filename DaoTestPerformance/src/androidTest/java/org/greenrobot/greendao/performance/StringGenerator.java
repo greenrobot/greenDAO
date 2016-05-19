@@ -1,4 +1,4 @@
-package de.greenrobot.daotest.performance;
+package org.greenrobot.greendao.performance;
 
 import java.util.Random;
 

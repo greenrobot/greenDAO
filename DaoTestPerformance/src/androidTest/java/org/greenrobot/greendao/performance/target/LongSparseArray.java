@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.greenrobot.daotest.performance.target;
+package org.greenrobot.greendao.performance.target;
 
 import android.util.Log;
 

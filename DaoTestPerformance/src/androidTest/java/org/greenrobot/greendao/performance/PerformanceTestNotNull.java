@@ -15,11 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daotest.performance;
+package org.greenrobot.greendao.performance;
 
 import org.greenrobot.greendao.daotest.SimpleEntityNotNull;
 import org.greenrobot.greendao.daotest.SimpleEntityNotNullDao;
-import de.greenrobot.daotest.entity.SimpleEntityNotNullHelper;
+import org.greenrobot.greendao.daotest.entity.SimpleEntityNotNullHelper;
+
 import java.util.List;
 
 public class PerformanceTestNotNull extends PerformanceTest<SimpleEntityNotNullDao, SimpleEntityNotNull, Long> {

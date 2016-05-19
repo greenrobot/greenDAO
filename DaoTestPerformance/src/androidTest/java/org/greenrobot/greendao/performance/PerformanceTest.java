@@ -15,16 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daotest.performance;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+package org.greenrobot.greendao.performance;
 
 import android.os.Debug;
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.DaoLog;
 import org.greenrobot.greendao.test.AbstractDaoTest;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
         extends AbstractDaoTest<D, T, K> {

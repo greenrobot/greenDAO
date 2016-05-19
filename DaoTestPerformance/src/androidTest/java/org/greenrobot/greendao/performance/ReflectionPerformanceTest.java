@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daotest.performance;
+package org.greenrobot.greendao.performance;
+
+import org.greenrobot.greendao.DaoLog;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import org.greenrobot.greendao.DaoLog;
 
 public class ReflectionPerformanceTest // extends TestCase
 {

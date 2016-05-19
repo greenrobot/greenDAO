@@ -15,19 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.greenrobot.daotest.performance;
+package org.greenrobot.greendao.performance;
+
+import junit.framework.TestCase;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.internal.LongHashMap;
+import org.greenrobot.greendao.performance.target.LongHashMapAmarena2DZechner;
+import org.greenrobot.greendao.performance.target.LongHashMapJDBM;
+import org.greenrobot.greendao.performance.target.LongSparseArray;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
-import junit.framework.TestCase;
-import org.greenrobot.greendao.DaoLog;
-import org.greenrobot.greendao.internal.LongHashMap;
-import de.greenrobot.daotest.performance.target.LongHashMapAmarena2DZechner;
-import de.greenrobot.daotest.performance.target.LongHashMapJDBM;
-import de.greenrobot.daotest.performance.target.LongSparseArray;
 
 public class LoockupPerformanceTest extends TestCase {
 

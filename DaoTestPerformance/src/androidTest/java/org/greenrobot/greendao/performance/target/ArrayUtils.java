@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package de.greenrobot.daotest.performance.target;
+package org.greenrobot.greendao.performance.target;
 
 import java.lang.reflect.Array;
-import java.util.Collection;
 
 // XXX these should be changed to reflect the actual memory allocator we use.
 // it looks like right now objects want to be powers of 2 minus 8

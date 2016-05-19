@@ -11,11 +11,11 @@
  * governing permissions and limitations under the License.
  ******************************************************************************/
 
-package de.greenrobot.daotest.performance.target;
-
-import java.util.Iterator;
+package org.greenrobot.greendao.performance.target;
 
 import org.greenrobot.greendao.DaoLog;
+
+import java.util.Iterator;
 
 /**
  * An long to object hashmap, taken from Amarena2D (thanks Christoph :p).
