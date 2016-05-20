@@ -46,7 +46,7 @@ import org.greenrobot.greendao.query.QueryBuilder;
 </#if>
 
 <#if entity.javaPackageDao != schema.defaultJavaPackageDao>
-import ${schema.defaultJavaPackageDao}.DaoSession;
+import ${schema.defaultJavaPackageDao}.${schema.prefix}DaoSession;
 
 </#if>
 <#if entity.additionalImportsDao?has_content>
@@ -79,7 +79,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     };
 
 <#if entity.active>
-    private DaoSession daoSession;
+    private ${schema.prefix}DaoSession daoSession;
 
 </#if>
 <#list entity.properties as property><#if property.customType?has_content><#--
@@ -93,7 +93,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
         super(config);
     }
     
-    public ${entity.classNameDao}(DaoConfig config, DaoSession daoSession) {
+    public ${entity.classNameDao}(DaoConfig config, ${schema.prefix}DaoSession daoSession) {
         super(config, daoSession);
 <#if entity.active>        
         this.daoSession = daoSession;

@@ -29,6 +29,8 @@ import java.util.Map;
  */
 @SuppressWarnings("unused")
 public class Schema {
+    public static final String DEFAULT_NAME = "default";
+
     private final int version;
     private final String defaultJavaPackage;
     private String defaultJavaPackageDao;
@@ -40,9 +42,11 @@ public class Schema {
     private boolean hasKeepSectionsByDefault;
     private boolean useActiveEntitiesByDefault;
     private final String name;
+    private final String prefix;
 
     public Schema(String name, int version, String defaultJavaPackage) {
         this.name = name;
+        this.prefix = name.equals(DEFAULT_NAME) ? "" : DaoUtil.capFirst(name);
         this.version = version;
         this.defaultJavaPackage = defaultJavaPackage;
         this.entities = new ArrayList<>();
@@ -50,7 +54,7 @@ public class Schema {
     }
 
     public Schema(int version, String defaultJavaPackage) {
-        this("default", version, defaultJavaPackage);
+        this(DEFAULT_NAME, version, defaultJavaPackage);
     }
 
     public void enableKeepSectionsByDefault() {
@@ -177,6 +181,10 @@ public class Schema {
 
     public String getName() {
         return name;
+    }
+
+    public String getPrefix() {
+        return prefix;
     }
 
     void init2ndPass() {

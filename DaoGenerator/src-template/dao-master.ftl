@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<#-- @ftlvariable name="schema" type="org.greenrobot.greendao.generator.Schema" -->
 package ${schema.defaultJavaPackageDao};
 
 import android.content.Context;
@@ -35,7 +36,7 @@ import ${entity.javaPackageDao}.${entity.classNameDao};
 /** 
  * Master of DAO (schema version ${schema.version?c}): knows all DAOs.
 */
-public class DaoMaster extends AbstractDaoMaster {
+public class ${schema.prefix}DaoMaster extends AbstractDaoMaster {
     public static final int SCHEMA_VERSION = ${schema.version?c};
 
     /** Creates underlying database table using DAOs. */
@@ -83,19 +84,19 @@ public class DaoMaster extends AbstractDaoMaster {
         }
     }
 
-    public DaoMaster(SQLiteDatabase db) {
+    public ${schema.prefix}DaoMaster(SQLiteDatabase db) {
         super(db, SCHEMA_VERSION);
 <#list schema.entities as entity>
         registerDaoClass(${entity.classNameDao}.class);
 </#list>
     }
     
-    public DaoSession newSession() {
-        return new DaoSession(db, IdentityScopeType.Session, daoConfigMap);
+    public ${schema.prefix}DaoSession newSession() {
+        return new ${schema.prefix}DaoSession(db, IdentityScopeType.Session, daoConfigMap);
     }
     
-    public DaoSession newSession(IdentityScopeType type) {
-        return new DaoSession(db, type, daoConfigMap);
+    public ${schema.prefix}DaoSession newSession(IdentityScopeType type) {
+        return new ${schema.prefix}DaoSession(db, type, daoConfigMap);
     }
     
 }

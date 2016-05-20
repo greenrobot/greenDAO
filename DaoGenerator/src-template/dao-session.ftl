@@ -43,7 +43,7 @@ import ${entity.javaPackageDao}.${entity.classNameDao};
  * 
  * @see org.greenrobot.greendao.AbstractDaoSession
  */
-public class DaoSession extends AbstractDaoSession {
+public class ${schema.prefix}DaoSession extends AbstractDaoSession {
 
 <#list schema.entities as entity>
     private final DaoConfig ${entity.classNameDao?uncap_first}Config;
@@ -53,7 +53,7 @@ public class DaoSession extends AbstractDaoSession {
     private final ${entity.classNameDao} ${entity.classNameDao?uncap_first};
 </#list>        
 
-    public DaoSession(SQLiteDatabase db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
+    public ${schema.prefix}DaoSession(SQLiteDatabase db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
             daoConfigMap) {
         super(db);
 

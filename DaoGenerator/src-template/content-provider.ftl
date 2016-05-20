@@ -1,3 +1,6 @@
+<#-- @ftlvariable name="entity" type="org.greenrobot.greendao.generator.Entity" -->
+<#-- @ftlvariable name="contentProvider" type="org.greenrobot.greendao.generator.ContentProvider" -->
+<#-- @ftlvariable name="schema" type="org.greenrobot.greendao.generator.Schema" -->
 package ${contentProvider.javaPackage};
 
 import android.content.ContentProvider;
@@ -11,7 +14,7 @@ import android.net.Uri;
 
 import org.greenrobot.greendao.DaoLog;
 
-import ${schema.defaultJavaPackageDao}.DaoSession;
+import ${schema.defaultJavaPackageDao}.${schema.prefix}DaoSession;
 import ${entity.javaPackageDao}.${entity.classNameDao};
 
 /* Copy this code snippet into your AndroidManifest.xml inside the <application> element:
@@ -50,12 +53,12 @@ public class ${contentProvider.className} extends ContentProvider {
     * This must be set from outside, it's recommended to do this inside your Application object.
     * Subject to change (static isn't nice).
     */
-    public static DaoSession daoSession;
+    public static ${schema.prefix}DaoSession daoSession;
     
     @Override
     public boolean onCreate() {
         // if(daoSession == null) {
-        //     throw new IllegalStateException("DaoSession must be set before content provider is created");
+        //     throw new IllegalStateException("${schema.prefix}DaoSession must be set before content provider is created");
         // }
         DaoLog.d("Content Provider started: " + CONTENT_URI);
         return true;
@@ -63,7 +66,7 @@ public class ${contentProvider.className} extends ContentProvider {
     
     protected SQLiteDatabase getDatabase() {
         if(daoSession == null) {
-            throw new IllegalStateException("DaoSession must be set during content provider is active");
+            throw new IllegalStateException("${schema.prefix}DaoSession must be set during content provider is active");
         }
         return daoSession.getDatabase();
     }

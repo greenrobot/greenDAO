@@ -38,7 +38,7 @@ import org.greenrobot.greendao.annotation.*;
 import java.util.List;
 </#if>
 <#if entity.active>
-import ${schema.defaultJavaPackageDao}.DaoSession;
+import ${schema.defaultJavaPackageDao}.${schema.prefix}DaoSession;
 import org.greenrobot.greendao.DaoException;
 
 </#if>
@@ -130,7 +130,7 @@ ${property.javaDocField}
 <#if entity.active>
     /** Used to resolve relations */
     @Generated
-    private transient DaoSession daoSession;
+    private transient ${schema.prefix}DaoSession daoSession;
 
     /** Used for active entity operations. */
     @Generated
@@ -214,7 +214,7 @@ property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_
 <#if entity.active>
     /** called by internal mechanisms, do not call yourself. */
     @Generated
-    public void __setDaoSession(DaoSession daoSession) {
+    public void __setDaoSession(${schema.prefix}DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.get${entity.classNameDao?cap_first}() : null;
     }

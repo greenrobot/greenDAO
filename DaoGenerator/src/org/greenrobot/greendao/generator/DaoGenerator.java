@@ -115,8 +115,10 @@ public class DaoGenerator {
                         + "ContentProvider", schema, entity, additionalObjectsForTemplate);
             }
         }
-        generate(templateDaoMaster, outDirFile, schema.getDefaultJavaPackageDao(), "DaoMaster", schema, null);
-        generate(templateDaoSession, outDirFile, schema.getDefaultJavaPackageDao(), "DaoSession", schema, null);
+        generate(templateDaoMaster, outDirFile, schema.getDefaultJavaPackageDao(),
+            schema.getPrefix() + "DaoMaster", schema, null);
+        generate(templateDaoSession, outDirFile, schema.getDefaultJavaPackageDao(),
+            schema.getPrefix() + "DaoSession", schema, null);
 
         long time = System.currentTimeMillis() - start;
         System.out.println("Processed " + entities.size() + " entities in " + time + "ms");
