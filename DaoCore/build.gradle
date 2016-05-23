@@ -4,7 +4,7 @@ apply plugin: 'signing'
 
 group = 'org.greenrobot'
 archivesBaseName = 'greendao-encryption'
-version = '2.2.0'
+version = '2.2.1'
 sourceCompatibility = 1.6
 
 def isSnapshot = version.endsWith('-SNAPSHOT')
