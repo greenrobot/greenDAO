@@ -48,7 +48,7 @@ public class TableStatements {
     public DatabaseStatement getInsertStatement() {
         if (insertStatement == null) {
             String sql = SqlUtils.createSqlInsert("INSERT INTO ", tablename, allColumns);
-            SQLiteStatement newInsertStatement = db.compileStatement(sql);
+            DatabaseStatement newInsertStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (insertStatement == null) {
                     insertStatement = newInsertStatement;
@@ -64,7 +64,7 @@ public class TableStatements {
     public DatabaseStatement getInsertOrReplaceStatement() {
         if (insertOrReplaceStatement == null) {
             String sql = SqlUtils.createSqlInsert("INSERT OR REPLACE INTO ", tablename, allColumns);
-            SQLiteStatement newInsertOrReplaceStatement = db.compileStatement(sql);
+            DatabaseStatement newInsertOrReplaceStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (insertOrReplaceStatement == null) {
                     insertOrReplaceStatement = newInsertOrReplaceStatement;
@@ -80,7 +80,7 @@ public class TableStatements {
     public DatabaseStatement getDeleteStatement() {
         if (deleteStatement == null) {
             String sql = SqlUtils.createSqlDelete(tablename, pkColumns);
-            SQLiteStatement newDeleteStatement = db.compileStatement(sql);
+            DatabaseStatement newDeleteStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (deleteStatement == null) {
                     deleteStatement = newDeleteStatement;
@@ -96,7 +96,7 @@ public class TableStatements {
     public DatabaseStatement getUpdateStatement() {
         if (updateStatement == null) {
             String sql = SqlUtils.createSqlUpdate(tablename, allColumns, pkColumns);
-            SQLiteStatement newUpdateStatement = db.compileStatement(sql);
+            DatabaseStatement newUpdateStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (updateStatement == null) {
                     updateStatement = newUpdateStatement;
