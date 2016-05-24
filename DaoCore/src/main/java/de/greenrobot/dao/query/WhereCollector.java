@@ -79,7 +79,7 @@ class WhereCollector<T> {
             Property[] properties = dao.getProperties();
             boolean found = false;
             for (Property property2 : properties) {
-                if (property == property2) {
+                if (property.equals(property2)) {
                     found = true;
                     break;
                 }

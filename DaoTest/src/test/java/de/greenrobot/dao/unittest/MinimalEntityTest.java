@@ -11,6 +11,7 @@ import org.robolectric.annotation.Config;
 
 import java.util.concurrent.CountDownLatch;
 
+import de.greenrobot.dao.Property;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.daotest.dummyapp.BuildConfig;
 
@@ -45,6 +46,12 @@ public class MinimalEntityTest {
         daoSession.update(entity);
         daoSession.delete(entity);
         assertNull(minimalEntityDao.load(entity.getId()));
+    }
+
+     @Test
+    public void testQueryBuilderEquality() {
+        final Property Id2 = new Property(0, Long.class, "id", true, "_id");
+        minimalEntityDao.queryBuilder().where(Id2.eq(0)).list();
     }
 
     @Test
