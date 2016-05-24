@@ -117,4 +117,29 @@ public class Property {
         return new PropertyCondition(this, " IS NOT NULL");
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if(object instanceof Property) {
+            Property property = (Property)object;
+            return ordinal == property.ordinal
+                    && type.equals(property.type)
+                    && name.equals(property.name)
+                    && primaryKey == property.primaryKey
+                    && columnName.equals(property.columnName);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return ordinal
+                ^ type.hashCode()
+                ^ name.hashCode()
+                ^ (primaryKey ? 1:0)
+                ^ columnName.hashCode();
+    }
+
 }
