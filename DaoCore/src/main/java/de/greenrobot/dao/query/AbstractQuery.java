@@ -83,4 +83,7 @@ abstract class AbstractQuery<T> {
         }
     }
 
+	public AbstractDao<T, ?> getDao() {
+		return dao;
+	}
 }
