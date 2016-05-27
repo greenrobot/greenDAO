@@ -114,7 +114,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     /**
-     * Loads and entity for the given PK.
+     * Loads the entity for the given PK.
      *
      * @param key a PK value or null
      * @return The entity or null, if no entity matched the PK value

@@ -19,6 +19,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 /** Helper class to create SQL statements for specific tables (used by greenDAO internally). */
+// Note: avoid locking while compiling any statement (accessing the db) to avoid deadlocks on lock-savvy DBs like
+// SQLCipher.
 public class TableStatements {
     private final SQLiteDatabase db;
     private final String tablename;
@@ -44,11 +46,15 @@ public class TableStatements {
 
     public SQLiteStatement getInsertStatement() {
         if (insertStatement == null) {
+            String sql = SqlUtils.createSqlInsert("INSERT INTO ", tablename, allColumns);
+            SQLiteStatement newInsertStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (insertStatement == null) {
-                    String sql = SqlUtils.createSqlInsert("INSERT INTO ", tablename, allColumns);
-                    insertStatement = db.compileStatement(sql);
+                    insertStatement = newInsertStatement;
                 }
+            }
+            if (insertStatement != newInsertStatement) {
+                newInsertStatement.close();
             }
         }
         return insertStatement;
@@ -56,11 +62,15 @@ public class TableStatements {
 
     public SQLiteStatement getInsertOrReplaceStatement() {
         if (insertOrReplaceStatement == null) {
+            String sql = SqlUtils.createSqlInsert("INSERT OR REPLACE INTO ", tablename, allColumns);
+            SQLiteStatement newInsertOrReplaceStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (insertOrReplaceStatement == null) {
-                    String sql = SqlUtils.createSqlInsert("INSERT OR REPLACE INTO ", tablename, allColumns);
-                    insertOrReplaceStatement = db.compileStatement(sql);
+                    insertOrReplaceStatement = newInsertOrReplaceStatement;
                 }
+            }
+            if (insertOrReplaceStatement != newInsertOrReplaceStatement) {
+                newInsertOrReplaceStatement.close();
             }
         }
         return insertOrReplaceStatement;
@@ -68,11 +78,15 @@ public class TableStatements {
 
     public SQLiteStatement getDeleteStatement() {
         if (deleteStatement == null) {
+            String sql = SqlUtils.createSqlDelete(tablename, pkColumns);
+            SQLiteStatement newDeleteStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (deleteStatement == null) {
-                    String sql = SqlUtils.createSqlDelete(tablename, pkColumns);
-                    deleteStatement = db.compileStatement(sql);
+                    deleteStatement = newDeleteStatement;
                 }
+            }
+            if (deleteStatement != newDeleteStatement) {
+                newDeleteStatement.close();
             }
         }
         return deleteStatement;
@@ -80,11 +94,15 @@ public class TableStatements {
 
     public SQLiteStatement getUpdateStatement() {
         if (updateStatement == null) {
+            String sql = SqlUtils.createSqlUpdate(tablename, allColumns, pkColumns);
+            SQLiteStatement newUpdateStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (updateStatement == null) {
-                    String sql = SqlUtils.createSqlUpdate(tablename, allColumns, pkColumns);
-                    updateStatement = db.compileStatement(sql);
+                    updateStatement = newUpdateStatement;
                 }
+            }
+            if (updateStatement != newUpdateStatement) {
+                newUpdateStatement.close();
             }
         }
         return updateStatement;
