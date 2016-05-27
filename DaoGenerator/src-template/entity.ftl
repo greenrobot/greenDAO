@@ -168,7 +168,7 @@ ${property.javaDocSetter}
         ${toOne.fkProperties[0].javaType} __key = this.${toOne.fkProperties[0].propertyName};
         if (${toOne.name}__resolvedKey == null || <#--
         --><#if toOne.resolvedKeyUseEquals[0]>!${toOne.name}__resolvedKey.equals(__key)<#--
-        --><#else>${toOne.name}__resolvedKey != __key</#if>) {
+        --><#else>!${toOne.name}__resolvedKey.equals(__key)</#if>) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
