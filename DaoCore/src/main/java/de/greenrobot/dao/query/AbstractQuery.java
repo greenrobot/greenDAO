@@ -66,13 +66,14 @@ abstract class AbstractQuery<T> {
     /**
      * Sets the parameter (0 based) using the position in which it was added during building the query.
      */
-    public void setParameter(int index, Object parameter) {
+    public AbstractQuery<T> setParameter(int index, Object parameter) {
         checkThread();
         if (parameter != null) {
             parameters[index] = parameter.toString();
         } else {
             parameters[index] = null;
         }
+        return this;
     }
 
     protected void checkThread() {

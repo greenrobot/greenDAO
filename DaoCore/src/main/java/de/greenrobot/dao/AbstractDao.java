@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import android.database.sqlite.SQLiteStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import de.greenrobot.dao.identityscope.IdentityScope;
@@ -39,7 +38,7 @@ import de.greenrobot.dao.query.QueryBuilder;
 
 /**
  * Base class for all DAOs: Implements entity operations like insert, load, delete, and query.
- * <p>
+ * <p/>
  * This class is thread-safe.
  *
  * @param <T> Entity type
@@ -115,7 +114,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     /**
-     * Loads and entity for the given PK.
+     * Loads the entity for the given PK.
      *
      * @param key a PK value or null
      * @return The entity or null, if no entity matched the PK value
@@ -177,6 +176,16 @@ public abstract class AbstractDao<T, K> {
         }
     }
 
+    /**
+     * Detaches all entities (of type T) from the identity scope (session). Subsequent query results won't return any
+     * previously loaded objects.
+     */
+    public void detachAll() {
+        if (identityScope != null) {
+            identityScope.clear();
+        }
+    }
+
     protected List<T> loadAllAndCloseCursor(Cursor cursor) {
         try {
             return loadAllFromCursor(cursor);
@@ -208,7 +217,8 @@ public abstract class AbstractDao<T, K> {
      * is set.
      *
      * @param entities      The entities to insert.
-     * @param setPrimaryKey if true, the PKs of the given will be set after the insert; pass false to improve performance.
+     * @param setPrimaryKey if true, the PKs of the given will be set after the insert; pass false to improve
+     *                      performance.
      */
     public void insertInTx(Iterable<T> entities, boolean setPrimaryKey) {
         SQLiteStatement stmt = statements.getInsertStatement();
@@ -220,7 +230,8 @@ public abstract class AbstractDao<T, K> {
      * tracked if the PK is set.
      *
      * @param entities      The entities to insert.
-     * @param setPrimaryKey if true, the PKs of the given will be set after the insert; pass false to improve performance.
+     * @param setPrimaryKey if true, the PKs of the given will be set after the insert; pass false to improve
+     *                      performance.
      */
     public void insertOrReplaceInTx(Iterable<T> entities, boolean setPrimaryKey) {
         SQLiteStatement stmt = statements.getInsertOrReplaceStatement();
@@ -284,8 +295,10 @@ public abstract class AbstractDao<T, K> {
     }
 
     /**
-     * Insert an entity into the table associated with a concrete DAO <b>without</b> setting key property. Warning: This
-     * may be faster, but the entity should not be used anymore. The entity also won't be attached to identy scope.
+     * Insert an entity into the table associated with a concrete DAO <b>without</b> setting key property.
+     *
+     * Warning: This may be faster, but the entity should not be used anymore. The entity also won't be attached to
+     * identity scope.
      *
      * @return row ID of newly inserted entity
      */
@@ -360,7 +373,7 @@ public abstract class AbstractDao<T, K> {
     protected List<T> loadAllFromCursor(Cursor cursor) {
         int count = cursor.getCount();
         if (count == 0) {
-            return Collections.EMPTY_LIST;
+            return new ArrayList<T>();
         }
         List<T> list = new ArrayList<T>(count);
         CursorWindow window = null;
@@ -407,12 +420,12 @@ public abstract class AbstractDao<T, K> {
             row++;
             if (row >= windowEnd) {
                 window = moveToNextUnlocked(cursor);
-                if(window == null) {
+                if (window == null) {
                     break;
                 }
                 windowEnd = window.getStartPosition() + window.getNumRows();
             } else {
-                if(!cursor.moveToNext()) {
+                if (!cursor.moveToNext()) {
                     break;
                 }
             }
@@ -426,7 +439,7 @@ public abstract class AbstractDao<T, K> {
     private CursorWindow moveToNextUnlocked(Cursor cursor) {
         identityScope.unlock();
         try {
-            if(cursor.moveToNext()) {
+            if (cursor.moveToNext()) {
                 return ((CrossProcessCursor) cursor).getWindow();
             } else {
                 return null;
