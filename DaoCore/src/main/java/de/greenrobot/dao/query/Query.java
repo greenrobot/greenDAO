@@ -19,6 +19,7 @@ import android.database.Cursor;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoException;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -131,4 +132,18 @@ public class Query<T> extends AbstractQueryWithLimit<T> {
         return entity;
     }
 
+    @Override
+    public Query<T> setParameter(int index, Object parameter) {
+        return (Query<T>) super.setParameter(index, parameter);
+    }
+
+    @Override
+    public Query<T> setParameter(int index, Date parameter) {
+        return (Query<T>) super.setParameter(index, parameter);
+    }
+
+    @Override
+    public Query<T> setParameter(int index, Boolean parameter) {
+        return (Query<T>) super.setParameter(index, parameter);
+    }
 }

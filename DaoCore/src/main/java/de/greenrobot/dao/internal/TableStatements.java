@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 /** Helper class to create SQL statements for specific tables (used by greenDAO internally). */
+// Note: avoid locking while compiling any statement (accessing the db) to avoid deadlocks on lock-savvy DBs like
+// SQLCipher.
 public class TableStatements {
     private final SQLiteDatabase db;
     private final String tablename;
     private final String[] allColumns;
     private final String[] pkColumns;
 
-    private SQLiteStatement insertStatement;
-    private SQLiteStatement insertOrReplaceStatement;
-    private SQLiteStatement updateStatement;
-    private SQLiteStatement deleteStatement;
+    private volatile SQLiteStatement insertStatement;
+    private volatile SQLiteStatement insertOrReplaceStatement;
+    private volatile SQLiteStatement updateStatement;
+    private volatile SQLiteStatement deleteStatement;
 
     private volatile String selectAll;
     private volatile String selectByKey;
@@ -45,7 +47,15 @@ public class TableStatements {
     public SQLiteStatement getInsertStatement() {
         if (insertStatement == null) {
             String sql = SqlUtils.createSqlInsert("INSERT INTO ", tablename, allColumns);
-            insertStatement = db.compileStatement(sql);
+            SQLiteStatement newInsertStatement = db.compileStatement(sql);
+            synchronized (this) {
+                if (insertStatement == null) {
+                    insertStatement = newInsertStatement;
+                }
+            }
+            if (insertStatement != newInsertStatement) {
+                newInsertStatement.close();
+            }
         }
         return insertStatement;
     }
@@ -53,7 +63,15 @@ public class TableStatements {
     public SQLiteStatement getInsertOrReplaceStatement() {
         if (insertOrReplaceStatement == null) {
             String sql = SqlUtils.createSqlInsert("INSERT OR REPLACE INTO ", tablename, allColumns);
-            insertOrReplaceStatement = db.compileStatement(sql);
+            SQLiteStatement newInsertOrReplaceStatement = db.compileStatement(sql);
+            synchronized (this) {
+                if (insertOrReplaceStatement == null) {
+                    insertOrReplaceStatement = newInsertOrReplaceStatement;
+                }
+            }
+            if (insertOrReplaceStatement != newInsertOrReplaceStatement) {
+                newInsertOrReplaceStatement.close();
+            }
         }
         return insertOrReplaceStatement;
     }
@@ -61,7 +79,15 @@ public class TableStatements {
     public SQLiteStatement getDeleteStatement() {
         if (deleteStatement == null) {
             String sql = SqlUtils.createSqlDelete(tablename, pkColumns);
-            deleteStatement = db.compileStatement(sql);
+            SQLiteStatement newDeleteStatement = db.compileStatement(sql);
+            synchronized (this) {
+                if (deleteStatement == null) {
+                    deleteStatement = newDeleteStatement;
+                }
+            }
+            if (deleteStatement != newDeleteStatement) {
+                newDeleteStatement.close();
+            }
         }
         return deleteStatement;
     }
@@ -69,7 +95,15 @@ public class TableStatements {
     public SQLiteStatement getUpdateStatement() {
         if (updateStatement == null) {
             String sql = SqlUtils.createSqlUpdate(tablename, allColumns, pkColumns);
-            updateStatement = db.compileStatement(sql);
+            SQLiteStatement newUpdateStatement = db.compileStatement(sql);
+            synchronized (this) {
+                if (updateStatement == null) {
+                    updateStatement = newUpdateStatement;
+                }
+            }
+            if (updateStatement != newUpdateStatement) {
+                newUpdateStatement.close();
+            }
         }
         return updateStatement;
     }

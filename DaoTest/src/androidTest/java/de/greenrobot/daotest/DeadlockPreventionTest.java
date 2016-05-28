@@ -37,7 +37,7 @@ public class DeadlockPreventionTest extends AbstractDaoSessionTest<DaoMaster, Da
     }
 
     // Runs pretty long, only run manually
-    public void testLoadAll() throws InterruptedException {
+    public void _testLoadAll() throws InterruptedException {
         dao = daoSession.getTestEntityDao();
         List<TestEntity> entities = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
