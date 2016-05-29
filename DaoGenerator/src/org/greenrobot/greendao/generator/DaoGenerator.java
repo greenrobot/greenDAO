@@ -49,7 +49,11 @@ public class DaoGenerator {
     private Template templateContentProvider;
 
     public DaoGenerator() throws IOException {
-        System.out.println("greenDAO Generator");
+        this(false);
+    }
+
+    public DaoGenerator(boolean encryption) throws IOException {
+        System.out.println("greenDAO Generator" + (encryption ? " (enryption mode)" : ""));
         System.out.println("Copyright 2011-2016 Markus Junginger, greenrobot.de. Licensed under GPL V3.");
         System.out.println("This program comes with ABSOLUTELY NO WARRANTY");
 
@@ -58,7 +62,8 @@ public class DaoGenerator {
         patternKeepMethods = compilePattern("METHODS");
 
         Configuration config = new Configuration(Configuration.VERSION_2_3_23);
-        config.setClassForTemplateLoading(this.getClass(), "/");
+        String basePackagePath = encryption ? "/encryption/" : "/standard/";
+        config.setClassForTemplateLoading(this.getClass(), basePackagePath);
 
         templateDao = config.getTemplate("dao.ftl");
         templateDaoMaster = config.getTemplate("dao-master.ftl");
@@ -84,7 +89,7 @@ public class DaoGenerator {
         long start = System.currentTimeMillis();
 
         File outDirFile = toFileForceExists(outDir);
-        File outDirEntityFile = outDirEntity != null? toFileForceExists(outDirEntity): outDirFile;
+        File outDirEntityFile = outDirEntity != null ? toFileForceExists(outDirEntity) : outDirFile;
         File outDirTestFile = outDirTest != null ? toFileForceExists(outDirTest) : null;
 
         schema.init2ndPass();

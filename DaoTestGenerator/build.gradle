@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
+// If your IDE fails to run generation (NoClassDefFoundError), run it using gradle
 mainClassName = "org.greenrobot.greendao.generator.gentest.TestDaoGenerator"
 
 sourceSets {
