@@ -17,6 +17,9 @@ You should have received a copy of the GNU General Public License
 along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<#-- @ftlvariable name="entity" type="org.greenrobot.greendao.generator.Entity" -->
+<#-- @ftlvariable name="schema" type="org.greenrobot.greendao.generator.Schema" -->
+
 <#assign toBindType = {"Boolean":"Long", "Byte":"Long", "Short":"Long", "Int":"Long", "Long":"Long", "Float":"Double", "Double":"Double", "String":"String", "ByteArray":"Blob", "Date": "Long" } />
 <#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob", "Date": "Long"  } />
 package ${entity.javaPackageDao};
@@ -29,21 +32,21 @@ import java.util.ArrayList;
 </#if>
 import android.database.Cursor;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Property;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.Property;
 <#if entity.toOneRelations?has_content>
-import de.greenrobot.dao.internal.SqlUtils;
+import org.greenrobot.greendao.internal.SqlUtils;
 </#if>
-import de.greenrobot.dao.internal.DaoConfig;
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.database.DatabaseStatement;
+import org.greenrobot.greendao.internal.DaoConfig;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.database.DatabaseStatement;
 <#if entity.incomingToManyRelations?has_content>
-import de.greenrobot.dao.query.Query;
-import de.greenrobot.dao.query.QueryBuilder;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 </#if>
 
 <#if entity.javaPackageDao != schema.defaultJavaPackageDao>
-import ${schema.defaultJavaPackageDao}.DaoSession;
+import ${schema.defaultJavaPackageDao}.${schema.prefix}DaoSession;
 
 </#if>
 <#if entity.additionalImportsDao?has_content>
@@ -76,7 +79,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
     };
 
 <#if entity.active>
-    private DaoSession daoSession;
+    private ${schema.prefix}DaoSession daoSession;
 
 </#if>
 <#list entity.properties as property><#if property.customType?has_content><#--
@@ -90,7 +93,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
         super(config);
     }
     
-    public ${entity.classNameDao}(DaoConfig config, DaoSession daoSession) {
+    public ${entity.classNameDao}(DaoConfig config, ${schema.prefix}DaoSession daoSession) {
         super(config, daoSession);
 <#if entity.active>        
         this.daoSession = daoSession;
@@ -110,7 +113,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 <#list entity.indexes as index>
         db.execSQL("CREATE <#if index.unique>UNIQUE </#if>INDEX " + constraint + "${index.name} ON ${entity.tableName}" +
                 " (<#list index.properties 
-as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);");
+as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index])??> ${index.propertiesOrder[property_index]}</#if><#sep>,</#list>);");
 </#list>
 </#if>         
     }

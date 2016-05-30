@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<#-- @ftlvariable name="schema" type="org.greenrobot.greendao.generator.Schema" -->
 package ${schema.defaultJavaPackageDao};
 
 import android.content.Context;
@@ -24,12 +25,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.util.Log;
 
-import de.greenrobot.dao.AbstractDaoMaster;
-import de.greenrobot.dao.database.StandardDatabase;
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.database.EncryptedDatabaseOpenHelper;
-import de.greenrobot.dao.database.DatabaseOpenHelper;
-import de.greenrobot.dao.identityscope.IdentityScopeType;
+import org.greenrobot.greendao.AbstractDaoMaster;
+import org.greenrobot.greendao.database.StandardDatabase;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.database.EncryptedDatabaseOpenHelper;
+import org.greenrobot.greendao.database.DatabaseOpenHelper;
+import org.greenrobot.greendao.identityscope.IdentityScopeType;
 
 <#list schema.entities as entity>
 import ${entity.javaPackageDao}.${entity.classNameDao};
@@ -39,7 +40,7 @@ import ${entity.javaPackageDao}.${entity.classNameDao};
 /** 
  * Master of DAO (schema version ${schema.version?c}): knows all DAOs.
 */
-public class DaoMaster extends AbstractDaoMaster {
+public class ${schema.prefix}DaoMaster extends AbstractDaoMaster {
     public static final int SCHEMA_VERSION = ${schema.version?c};
 
     /** Creates underlying database table using DAOs. */
@@ -64,6 +65,7 @@ public class DaoMaster extends AbstractDaoMaster {
         public OpenHelper(Context context, String name) {
             super(context, name, SCHEMA_VERSION);
         }
+
         public OpenHelper(Context context, String name, CursorFactory factory) {
             super(context, name, factory, SCHEMA_VERSION);
         }
@@ -123,23 +125,23 @@ public class DaoMaster extends AbstractDaoMaster {
         }
     }
 
-    public DaoMaster(SQLiteDatabase db) {
+    public ${schema.prefix}DaoMaster(SQLiteDatabase db) {
         this(new StandardDatabase(db));
     }
 
-    public DaoMaster(Database db) {
+    public ${schema.prefix}DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
 <#list schema.entities as entity>
         registerDaoClass(${entity.classNameDao}.class);
 </#list>
     }
     
-    public DaoSession newSession() {
-        return new DaoSession(db, IdentityScopeType.Session, daoConfigMap);
+    public ${schema.prefix}DaoSession newSession() {
+        return new ${schema.prefix}DaoSession(db, IdentityScopeType.Session, daoConfigMap);
     }
     
-    public DaoSession newSession(IdentityScopeType type) {
-        return new DaoSession(db, type, daoConfigMap);
+    public ${schema.prefix}DaoSession newSession(IdentityScopeType type) {
+        return new ${schema.prefix}DaoSession(db, type, daoConfigMap);
     }
     
 }
