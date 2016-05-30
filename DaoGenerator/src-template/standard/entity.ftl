@@ -17,17 +17,29 @@ You should have received a copy of the GNU General Public License
 along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<#-- @ftlvariable name="entity" type="org.greenrobot.greendao.generator.Entity" -->
+<#-- @ftlvariable name="schema" type="org.greenrobot.greendao.generator.Schema" -->
+
 <#assign toBindType = {"Boolean":"Long", "Byte":"Long", "Short":"Long", "Int":"Long", "Long":"Long", "Float":"Double", "Double":"Double", "String":"String", "ByteArray":"Blob" }/>
 <#assign toCursorType = {"Boolean":"Short", "Byte":"Short", "Short":"Short", "Int":"Int", "Long":"Long", "Float":"Float", "Double":"Double", "String":"String", "ByteArray":"Blob" }/>
-<#assign complexTypes = ["String", "ByteArray", "Date"]/>
+<#assign primitiveTypes = ["boolean", "byte", "int", "long", "float", "double", "short"]/>
+<#macro multiIndexes>
+{
+<#list entity.multiIndexes as index>
+    @Index(value = "${index.orderSpec}"<#if index.nonDefaultName>, name = "${index.name}"</#if><#if index.unique>, unique = true</#if>)<#sep>,
+</#list>
+
+}</#macro>
 package ${entity.javaPackage};
+
+import org.greenrobot.greendao.annotation.*;
 
 <#if entity.toManyRelations?has_content>
 import java.util.List;
 </#if>
 <#if entity.active>
-import ${schema.defaultJavaPackageDao}.DaoSession;
-import de.greenrobot.dao.DaoException;
+import ${schema.defaultJavaPackageDao}.${schema.prefix}DaoSession;
+import org.greenrobot.greendao.DaoException;
 
 </#if>
 <#if entity.additionalImportsEntity?has_content>
@@ -55,41 +67,118 @@ ${entity.javaDoc}
 <#if entity.codeBeforeClass ??>
 ${entity.codeBeforeClass}
 </#if>
+<#if entity.active && schema.name != "default">
+@Entity(schema = "${schema.name}", active = true)
+<#elseif entity.active>
+@Entity(active = true)
+<#elseif schema.name != "default">
+@Entity(schema = "${schema.name}")
+<#else>
+@Entity
+</#if>
+<#if entity.nonDefaultTableName && (entity.multiIndexes?size > 0)>
+@Table(name = "${entity.tableName}", indexes = <@multiIndexes/><#if entity.skipTableCreation>, create = false</#if>)
+<#elseif entity.nonDefaultTableName>
+@Table(name = "${entity.tableName}"<#if entity.skipTableCreation>, create = false</#if>)
+<#elseif (entity.multiIndexes?size > 0)>
+@Table(indexes = <@multiIndexes/><#if entity.skipTableCreation>, create = false</#if>)
+<#elseif entity.skipTableCreation>
+@Table(create = false)
+</#if>
 public class ${entity.className}<#if
 entity.superclass?has_content> extends ${entity.superclass} </#if><#if
 entity.interfacesToImplement?has_content> implements <#list entity.interfacesToImplement
 as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
-
 <#list entity.properties as property>
-<#if property.notNull && complexTypes?seq_contains(property.propertyType)>
-    /** Not-null value. */
+<#assign notNull = property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
+<#if property.primaryKey||notNull||property.unique||property.index??||property.nonDefaultColumnName||property.converter??>
+
 </#if>
 <#if property.javaDocField ??>
 ${property.javaDocField}
 </#if>
 <#if property.codeBeforeField ??>
-     ${property.codeBeforeField}
+    ${property.codeBeforeField}
+</#if>
+<#if property.primaryKey>
+    @Id<#if property.autoincrement>(autoincrement = true)</#if>
+</#if>
+<#if property.nonDefaultColumnName>
+    @Column(name = "${property.columnName}")
+</#if>
+<#if property.converter??>
+    @Convert(converter = ${property.converter}.class, columnType = ${property.javaType}.class)
+</#if>
+<#if notNull>
+    @NotNull
+</#if>
+<#if property.unique>
+    @Unique
+</#if>
+<#if ((property.index.nonDefaultName)!false) && (property.index.unique)!false>
+    @Index(name = "${property.index.name}", unique = true)
+<#elseif (property.index.nonDefaultName)!false>
+    @Index(name = "${property.index.name}")
+<#elseif (property.index.unique)!false>
+    @Index(unique = true)
+<#elseif property.index??>
+    @Index
 </#if>
     private ${property.javaTypeInEntity} ${property.propertyName};
 </#list>
 
 <#if entity.active>
     /** Used to resolve relations */
-    private transient DaoSession daoSession;
+    @Generated
+    private transient ${schema.prefix}DaoSession daoSession;
 
     /** Used for active entity operations. */
+    @Generated
     private transient ${entity.classNameDao} myDao;
-
 <#list entity.toOneRelations as toOne>
-    private ${toOne.targetEntity.className} ${toOne.name};
-<#if toOne.useFkProperty>
-    private ${toOne.resolvedKeyJavaType[0]} ${toOne.name}__resolvedKey;
-<#else>
-    private boolean ${toOne.name}__refreshed;
-</#if>
 
+<#if toOne.useFkProperty>
+    @ToOne(foreignKey = "${toOne.fkProperties[0].propertyName}")
+    private ${toOne.targetEntity.className} ${toOne.name};
+
+    @Generated
+    private transient ${toOne.resolvedKeyJavaType[0]} ${toOne.name}__resolvedKey;
+<#else>
+    @ToOne
+<#if toOne.fkProperties[0].nonDefaultColumnName>
+    @Column(name = "${toOne.fkProperties[0].columnName}")
+</#if>
+<#if toOne.fkProperties[0].unique>
+    @Unique
+</#if>
+<#if toOne.fkProperties[0].notNull>
+    @NotNull
+</#if>
+    private ${toOne.targetEntity.className} ${toOne.name};
+
+    @Generated
+    private transient boolean ${toOne.name}__refreshed;
+</#if>
 </#list>
 <#list entity.toManyRelations as toMany>
+
+<#if toMany.sourceProperties??>
+    @ToMany(joinOn = {
+<#list toMany.sourceProperties as sourceProperty>
+        @JoinOn(source = "${sourceProperty.propertyName}", target = "${toMany.targetProperties[sourceProperty_index].propertyName}")<#sep>,
+</#list>
+
+    })
+<#elseif toMany.targetProperties??>
+    @ToMany(mappedBy = "${toMany.targetProperties[0]}")
+<#else>
+    @ToMany
+    @JoinEntity(entity = ${toMany.joinEntity.className}.class, sourceProperty = "${toMany.sourceProperty.propertyName}", targetProperty = "${toMany.targetProperty.propertyName}")
+</#if>
+<#assign orderSpec = (toMany.orderSpec)!"0">
+<#if orderSpec != "0">
+    @OrderBy("${orderSpec}")
+</#if>
     private List<${toMany.targetEntity.className}> ${toMany.name};
 </#list>
 
@@ -100,6 +189,7 @@ ${keepFields!}    // KEEP FIELDS END
 
 </#if>
 <#if entity.constructors>
+    @Generated
     public ${entity.className}() {
     }
 <#if entity.propertiesPk?has_content && entity.propertiesPk?size != entity.properties?size>
@@ -112,6 +202,7 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
     }
 </#if>
 
+    @Generated
     public ${entity.className}(<#list entity.properties as
 property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
 <#list entity.properties as property>
@@ -122,27 +213,28 @@ property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_
 
 <#if entity.active>
     /** called by internal mechanisms, do not call yourself. */
-    public void __setDaoSession(DaoSession daoSession) {
+    @Generated
+    public void __setDaoSession(${schema.prefix}DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.get${entity.classNameDao?cap_first}() : null;
     }
 
 </#if>
 <#list entity.properties as property>
-<#if property.notNull && complexTypes?seq_contains(property.propertyType)>
-    /** Not-null value. */
-</#if>
 <#if property.javaDocGetter ??>
 ${property.javaDocGetter}
 </#if>
 <#if property.codeBeforeGetter ??>
     ${property.codeBeforeGetter}
 </#if>
+<#if property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
+    @NotNull
+</#if>
     public ${property.javaTypeInEntity} get${property.propertyName?cap_first}() {
         return ${property.propertyName};
     }
 
-<#if property.notNull && complexTypes?seq_contains(property.propertyType)>
+<#if property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
     /** Not-null value; ensure this value is available before it is saved to the database. */
 </#if>
 <#if property.javaDocSetter ??>
@@ -151,7 +243,7 @@ ${property.javaDocSetter}
 <#if property.codeBeforeSetter ??>
     ${property.codeBeforeSetter}
 </#if>
-    public void set${property.propertyName?cap_first}(${property.javaTypeInEntity} ${property.propertyName}) {
+    public void set${property.propertyName?cap_first}(<#if property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>@NotNull </#if>${property.javaTypeInEntity} ${property.propertyName}) {
         this.${property.propertyName} = ${property.propertyName};
     }
 
@@ -163,6 +255,7 @@ ${property.javaDocSetter}
 -->
 <#list entity.toOneRelations as toOne>
     /** To-one relationship, resolved on first access. */
+    @Generated
     public ${toOne.targetEntity.className} get${toOne.name?cap_first}() {
 <#if toOne.useFkProperty>
         ${toOne.fkProperties[0].javaType} __key = this.${toOne.fkProperties[0].propertyName};
@@ -194,12 +287,14 @@ ${property.javaDocSetter}
 <#if !toOne.useFkProperty>
 
     /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
+    @Generated
     public ${toOne.targetEntity.className} peak${toOne.name?cap_first}() {
         return ${toOne.name};
     }
 </#if>
 
-    public void set${toOne.name?cap_first}(${toOne.targetEntity.className} ${toOne.name}) {
+    @Generated
+    public void set${toOne.name?cap_first}(<#if toOne.fkProperties[0].notNull && !primitiveTypes?seq_contains(toOne.fkProperties[0].javaTypeInEntity)>@NotNull </#if>${toOne.targetEntity.className} ${toOne.name}) {
 <#if toOne.fkProperties[0].notNull>
         if (${toOne.name} == null) {
             throw new DaoException("To-one property '${toOne.fkProperties[0].propertyName}' has not-null constraint; cannot set to-one to null");
@@ -224,6 +319,7 @@ ${property.javaDocSetter}
 -->
 <#list entity.toManyRelations as toMany>
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    @Generated
     public List<${toMany.targetEntity.className}> get${toMany.name?cap_first}() {
         if (${toMany.name} == null) {
             if (daoSession == null) {
@@ -243,6 +339,7 @@ ${property.javaDocSetter}
     }
 
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated
     public synchronized void reset${toMany.name?cap_first}() {
         ${toMany.name} = null;
     }
@@ -254,7 +351,11 @@ ${property.javaDocSetter}
 ##########################################
 -->
 <#if entity.active>
-    /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */
+    /**
+    * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
+    * Entity must attached to an entity context.
+    */
+    @Generated
     public void delete() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
@@ -262,7 +363,11 @@ ${property.javaDocSetter}
         myDao.delete(this);
     }
 
-    /** Convenient call for {@link AbstractDao#update(Object)}. Entity must attached to an entity context. */
+    /**
+    * Convenient call for {@link org.greenrobot.greendao.AbstractDao#update(Object)}.
+    * Entity must attached to an entity context.
+    */
+    @Generated
     public void update() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
@@ -270,7 +375,11 @@ ${property.javaDocSetter}
         myDao.update(this);
     }
 
-    /** Convenient call for {@link AbstractDao#refresh(Object)}. Entity must attached to an entity context. */
+    /**
+    * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
+    * Entity must attached to an entity context.
+    */
+    @Generated
     public void refresh() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
