@@ -632,14 +632,20 @@ public class Entity {
             Entity targetEntity = toOne.getTargetEntity();
             checkAdditionalImportsEntityTargetEntity(targetEntity);
             // For deep loading
-            if (!targetEntity.getJavaPackage().equals(javaPackageDao)) {
-                additionalImportsDao.add(targetEntity.getJavaPackage() + "." + targetEntity.getClassName());
-            }
+            checkAdditionalImportsDaoTargetEntity(targetEntity);
         }
 
         for (ToManyBase toMany : toManyRelations) {
             Entity targetEntity = toMany.getTargetEntity();
             checkAdditionalImportsEntityTargetEntity(targetEntity);
+        }
+
+        for (ToManyBase incomingToMany : incomingToManyRelations) {
+            if (incomingToMany instanceof ToManyWithJoinEntity) {
+                final ToManyWithJoinEntity toManyWithJoinEntity = (ToManyWithJoinEntity) incomingToMany;
+                final Entity joinEntity = toManyWithJoinEntity.getJoinEntity();
+                checkAdditionalImportsDaoTargetEntity(joinEntity);
+            }
         }
 
         for (Property property : properties) {
@@ -671,6 +677,12 @@ public class Entity {
         }
         if (!targetEntity.getJavaPackageDao().equals(javaPackage)) {
             additionalImportsEntity.add(targetEntity.getJavaPackageDao() + "." + targetEntity.getClassNameDao());
+        }
+    }
+
+    private void checkAdditionalImportsDaoTargetEntity(Entity targetEntity) {
+        if (!targetEntity.getJavaPackage().equals(javaPackageDao)) {
+            additionalImportsDao.add(targetEntity.getJavaPackage() + "." + targetEntity.getClassName());
         }
     }
 
