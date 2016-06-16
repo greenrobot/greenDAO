@@ -18,8 +18,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ToOne {
     /**
-     * Name of the property inside the current entity which holds the key of related entity
-     * If nothing is specified, then additional column is automatically created to hold the key
+     * Name of the property inside the current entity which holds the key of related entity.
+     * If this parameter is absent, then an additional column is automatically created to hold the key.
      */
     String foreignKey() default "";
 }

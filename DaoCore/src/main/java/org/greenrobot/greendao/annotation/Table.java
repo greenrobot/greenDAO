@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Table {
     /**
-     * Specifies name of the table in DB. By default class name of the entity is used
+     * Specifies the table name on the DB side. By default, the name is based on the entities class name.
      */
     String name() default "";
 
