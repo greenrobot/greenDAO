@@ -4,16 +4,8 @@ apply plugin: 'signing'
 
 group = 'org.greenrobot'
 archivesBaseName = 'greendao-generator'
-version = '3.0.0-11-SNAPSHOT'
+version = '3.0.0-beta'
 sourceCompatibility = 1.7
-
-def isSnapshot = version.endsWith('-SNAPSHOT')
-def sonatypeRepositoryUrl
-if(isSnapshot) {
-    sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-} else {
-    sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-}
 
 repositories {
     mavenCentral()
@@ -91,6 +83,14 @@ signing {
 uploadArchives {
     repositories {
         mavenDeployer {
+            def isSnapshot = version.endsWith('-SNAPSHOT')
+            def sonatypeRepositoryUrl
+            if(isSnapshot) {
+                sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            } else {
+                sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            }
+
             if(project.hasProperty('preferedRepo') && project.hasProperty('preferedUsername') 
                 && project.hasProperty('preferedPassword')) {
                 configuration = configurations.deployerJars
