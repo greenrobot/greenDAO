@@ -5,9 +5,11 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'org.greenrobot:greendao-gradle-plugin:0.15-SNAPSHOT'
     }
 }
 
+apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'com.android.application'
 
 repositories {

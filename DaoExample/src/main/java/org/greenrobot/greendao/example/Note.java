@@ -29,7 +29,7 @@ public class Note {
     @Convert(converter = NoteTypeConverter.class, columnType = String.class)
     private NoteType type;
 
-    @Generated
+    @Generated(hash = 1272611929)
     public Note() {
     }
 
@@ -37,8 +37,8 @@ public class Note {
         this.id = id;
     }
 
-    @Generated
-    public Note(Long id, String text, String comment, java.util.Date date, NoteType type) {
+    @Generated(hash = 1686394253)
+    public Note(Long id, @NotNull String text, String comment, java.util.Date date, NoteType type) {
         this.id = id;
         this.text = text;
         this.comment = comment;
