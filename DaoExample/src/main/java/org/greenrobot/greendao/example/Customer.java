@@ -36,7 +36,7 @@ public class Customer {
     private transient CustomerDao myDao;
 
     @ToMany(joinOn = {
-        @JoinOn(source = "id", target = "customerId")
+            @JoinOn(source = "id", target = "customerId")
     })
     @OrderBy("date ASC")
     private List<Order> orders;
@@ -94,7 +94,7 @@ public class Customer {
             OrderDao targetDao = daoSession.getOrderDao();
             List<Order> ordersNew = targetDao._queryCustomer_Orders(id);
             synchronized (this) {
-                if(orders == null) {
+                if (orders == null) {
                     orders = ordersNew;
                 }
             }
