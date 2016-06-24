@@ -101,21 +101,48 @@ ${keepFields!}    // KEEP FIELDS END
 </#if>
 <#if entity.constructors>
     public ${entity.className}() {
+      	<#list entity.properties as property>
+      	<#if property.defValType>
+    		this.${property.propertyName} = ${property.defValue};
+    	</#if>
+    	</#list>
     }
 <#if entity.propertiesPk?has_content && entity.propertiesPk?size != entity.properties?size>
 
+    <#if entity.propertiesPk?has_content && entity.propertiesPk?size == 1 && entity.propertiesPk[0].pkAutoincrement>
+    //pass one aleady constructor.
+    <#else>
     public ${entity.className}(<#list entity.propertiesPk as
-property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
-<#list entity.propertiesPk as property>
-        this.${property.propertyName} = ${property.propertyName};
+property><#if !property.pkAutoincrement>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#if></#list>) {
+        this();
+        <#list entity.propertiesPk as property>
+                <#if !property.pkAutoincrement>this.${property.propertyName} = ${property.propertyName};</#if>
+                <#if property.defValType>
+                if(this.${property.propertyName}==null)this.${property.propertyName} = ${property.defValue};
+                </#if>
+        </#list>
+    }
+    </#if>
+</#if>
+
+<#if entity.propertiesPk?has_content && (entity.propertiesPk?size > 0) && entity.propertiesPk[0].pkAutoincrement>
+    public ${entity.className}(<#list entity.properties as
+property><#if !property.pkAutoincrement>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_next>, </#if></#if></#list>) {
+<#list entity.properties as property>
+        <#if !property.pkAutoincrement>this.${property.propertyName} = ${property.propertyName};</#if>
+        <#if property.defValType>
+        if(this.${property.propertyName}==null)this.${property.propertyName} = ${property.defValue};
+        </#if>
 </#list>
     }
 </#if>
-
     public ${entity.className}(<#list entity.properties as
 property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
 <#list entity.properties as property>
         this.${property.propertyName} = ${property.propertyName};
+        <#if property.defValType>
+        if(this.${property.propertyName}==null)this.${property.propertyName} = ${property.defValue};
+        </#if>
 </#list>
     }
 </#if>
@@ -153,6 +180,9 @@ ${property.javaDocSetter}
 </#if>
     public void set${property.propertyName?cap_first}(${property.javaTypeInEntity} ${property.propertyName}) {
         this.${property.propertyName} = ${property.propertyName};
+        <#if property.defValType>
+        if(this.${property.propertyName}==null) this.${property.propertyName} = ${property.defValue};
+        </#if>
     }
 
 </#list>
