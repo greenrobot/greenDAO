@@ -15,15 +15,15 @@
  */
 package de.greenrobot.dao.query;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.AbstractDaoSession;
 import de.greenrobot.dao.DaoException;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.SqlUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Builds custom entity queries using constraints and parameters and without SQL (QueryBuilder creates SQL for you). To
@@ -191,9 +191,10 @@ public class QueryBuilder<T> {
         for (Property property : properties) {
             checkOrderBuilder();
             append(orderBuilder, property);
-            if (String.class.equals(property.type)) {
-                orderBuilder.append(" COLLATE LOCALIZED");
-            }
+            // SQLCipher 3.5.0 does not understand "COLLATE LOCALIZED ASC", so use standard sorting
+            // if (String.class.equals(property.type)) {
+            //     orderBuilder.append(" COLLATE LOCALIZED");
+            // }
             orderBuilder.append(ascOrDescWithLeadingSpace);
         }
     }

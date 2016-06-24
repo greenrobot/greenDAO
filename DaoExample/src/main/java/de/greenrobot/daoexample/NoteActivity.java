@@ -65,7 +65,8 @@ public class NoteActivity extends ListActivity {
         noteDao = daoSession.getNoteDao();
 
         String textColumn = NoteDao.Properties.Text.columnName;
-        String orderBy = textColumn + " COLLATE LOCALIZED ASC";
+        // SQLCipher 3.5.0 does not understand "COLLATE LOCALIZED ASC", so use standard sorting
+        String orderBy = textColumn + " ASC";
         SQLiteDatabase sqLiteDatabase = ((EncryptedDatabase) db).getSQLiteDatabase();
         cursor = sqLiteDatabase.query(noteDao.getTablename(), noteDao.getAllColumns(), null, null, null, null, orderBy);
         String[] from = {textColumn, NoteDao.Properties.Comment.columnName};
