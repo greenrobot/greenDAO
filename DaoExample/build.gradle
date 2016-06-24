@@ -37,5 +37,5 @@ android {
 
 dependencies {
     compile project(':DaoCore')
-    compile 'net.zetetic:android-database-sqlcipher:3.5.0'
+    compile 'net.zetetic:android-database-sqlcipher:3.5.1'
 }
