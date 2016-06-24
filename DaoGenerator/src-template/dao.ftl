@@ -135,10 +135,19 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
         }
 </#if>
 <#else> <#-- nullable, non-protobuff -->
+        <#if property.pkAutoincrement>
+        //PrimaryKey Autoincrement,so we do not care this property.
+        /** ${property.javaTypeInEntity} ${property.propertyName} = entity.get${property.propertyName?cap_first}();
+                  if (${property.propertyName} != null) {
+                      stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, ${property.databaseValueExpression});
+                  }
+        */
+        <#else>
         ${property.javaTypeInEntity} ${property.propertyName} = entity.get${property.propertyName?cap_first}();
         if (${property.propertyName} != null) {
             stmt.bind${toBindType[property.propertyType]}(${property_index + 1}, ${property.databaseValueExpression});
         }
+        </#if>
 </#if>
 </#list>
 <#list entity.toOneRelations as toOne>

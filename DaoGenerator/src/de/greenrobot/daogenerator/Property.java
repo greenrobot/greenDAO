@@ -26,7 +26,12 @@ public class Property {
         public PropertyBuilder(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
             property = new Property(schema, entity, propertyType, propertyName);
         }
-
+        public PropertyBuilder defValue(String pVal)
+        {
+            property.defValue = pVal;
+            property.defValType = true;
+            return this;
+        }
         public PropertyBuilder columnName(String columnName) {
             property.columnName = columnName;
             return this;
@@ -166,6 +171,8 @@ public class Property {
     private final Entity entity;
     private PropertyType propertyType;
     private final String propertyName;
+    private boolean defValType;
+    private Object defValue;
 
     private String columnName;
     private String columnType;
@@ -199,6 +206,7 @@ public class Property {
     private String javaType;
 
     public Property(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
+        defValType = false;
         this.schema = schema;
         this.entity = entity;
         this.propertyName = propertyName;
@@ -229,7 +237,7 @@ public class Property {
         return primaryKey;
     }
 
-    public boolean isAutoincrement() {
+    public boolean isPkAutoincrement() {
         return pkAutoincrement;
     }
 
@@ -247,6 +255,14 @@ public class Property {
 
     public String getJavaType() {
         return javaType;
+    }
+    public String getDefValue()
+    {
+        return (String)defValue;
+    }
+    public boolean isDefValType()
+    {
+        return defValType;
     }
 
     public String getJavaTypeInEntity() {
