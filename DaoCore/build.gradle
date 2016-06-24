@@ -4,7 +4,7 @@ apply plugin: 'signing'
 
 group = 'org.greenrobot'
 archivesBaseName = 'greendao-encryption'
-version = '2.2.1'
+version = '2.2.2'
 sourceCompatibility = 1.6
 
 def isSnapshot = version.endsWith('-SNAPSHOT')
@@ -86,7 +86,7 @@ uploadArchives {
             }
 
             pom.project {
-               name 'greenDAO'
+               name 'greenDAO (Encryption)'
                packaging 'jar'
                description 'greenDAO is a light and fast ORM for Android'
                url 'http://greenrobot.org/greendao'
