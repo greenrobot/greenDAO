@@ -37,7 +37,8 @@ android {
     }
 }
 
-greendao{
+greendao {
+    schemaVersion 1000
     encrypt true
 }
 
