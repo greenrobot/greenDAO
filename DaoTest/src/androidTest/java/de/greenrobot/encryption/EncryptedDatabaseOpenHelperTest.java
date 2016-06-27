@@ -4,11 +4,11 @@ import android.app.Application;
 import android.test.ApplicationTestCase;
 
 import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendaotest.DaoMaster;
-import org.greenrobot.greendaotest.DaoMaster.EncryptedDevOpenHelper;
-import org.greenrobot.greendaotest.DaoMaster.EncryptedOpenHelper;
-import org.greenrobot.greendaotest.DaoSession;
-import org.greenrobot.greendaotest.SimpleEntity;
+import org.greenrobot.greendao.daotest.DaoMaster;
+import org.greenrobot.greendao.daotest.DaoMaster.EncryptedDevOpenHelper;
+import org.greenrobot.greendao.daotest.DaoMaster.EncryptedOpenHelper;
+import org.greenrobot.greendao.daotest.DaoSession;
+import org.greenrobot.greendao.daotest.SimpleEntity;
 
 public class EncryptedDatabaseOpenHelperTest extends ApplicationTestCase {
 

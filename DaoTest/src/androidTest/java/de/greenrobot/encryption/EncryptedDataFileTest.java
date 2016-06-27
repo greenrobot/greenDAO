@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendaotest.SimpleEntity;
+import org.greenrobot.greendao.daotest.SimpleEntity;
 
 public class EncryptedDataFileTest extends EncryptionSimpleEntityTest {
 

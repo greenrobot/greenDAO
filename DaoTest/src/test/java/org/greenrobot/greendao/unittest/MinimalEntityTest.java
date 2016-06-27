@@ -11,7 +11,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.query.Query;
-import org.greenrobot.greendaotest.dummyapp.BuildConfig;
+import org.greenrobot.greendao.daotest.dummyapp.BuildConfig;
 
 
 import static org.junit.Assert.assertEquals;
