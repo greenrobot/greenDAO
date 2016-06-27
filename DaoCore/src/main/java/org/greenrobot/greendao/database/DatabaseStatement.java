@@ -1,4 +1,4 @@
-package de.greenrobot.dao.database;
+package org.greenrobot.greendao.database;
 
 public interface DatabaseStatement {
     void execute();

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.greenrobot.dao.database;
+package org.greenrobot.greendao.database;
 
 import android.database.Cursor;
 import android.database.SQLException;
-import net.sqlcipher.database.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase;
 
-public class EncryptedDatabase implements Database {
+public class StandardDatabase implements Database {
     private final SQLiteDatabase delegate;
 
-    public EncryptedDatabase(SQLiteDatabase delegate) {
+    public StandardDatabase(SQLiteDatabase delegate) {
         this.delegate = delegate;
     }
 
@@ -63,7 +63,7 @@ public class EncryptedDatabase implements Database {
 
     @Override
     public DatabaseStatement compileStatement(String sql) {
-        return new EncryptedDatabaseStatement(delegate.compileStatement(sql));
+        return new StandardDatabaseStatement(delegate.compileStatement(sql));
     }
 
     @Override
