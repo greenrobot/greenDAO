@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package org.greenrobot.greendao;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.database.sqlite.SQLiteDatabase;
-import org.greenrobot.greendao.identityscope.IdentityScopeType;
-import org.greenrobot.greendao.internal.DaoConfig;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.identityscope.IdentityScopeType;
+import de.greenrobot.dao.internal.DaoConfig;
 
 /**
  * The master of dao will guide you: start dao sessions with the master.
@@ -29,11 +29,11 @@ import org.greenrobot.greendao.internal.DaoConfig;
  * @author Markus
  */
 public abstract class AbstractDaoMaster {
-    protected final SQLiteDatabase db;
+    protected final Database db;
     protected final int schemaVersion;
     protected final Map<Class<? extends AbstractDao<?, ?>>, DaoConfig> daoConfigMap;
 
-    public AbstractDaoMaster(SQLiteDatabase db, int schemaVersion) {
+    public AbstractDaoMaster(Database db, int schemaVersion) {
         this.db = db;
         this.schemaVersion = schemaVersion;
 
@@ -50,7 +50,7 @@ public abstract class AbstractDaoMaster {
     }
 
     /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
-    public SQLiteDatabase getDatabase() {
+    public Database getDatabase() {
         return db;
     }
 

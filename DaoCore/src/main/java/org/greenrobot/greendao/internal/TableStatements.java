@@ -15,39 +15,40 @@
  */
 package org.greenrobot.greendao.internal;
 
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
 
 /** Helper class to create SQL statements for specific tables (used by greenDAO internally). */
 // Note: avoid locking while compiling any statement (accessing the db) to avoid deadlocks on lock-savvy DBs like
 // SQLCipher.
 public class TableStatements {
-    private final SQLiteDatabase db;
+    private final Database db;
     private final String tablename;
     private final String[] allColumns;
     private final String[] pkColumns;
 
-    private volatile SQLiteStatement insertStatement;
-    private volatile SQLiteStatement insertOrReplaceStatement;
-    private volatile SQLiteStatement updateStatement;
-    private volatile SQLiteStatement deleteStatement;
+    private DatabaseStatement insertStatement;
+    private DatabaseStatement insertOrReplaceStatement;
+    private DatabaseStatement updateStatement;
+    private DatabaseStatement deleteStatement;
+    private DatabaseStatement countStatement;
 
     private volatile String selectAll;
     private volatile String selectByKey;
     private volatile String selectByRowId;
     private volatile String selectKeys;
 
-    public TableStatements(SQLiteDatabase db, String tablename, String[] allColumns, String[] pkColumns) {
+    public TableStatements(Database db, String tablename, String[] allColumns, String[] pkColumns) {
         this.db = db;
         this.tablename = tablename;
         this.allColumns = allColumns;
         this.pkColumns = pkColumns;
     }
 
-    public SQLiteStatement getInsertStatement() {
+    public DatabaseStatement getInsertStatement() {
         if (insertStatement == null) {
             String sql = SqlUtils.createSqlInsert("INSERT INTO ", tablename, allColumns);
-            SQLiteStatement newInsertStatement = db.compileStatement(sql);
+            DatabaseStatement newInsertStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (insertStatement == null) {
                     insertStatement = newInsertStatement;
@@ -60,10 +61,10 @@ public class TableStatements {
         return insertStatement;
     }
 
-    public SQLiteStatement getInsertOrReplaceStatement() {
+    public DatabaseStatement getInsertOrReplaceStatement() {
         if (insertOrReplaceStatement == null) {
             String sql = SqlUtils.createSqlInsert("INSERT OR REPLACE INTO ", tablename, allColumns);
-            SQLiteStatement newInsertOrReplaceStatement = db.compileStatement(sql);
+            DatabaseStatement newInsertOrReplaceStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (insertOrReplaceStatement == null) {
                     insertOrReplaceStatement = newInsertOrReplaceStatement;
@@ -76,10 +77,10 @@ public class TableStatements {
         return insertOrReplaceStatement;
     }
 
-    public SQLiteStatement getDeleteStatement() {
+    public DatabaseStatement getDeleteStatement() {
         if (deleteStatement == null) {
             String sql = SqlUtils.createSqlDelete(tablename, pkColumns);
-            SQLiteStatement newDeleteStatement = db.compileStatement(sql);
+            DatabaseStatement newDeleteStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (deleteStatement == null) {
                     deleteStatement = newDeleteStatement;
@@ -92,10 +93,10 @@ public class TableStatements {
         return deleteStatement;
     }
 
-    public SQLiteStatement getUpdateStatement() {
+    public DatabaseStatement getUpdateStatement() {
         if (updateStatement == null) {
             String sql = SqlUtils.createSqlUpdate(tablename, allColumns, pkColumns);
-            SQLiteStatement newUpdateStatement = db.compileStatement(sql);
+            DatabaseStatement newUpdateStatement = db.compileStatement(sql);
             synchronized (this) {
                 if (updateStatement == null) {
                     updateStatement = newUpdateStatement;
@@ -106,6 +107,14 @@ public class TableStatements {
             }
         }
         return updateStatement;
+    }
+
+    public DatabaseStatement getCountStatement() {
+        if (countStatement == null) {
+            String sql = SqlUtils.createSqlCount(tablename);
+            countStatement = db.compileStatement(sql);
+        }
+        return countStatement;
     }
 
     /** ends with an space to simplify appending to this string. */

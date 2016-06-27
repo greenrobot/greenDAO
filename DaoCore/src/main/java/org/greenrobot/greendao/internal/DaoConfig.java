@@ -20,14 +20,14 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.database.sqlite.SQLiteDatabase;
-import org.greenrobot.greendao.AbstractDao;
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.Property;
-import org.greenrobot.greendao.identityscope.IdentityScope;
-import org.greenrobot.greendao.identityscope.IdentityScopeLong;
-import org.greenrobot.greendao.identityscope.IdentityScopeObject;
-import org.greenrobot.greendao.identityscope.IdentityScopeType;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.Property;
+import de.greenrobot.dao.identityscope.IdentityScope;
+import de.greenrobot.dao.identityscope.IdentityScopeLong;
+import de.greenrobot.dao.identityscope.IdentityScopeObject;
+import de.greenrobot.dao.identityscope.IdentityScopeType;
 
 /**
  * Internal class used by greenDAO. DaoConfig stores essential data for DAOs, and is hold by AbstractDaoMaster. This
@@ -35,7 +35,7 @@ import org.greenrobot.greendao.identityscope.IdentityScopeType;
  */
 public final class DaoConfig implements Cloneable {
 
-    public final SQLiteDatabase db;
+    public final Database db;
     public final String tablename;
     public final Property[] properties;
 
@@ -50,7 +50,7 @@ public final class DaoConfig implements Cloneable {
 
     private IdentityScope<?, ?> identityScope;
 
-    public DaoConfig(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>> daoClass) {
+    public DaoConfig(Database db, Class<? extends AbstractDao<?, ?>> daoClass) {
         this.db = db;
         try {
             this.tablename = (String) daoClass.getField("TABLENAME").get(null);

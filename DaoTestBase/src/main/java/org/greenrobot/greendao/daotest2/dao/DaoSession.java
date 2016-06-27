@@ -1,13 +1,12 @@
 package org.greenrobot.greendao.daotest2.dao;
 
-import android.database.sqlite.SQLiteDatabase;
-
 import java.util.Map;
 
-import org.greenrobot.greendao.AbstractDao;
-import org.greenrobot.greendao.AbstractDaoSession;
-import org.greenrobot.greendao.identityscope.IdentityScopeType;
-import org.greenrobot.greendao.internal.DaoConfig;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.AbstractDaoSession;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.identityscope.IdentityScopeType;
+import de.greenrobot.dao.internal.DaoConfig;
 
 import org.greenrobot.greendao.daotest2.KeepEntity;
 import org.greenrobot.greendao.daotest2.ToManyTarget2;
@@ -38,7 +37,7 @@ public class DaoSession extends AbstractDaoSession {
     private final ToOneTarget2Dao toOneTarget2Dao;
     private final RelationSource2Dao relationSource2Dao;
 
-    public DaoSession(SQLiteDatabase db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
+    public DaoSession(Database db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
             daoConfigMap) {
         super(db);
 

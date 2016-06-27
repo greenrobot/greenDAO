@@ -1,12 +1,12 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
-import org.greenrobot.greendao.AbstractDao;
-import org.greenrobot.greendao.Property;
-import org.greenrobot.greendao.internal.DaoConfig;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.Property;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
 
 import org.greenrobot.greendao.daotest.TestEntity;
 
@@ -45,7 +45,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
     }
 
     /** Creates the underlying database table. */
-    public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"TEST_ENTITY\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
@@ -66,14 +66,14 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
     }
 
     /** Drops the underlying database table. */
-    public static void dropTable(SQLiteDatabase db, boolean ifExists) {
+    public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"TEST_ENTITY\"";
         db.execSQL(sql);
     }
 
     /** @inheritdoc */
     @Override
-    protected void bindValues(SQLiteStatement stmt, TestEntity entity) {
+    protected void bindValues(DatabaseStatement stmt, TestEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

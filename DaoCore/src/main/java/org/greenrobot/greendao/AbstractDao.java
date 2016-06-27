@@ -20,21 +20,21 @@ import android.database.CrossProcessCursor;
 import android.database.Cursor;
 import android.database.CursorWindow;
 import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
+
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
+import de.greenrobot.dao.identityscope.IdentityScope;
+import de.greenrobot.dao.identityscope.IdentityScopeLong;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.internal.FastCursor;
+import de.greenrobot.dao.internal.TableStatements;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import org.greenrobot.greendao.identityscope.IdentityScope;
-import org.greenrobot.greendao.identityscope.IdentityScopeLong;
-import org.greenrobot.greendao.internal.DaoConfig;
-import org.greenrobot.greendao.internal.FastCursor;
-import org.greenrobot.greendao.internal.TableStatements;
-import org.greenrobot.greendao.query.Query;
-import org.greenrobot.greendao.query.QueryBuilder;
 
 /**
  * Base class for all DAOs: Implements entity operations like insert, load, delete, and query.
@@ -50,12 +50,12 @@ import org.greenrobot.greendao.query.QueryBuilder;
  * 
  * 1.) If not inside a TX already, begin a TX to acquire a DB connection (connection is to be handled like a lock)
  * 
- * 2.) The SQLiteStatement
+ * 2.) The DatabaseStatement
  * 
  * 3.) identityScope
  */
 public abstract class AbstractDao<T, K> {
-    protected final SQLiteDatabase db;
+    protected final Database db;
     protected final DaoConfig config;
     protected IdentityScope<K, T> identityScope;
     protected IdentityScopeLong<T> identityScopeLong;
@@ -221,7 +221,7 @@ public abstract class AbstractDao<T, K> {
      *                      performance.
      */
     public void insertInTx(Iterable<T> entities, boolean setPrimaryKey) {
-        SQLiteStatement stmt = statements.getInsertStatement();
+        DatabaseStatement stmt = statements.getInsertStatement();
         executeInsertInTx(stmt, entities, setPrimaryKey);
     }
 
@@ -234,7 +234,7 @@ public abstract class AbstractDao<T, K> {
      *                      performance.
      */
     public void insertOrReplaceInTx(Iterable<T> entities, boolean setPrimaryKey) {
-        SQLiteStatement stmt = statements.getInsertOrReplaceStatement();
+        DatabaseStatement stmt = statements.getInsertOrReplaceStatement();
         executeInsertInTx(stmt, entities, setPrimaryKey);
     }
 
@@ -256,7 +256,7 @@ public abstract class AbstractDao<T, K> {
         insertOrReplaceInTx(Arrays.asList(entities), isEntityUpdateable());
     }
 
-    private void executeInsertInTx(SQLiteStatement stmt, Iterable<T> entities, boolean setPrimaryKey) {
+    private void executeInsertInTx(DatabaseStatement stmt, Iterable<T> entities, boolean setPrimaryKey) {
         db.beginTransaction();
         try {
             synchronized (stmt) {
@@ -303,7 +303,7 @@ public abstract class AbstractDao<T, K> {
      * @return row ID of newly inserted entity
      */
     public long insertWithoutSettingPk(T entity) {
-        SQLiteStatement stmt = statements.getInsertStatement();
+        DatabaseStatement stmt = statements.getInsertStatement();
         long rowId;
         if (db.isDbLockedByCurrentThread()) {
             synchronized (stmt) {
@@ -335,7 +335,7 @@ public abstract class AbstractDao<T, K> {
         return executeInsert(entity, statements.getInsertOrReplaceStatement());
     }
 
-    private long executeInsert(T entity, SQLiteStatement stmt) {
+    private long executeInsert(T entity, DatabaseStatement stmt) {
         long rowId;
         if (db.isDbLockedByCurrentThread()) {
             synchronized (stmt) {
@@ -550,7 +550,7 @@ public abstract class AbstractDao<T, K> {
     /** Deletes an entity with the given PK from the database. Currently, only single value PK entities are supported. */
     public void deleteByKey(K key) {
         assertSinglePk();
-        SQLiteStatement stmt = statements.getDeleteStatement();
+        DatabaseStatement stmt = statements.getDeleteStatement();
         if (db.isDbLockedByCurrentThread()) {
             synchronized (stmt) {
                 deleteByKeyInsideSynchronized(key, stmt);
@@ -572,7 +572,7 @@ public abstract class AbstractDao<T, K> {
         }
     }
 
-    private void deleteByKeyInsideSynchronized(K key, SQLiteStatement stmt) {
+    private void deleteByKeyInsideSynchronized(K key, DatabaseStatement stmt) {
         if (key instanceof Long) {
             stmt.bindLong(1, (Long) key);
         } else if (key == null) {
@@ -585,7 +585,7 @@ public abstract class AbstractDao<T, K> {
 
     private void deleteInTxInternal(Iterable<T> entities, Iterable<K> keys) {
         assertSinglePk();
-        SQLiteStatement stmt = statements.getDeleteStatement();
+        DatabaseStatement stmt = statements.getDeleteStatement();
         List<K> keysToRemoveFromIdentityScope = null;
         db.beginTransaction();
         try {
@@ -687,7 +687,7 @@ public abstract class AbstractDao<T, K> {
 
     public void update(T entity) {
         assertSinglePk();
-        SQLiteStatement stmt = statements.getUpdateStatement();
+        DatabaseStatement stmt = statements.getUpdateStatement();
         if (db.isDbLockedByCurrentThread()) {
             synchronized (stmt) {
                 updateInsideSynchronized(entity, stmt, true);
@@ -710,7 +710,7 @@ public abstract class AbstractDao<T, K> {
         return QueryBuilder.internalCreate(this);
     }
 
-    protected void updateInsideSynchronized(T entity, SQLiteStatement stmt, boolean lock) {
+    protected void updateInsideSynchronized(T entity, DatabaseStatement stmt, boolean lock) {
         // To do? Check if it's worth not to bind PKs here (performance).
         bindValues(stmt, entity);
         int index = config.allColumns.length + 1;
@@ -758,7 +758,7 @@ public abstract class AbstractDao<T, K> {
      * @param entities The entities to insert.
      */
     public void updateInTx(Iterable<T> entities) {
-        SQLiteStatement stmt = statements.getUpdateStatement();
+        DatabaseStatement stmt = statements.getUpdateStatement();
         db.beginTransaction();
         RuntimeException txEx = null;
         try {
@@ -809,7 +809,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     public long count() {
-        return DatabaseUtils.queryNumEntries(db, '\'' + config.tablename + '\'');
+        return statements.getCountStatement().simpleQueryForLong();
     }
 
     /** See {@link #getKey(Object)}, but guarantees that the returned key is never null (throws if null). */
@@ -827,7 +827,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
-    public SQLiteDatabase getDatabase() {
+    public Database getDatabase() {
         return db;
     }
 
@@ -841,7 +841,7 @@ public abstract class AbstractDao<T, K> {
     abstract protected void readEntity(Cursor cursor, T entity, int offset);
 
     /** Binds the entity's values to the statement. Make sure to synchronize the statement outside of the method. */
-    abstract protected void bindValues(SQLiteStatement stmt, T entity);
+    abstract protected void bindValues(DatabaseStatement stmt, T entity);
 
     /**
      * Updates the entity's key if possible (only for Long PKs currently). This method must always return the entity's

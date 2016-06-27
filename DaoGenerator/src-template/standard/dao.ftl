@@ -31,15 +31,15 @@ import java.util.List;
 import java.util.ArrayList;
 </#if>
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
 <#if entity.toOneRelations?has_content>
 import org.greenrobot.greendao.internal.SqlUtils;
 </#if>
-import org.greenrobot.greendao.internal.DaoConfig;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
 <#if entity.incomingToManyRelations?has_content>
 import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -102,7 +102,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 
 <#if !entity.skipTableCreation>
     /** Creates the underlying database table. */
-    public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"${entity.tableName}\" (" + //
 <#list entity.propertiesColumns as property>
@@ -119,7 +119,7 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
     }
 
     /** Drops the underlying database table. */
-    public static void dropTable(SQLiteDatabase db, boolean ifExists) {
+    public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"${entity.tableName}\"";
         db.execSQL(sql);
     }
@@ -127,7 +127,7 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
 </#if>
     /** @inheritdoc */
     @Override
-    protected void bindValues(SQLiteStatement stmt, ${entity.className} entity) {
+    protected void bindValues(DatabaseStatement stmt, ${entity.className} entity) {
         stmt.clearBindings();
 <#list entity.properties as property>
 <#if property.notNull || entity.protobuf>

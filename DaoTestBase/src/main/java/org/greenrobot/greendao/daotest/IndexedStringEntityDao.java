@@ -1,12 +1,12 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
-import org.greenrobot.greendao.AbstractDao;
-import org.greenrobot.greendao.Property;
-import org.greenrobot.greendao.internal.DaoConfig;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.Property;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
 
 import org.greenrobot.greendao.daotest.IndexedStringEntity;
 
@@ -37,7 +37,7 @@ public class IndexedStringEntityDao extends AbstractDao<IndexedStringEntity, Lon
     }
 
     /** Creates the underlying database table. */
-    public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"INDEXED_STRING_ENTITY\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
@@ -48,14 +48,14 @@ public class IndexedStringEntityDao extends AbstractDao<IndexedStringEntity, Lon
     }
 
     /** Drops the underlying database table. */
-    public static void dropTable(SQLiteDatabase db, boolean ifExists) {
+    public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"INDEXED_STRING_ENTITY\"";
         db.execSQL(sql);
     }
 
     /** @inheritdoc */
     @Override
-    protected void bindValues(SQLiteStatement stmt, IndexedStringEntity entity) {
+    protected void bindValues(DatabaseStatement stmt, IndexedStringEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

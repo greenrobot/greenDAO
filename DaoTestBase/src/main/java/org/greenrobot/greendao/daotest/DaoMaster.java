@@ -3,10 +3,14 @@ package org.greenrobot.greendao.daotest;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import org.greenrobot.greendao.AbstractDaoMaster;
-import org.greenrobot.greendao.identityscope.IdentityScopeType;
+
+import de.greenrobot.dao.AbstractDaoMaster;
+import de.greenrobot.dao.database.StandardDatabase;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.EncryptedDatabaseOpenHelper;
+import de.greenrobot.dao.database.DatabaseOpenHelper;
+import de.greenrobot.dao.identityscope.IdentityScopeType;
 
 import org.greenrobot.greendao.daotest.SimpleEntityDao;
 import org.greenrobot.greendao.daotest.SimpleEntityNotNullDao;
@@ -35,7 +39,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public static final int SCHEMA_VERSION = 1;
 
     /** Creates underlying database table using DAOs. */
-    public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createAllTables(Database db, boolean ifNotExists) {
         SimpleEntityDao.createTable(db, ifNotExists);
         SimpleEntityNotNullDao.createTable(db, ifNotExists);
         TestEntityDao.createTable(db, ifNotExists);
@@ -56,7 +60,7 @@ public class DaoMaster extends AbstractDaoMaster {
     }
     
     /** Drops underlying database table using DAOs. */
-    public static void dropAllTables(SQLiteDatabase db, boolean ifExists) {
+    public static void dropAllTables(Database db, boolean ifExists) {
         SimpleEntityDao.dropTable(db, ifExists);
         SimpleEntityNotNullDao.dropTable(db, ifExists);
         TestEntityDao.dropTable(db, ifExists);
@@ -76,14 +80,16 @@ public class DaoMaster extends AbstractDaoMaster {
         IndexedStringEntityDao.dropTable(db, ifExists);
     }
     
-    public static abstract class OpenHelper extends SQLiteOpenHelper {
-
+    public static abstract class OpenHelper extends DatabaseOpenHelper {
+        public OpenHelper(Context context, String name) {
+            super(context, name, SCHEMA_VERSION);
+        }
         public OpenHelper(Context context, String name, CursorFactory factory) {
             super(context, name, factory, SCHEMA_VERSION);
         }
 
         @Override
-        public void onCreate(SQLiteDatabase db) {
+        public void onCreate(Database db) {
             Log.i("greenDAO", "Creating tables for schema version " + SCHEMA_VERSION);
             createAllTables(db, false);
         }
@@ -91,12 +97,46 @@ public class DaoMaster extends AbstractDaoMaster {
     
     /** WARNING: Drops all table on Upgrade! Use only during development. */
     public static class DevOpenHelper extends OpenHelper {
-        public DevOpenHelper(Context context, String name, CursorFactory factory) {
-            super(context, name, factory);
+        public DevOpenHelper(Context context, String name) {
+            super(context, name);
         }
 
         @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        public void onUpgrade(Database db, int oldVersion, int newVersion) {
+            Log.i("greenDAO", "Upgrading schema from version " + oldVersion + " to " + newVersion + " by dropping all tables");
+            dropAllTables(db, true);
+            onCreate(db);
+        }
+    }
+
+    public static abstract class EncryptedOpenHelper extends EncryptedDatabaseOpenHelper {
+        public EncryptedOpenHelper(Context context, String name) {
+            super(context, name, SCHEMA_VERSION);
+        }
+
+        public EncryptedOpenHelper(Context context, String name, Object cursorFactory, boolean loadNativeLibs) {
+            super(context, name, cursorFactory, SCHEMA_VERSION, loadNativeLibs);
+        }
+
+        @Override
+        public void onCreate(Database db) {
+            Log.i("greenDAO", "Creating tables for schema version " + SCHEMA_VERSION);
+            createAllTables(db, false);
+        }
+    }
+
+    /** WARNING: Drops all table on Upgrade! Use only during development. */
+    public static class EncryptedDevOpenHelper extends EncryptedOpenHelper {
+        public EncryptedDevOpenHelper(Context context, String name) {
+            super(context, name);
+        }
+
+        public EncryptedDevOpenHelper(Context context, String name, Object cursorFactory, boolean loadNativeLibs) {
+            super(context, name, cursorFactory, loadNativeLibs);
+        }
+
+        @Override
+        public void onUpgrade(Database db, int oldVersion, int newVersion) {
             Log.i("greenDAO", "Upgrading schema from version " + oldVersion + " to " + newVersion + " by dropping all tables");
             dropAllTables(db, true);
             onCreate(db);
@@ -104,6 +144,10 @@ public class DaoMaster extends AbstractDaoMaster {
     }
 
     public DaoMaster(SQLiteDatabase db) {
+        this(new StandardDatabase(db));
+    }
+
+    public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
         registerDaoClass(SimpleEntityDao.class);
         registerDaoClass(SimpleEntityNotNullDao.class);

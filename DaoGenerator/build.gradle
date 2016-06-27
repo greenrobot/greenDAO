@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.greenrobot'
-archivesBaseName = 'greendao-generator'
+archivesBaseName = 'greendao-generator-encryption'
 version = '3.0.0-beta'
 sourceCompatibility = 1.7
 
@@ -91,7 +91,7 @@ uploadArchives {
                 sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
             }
 
-            if(project.hasProperty('preferedRepo') && project.hasProperty('preferedUsername') 
+            if(project.hasProperty('preferedRepo') && project.hasProperty('preferedUsername')
                 && project.hasProperty('preferedPassword')) {
                 configuration = configurations.deployerJars
                 repository(url: preferedRepo) {

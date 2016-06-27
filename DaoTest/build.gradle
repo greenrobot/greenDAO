@@ -12,7 +12,8 @@ apply plugin: 'com.android.application'
 
 dependencies {
     compile project(':DaoTestBase')
-    testCompile 'org.robolectric:robolectric:3.0'
+    compile 'net.zetetic:android-database-sqlcipher:3.5.1'
+    testCompile 'org.robolectric:robolectric:3.1'
 }
 
 android {

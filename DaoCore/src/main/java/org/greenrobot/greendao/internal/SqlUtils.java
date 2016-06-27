@@ -147,6 +147,10 @@ public class SqlUtils {
         return builder.toString();
     }
 
+    public static String createSqlCount(String tablename) {
+        return "SELECT COUNT(*) FROM \"" + tablename +'"';
+    }
+    
     public static String escapeBlobArgument(byte[] bytes) {
         return "X'" + toHex(bytes) + '\'';
     }

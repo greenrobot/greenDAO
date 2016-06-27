@@ -2,14 +2,14 @@ package org.greenrobot.greendao.daotest;
 
 import java.util.List;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
-import org.greenrobot.greendao.AbstractDao;
-import org.greenrobot.greendao.Property;
-import org.greenrobot.greendao.internal.DaoConfig;
-import org.greenrobot.greendao.query.Query;
-import org.greenrobot.greendao.query.QueryBuilder;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.Property;
+import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.database.Database;
+import de.greenrobot.dao.database.DatabaseStatement;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import org.greenrobot.greendao.daotest.ToManyTargetEntity;
 
@@ -46,7 +46,7 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
     }
 
     /** Creates the underlying database table. */
-    public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
+    public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"TO_MANY_TARGET_ENTITY\" (" + //
                 "\"TO_MANY_ID\" INTEGER," + // 0: toManyId
@@ -56,14 +56,14 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
     }
 
     /** Drops the underlying database table. */
-    public static void dropTable(SQLiteDatabase db, boolean ifExists) {
+    public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"TO_MANY_TARGET_ENTITY\"";
         db.execSQL(sql);
     }
 
     /** @inheritdoc */
     @Override
-    protected void bindValues(SQLiteStatement stmt, ToManyTargetEntity entity) {
+    protected void bindValues(DatabaseStatement stmt, ToManyTargetEntity entity) {
         stmt.clearBindings();
  
         Long toManyId = entity.getToManyId();
