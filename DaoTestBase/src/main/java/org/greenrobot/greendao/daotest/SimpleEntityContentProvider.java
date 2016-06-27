@@ -12,9 +12,6 @@ import org.greenrobot.greendao.DaoLog;
 import org.greenrobot.greendao.database.StandardDatabase;
 import org.greenrobot.greendao.database.Database;
 
-import org.greenrobot.greendaotest.DaoSession;
-import org.greenrobot.greendaotest.SimpleEntityDao;
-
 /* Copy this code snippet into your AndroidManifest.xml inside the
 <application> element:
 
