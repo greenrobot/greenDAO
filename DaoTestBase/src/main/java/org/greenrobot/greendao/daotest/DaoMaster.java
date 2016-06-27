@@ -5,12 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.util.Log;
 
-import de.greenrobot.dao.AbstractDaoMaster;
-import de.greenrobot.dao.database.StandardDatabase;
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.database.EncryptedDatabaseOpenHelper;
-import de.greenrobot.dao.database.DatabaseOpenHelper;
-import de.greenrobot.dao.identityscope.IdentityScopeType;
+import org.greenrobot.greendao.AbstractDaoMaster;
+import org.greenrobot.greendao.database.StandardDatabase;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.database.EncryptedDatabaseOpenHelper;
+import org.greenrobot.greendao.database.DatabaseOpenHelper;
+import org.greenrobot.greendao.identityscope.IdentityScopeType;
 
 import org.greenrobot.greendao.daotest.SimpleEntityDao;
 import org.greenrobot.greendao.daotest.SimpleEntityNotNullDao;

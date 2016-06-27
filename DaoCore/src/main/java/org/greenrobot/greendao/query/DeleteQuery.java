@@ -15,8 +15,8 @@
  */
 package org.greenrobot.greendao.query;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.database.Database;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.database.Database;
 
 /**
  * A repeatable query for deleting entities.<br/>

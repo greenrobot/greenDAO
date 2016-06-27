@@ -8,12 +8,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.database.StandardDatabase;
-import de.greenrobot.dao.database.Database;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.database.StandardDatabase;
+import org.greenrobot.greendao.database.Database;
 
-import de.greenrobot.daotest.DaoSession;
-import de.greenrobot.daotest.SimpleEntityDao;
+import org.greenrobot.greendaotest.DaoSession;
+import org.greenrobot.greendaotest.SimpleEntityDao;
 
 /* Copy this code snippet into your AndroidManifest.xml inside the
 <application> element:

@@ -18,12 +18,12 @@ package org.greenrobot.greendao.query;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.AbstractDaoSession;
-import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.Property;
-import de.greenrobot.dao.internal.SqlUtils;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.AbstractDaoSession;
+import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.internal.SqlUtils;
 
 /**
  * Builds custom entity queries using constraints and parameters and without SQL (QueryBuilder creates SQL for you). To

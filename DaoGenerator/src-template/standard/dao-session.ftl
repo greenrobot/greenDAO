@@ -21,11 +21,11 @@ package ${schema.defaultJavaPackageDao};
 
 import java.util.Map;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.AbstractDaoSession;
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.identityscope.IdentityScopeType;
-import de.greenrobot.dao.internal.DaoConfig;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.AbstractDaoSession;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.identityscope.IdentityScopeType;
+import org.greenrobot.greendao.internal.DaoConfig;
 
 <#list schema.entities as entity>
 import ${entity.javaPackage}.${entity.className};

@@ -3,13 +3,13 @@ package org.greenrobot.greendao.daotest;
 import java.util.List;
 import android.database.Cursor;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Property;
-import de.greenrobot.dao.internal.DaoConfig;
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.database.DatabaseStatement;
-import de.greenrobot.dao.query.Query;
-import de.greenrobot.dao.query.QueryBuilder;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.internal.DaoConfig;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import org.greenrobot.greendao.daotest.DateEntity;
 

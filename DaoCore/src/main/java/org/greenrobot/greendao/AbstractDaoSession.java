@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import de.greenrobot.dao.async.AsyncSession;
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.query.QueryBuilder;
+import org.greenrobot.greendao.async.AsyncSession;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 /**
  * DaoSession gives you access to your DAOs, offers convenient persistence methods, and also serves as a session cache.<br>

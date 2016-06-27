@@ -19,9 +19,9 @@ package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import de.greenrobot.dao.DbUtils;
-import de.greenrobot.dao.database.StandardDatabase;
-import de.greenrobot.dao.test.DbTest;
+import org.greenrobot.greendao.DbUtils;
+import org.greenrobot.greendao.database.StandardDatabase;
+import org.greenrobot.greendao.test.DbTest;
 
 import java.io.IOException;
 

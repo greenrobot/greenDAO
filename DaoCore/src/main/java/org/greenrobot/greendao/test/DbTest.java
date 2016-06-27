@@ -20,10 +20,10 @@ import android.app.Application;
 import android.app.Instrumentation;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.DbUtils;
-import de.greenrobot.dao.database.StandardDatabase;
-import de.greenrobot.dao.database.Database;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.DbUtils;
+import org.greenrobot.greendao.database.StandardDatabase;
+import org.greenrobot.greendao.database.Database;
 
 import java.util.Random;
 

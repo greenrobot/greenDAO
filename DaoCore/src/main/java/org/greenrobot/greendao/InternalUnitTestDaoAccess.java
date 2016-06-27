@@ -17,9 +17,9 @@
 package org.greenrobot.greendao;
 
 import android.database.Cursor;
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.identityscope.IdentityScope;
-import de.greenrobot.dao.internal.DaoConfig;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.identityscope.IdentityScope;
+import org.greenrobot.greendao.internal.DaoConfig;
 
 import java.lang.reflect.Constructor;
 

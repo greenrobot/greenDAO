@@ -37,9 +37,9 @@ import org.greenrobot.greendao.Property;
 <#if entity.toOneRelations?has_content>
 import org.greenrobot.greendao.internal.SqlUtils;
 </#if>
-import de.greenrobot.dao.internal.DaoConfig;
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.database.DatabaseStatement;
+import org.greenrobot.greendao.internal.DaoConfig;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.database.DatabaseStatement;
 <#if entity.incomingToManyRelations?has_content>
 import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;

@@ -15,8 +15,8 @@
  */
 package org.greenrobot.greendao.internal;
 
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.database.DatabaseStatement;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.database.DatabaseStatement;
 
 /** Helper class to create SQL statements for specific tables (used by greenDAO internally). */
 // Note: avoid locking while compiling any statement (accessing the db) to avoid deadlocks on lock-savvy DBs like

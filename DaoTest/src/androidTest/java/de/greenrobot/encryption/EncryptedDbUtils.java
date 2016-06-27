@@ -7,8 +7,8 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import java.io.File;
 
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.database.EncryptedDatabase;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.database.EncryptedDatabase;
 
 
 import static junit.framework.Assert.assertEquals;

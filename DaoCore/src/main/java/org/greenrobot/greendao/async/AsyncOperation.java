@@ -16,9 +16,9 @@
 
 package org.greenrobot.greendao.async;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.database.Database;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.database.Database;
 
 /**
  * An operation that will be enqueued for asynchronous execution.

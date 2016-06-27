@@ -20,14 +20,14 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.Property;
-import de.greenrobot.dao.identityscope.IdentityScope;
-import de.greenrobot.dao.identityscope.IdentityScopeLong;
-import de.greenrobot.dao.identityscope.IdentityScopeObject;
-import de.greenrobot.dao.identityscope.IdentityScopeType;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.identityscope.IdentityScope;
+import org.greenrobot.greendao.identityscope.IdentityScopeLong;
+import org.greenrobot.greendao.identityscope.IdentityScopeObject;
+import org.greenrobot.greendao.identityscope.IdentityScopeType;
 
 /**
  * Internal class used by greenDAO. DaoConfig stores essential data for DAOs, and is hold by AbstractDaoMaster. This

@@ -20,9 +20,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import android.database.sqlite.SQLiteDatabase;
-import de.greenrobot.dao.AbstractDaoMaster;
-import de.greenrobot.dao.AbstractDaoSession;
-import de.greenrobot.dao.database.Database;
+import org.greenrobot.greendao.AbstractDaoMaster;
+import org.greenrobot.greendao.AbstractDaoSession;
+import org.greenrobot.greendao.database.Database;
 
 /**
  * Base class for DAO (master) related testing.

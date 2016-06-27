@@ -1,11 +1,11 @@
 package org.greenrobot.greendao.async;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.AbstractDaoSession;
-import de.greenrobot.dao.DaoException;
-import de.greenrobot.dao.async.AsyncOperation.OperationType;
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.query.Query;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.AbstractDaoSession;
+import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.async.AsyncOperation.OperationType;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.query.Query;
 
 import java.util.concurrent.Callable;
 

@@ -19,9 +19,9 @@ package org.greenrobot.greendao;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.identityscope.IdentityScopeType;
-import de.greenrobot.dao.internal.DaoConfig;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.identityscope.IdentityScopeType;
+import org.greenrobot.greendao.internal.DaoConfig;
 
 /**
  * The master of dao will guide you: start dao sessions with the master.

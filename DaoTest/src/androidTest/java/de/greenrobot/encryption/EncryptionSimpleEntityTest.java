@@ -4,10 +4,10 @@ import net.sqlcipher.database.SQLiteConstraintException;
 
 import java.util.List;
 
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.daotest.SimpleEntity;
-import de.greenrobot.daotest.SimpleEntityDao.Properties;
-import de.greenrobot.daotest.entity.SimpleEntityTest;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendaotest.SimpleEntity;
+import org.greenrobot.greendaotest.SimpleEntityDao.Properties;
+import org.greenrobot.greendaotest.entity.SimpleEntityTest;
 
 public class EncryptionSimpleEntityTest extends SimpleEntityTest {
     @Override

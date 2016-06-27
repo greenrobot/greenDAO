@@ -2,10 +2,10 @@ package org.greenrobot.greendao.daotest;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import de.greenrobot.dao.DaoLog;
-import de.greenrobot.dao.database.StandardDatabase;
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.query.Query;
+import org.greenrobot.greendao.DaoLog;
+import org.greenrobot.greendao.database.StandardDatabase;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.query.Query;
 
 import java.lang.reflect.Method;
 

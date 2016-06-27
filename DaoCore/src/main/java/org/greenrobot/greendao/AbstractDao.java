@@ -21,15 +21,15 @@ import android.database.Cursor;
 import android.database.CursorWindow;
 import android.database.DatabaseUtils;
 
-import de.greenrobot.dao.database.Database;
-import de.greenrobot.dao.database.DatabaseStatement;
-import de.greenrobot.dao.identityscope.IdentityScope;
-import de.greenrobot.dao.identityscope.IdentityScopeLong;
-import de.greenrobot.dao.internal.DaoConfig;
-import de.greenrobot.dao.internal.FastCursor;
-import de.greenrobot.dao.internal.TableStatements;
-import de.greenrobot.dao.query.Query;
-import de.greenrobot.dao.query.QueryBuilder;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.identityscope.IdentityScope;
+import org.greenrobot.greendao.identityscope.IdentityScopeLong;
+import org.greenrobot.greendao.internal.DaoConfig;
+import org.greenrobot.greendao.internal.FastCursor;
+import org.greenrobot.greendao.internal.TableStatements;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
