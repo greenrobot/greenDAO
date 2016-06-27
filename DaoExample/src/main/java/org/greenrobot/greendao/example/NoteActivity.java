@@ -37,7 +37,7 @@ import java.util.Date;
 
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.EncryptedDatabase;
-import org.greenrobot.greendaoexample.DaoMaster.EncryptedDevOpenHelper;
+import org.greenrobot.greendao.example.DaoMaster.EncryptedDevOpenHelper;
 
 public class NoteActivity extends ListActivity {
 

@@ -37,6 +37,10 @@ android {
     }
 }
 
+greendao{
+    encrypt true
+}
+
 dependencies {
     compile project(':DaoCore')
     compile 'net.zetetic:android-database-sqlcipher:3.5.1'
