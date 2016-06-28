@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
- * Marks field is not persistent
+ * Transient fields are not persisted in the database.
  */
 @Retention(SOURCE)
 @Target(ElementType.FIELD)

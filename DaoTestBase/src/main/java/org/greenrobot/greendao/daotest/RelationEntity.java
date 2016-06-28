@@ -27,26 +27,26 @@ public class RelationEntity {
     @Generated
     private transient RelationEntityDao myDao;
 
-    @ToOne(foreignKey = "parentId")
+    @ToOne(joinProperty = "parentId")
     private RelationEntity parent;
 
     @Generated
     private transient Long parent__resolvedKey;
 
-    @ToOne(foreignKey = "testId")
+    @ToOne(joinProperty = "testId")
     private TestEntity testEntity;
 
     @Generated
     private transient Long testEntity__resolvedKey;
 
-    @ToOne(foreignKey = "testIdNotNull")
+    @ToOne(joinProperty = "testIdNotNull")
     private TestEntity testNotNull;
 
     @Generated
     private transient Long testNotNull__resolvedKey;
 
     @ToOne
-    @Column(name = "WITHOUT_PROPERTY_TEST_ID")
+    @Property(nameInDb = "WITHOUT_PROPERTY_TEST_ID")
     private TestEntity testWithoutProperty;
 
     @Generated

@@ -6,13 +6,11 @@ import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.NotNull;
-import org.greenrobot.greendao.annotation.Table;
 
 /**
  * Entity mapped to table "NOTE".
  */
-@Entity
-@Table(indexes = {
+@Entity(indexes = {
     @Index(value = "text, date DESC", unique = true)
 })
 public class Note {

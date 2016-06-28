@@ -67,24 +67,16 @@ ${entity.javaDoc}
 <#if entity.codeBeforeClass ??>
 ${entity.codeBeforeClass}
 </#if>
-<#if entity.active && schema.name != "default">
-@Entity(schema = "${schema.name}", active = true)
-<#elseif entity.active>
-@Entity(active = true)
-<#elseif schema.name != "default">
-@Entity(schema = "${schema.name}")
-<#else>
-@Entity
+<#assign entityAttrs = []>
+<#if schema.name != "default"><#assign entityAttrs = entityAttrs + ["schema = \"${schema.name}\""]></#if>
+<#if entity.active><#assign entityAttrs = entityAttrs + ["active = true"]></#if>
+<#if entity.nonDefaultTableName><#assign entityAttrs = entityAttrs + ["nameInDb = \"${entity.tableName}\""]></#if>
+<#if (entity.multiIndexes?size > 0)>
+    <#assign idxAttr>indexes = "<@multiIndexes/>"</#assign>
+    <#assign entityAttrs = entityAttrs + [idxAttr]>
 </#if>
-<#if entity.nonDefaultTableName && (entity.multiIndexes?size > 0)>
-@Table(name = "${entity.tableName}", indexes = <@multiIndexes/><#if entity.skipTableCreation>, create = false</#if>)
-<#elseif entity.nonDefaultTableName>
-@Table(name = "${entity.tableName}"<#if entity.skipTableCreation>, create = false</#if>)
-<#elseif (entity.multiIndexes?size > 0)>
-@Table(indexes = <@multiIndexes/><#if entity.skipTableCreation>, create = false</#if>)
-<#elseif entity.skipTableCreation>
-@Table(create = false)
-</#if>
+<#if entity.skipTableCreation><#assign entityAttrs = entityAttrs + ["createInDb = false"]></#if>
+@Entity<#if (entityAttrs?size > 0)>(${entityAttrs?join(", ")})</#if>
 public class ${entity.className}<#if
 entity.superclass?has_content> extends ${entity.superclass} </#if><#if
 entity.interfacesToImplement?has_content> implements <#list entity.interfacesToImplement
@@ -104,7 +96,7 @@ ${property.javaDocField}
     @Id<#if property.autoincrement>(autoincrement = true)</#if>
 </#if>
 <#if property.nonDefaultColumnName>
-    @Column(name = "${property.columnName}")
+    @Property(nameInDb = "${property.columnName}")
 </#if>
 <#if property.converter??>
     @Convert(converter = ${property.converter}.class, columnType = ${property.javaType}.class)
@@ -138,7 +130,7 @@ ${property.javaDocField}
 <#list entity.toOneRelations as toOne>
 
 <#if toOne.useFkProperty>
-    @ToOne(foreignKey = "${toOne.fkProperties[0].propertyName}")
+    @ToOne(joinProperty = "${toOne.fkProperties[0].propertyName}")
     private ${toOne.targetEntity.className} ${toOne.name};
 
     @Generated
@@ -146,7 +138,7 @@ ${property.javaDocField}
 <#else>
     @ToOne
 <#if toOne.fkProperties[0].nonDefaultColumnName>
-    @Column(name = "${toOne.fkProperties[0].columnName}")
+    @Property(nameInDb = "${toOne.fkProperties[0].columnName}")
 </#if>
 <#if toOne.fkProperties[0].unique>
     @Unique
@@ -163,9 +155,9 @@ ${property.javaDocField}
 <#list entity.toManyRelations as toMany>
 
 <#if toMany.sourceProperties??>
-    @ToMany(joinOn = {
+    @ToMany(joinProperties = {
 <#list toMany.sourceProperties as sourceProperty>
-        @JoinOn(source = "${sourceProperty.propertyName}", target = "${toMany.targetProperties[sourceProperty_index].propertyName}")<#sep>,
+        @JoinProperty(name = "${sourceProperty.propertyName}", referencedName = "${toMany.targetProperties[sourceProperty_index].propertyName}")<#sep>,
 </#list>
 
     })

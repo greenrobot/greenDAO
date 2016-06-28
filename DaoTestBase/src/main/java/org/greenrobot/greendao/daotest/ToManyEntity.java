@@ -25,27 +25,27 @@ public class ToManyEntity {
     @Generated
     private transient ToManyEntityDao myDao;
 
-    @ToMany(joinOn = {
-        @JoinOn(source = "id", target = "toManyId")
+    @ToMany(joinProperties = {
+        @JoinProperty(name = "id", referencedName = "toManyId")
     })
     @OrderBy("id ASC")
     private List<ToManyTargetEntity> toManyTargetEntityList;
 
-    @ToMany(joinOn = {
-        @JoinOn(source = "id", target = "toManyIdDesc")
+    @ToMany(joinProperties = {
+        @JoinProperty(name = "id", referencedName = "toManyIdDesc")
     })
     @OrderBy("id DESC")
     private List<ToManyTargetEntity> toManyDescList;
 
-    @ToMany(joinOn = {
-        @JoinOn(source = "sourceJoinProperty", target = "targetJoinProperty")
+    @ToMany(joinProperties = {
+        @JoinProperty(name = "sourceJoinProperty", referencedName = "targetJoinProperty")
     })
     @OrderBy("id ASC")
     private List<ToManyTargetEntity> toManyByJoinProperty;
 
-    @ToMany(joinOn = {
-        @JoinOn(source = "id", target = "toManyId"),
-        @JoinOn(source = "sourceJoinProperty", target = "targetJoinProperty")
+    @ToMany(joinProperties = {
+        @JoinProperty(name = "id", referencedName = "toManyId"),
+        @JoinProperty(name = "sourceJoinProperty", referencedName = "targetJoinProperty")
     })
     @OrderBy("targetJoinProperty DESC, id DESC")
     private List<ToManyTargetEntity> toManyJoinTwo;
