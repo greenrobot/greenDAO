@@ -23,3 +23,5 @@ android {
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 }
+
+uploadArchives.enabled = false

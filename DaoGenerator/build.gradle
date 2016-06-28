@@ -11,15 +11,9 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    deployerJars
-}
-
 dependencies {
     compile 'org.freemarker:freemarker:2.3.23'
     testCompile 'junit:junit:4.12'
-    // deployerJars 'org.apache.maven.wagon:wagon-webdav-jackrabbit:2.4'
-    deployerJars 'org.apache.maven.wagon:wagon-webdav:1.0-beta-2'
 }
 
 sourceSets {
@@ -71,46 +65,14 @@ artifacts {
     archives sourcesJar
 }
 
-signing {
-    if(project.hasProperty('signing.keyId') && project.hasProperty('signing.password') &&
-    project.hasProperty('signing.secretKeyRingFile')) {
-        sign configurations.archives
-    } else {
-        println "Signing information missing/incomplete for ${project.name}"
-    }
-}
-
 uploadArchives {
     repositories {
         mavenDeployer {
-            def isSnapshot = version.endsWith('-SNAPSHOT')
-            def sonatypeRepositoryUrl
-            if(isSnapshot) {
-                sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-            } else {
-                sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            }
-
-            if(project.hasProperty('preferedRepo') && project.hasProperty('preferedUsername') 
-                && project.hasProperty('preferedPassword')) {
-                configuration = configurations.deployerJars
-                repository(url: preferedRepo) {
-                    authentication(userName: preferedUsername, password: preferedPassword)
-                }
-            } else if(project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')) {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-                repository(url: sonatypeRepositoryUrl) {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                }
-            } else {
-                println "Settings sonatypeUsername/sonatypePassword missing/incomplete for ${project.name}"
-            }
-
+            // Basic definitions are defined in root project
             pom.project {
                name 'greenDAO Generator'
                packaging 'jar'
                description 'Code generator for greenDAO, the light and fast ORM for Android'
-               url 'http://greenrobot.org/greendao'
 
                scm {
                    url 'https://github.com/greenrobot/greenDAO'
@@ -124,23 +86,6 @@ uploadArchives {
                        url 'http://www.gnu.org/licenses/gpl.txt'
                        distribution 'repo'
                    }
-               }
-
-               developers {
-                   developer {
-                       id 'greenrobot'
-                       name 'greenrobot'
-                   }
-               }
-               
-               issueManagement {
-                   system 'GitHub Issues'
-                   url 'https://github.com/greenrobot/greenDAO/issues'
-               }
-               
-               organization {
-                   name 'greenrobot'
-                   url 'http://greenrobot.org'
                }
            }
         }
