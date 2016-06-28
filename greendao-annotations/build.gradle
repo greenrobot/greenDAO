@@ -1,34 +1,16 @@
 apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'signing'
 
 group = 'org.greenrobot'
-archivesBaseName = 'greendao'
-version = '3.0.0-beta'
+version = '3.0.0-beta3'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compile project(':greendao-annotations')
-    compileOnly 'com.google.android:android:4.1.1.4'
-    compileOnly 'com.google.android:android-test:4.1.1.4'
-    compileOnly 'com.google.android:annotations:4.1.1.4'
-    compileOnly 'com.google.android:support-v4:r7'
-}
-
 javadoc {
-    def srcAnnotations = project(':greendao-annotations').file('src/main/java/')
-    if(!srcAnnotations.directory) throw new GradleScriptException("Not a directory: ${srcAnnotations}", null)
     failOnError = false
-    title = " greenDAO ${version} API"
+    title = " greenDAO Annotation ${version} API"
 	options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
 	excludes = ['de/greenrobot/dao/internal','de/greenrobot/dao/Internal*']
-    includes += srcAnnotations.absolutePath
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -52,7 +34,7 @@ uploadArchives {
         mavenDeployer {
             // Basic definitions are defined in root project
             pom.project {
-               name 'greenDAO'
+               name 'greenDAO Annotations'
                packaging 'jar'
                description 'greenDAO is a light and fast ORM for Android'
                url 'http://greenrobot.org/greendao'
