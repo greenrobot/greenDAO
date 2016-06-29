@@ -1,6 +1,6 @@
 <#--
 
-Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
                                                                            
 This file is part of greenDAO Generator.                                   
                                                                            
@@ -72,7 +72,7 @@ ${entity.codeBeforeClass}
 <#if entity.active><#assign entityAttrs = entityAttrs + ["active = true"]></#if>
 <#if entity.nonDefaultTableName><#assign entityAttrs = entityAttrs + ["nameInDb = \"${entity.tableName}\""]></#if>
 <#if (entity.multiIndexes?size > 0)>
-    <#assign idxAttr>indexes = "<@multiIndexes/>"</#assign>
+    <#assign idxAttr>indexes = <@multiIndexes/></#assign>
     <#assign entityAttrs = entityAttrs + [idxAttr]>
 </#if>
 <#if entity.skipTableCreation><#assign entityAttrs = entityAttrs + ["createInDb = false"]></#if>
