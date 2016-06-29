@@ -4,7 +4,7 @@ apply plugin: 'signing'
 
 group = 'org.greenrobot'
 archivesBaseName = 'greendao'
-version = '3.0.0-beta'
+version = '3.0.0-beta3'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7

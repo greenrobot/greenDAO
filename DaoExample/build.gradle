@@ -5,7 +5,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.2'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0-beta2'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0-beta3'
     }
 }
 
