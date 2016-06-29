@@ -22,8 +22,9 @@ public class DaoSessionConcurrentWALTest extends DaoSessionConcurrentTest {
     public void testConcurrentLockAndQueryDuringTxWAL() throws InterruptedException {
         if (Build.VERSION.SDK_INT >= 16) {
             try {
-                Method method = db.getClass().getMethod("isWriteAheadLoggingEnabled");
-                boolean walEnabled = (Boolean) method.invoke(db);
+                Object rawDatabase = db.getRawDatabase();
+                Method method = rawDatabase.getClass().getMethod("isWriteAheadLoggingEnabled");
+                boolean walEnabled = (Boolean) method.invoke(rawDatabase);
                 if (!walEnabled) {
                     throw new RuntimeException("WAL is disabled. This test will deadlock without WAL");
                 }
