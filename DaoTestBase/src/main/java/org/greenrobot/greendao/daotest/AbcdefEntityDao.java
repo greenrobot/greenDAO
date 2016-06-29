@@ -1,6 +1,7 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -70,9 +71,73 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, AbcdefEntity entity) {
+        stmt.clearBindings();
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
+        Integer a = entity.getA();
+        if (a != null) {
+            stmt.bindLong(2, a);
+        }
+ 
+        Integer b = entity.getB();
+        if (b != null) {
+            stmt.bindLong(3, b);
+        }
+ 
+        Integer c = entity.getC();
+        if (c != null) {
+            stmt.bindLong(4, c);
+        }
+ 
+        Integer d = entity.getD();
+        if (d != null) {
+            stmt.bindLong(5, d);
+        }
+ 
+        Integer e = entity.getE();
+        if (e != null) {
+            stmt.bindLong(6, e);
+        }
+ 
+        Integer f = entity.getF();
+        if (f != null) {
+            stmt.bindLong(7, f);
+        }
+ 
+        Integer g = entity.getG();
+        if (g != null) {
+            stmt.bindLong(8, g);
+        }
+ 
+        Integer h = entity.getH();
+        if (h != null) {
+            stmt.bindLong(9, h);
+        }
+ 
+        Integer j = entity.getJ();
+        if (j != null) {
+            stmt.bindLong(10, j);
+        }
+ 
+        Integer i = entity.getI();
+        if (i != null) {
+            stmt.bindLong(11, i);
+        }
+ 
+        Integer k = entity.getK();
+        if (k != null) {
+            stmt.bindLong(12, k);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, AbcdefEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

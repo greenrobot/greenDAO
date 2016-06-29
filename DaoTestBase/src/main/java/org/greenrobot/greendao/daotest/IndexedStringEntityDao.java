@@ -1,6 +1,7 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -53,9 +54,23 @@ public class IndexedStringEntityDao extends AbstractDao<IndexedStringEntity, Lon
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, IndexedStringEntity entity) {
+        stmt.clearBindings();
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
+        String indexedString = entity.getIndexedString();
+        if (indexedString != null) {
+            stmt.bindString(2, indexedString);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, IndexedStringEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

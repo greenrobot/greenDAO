@@ -44,6 +44,7 @@ public class DaoMaster extends AbstractDaoMaster {
         public OpenHelper(Context context, String name) {
             super(context, name, SCHEMA_VERSION);
         }
+
         public OpenHelper(Context context, String name, CursorFactory factory) {
             super(context, name, factory, SCHEMA_VERSION);
         }

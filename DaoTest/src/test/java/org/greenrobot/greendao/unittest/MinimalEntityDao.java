@@ -1,7 +1,6 @@
 package org.greenrobot.greendao.unittest;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
@@ -9,8 +8,6 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
-
-import org.greenrobot.greendao.unittest.MinimalEntity;
 
 import org.greenrobot.greendao.unittest.MinimalEntity;
 
@@ -52,9 +49,18 @@ public class MinimalEntityDao extends AbstractDao<MinimalEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, MinimalEntity entity) {
+        stmt.clearBindings();
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, MinimalEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

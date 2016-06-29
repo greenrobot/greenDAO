@@ -1,6 +1,7 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -66,9 +67,63 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, SpecialNamesEntity entity) {
+        stmt.clearBindings();
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
+        String count = entity.getCount();
+        if (count != null) {
+            stmt.bindString(2, count);
+        }
+ 
+        String select = entity.getSelect();
+        if (select != null) {
+            stmt.bindString(3, select);
+        }
+ 
+        String sum = entity.getSum();
+        if (sum != null) {
+            stmt.bindString(4, sum);
+        }
+ 
+        String avg = entity.getAvg();
+        if (avg != null) {
+            stmt.bindString(5, avg);
+        }
+ 
+        String join = entity.getJoin();
+        if (join != null) {
+            stmt.bindString(6, join);
+        }
+ 
+        String distinct = entity.getDistinct();
+        if (distinct != null) {
+            stmt.bindString(7, distinct);
+        }
+ 
+        String on = entity.getOn();
+        if (on != null) {
+            stmt.bindString(8, on);
+        }
+ 
+        String index = entity.getIndex();
+        if (index != null) {
+            stmt.bindString(9, index);
+        }
+ 
+        Integer order = entity.getOrder();
+        if (order != null) {
+            stmt.bindLong(10, order);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, SpecialNamesEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

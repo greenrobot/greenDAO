@@ -1,6 +1,7 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -66,9 +67,63 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, SimpleEntity entity) {
+        stmt.clearBindings();
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
+        Boolean simpleBoolean = entity.getSimpleBoolean();
+        if (simpleBoolean != null) {
+            stmt.bindLong(2, simpleBoolean ? 1L: 0L);
+        }
+ 
+        Byte simpleByte = entity.getSimpleByte();
+        if (simpleByte != null) {
+            stmt.bindLong(3, simpleByte);
+        }
+ 
+        Short simpleShort = entity.getSimpleShort();
+        if (simpleShort != null) {
+            stmt.bindLong(4, simpleShort);
+        }
+ 
+        Integer simpleInt = entity.getSimpleInt();
+        if (simpleInt != null) {
+            stmt.bindLong(5, simpleInt);
+        }
+ 
+        Long simpleLong = entity.getSimpleLong();
+        if (simpleLong != null) {
+            stmt.bindLong(6, simpleLong);
+        }
+ 
+        Float simpleFloat = entity.getSimpleFloat();
+        if (simpleFloat != null) {
+            stmt.bindDouble(7, simpleFloat);
+        }
+ 
+        Double simpleDouble = entity.getSimpleDouble();
+        if (simpleDouble != null) {
+            stmt.bindDouble(8, simpleDouble);
+        }
+ 
+        String simpleString = entity.getSimpleString();
+        if (simpleString != null) {
+            stmt.bindString(9, simpleString);
+        }
+ 
+        byte[] simpleByteArray = entity.getSimpleByteArray();
+        if (simpleByteArray != null) {
+            stmt.bindBlob(10, simpleByteArray);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, SimpleEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

@@ -3,6 +3,7 @@ package org.greenrobot.greendao.daotest;
 import java.util.List;
 import java.util.ArrayList;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -64,9 +65,34 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, RelationEntity entity) {
+        stmt.clearBindings();
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
+        Long parentId = entity.getParentId();
+        if (parentId != null) {
+            stmt.bindLong(2, parentId);
+        }
+ 
+        Long testId = entity.getTestId();
+        if (testId != null) {
+            stmt.bindLong(3, testId);
+        }
+        stmt.bindLong(4, entity.getTestIdNotNull());
+ 
+        String simpleString = entity.getSimpleString();
+        if (simpleString != null) {
+            stmt.bindString(5, simpleString);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, RelationEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

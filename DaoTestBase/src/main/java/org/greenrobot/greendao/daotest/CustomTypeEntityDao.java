@@ -1,6 +1,7 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -54,9 +55,23 @@ public class CustomTypeEntityDao extends AbstractDao<CustomTypeEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, CustomTypeEntity entity) {
+        stmt.clearBindings();
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
+        MyTimestamp myCustomTimestamp = entity.getMyCustomTimestamp();
+        if (myCustomTimestamp != null) {
+            stmt.bindLong(2, myCustomTimestampConverter.convertToDatabaseValue(myCustomTimestamp));
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, CustomTypeEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

@@ -19,7 +19,7 @@ package org.greenrobot.greendao;
 import android.database.CrossProcessCursor;
 import android.database.Cursor;
 import android.database.CursorWindow;
-import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
@@ -296,7 +296,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Insert an entity into the table associated with a concrete DAO <b>without</b> setting key property.
-     *
+     * <p/>
      * Warning: This may be faster, but the entity should not be used anymore. The entity also won't be attached to
      * identity scope.
      *
@@ -834,6 +834,7 @@ public abstract class AbstractDao<T, K> {
     /** Reads the values from the current position of the given cursor and returns a new entity. */
     abstract protected T readEntity(Cursor cursor, int offset);
 
+
     /** Reads the key from the current position of the given cursor, or returns null if there's no single-value key. */
     abstract protected K readKey(Cursor cursor, int offset);
 
@@ -842,6 +843,12 @@ public abstract class AbstractDao<T, K> {
 
     /** Binds the entity's values to the statement. Make sure to synchronize the statement outside of the method. */
     abstract protected void bindValues(DatabaseStatement stmt, T entity);
+
+    /**
+     * Binds the entity's values to the statement. Make sure to synchronize the enclosing DatabaseStatement outside
+     * of the method.
+     */
+    protected abstract void bindValues(SQLiteStatement stmt, T entity);
 
     /**
      * Updates the entity's key if possible (only for Long PKs currently). This method must always return the entity's

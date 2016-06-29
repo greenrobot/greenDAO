@@ -1,6 +1,7 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -50,9 +51,23 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, StringKeyValueEntity entity) {
+        stmt.clearBindings();
+ 
+        String key = entity.getKey();
+        if (key != null) {
+            stmt.bindString(1, key);
+        }
+ 
+        String value = entity.getValue();
+        if (value != null) {
+            stmt.bindString(2, value);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, StringKeyValueEntity entity) {
         stmt.clearBindings();
  
         String key = entity.getKey();

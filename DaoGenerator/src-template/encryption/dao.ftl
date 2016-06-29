@@ -1,6 +1,6 @@
 <#--
 
-Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
                                                                            
 This file is part of greenDAO Generator.                                   
                                                                            
@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.ArrayList;
 </#if>
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -125,9 +126,10 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
     }
 
 </#if>
-    /** @inheritdoc */
+<#assign stmtTypes = ["DatabaseStatement", "SQLiteStatement"] />
+<#list stmtTypes as stmtType>
     @Override
-    protected void bindValues(DatabaseStatement stmt, ${entity.className} entity) {
+    protected void bindValues(${stmtType} stmt, ${entity.className} entity) {
         stmt.clearBindings();
 <#list entity.properties as property>
 <#if property.notNull || entity.protobuf>
@@ -162,6 +164,7 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
 </#list>
     }
 
+</#list>
 <#if entity.active>
     @Override
     protected void attachEntity(${entity.className} entity) {

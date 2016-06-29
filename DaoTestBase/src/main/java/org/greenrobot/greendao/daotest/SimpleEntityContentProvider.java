@@ -12,8 +12,10 @@ import org.greenrobot.greendao.DaoLog;
 import org.greenrobot.greendao.database.StandardDatabase;
 import org.greenrobot.greendao.database.Database;
 
-/* Copy this code snippet into your AndroidManifest.xml inside the
-<application> element:
+import org.greenrobot.greendao.daotest.DaoSession;
+import org.greenrobot.greendao.daotest.SimpleEntityDao;
+
+/* Copy this code snippet into your AndroidManifest.xml inside the <application> element:
 
     <provider
         android:name="org.greenrobot.greendao.daotest.SimpleEntityContentProvider"
@@ -31,8 +33,7 @@ public class SimpleEntityContentProvider extends ContentProvider {
             + "/" + BASE_PATH;
 
     private static final String TABLENAME = SimpleEntityDao.TABLENAME;
-    private static final String PK = SimpleEntityDao.Properties.Id
-            .columnName;
+    private static final String PK = SimpleEntityDao.Properties.Id.columnName;
 
     private static final int SIMPLEENTITY_DIR = 0;
     private static final int SIMPLEENTITY_ID = 1;
@@ -46,22 +47,22 @@ public class SimpleEntityContentProvider extends ContentProvider {
     }
 
     /**
-     * This must be set from outside, it's recommended to do this inside your Application object.
-     * Subject to change (static isn't nice).
-     */
+    * This must be set from outside, it's recommended to do this inside your Application object.
+    * Subject to change (static isn't nice).
+    */
     public static DaoSession daoSession;
 
     @Override
     public boolean onCreate() {
         // if(daoSession == null) {
-        // throw new IllegalStateException("DaoSession must be set before content provider is created");
+        //     throw new IllegalStateException("DaoSession must be set before content provider is created");
         // }
         DaoLog.d("Content Provider started: " + CONTENT_URI);
         return true;
     }
 
     protected Database getDatabase() {
-        if (daoSession == null) {
+        if(daoSession == null) {
             throw new IllegalStateException("DaoSession must be set during content provider is active");
         }
         return daoSession.getDatabase();
@@ -79,27 +80,27 @@ public class SimpleEntityContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection,
-                      String[] selectionArgs) {
+            String[] selectionArgs) {
         throw new UnsupportedOperationException("This content provider is readonly");
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
-                        String[] selectionArgs, String sortOrder) {
+            String[] selectionArgs, String sortOrder) {
 
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
-            case SIMPLEENTITY_DIR:
-                queryBuilder.setTables(TABLENAME);
-                break;
-            case SIMPLEENTITY_ID:
-                queryBuilder.setTables(TABLENAME);
-                queryBuilder.appendWhere(PK + "="
-                        + uri.getLastPathSegment());
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown URI: " + uri);
+        case SIMPLEENTITY_DIR:
+            queryBuilder.setTables(TABLENAME);
+            break;
+        case SIMPLEENTITY_ID:
+            queryBuilder.setTables(TABLENAME);
+            queryBuilder.appendWhere(PK + "="
+                    + uri.getLastPathSegment());
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown URI: " + uri);
         }
 
         Database db = getDatabase();
@@ -113,12 +114,12 @@ public class SimpleEntityContentProvider extends ContentProvider {
     @Override
     public final String getType(Uri uri) {
         switch (sURIMatcher.match(uri)) {
-            case SIMPLEENTITY_DIR:
-                return CONTENT_TYPE;
-            case SIMPLEENTITY_ID:
-                return CONTENT_ITEM_TYPE;
-            default:
-                throw new IllegalArgumentException("Unsupported URI: " + uri);
+        case SIMPLEENTITY_DIR:
+            return CONTENT_TYPE;
+        case SIMPLEENTITY_ID:
+            return CONTENT_ITEM_TYPE;
+        default :
+            throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
     }
 }

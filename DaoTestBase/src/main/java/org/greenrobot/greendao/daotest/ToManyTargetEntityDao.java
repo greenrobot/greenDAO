@@ -2,6 +2,7 @@ package org.greenrobot.greendao.daotest;
 
 import java.util.List;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -61,9 +62,33 @@ public class ToManyTargetEntityDao extends AbstractDao<ToManyTargetEntity, Long>
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, ToManyTargetEntity entity) {
+        stmt.clearBindings();
+ 
+        Long toManyId = entity.getToManyId();
+        if (toManyId != null) {
+            stmt.bindLong(1, toManyId);
+        }
+ 
+        Long toManyIdDesc = entity.getToManyIdDesc();
+        if (toManyIdDesc != null) {
+            stmt.bindLong(2, toManyIdDesc);
+        }
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(3, id);
+        }
+ 
+        String targetJoinProperty = entity.getTargetJoinProperty();
+        if (targetJoinProperty != null) {
+            stmt.bindString(4, targetJoinProperty);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, ToManyTargetEntity entity) {
         stmt.clearBindings();
  
         Long toManyId = entity.getToManyId();

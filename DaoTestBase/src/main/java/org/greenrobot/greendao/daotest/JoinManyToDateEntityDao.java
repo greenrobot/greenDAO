@@ -1,6 +1,7 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -52,9 +53,28 @@ public class JoinManyToDateEntityDao extends AbstractDao<JoinManyToDateEntity, L
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, JoinManyToDateEntity entity) {
+        stmt.clearBindings();
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
+        Long idToMany = entity.getIdToMany();
+        if (idToMany != null) {
+            stmt.bindLong(2, idToMany);
+        }
+ 
+        Long idDate = entity.getIdDate();
+        if (idDate != null) {
+            stmt.bindLong(3, idDate);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, JoinManyToDateEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

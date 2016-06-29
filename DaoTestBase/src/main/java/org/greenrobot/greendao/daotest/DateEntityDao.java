@@ -2,6 +2,7 @@ package org.greenrobot.greendao.daotest;
 
 import java.util.List;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -56,9 +57,24 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, DateEntity entity) {
+        stmt.clearBindings();
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
+        java.util.Date date = entity.getDate();
+        if (date != null) {
+            stmt.bindLong(2, date.getTime());
+        }
+        stmt.bindLong(3, entity.getDateNotNull().getTime());
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, DateEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

@@ -1,6 +1,7 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -66,9 +67,23 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, SimpleEntityNotNull entity) {
+        stmt.clearBindings();
+        stmt.bindLong(1, entity.getId());
+        stmt.bindLong(2, entity.getSimpleBoolean() ? 1L: 0L);
+        stmt.bindLong(3, entity.getSimpleByte());
+        stmt.bindLong(4, entity.getSimpleShort());
+        stmt.bindLong(5, entity.getSimpleInt());
+        stmt.bindLong(6, entity.getSimpleLong());
+        stmt.bindDouble(7, entity.getSimpleFloat());
+        stmt.bindDouble(8, entity.getSimpleDouble());
+        stmt.bindString(9, entity.getSimpleString());
+        stmt.bindBlob(10, entity.getSimpleByteArray());
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, SimpleEntityNotNull entity) {
         stmt.clearBindings();
         stmt.bindLong(1, entity.getId());
         stmt.bindLong(2, entity.getSimpleBoolean() ? 1L: 0L);

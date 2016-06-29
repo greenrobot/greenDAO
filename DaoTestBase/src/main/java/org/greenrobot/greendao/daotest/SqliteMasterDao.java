@@ -1,6 +1,7 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -39,9 +40,38 @@ public class SqliteMasterDao extends AbstractDao<SqliteMaster, Void> {
         super(config, daoSession);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, SqliteMaster entity) {
+        stmt.clearBindings();
+ 
+        String type = entity.getType();
+        if (type != null) {
+            stmt.bindString(1, type);
+        }
+ 
+        String name = entity.getName();
+        if (name != null) {
+            stmt.bindString(2, name);
+        }
+ 
+        String tableName = entity.getTableName();
+        if (tableName != null) {
+            stmt.bindString(3, tableName);
+        }
+ 
+        Long rootpage = entity.getRootpage();
+        if (rootpage != null) {
+            stmt.bindLong(4, rootpage);
+        }
+ 
+        String sql = entity.getSql();
+        if (sql != null) {
+            stmt.bindString(5, sql);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, SqliteMaster entity) {
         stmt.clearBindings();
  
         String type = entity.getType();

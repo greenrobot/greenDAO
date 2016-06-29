@@ -1,6 +1,7 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -48,9 +49,18 @@ public class AutoincrementEntityDao extends AbstractDao<AutoincrementEntity, Lon
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, AutoincrementEntity entity) {
+        stmt.clearBindings();
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, AutoincrementEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();

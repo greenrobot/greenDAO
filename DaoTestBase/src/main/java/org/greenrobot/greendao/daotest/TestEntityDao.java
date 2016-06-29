@@ -1,6 +1,7 @@
 package org.greenrobot.greendao.daotest;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -71,9 +72,55 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         db.execSQL(sql);
     }
 
-    /** @inheritdoc */
     @Override
     protected void bindValues(DatabaseStatement stmt, TestEntity entity) {
+        stmt.clearBindings();
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+        stmt.bindLong(2, entity.getSimpleInt());
+ 
+        Integer simpleInteger = entity.getSimpleInteger();
+        if (simpleInteger != null) {
+            stmt.bindLong(3, simpleInteger);
+        }
+        stmt.bindString(4, entity.getSimpleStringNotNull());
+ 
+        String simpleString = entity.getSimpleString();
+        if (simpleString != null) {
+            stmt.bindString(5, simpleString);
+        }
+ 
+        String indexedString = entity.getIndexedString();
+        if (indexedString != null) {
+            stmt.bindString(6, indexedString);
+        }
+ 
+        String indexedStringAscUnique = entity.getIndexedStringAscUnique();
+        if (indexedStringAscUnique != null) {
+            stmt.bindString(7, indexedStringAscUnique);
+        }
+ 
+        java.util.Date simpleDate = entity.getSimpleDate();
+        if (simpleDate != null) {
+            stmt.bindLong(8, simpleDate.getTime());
+        }
+ 
+        Boolean simpleBoolean = entity.getSimpleBoolean();
+        if (simpleBoolean != null) {
+            stmt.bindLong(9, simpleBoolean ? 1L: 0L);
+        }
+ 
+        byte[] simpleByteArray = entity.getSimpleByteArray();
+        if (simpleByteArray != null) {
+            stmt.bindBlob(10, simpleByteArray);
+        }
+    }
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, TestEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();
