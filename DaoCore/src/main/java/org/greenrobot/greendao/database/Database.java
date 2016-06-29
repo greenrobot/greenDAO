@@ -38,4 +38,6 @@ public interface Database {
     boolean isDbLockedByCurrentThread();
 
     void close();
+
+    Object getRawDatabase();
 }

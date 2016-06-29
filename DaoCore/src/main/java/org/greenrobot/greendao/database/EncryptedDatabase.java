@@ -76,6 +76,11 @@ public class EncryptedDatabase implements Database {
         delegate.close();
     }
 
+    @Override
+    public Object getRawDatabase() {
+        return delegate;
+    }
+
     public SQLiteDatabase getSQLiteDatabase() {
         return delegate;
     }
