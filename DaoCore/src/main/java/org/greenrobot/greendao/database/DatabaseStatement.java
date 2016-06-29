@@ -20,4 +20,6 @@ public interface DatabaseStatement {
     void bindDouble(int index, double value);
 
     void close();
+
+    Object getRawStatement();
 }

@@ -74,4 +74,9 @@ public class StandardDatabaseStatement implements DatabaseStatement {
         delegate.close();
     }
 
+    @Override
+    public Object getRawStatement() {
+        return delegate;
+    }
+
 }

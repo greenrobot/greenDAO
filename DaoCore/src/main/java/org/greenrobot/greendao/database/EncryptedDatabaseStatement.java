@@ -75,4 +75,9 @@ public class EncryptedDatabaseStatement implements DatabaseStatement {
         delegate.close();
     }
 
+    @Override
+    public Object getRawStatement() {
+        return delegate;
+    }
+
 }
