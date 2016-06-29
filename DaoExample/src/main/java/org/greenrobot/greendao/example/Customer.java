@@ -1,10 +1,9 @@
 package org.greenrobot.greendao.example;
 
-import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.JoinOn;
+import org.greenrobot.greendao.annotation.JoinProperty;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.ToMany;
@@ -35,8 +34,8 @@ public class Customer {
     @Generated(hash = 1697251196)
     private transient CustomerDao myDao;
 
-    @ToMany(joinOn = {
-            @JoinOn(source = "id", target = "customerId")
+    @ToMany(joinProperties = {
+            @JoinProperty(name = "id", referencedName = "customerId")
     })
     @OrderBy("date ASC")
     private List<Order> orders;

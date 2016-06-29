@@ -6,14 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Optional. Configures the mapped column for a persistent field.
+ * Optional: configures the mapped column for a persistent field.
  * This annotation is also applicable with @ToOne without additional foreign key property
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
-public @interface Column {
+public @interface Property {
     /**
-     * Name of the column. Default is field name.
+     * Name of the database column for this property. Default is field name.
      */
-    String name() default "";
+    String nameInDb() default "";
 }

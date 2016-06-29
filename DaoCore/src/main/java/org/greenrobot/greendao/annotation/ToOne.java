@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * automatically created backing column
  *
  * In case foreignKey is not specified, the following annotations can be applied together with @ToOne:
- * - {@link Column} to specify backing column name
+ * - {@link Property} to specify backing column name
  * - {@link Unique} to put the unique constraint on backing column during table creation
  * - {@link NotNull} to put the NOT NULL constraint on backing column during table creation
  */
@@ -21,5 +21,5 @@ public @interface ToOne {
      * Name of the property inside the current entity which holds the key of related entity.
      * If this parameter is absent, then an additional column is automatically created to hold the key.
      */
-    String foreignKey() default "";
+    String joinProperty() default "";
 }

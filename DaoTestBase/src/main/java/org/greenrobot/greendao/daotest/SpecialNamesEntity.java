@@ -6,8 +6,7 @@ import org.greenrobot.greendao.annotation.*;
 /**
  * Entity mapped to table "ORDER TRANSACTION GROUP BY".
  */
-@Entity
-@Table(name = "ORDER TRANSACTION GROUP BY")
+@Entity(nameInDb = "ORDER TRANSACTION GROUP BY")
 public class SpecialNamesEntity {
 
     @Id

@@ -7,3 +7,5 @@ dependencies {
     compile project(':DaoCore')
     compileOnly 'com.google.android:android:4.1.1.4'
 }
+
+uploadArchives.enabled = false

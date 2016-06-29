@@ -5,14 +5,12 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
-import org.greenrobot.greendao.annotation.Table;
 import org.greenrobot.greendao.annotation.ToOne;
 
 /**
  * Entity mapped to table "ORDERS".
  */
-@Entity(active = true)
-@Table(name = "ORDERS")
+@Entity(active = true, nameInDb = "ORDERS")
 public class Order {
 
     @Id
@@ -28,7 +26,7 @@ public class Order {
     @Generated(hash = 949219203)
     private transient OrderDao myDao;
 
-    @ToOne(foreignKey = "customerId")
+    @ToOne(joinProperty = "customerId")
     private Customer customer;
 
     @Generated(hash = 8592637)
@@ -103,7 +101,8 @@ public class Order {
     @Generated(hash = 625323961)
     public void setCustomer(@NotNull Customer customer) {
         if (customer == null) {
-            throw new DaoException("To-one property 'customerId' has not-null constraint; cannot set to-one to null");
+            throw new DaoException(
+                    "To-one property 'customerId' has not-null constraint; cannot set to-one to null");
         }
         synchronized (this) {
             this.customer = customer;

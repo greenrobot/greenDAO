@@ -9,13 +9,12 @@ import org.greenrobot.greendao.annotation.*;
 /**
  * Entity mapped to table "SQLITE_MASTER".
  */
-@Entity
-@Table(create = false)
+@Entity(createInDb = false)
 public class SqliteMaster {
     private String type;
     private String name;
 
-    @Column(name = "tbl_name")
+    @Property(nameInDb = "tbl_name")
     private String tableName;
     private Long rootpage;
     private String sql;

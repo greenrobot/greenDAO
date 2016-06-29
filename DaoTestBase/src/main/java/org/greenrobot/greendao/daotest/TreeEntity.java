@@ -25,14 +25,14 @@ public class TreeEntity {
     @Generated
     private transient TreeEntityDao myDao;
 
-    @ToOne(foreignKey = "parentId")
+    @ToOne(joinProperty = "parentId")
     private TreeEntity parent;
 
     @Generated
     private transient Long parent__resolvedKey;
 
-    @ToMany(joinOn = {
-        @JoinOn(source = "id", target = "parentId")
+    @ToMany(joinProperties = {
+        @JoinProperty(name = "id", referencedName = "parentId")
     })
     private List<TreeEntity> children;
 

@@ -10,12 +10,6 @@ buildscript {
 
 apply plugin: 'com.android.application'
 
-dependencies {
-    compile project(':DaoTestBase')
-    compile 'net.zetetic:android-database-sqlcipher:3.5.1'
-    testCompile 'org.robolectric:robolectric:3.1'
-}
-
 android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -25,3 +19,11 @@ android {
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 }
+
+dependencies {
+    compile project(':DaoTestBase')
+    compile 'net.zetetic:android-database-sqlcipher:3.5.1'
+    testCompile 'org.robolectric:robolectric:3.1'
+}
+
+uploadArchives.enabled = false

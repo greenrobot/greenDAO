@@ -34,14 +34,14 @@ public class RelationSource2 {
     @Generated
     private transient RelationSource2Dao myDao;
 
-    @ToOne(foreignKey = "toOneId")
+    @ToOne(joinProperty = "toOneId")
     private ToOneTarget2 toOneTarget2;
 
     @Generated
     private transient Long toOneTarget2__resolvedKey;
 
-    @ToMany(joinOn = {
-        @JoinOn(source = "id", target = "fkId")
+    @ToMany(joinProperties = {
+        @JoinProperty(name = "id", referencedName = "fkId")
     })
     private List<ToManyTarget2> toManyTarget2List;
 

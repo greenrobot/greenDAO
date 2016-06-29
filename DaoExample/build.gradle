@@ -5,7 +5,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.2'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0-beta'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0-beta3'
     }
 }
 
@@ -46,3 +46,5 @@ dependencies {
     compile project(':DaoCore')
     compile 'net.zetetic:android-database-sqlcipher:3.5.1'
 }
+
+uploadArchives.enabled = false

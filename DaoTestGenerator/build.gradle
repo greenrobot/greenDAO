@@ -15,3 +15,5 @@ sourceSets {
 dependencies {
     compile project(':DaoGenerator')
 }
+
+uploadArchives.enabled = false

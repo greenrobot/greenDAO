@@ -17,7 +17,7 @@ import org.greenrobot.greendao.unittest.MinimalEntityDao;
 /**
  * {@inheritDoc}
  * 
- * @see AbstractDaoSession
+ * @see org.greenrobot.greendao.AbstractDaoSession
  */
 public class DaoSession extends AbstractDaoSession {
 
