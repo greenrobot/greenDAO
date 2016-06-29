@@ -19,6 +19,7 @@ package org.greenrobot.greendao;
 import android.database.CrossProcessCursor;
 import android.database.Cursor;
 import android.database.CursorWindow;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.database.Database;
@@ -55,8 +56,9 @@ import java.util.List;
  * 3.) identityScope
  */
 public abstract class AbstractDao<T, K> {
-    protected final Database db;
     protected final DaoConfig config;
+    protected final Database db;
+    protected final boolean isStandardSQLite;
     protected IdentityScope<K, T> identityScope;
     protected IdentityScopeLong<T> identityScopeLong;
     protected TableStatements statements;
@@ -73,6 +75,7 @@ public abstract class AbstractDao<T, K> {
         this.config = config;
         this.session = daoSession;
         db = config.db;
+        isStandardSQLite = db.getRawDatabase() instanceof SQLiteDatabase;
         identityScope = (IdentityScope<K, T>) config.getIdentityScope();
         if (identityScope instanceof IdentityScopeLong) {
             identityScopeLong = (IdentityScopeLong<T>) identityScope;
@@ -264,13 +267,26 @@ public abstract class AbstractDao<T, K> {
                     identityScope.lock();
                 }
                 try {
-                    for (T entity : entities) {
-                        bindValues(stmt, entity);
-                        if (setPrimaryKey) {
-                            long rowId = stmt.executeInsert();
-                            updateKeyAfterInsertAndAttach(entity, rowId, false);
-                        } else {
-                            stmt.execute();
+                    if (isStandardSQLite) {
+                        SQLiteStatement rawStmt = (SQLiteStatement) stmt.getRawStatement();
+                        for (T entity : entities) {
+                            bindValues(rawStmt, entity);
+                            if (setPrimaryKey) {
+                                long rowId = rawStmt.executeInsert();
+                                updateKeyAfterInsertAndAttach(entity, rowId, false);
+                            } else {
+                                rawStmt.execute();
+                            }
+                        }
+                    } else {
+                        for (T entity : entities) {
+                            bindValues(stmt, entity);
+                            if (setPrimaryKey) {
+                                long rowId = stmt.executeInsert();
+                                updateKeyAfterInsertAndAttach(entity, rowId, false);
+                            } else {
+                                stmt.execute();
+                            }
                         }
                     }
                 } finally {
@@ -291,7 +307,7 @@ public abstract class AbstractDao<T, K> {
      * @return row ID of newly inserted entity
      */
     public long insert(T entity) {
-        return executeInsert(entity, statements.getInsertStatement());
+        return executeInsert(entity, statements.getInsertStatement(), true);
     }
 
     /**
@@ -303,27 +319,7 @@ public abstract class AbstractDao<T, K> {
      * @return row ID of newly inserted entity
      */
     public long insertWithoutSettingPk(T entity) {
-        DatabaseStatement stmt = statements.getInsertStatement();
-        long rowId;
-        if (db.isDbLockedByCurrentThread()) {
-            synchronized (stmt) {
-                bindValues(stmt, entity);
-                rowId = stmt.executeInsert();
-            }
-        } else {
-            // Do TX to acquire a connection before locking the stmt to avoid deadlocks
-            db.beginTransaction();
-            try {
-                synchronized (stmt) {
-                    bindValues(stmt, entity);
-                    rowId = stmt.executeInsert();
-                }
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
-            }
-        }
-        return rowId;
+        return executeInsert(entity, statements.getInsertOrReplaceStatement(), false);
     }
 
     /**
@@ -332,31 +328,40 @@ public abstract class AbstractDao<T, K> {
      * @return row ID of newly inserted entity
      */
     public long insertOrReplace(T entity) {
-        return executeInsert(entity, statements.getInsertOrReplaceStatement());
+        return executeInsert(entity, statements.getInsertOrReplaceStatement(), true);
     }
 
-    private long executeInsert(T entity, DatabaseStatement stmt) {
+    private long executeInsert(T entity, DatabaseStatement stmt, boolean setKeyAndAttach) {
         long rowId;
         if (db.isDbLockedByCurrentThread()) {
-            synchronized (stmt) {
-                bindValues(stmt, entity);
-                rowId = stmt.executeInsert();
-            }
+            rowId = insertInsideTx(entity, stmt);
         } else {
             // Do TX to acquire a connection before locking the stmt to avoid deadlocks
             db.beginTransaction();
             try {
-                synchronized (stmt) {
-                    bindValues(stmt, entity);
-                    rowId = stmt.executeInsert();
-                }
+                rowId = insertInsideTx(entity, stmt);
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
             }
         }
-        updateKeyAfterInsertAndAttach(entity, rowId, true);
+        if (setKeyAndAttach) {
+            updateKeyAfterInsertAndAttach(entity, rowId, true);
+        }
         return rowId;
+    }
+
+    private long insertInsideTx(T entity, DatabaseStatement stmt) {
+        synchronized (stmt) {
+            if (isStandardSQLite) {
+                SQLiteStatement rawStmt = (SQLiteStatement) stmt.getRawStatement();
+                bindValues(rawStmt, entity);
+                return rawStmt.executeInsert();
+            } else {
+                bindValues(stmt, entity);
+                return stmt.executeInsert();
+            }
+        }
     }
 
     protected void updateKeyAfterInsertAndAttach(T entity, long rowId, boolean lock) {
@@ -690,7 +695,11 @@ public abstract class AbstractDao<T, K> {
         DatabaseStatement stmt = statements.getUpdateStatement();
         if (db.isDbLockedByCurrentThread()) {
             synchronized (stmt) {
-                updateInsideSynchronized(entity, stmt, true);
+                if (isStandardSQLite) {
+                    updateInsideSynchronized(entity, (SQLiteStatement) stmt.getRawStatement(), true);
+                } else {
+                    updateInsideSynchronized(entity, stmt, true);
+                }
             }
         } else {
             // Do TX to acquire a connection before locking the stmt to avoid deadlocks
@@ -711,6 +720,22 @@ public abstract class AbstractDao<T, K> {
     }
 
     protected void updateInsideSynchronized(T entity, DatabaseStatement stmt, boolean lock) {
+        // To do? Check if it's worth not to bind PKs here (performance).
+        bindValues(stmt, entity);
+        int index = config.allColumns.length + 1;
+        K key = getKey(entity);
+        if (key instanceof Long) {
+            stmt.bindLong(index, (Long) key);
+        } else if (key == null) {
+            throw new DaoException("Cannot update entity without key - was it inserted before?");
+        } else {
+            stmt.bindString(index, key.toString());
+        }
+        stmt.execute();
+        attachEntity(key, entity, lock);
+    }
+
+    protected void updateInsideSynchronized(T entity, SQLiteStatement stmt, boolean lock) {
         // To do? Check if it's worth not to bind PKs here (performance).
         bindValues(stmt, entity);
         int index = config.allColumns.length + 1;
@@ -767,8 +792,15 @@ public abstract class AbstractDao<T, K> {
                     identityScope.lock();
                 }
                 try {
-                    for (T entity : entities) {
-                        updateInsideSynchronized(entity, stmt, false);
+                    if (isStandardSQLite) {
+                        SQLiteStatement rawStmt = (SQLiteStatement) stmt.getRawStatement();
+                        for (T entity : entities) {
+                            updateInsideSynchronized(entity, rawStmt, false);
+                        }
+                    } else {
+                        for (T entity : entities) {
+                            updateInsideSynchronized(entity, stmt, false);
+                        }
                     }
                 } finally {
                     if (identityScope != null) {
