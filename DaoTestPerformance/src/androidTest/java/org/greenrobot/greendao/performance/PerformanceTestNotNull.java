@@ -52,7 +52,7 @@ public class PerformanceTestNotNull extends PerformanceTest<SimpleEntityNotNullD
             entity.getSimpleString();
             entity.getSimpleByteArray();
         }
-        stopClock(list.size() + " entities");
+        stopClock();
     }
 
 }
