@@ -33,7 +33,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
         extends AbstractDaoTest<D, T, K> {
 
     private static final int BATCH_SIZE = 10000;
-    private static final int RUNS = 8;
+    private static final int RUNS = 10;
 
     boolean useTraceView = false;
     private Benchmark benchmark;
@@ -65,7 +65,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
         int count = BATCH_SIZE / 10;
         File benchFile = new File(Environment.getExternalStorageDirectory(), "greendao-1by1-" + count + ".tsv");
         benchmark = new Benchmark(benchFile);
-        benchmark.addFixedColumnDevice();
+        benchmark.addFixedColumnDevice().warmUpRuns(2);
         for (int i = 0; i < RUNS; i++) {
             runOneByOneTests(entities, count, count);
 
@@ -81,7 +81,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
     public void testPerformanceBatch() throws Exception {
         File benchFile = new File(Environment.getExternalStorageDirectory(), "greendao-batch-" + BATCH_SIZE + ".tsv");
         benchmark = new Benchmark(benchFile);
-        benchmark.addFixedColumnDevice();
+        benchmark.addFixedColumnDevice().warmUpRuns(2);
 
         for (int i = 0; i < RUNS; i++) {
             runBatchTests(entities);

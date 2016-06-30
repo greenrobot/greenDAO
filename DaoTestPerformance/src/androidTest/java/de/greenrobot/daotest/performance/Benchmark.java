@@ -18,6 +18,8 @@ import java.util.Date;
 import java.util.List;
 
 public class Benchmark {
+    public static final String TAG = "Benchmark";
+
     private final List<Pair<String, String>> fixedColumns = new ArrayList<>();
     private final List<Pair<String, String>> values = new ArrayList<>();
     private final File file;
@@ -31,6 +33,8 @@ public class Benchmark {
     private long threadTimeMillis;
     private long timeMillis;
     private String name;
+    private int runs;
+    private int warmUpRuns;
 
     public Benchmark(File file) {
         this.file = file;
@@ -73,12 +77,29 @@ public class Benchmark {
         }
     }
 
-    public void addFixedColumn(String key, String value) {
-        fixedColumns.add(new Pair<String, String>(key, value));
+    public Benchmark warmUpRuns(int warmUpRuns) {
+        this.warmUpRuns = warmUpRuns;
+        return this;
     }
 
-    public void addFixedColumnDevice() {
+    public Benchmark enableThreadTime() {
+        this.storeThreadTime = true;
+        return this;
+    }
+
+    public Benchmark disableThreadTime() {
+        this.storeThreadTime = false;
+        return this;
+    }
+
+    public Benchmark addFixedColumn(String key, String value) {
+        fixedColumns.add(new Pair<String, String>(key, value));
+        return this;
+    }
+
+    public Benchmark addFixedColumnDevice() {
         addFixedColumn("device", Build.MODEL);
+        return this;
     }
 
     public void start(String name) {
@@ -119,7 +140,7 @@ public class Benchmark {
         }
         started = false;
 
-        Log.d("Benchmark", name + ": " + time + " ms (thread: " + timeThread + " ms)");
+        Log.d(TAG, name + ": " + time + " ms (thread: " + timeThread + " ms)");
         values.add(new Pair<>(name, Long.toString(time)));
         if (storeThreadTime) {
             values.add(new Pair<>(name + "-thread", Long.toString(timeThread)));
@@ -128,29 +149,34 @@ public class Benchmark {
     }
 
     public void commit() {
-        String[] collectedHeaders = getAllFirsts(values);
-        if (!Arrays.equals(collectedHeaders, headers)) {
-            headers = collectedHeaders;
-            String line = StringUtils.join(headers, "" + separator) + '\n';
+        runs++;
+        if (runs > warmUpRuns) {
+            Log.d(TAG, "Writing results for run " + runs);
+            String[] collectedHeaders = getAllFirsts(values);
+            if (!Arrays.equals(collectedHeaders, headers)) {
+                headers = collectedHeaders;
+                String line = StringUtils.join(headers, "" + separator) + '\n';
+                try {
+                    FileUtils.appendUtf8(file, line);
+                } catch (IOException e) {
+                    throw new RuntimeException("Could not write header in benchmark file", e);
+                }
+            }
+
+            StringBuilder line = new StringBuilder();
+            for (Pair<String, String> pair : values) {
+                line.append(pair.second).append(separator);
+            }
+            line.append('\n');
             try {
                 FileUtils.appendUtf8(file, line);
             } catch (IOException e) {
                 throw new RuntimeException("Could not write header in benchmark file", e);
             }
-        }
-
-        StringBuilder line = new StringBuilder();
-        for (Pair<String, String> pair : values) {
-            line.append(pair.second).append(separator);
-        }
-        line.append('\n');
-        try {
-            FileUtils.appendUtf8(file, line);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not write header in benchmark file", e);
+        } else {
+            Log.d(TAG, "Ignoring results for run " + runs + " (warm up)");
         }
         values.clear();
-        System.gc();
     }
 
     private String[] getAllFirsts(List<Pair<String, String>> columns) {
