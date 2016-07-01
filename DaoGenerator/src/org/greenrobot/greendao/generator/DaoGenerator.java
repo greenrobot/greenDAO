@@ -49,11 +49,7 @@ public class DaoGenerator {
     private Template templateContentProvider;
 
     public DaoGenerator() throws IOException {
-        this(false);
-    }
-
-    public DaoGenerator(boolean encryption) throws IOException {
-        System.out.println("greenDAO Generator" + (encryption ? " (enryption mode)" : ""));
+        System.out.println("greenDAO Generator");
         System.out.println("Copyright 2011-2016 Markus Junginger, greenrobot.de. Licensed under GPL V3.");
         System.out.println("This program comes with ABSOLUTELY NO WARRANTY");
 
@@ -62,8 +58,7 @@ public class DaoGenerator {
         patternKeepMethods = compilePattern("METHODS");
 
         Configuration config = new Configuration(Configuration.VERSION_2_3_23);
-        String basePackagePath = encryption ? "/encryption/" : "/standard/";
-        config.setClassForTemplateLoading(this.getClass(), basePackagePath);
+        config.setClassForTemplateLoading(this.getClass(), "/");
 
         templateDao = config.getTemplate("dao.ftl");
         templateDaoMaster = config.getTemplate("dao-master.ftl");
@@ -121,9 +116,9 @@ public class DaoGenerator {
             }
         }
         generate(templateDaoMaster, outDirFile, schema.getDefaultJavaPackageDao(),
-            schema.getPrefix() + "DaoMaster", schema, null);
+                schema.getPrefix() + "DaoMaster", schema, null);
         generate(templateDaoSession, outDirFile, schema.getDefaultJavaPackageDao(),
-            schema.getPrefix() + "DaoSession", schema, null);
+                schema.getPrefix() + "DaoSession", schema, null);
 
         long time = System.currentTimeMillis() - start;
         System.out.println("Processed " + entities.size() + " entities in " + time + "ms");
