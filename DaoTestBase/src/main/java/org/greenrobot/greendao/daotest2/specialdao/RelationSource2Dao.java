@@ -62,7 +62,7 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
     }
 
     @Override
-    protected void bindValues(DatabaseStatement stmt, RelationSource2 entity) {
+    protected final void bindValues(DatabaseStatement stmt, RelationSource2 entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();
@@ -77,7 +77,7 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
     }
 
     @Override
-    protected void bindValues(SQLiteStatement stmt, RelationSource2 entity) {
+    protected final void bindValues(SQLiteStatement stmt, RelationSource2 entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();
@@ -92,18 +92,16 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
     }
 
     @Override
-    protected void attachEntity(RelationSource2 entity) {
+    protected final void attachEntity(RelationSource2 entity) {
         super.attachEntity(entity);
         entity.__setDaoSession(daoSession);
     }
 
-    /** @inheritdoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
     @Override
     public RelationSource2 readEntity(Cursor cursor, int offset) {
         RelationSource2 entity = new RelationSource2( //
@@ -113,21 +111,18 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
         return entity;
     }
      
-    /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, RelationSource2 entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setToOneId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
      }
     
-    /** @inheritdoc */
     @Override
-    protected Long updateKeyAfterInsert(RelationSource2 entity, long rowId) {
+    protected final Long updateKeyAfterInsert(RelationSource2 entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
     @Override
     public Long getKey(RelationSource2 entity) {
         if(entity != null) {
@@ -137,9 +132,8 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
         }
     }
 
-    /** @inheritdoc */
-    @Override    
-    protected boolean isEntityUpdateable() {
+    @Override
+    protected final boolean isEntityUpdateable() {
         return true;
     }
     

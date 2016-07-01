@@ -52,7 +52,7 @@ public class ToOneTarget2Dao extends AbstractDao<ToOneTarget2, Long> {
     }
 
     @Override
-    protected void bindValues(DatabaseStatement stmt, ToOneTarget2 entity) {
+    protected final void bindValues(DatabaseStatement stmt, ToOneTarget2 entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();
@@ -62,7 +62,7 @@ public class ToOneTarget2Dao extends AbstractDao<ToOneTarget2, Long> {
     }
 
     @Override
-    protected void bindValues(SQLiteStatement stmt, ToOneTarget2 entity) {
+    protected final void bindValues(SQLiteStatement stmt, ToOneTarget2 entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();
@@ -71,13 +71,11 @@ public class ToOneTarget2Dao extends AbstractDao<ToOneTarget2, Long> {
         }
     }
 
-    /** @inheritdoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
     @Override
     public ToOneTarget2 readEntity(Cursor cursor, int offset) {
         ToOneTarget2 entity = new ToOneTarget2( //
@@ -86,20 +84,17 @@ public class ToOneTarget2Dao extends AbstractDao<ToOneTarget2, Long> {
         return entity;
     }
      
-    /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, ToOneTarget2 entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
      }
     
-    /** @inheritdoc */
     @Override
-    protected Long updateKeyAfterInsert(ToOneTarget2 entity, long rowId) {
+    protected final Long updateKeyAfterInsert(ToOneTarget2 entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
     @Override
     public Long getKey(ToOneTarget2 entity) {
         if(entity != null) {
@@ -109,9 +104,8 @@ public class ToOneTarget2Dao extends AbstractDao<ToOneTarget2, Long> {
         }
     }
 
-    /** @inheritdoc */
-    @Override    
-    protected boolean isEntityUpdateable() {
+    @Override
+    protected final boolean isEntityUpdateable() {
         return true;
     }
     

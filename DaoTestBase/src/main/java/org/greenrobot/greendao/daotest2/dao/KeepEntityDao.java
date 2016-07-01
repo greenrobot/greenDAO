@@ -50,7 +50,7 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
     }
 
     @Override
-    protected void bindValues(DatabaseStatement stmt, KeepEntity entity) {
+    protected final void bindValues(DatabaseStatement stmt, KeepEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();
@@ -60,7 +60,7 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
     }
 
     @Override
-    protected void bindValues(SQLiteStatement stmt, KeepEntity entity) {
+    protected final void bindValues(SQLiteStatement stmt, KeepEntity entity) {
         stmt.clearBindings();
  
         Long id = entity.getId();
@@ -69,13 +69,11 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
         }
     }
 
-    /** @inheritdoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
-    /** @inheritdoc */
     @Override
     public KeepEntity readEntity(Cursor cursor, int offset) {
         KeepEntity entity = new KeepEntity( //
@@ -84,20 +82,17 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
         return entity;
     }
      
-    /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, KeepEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
      }
     
-    /** @inheritdoc */
     @Override
-    protected Long updateKeyAfterInsert(KeepEntity entity, long rowId) {
+    protected final Long updateKeyAfterInsert(KeepEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
-    /** @inheritdoc */
     @Override
     public Long getKey(KeepEntity entity) {
         if(entity != null) {
@@ -107,9 +102,8 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
         }
     }
 
-    /** @inheritdoc */
-    @Override    
-    protected boolean isEntityUpdateable() {
+    @Override
+    protected final boolean isEntityUpdateable() {
         return true;
     }
     
