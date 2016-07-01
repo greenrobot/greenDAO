@@ -129,7 +129,7 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
 <#assign stmtTypes = ["DatabaseStatement", "SQLiteStatement"] />
 <#list stmtTypes as stmtType>
     @Override
-    protected void bindValues(${stmtType} stmt, ${entity.className} entity) {
+    protected final void bindValues(${stmtType} stmt, ${entity.className} entity) {
         stmt.clearBindings();
 <#list entity.properties as property>
 <#if property.notNull || entity.protobuf>
@@ -167,13 +167,12 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
 </#list>
 <#if entity.active>
     @Override
-    protected void attachEntity(${entity.className} entity) {
+    protected final void attachEntity(${entity.className} entity) {
         super.attachEntity(entity);
         entity.__setDaoSession(daoSession);
     }
 
 </#if>
-    /** @inheritdoc */
     @Override
     public ${entity.pkType} readKey(Cursor cursor, int offset) {
 <#if entity.pkProperty??>
@@ -187,7 +186,6 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
 </#if>  
     }    
 
-    /** @inheritdoc */
     @Override
     public ${entity.className} readEntity(Cursor cursor, int offset) {
 <#if entity.protobuf>
@@ -223,7 +221,6 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
 </#if>
     }
      
-    /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, ${entity.className} entity, int offset) {
 <#if entity.protobuf>
@@ -236,9 +233,8 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
 </#if>
      }
     
-    /** @inheritdoc */
     @Override
-    protected ${entity.pkType} updateKeyAfterInsert(${entity.className} entity, long rowId) {
+    protected final ${entity.pkType} updateKeyAfterInsert(${entity.className} entity, long rowId) {
 <#if entity.pkProperty??>
 <#if entity.pkProperty.propertyType == "Long">
 <#if !entity.protobuf>
@@ -254,7 +250,6 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
 </#if>
     }
     
-    /** @inheritdoc */
     @Override
     public ${entity.pkType} getKey(${entity.className} entity) {
 <#if entity.pkProperty??>
@@ -268,9 +263,8 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
 </#if>    
     }
 
-    /** @inheritdoc */
-    @Override    
-    protected boolean isEntityUpdateable() {
+    @Override
+    protected final boolean isEntityUpdateable() {
         return ${(!entity.protobuf)?string};
     }
     
