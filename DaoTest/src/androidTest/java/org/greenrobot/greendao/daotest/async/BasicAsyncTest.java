@@ -172,7 +172,7 @@ public class BasicAsyncTest extends AbstractAsyncTest {
         assertWaitForCompletion1Sec();
         while (!testListenerMainThread_done) {
             synchronized (listener) {
-                listener.wait();
+                listener.wait(1000);
             }
         }
     }
