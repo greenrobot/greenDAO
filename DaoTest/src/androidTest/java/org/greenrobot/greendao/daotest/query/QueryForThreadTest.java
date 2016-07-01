@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -17,17 +17,20 @@
  */
 package org.greenrobot.greendao.daotest.query;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.util.SparseArray;
+
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.DaoLog;
-import org.greenrobot.greendao.query.Query;
-import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.daotest.TestEntity;
 import org.greenrobot.greendao.daotest.TestEntityDao.Properties;
 import org.greenrobot.greendao.daotest.entity.TestEntityTestBase;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class QueryForThreadTest extends TestEntityTestBase {
     /** Takes longer when activated */
@@ -53,13 +56,17 @@ public class QueryForThreadTest extends TestEntityTestBase {
     }
 
     public void testGetForCurrentThread_ManyThreadsDontLeak() throws Exception {
+        if (VERSION.SDK_INT > VERSION_CODES.LOLLIPOP_MR1) {
+            DaoLog.i("testGetForCurrentThread_ManyThreadsDontLeak does not work on API level " + VERSION.SDK_INT);
+            return;
+        }
         QueryBuilder<TestEntity> builder = dao.queryBuilder().where(Properties.SimpleInteger.eq("dummy"));
         final Query<TestEntity> query = builder.build();
         for (int i = 1; i <= LEAK_TEST_ITERATIONS; i++) {
             Thread thread = new Thread() {
                 public void run() {
                     query.forCurrentThread();
-                };
+                }
             };
             thread.start();
             if (i % 10 == 0) {
