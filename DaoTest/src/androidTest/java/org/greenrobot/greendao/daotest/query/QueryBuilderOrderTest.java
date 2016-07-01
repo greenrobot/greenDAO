@@ -17,14 +17,14 @@
  */
 package org.greenrobot.greendao.daotest.query;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.daotest.TestEntity;
 import org.greenrobot.greendao.daotest.TestEntityDao.Properties;
 import org.greenrobot.greendao.daotest.entity.TestEntityTestBase;
+import org.greenrobot.greendao.query.QueryBuilder;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class QueryBuilderOrderTest extends TestEntityTestBase {
     @Override
@@ -85,7 +85,8 @@ public class QueryBuilderOrderTest extends TestEntityTestBase {
         TestEntity entityAE = addEntity(list, "Ä");
         dao.insertInTx(list);
 
-        List<TestEntity> result = dao.queryBuilder().orderAsc(Properties.SimpleString).list();
+        List<TestEntity> result = dao.queryBuilder().preferLocalizedStringOrder().orderAsc(Properties.SimpleString)
+                .list();
         assertEquals(list.size(), result.size());
         assertEquals(entityAE.getId(), result.get(0).getId());
         assertEquals(entityB.getId(), result.get(1).getId());
@@ -101,6 +102,26 @@ public class QueryBuilderOrderTest extends TestEntityTestBase {
         dao.insertInTx(list);
 
         List<TestEntity> result = dao.queryBuilder().orderCustom(Properties.SimpleString, "ASC").list();
+        assertEquals(list.size(), result.size());
+        assertEquals(entityAA.getId(), result.get(0).getId());
+        assertEquals(entityAC.getId(), result.get(1).getId());
+        assertEquals(entityAB.getId(), result.get(2).getId());
+    }
+
+    public void testOrderCustom_stringOrderCollation() {
+        List<TestEntity> list = new ArrayList<TestEntity>();
+        TestEntity entityAA = addEntity(list, "Aa");
+        TestEntity entityAB = addEntity(list, "ab");
+        TestEntity entityAC = addEntity(list, "Ac");
+        dao.insertInTx(list);
+
+        List<TestEntity> result = dao.queryBuilder().stringOrderCollation(null).orderAsc(Properties.SimpleString).list();
+        assertEquals(list.size(), result.size());
+        assertEquals(entityAA.getId(), result.get(0).getId());
+        assertEquals(entityAC.getId(), result.get(1).getId());
+        assertEquals(entityAB.getId(), result.get(2).getId());
+
+        result = dao.queryBuilder().stringOrderCollation("COLLATE BINARY").orderAsc(Properties.SimpleString).list();
         assertEquals(list.size(), result.size());
         assertEquals(entityAA.getId(), result.get(0).getId());
         assertEquals(entityAC.getId(), result.get(1).getId());

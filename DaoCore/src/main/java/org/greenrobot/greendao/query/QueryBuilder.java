@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,7 @@
  */
 package org.greenrobot.greendao.query;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.database.sqlite.SQLiteDatabase;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.AbstractDaoSession;
@@ -24,6 +23,9 @@ import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.DaoLog;
 import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.SqlUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Builds custom entity queries using constraints and parameters and without SQL (QueryBuilder creates SQL for you). To
@@ -60,6 +62,9 @@ public class QueryBuilder<T> {
     private Integer offset;
     private boolean distinct;
 
+    /** stored with a leading space */
+    private String stringOrderCollation;
+
     /** For internal use by greenDAO only. */
     public static <T2> QueryBuilder<T2> internalCreate(AbstractDao<T2, ?> dao) {
         return new QueryBuilder<T2>(dao);
@@ -75,6 +80,7 @@ public class QueryBuilder<T> {
         values = new ArrayList<Object>();
         joins = new ArrayList<Join<T, ?>>();
         whereCollector = new WhereCollector<T>(dao, tablePrefix);
+        stringOrderCollation = " COLLATE NOCASE";
     }
 
     private void checkOrderBuilder() {
@@ -88,6 +94,36 @@ public class QueryBuilder<T> {
     /** Use a SELECT DISTINCT to avoid duplicate entities returned, e.g. when doing joins. */
     public QueryBuilder<T> distinct() {
         distinct = true;
+        return this;
+    }
+
+    /**
+     * If using Android's embedded SQLite, this enables localized ordering of strings
+     * (see {@link #orderAsc(Property...)} and {@link #orderDesc(Property...)}). This uses "COLLATE LOCALIZED", which
+     * is unavailable in SQLCipher (in that case, the ordering is unchanged).
+     *
+     * @see #stringOrderCollation
+     */
+    public QueryBuilder<T> preferLocalizedStringOrder() {
+        // SQLCipher 3.5.0+ does not understand "COLLATE LOCALIZED"
+        if (dao.getDatabase().getRawDatabase() instanceof SQLiteDatabase) {
+            stringOrderCollation = " COLLATE LOCALIZED";
+        }
+        return this;
+    }
+
+    /**
+     * Customizes the ordering of strings used by {@link #orderAsc(Property...)} and {@link #orderDesc(Property...)}.
+     * Default is "COLLATE NOCASE".
+     *
+     * @see #preferLocalizedStringOrder
+     */
+    public QueryBuilder<T> stringOrderCollation(String stringOrderCollation) {
+        // SQLCipher 3.5.0+ does not understand "COLLATE LOCALIZED"
+        if (dao.getDatabase().getRawDatabase() instanceof SQLiteDatabase) {
+            this.stringOrderCollation = stringOrderCollation == null || stringOrderCollation.startsWith(" ") ?
+                    stringOrderCollation : " " + stringOrderCollation;
+        }
         return this;
     }
 
@@ -191,10 +227,9 @@ public class QueryBuilder<T> {
         for (Property property : properties) {
             checkOrderBuilder();
             append(orderBuilder, property);
-            // SQLCipher 3.5.0 does not understand "COLLATE LOCALIZED ASC", so use standard sorting
-            // if (String.class.equals(property.type)) {
-            //     orderBuilder.append(" COLLATE LOCALIZED");
-            // }
+            if (String.class.equals(property.type) && stringOrderCollation != null) {
+                orderBuilder.append(stringOrderCollation);
+            }
             orderBuilder.append(ascOrDescWithLeadingSpace);
         }
     }
