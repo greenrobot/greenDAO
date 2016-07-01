@@ -44,6 +44,8 @@ greendao {
 
 dependencies {
     compile project(':DaoCore')
+
+    // This is only needed if you want to use encrypted databases
     compile 'net.zetetic:android-database-sqlcipher:3.5.1'
 }
 

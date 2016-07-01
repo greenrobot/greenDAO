@@ -3,6 +3,7 @@
     package="org.greenrobot.greendao.example">
 
     <application
+        android:name="App"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:allowBackup="true">

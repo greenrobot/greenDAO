@@ -41,12 +41,8 @@ import org.greenrobot.greendao.example.DaoMaster.EncryptedDevOpenHelper;
 
 public class NoteActivity extends ListActivity {
 
-    private Database db;
-
     private EditText editText;
 
-    private DaoMaster daoMaster;
-    private DaoSession daoSession;
     private NoteDao noteDao;
 
     private Cursor cursor;
@@ -57,17 +53,14 @@ public class NoteActivity extends ListActivity {
 
         setContentView(R.layout.main);
 
-        // Note: db setup is better done in Application
-        EncryptedDevOpenHelper helper = new EncryptedDevOpenHelper(this, "notes-db-encrypted");
-        db = helper.getWritableDatabase("super-secret");
-        daoMaster = new DaoMaster(db);
-        daoSession = daoMaster.newSession();
+        DaoSession daoSession = ((App) getApplication()).getDaoSession();
         noteDao = daoSession.getNoteDao();
 
+        // You usually do not need to work with the database directly when using greenDAO. But you still can...
+        SQLiteDatabase sqLiteDatabase = (SQLiteDatabase) daoSession.getDatabase().getRawDatabase();
         String textColumn = NoteDao.Properties.Text.columnName;
         // SQLCipher 3.5.0 does not understand "COLLATE LOCALIZED ASC", so use standard sorting
-        String orderBy = textColumn + " ASC";
-        SQLiteDatabase sqLiteDatabase = ((EncryptedDatabase) db).getSQLiteDatabase();
+        String orderBy = textColumn + " COLLATE NOCASE ASC";
         cursor = sqLiteDatabase.query(noteDao.getTablename(), noteDao.getAllColumns(), null, null, null, null, orderBy);
         String[] from = {textColumn, NoteDao.Properties.Comment.columnName};
         int[] to = {android.R.id.text1, android.R.id.text2};
