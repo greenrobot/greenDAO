@@ -3,12 +3,12 @@ package de.greenrobot.encryption;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
-import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.daotest.DaoMaster;
-import org.greenrobot.greendao.daotest.DaoMaster.EncryptedDevOpenHelper;
-import org.greenrobot.greendao.daotest.DaoMaster.EncryptedOpenHelper;
+import org.greenrobot.greendao.daotest.DaoMaster.DevOpenHelper;
+import org.greenrobot.greendao.daotest.DaoMaster.OpenHelper;
 import org.greenrobot.greendao.daotest.DaoSession;
 import org.greenrobot.greendao.daotest.SimpleEntity;
+import org.greenrobot.greendao.database.Database;
 
 public class EncryptedDatabaseOpenHelperTest extends ApplicationTestCase {
 
@@ -18,18 +18,18 @@ public class EncryptedDatabaseOpenHelperTest extends ApplicationTestCase {
 
     public void testEncryptedDevOpenHelper() {
         createApplication();
-        Database db = new EncryptedDevOpenHelper(getApplication(), null).getReadableDatabase("password");
+        Database db = new DevOpenHelper(getApplication(), null).getEncryptedReadableDb("password");
         assertDbEncryptedAndFunctional(db);
     }
 
     public void testEncryptedOpenHelper() {
         createApplication();
-        Database db = new EncryptedOpenHelper(getApplication(), null) {
+        Database db = new OpenHelper(getApplication(), null) {
             @Override
             public void onUpgrade(Database db, int oldVersion, int newVersion) {
 
             }
-        }.getReadableDatabase("password");
+        }.getEncryptedReadableDb("password");
         assertDbEncryptedAndFunctional(db);
     }
 

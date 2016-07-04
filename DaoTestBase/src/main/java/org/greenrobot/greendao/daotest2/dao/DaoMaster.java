@@ -8,12 +8,9 @@ import android.util.Log;
 import org.greenrobot.greendao.AbstractDaoMaster;
 import org.greenrobot.greendao.database.StandardDatabase;
 import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendao.database.EncryptedDatabaseOpenHelper;
 import org.greenrobot.greendao.database.DatabaseOpenHelper;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 
-import org.greenrobot.greendao.daotest2.dao.KeepEntityDao;
-import org.greenrobot.greendao.daotest2.dao.ToManyTarget2Dao;
 import org.greenrobot.greendao.daotest2.to1_specialdao.ToOneTarget2Dao;
 import org.greenrobot.greendao.daotest2.specialdao.RelationSource2Dao;
 
@@ -62,38 +59,8 @@ public class DaoMaster extends AbstractDaoMaster {
             super(context, name);
         }
 
-        @Override
-        public void onUpgrade(Database db, int oldVersion, int newVersion) {
-            Log.i("greenDAO", "Upgrading schema from version " + oldVersion + " to " + newVersion + " by dropping all tables");
-            dropAllTables(db, true);
-            onCreate(db);
-        }
-    }
-
-    public static abstract class EncryptedOpenHelper extends EncryptedDatabaseOpenHelper {
-        public EncryptedOpenHelper(Context context, String name) {
-            super(context, name, SCHEMA_VERSION);
-        }
-
-        public EncryptedOpenHelper(Context context, String name, Object cursorFactory, boolean loadNativeLibs) {
-            super(context, name, cursorFactory, SCHEMA_VERSION, loadNativeLibs);
-        }
-
-        @Override
-        public void onCreate(Database db) {
-            Log.i("greenDAO", "Creating tables for schema version " + SCHEMA_VERSION);
-            createAllTables(db, false);
-        }
-    }
-
-    /** WARNING: Drops all table on Upgrade! Use only during development. */
-    public static class EncryptedDevOpenHelper extends EncryptedOpenHelper {
-        public EncryptedDevOpenHelper(Context context, String name) {
-            super(context, name);
-        }
-
-        public EncryptedDevOpenHelper(Context context, String name, Object cursorFactory, boolean loadNativeLibs) {
-            super(context, name, cursorFactory, loadNativeLibs);
+        public DevOpenHelper(Context context, String name, CursorFactory factory) {
+            super(context, name, factory);
         }
 
         @Override
