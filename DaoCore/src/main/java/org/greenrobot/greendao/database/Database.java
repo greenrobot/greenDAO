@@ -18,6 +18,9 @@ package org.greenrobot.greendao.database;
 import android.database.Cursor;
 import android.database.SQLException;
 
+/**
+ * Database abstraction used internally by greenDAO.
+ */
 public interface Database {
     Cursor rawQuery(String sql, String[] selectionArgs);
 

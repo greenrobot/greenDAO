@@ -25,69 +25,66 @@ import net.sqlcipher.database.SQLiteOpenHelper;
  * Like android.database.sqlite.SQLiteOpenHelper, but uses greenDAO's {@link Database} abstraction to create and update
  * an encrypted database.
  */
-public abstract class EncryptedDatabaseOpenHelper extends AbstractDatabaseOpenHelper {
-    private SQLiteOpenHelper delegate;
-
+public abstract class EncryptedDatabaseOpenHelper extends SQLiteOpenHelper implements DatabaseOpenHelper {
     public EncryptedDatabaseOpenHelper(Context context, String name, int version) {
         this(context, name, null, version, true);
     }
 
     /**
-     * @param cursorFactory Must be null or of type net.sqlcipher.database.SQLiteDatabase.CursorFactory
-     *                      (using Object here to prevent DaoMaster referencing any SQLCipher classes, which is nicer
-     *                      for plain Java unit tests)
+     * @param cursorFactory  Must be null or of type net.sqlcipher.database.SQLiteDatabase.CursorFactory
+     *                       (using Object here to prevent DaoMaster referencing any SQLCipher classes, which is nicer
+     *                       for plain Java unit tests)
      * @param loadNativeLibs if true, {@link SQLiteDatabase#loadLibs(Context)} will be called.
      */
-    public EncryptedDatabaseOpenHelper(Context context, String name, Object cursorFactory, int version, boolean loadNativeLibs) {
+    public EncryptedDatabaseOpenHelper(Context context, String name, Object cursorFactory, int version,
+                                       boolean loadNativeLibs) {
+        super(checkLoadnativeLibs(context, loadNativeLibs), name, (CursorFactory) cursorFactory, version);
+    }
+
+    // Static method to ensure this is called before super constructor
+    private static Context checkLoadnativeLibs(Context context, boolean loadNativeLibs) {
         if (loadNativeLibs) {
             SQLiteDatabase.loadLibs(context);
         }
-        delegate = new Adapter(context, name, (CursorFactory) cursorFactory, version);
+        return context;
     }
 
-    public Database getWritableDatabase(String password) {
-        return wrap(delegate.getWritableDatabase(password));
+    public Database getWritableDb(String password) {
+        return wrap(getWritableDatabase(password));
     }
 
-    public Database getWritableDatabase(char[] password) {
-        return wrap(delegate.getWritableDatabase(password));
+    public Database getWritableDb(char[] password) {
+        return wrap(getWritableDatabase(password));
     }
 
-    public Database getReadableDatabase(String password) {
-        return wrap(delegate.getReadableDatabase(password));
+    public Database getReadableDb(String password) {
+        return wrap(getReadableDatabase(password));
     }
 
-    public Database getReadableDatabase(char[] password) {
-        return wrap(delegate.getReadableDatabase(password));
-    }
-
-    public void close() {
-        delegate.close();
+    public Database getReadableDb(char[] password) {
+        return wrap(getReadableDatabase(password));
     }
 
     protected Database wrap(SQLiteDatabase sqLiteDatabase) {
         return new EncryptedDatabase(sqLiteDatabase);
     }
 
-    private class Adapter extends SQLiteOpenHelper {
-        public Adapter(Context context, String name, CursorFactory factory, int version) {
-            super(context, name, factory, version);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            EncryptedDatabaseOpenHelper.this.onCreate(wrap(db));
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            EncryptedDatabaseOpenHelper.this.onUpgrade(wrap(db), oldVersion, newVersion);
-        }
-
-        @Override
-        public void onOpen(SQLiteDatabase db) {
-            EncryptedDatabaseOpenHelper.this.onOpen(wrap(db));
-        }
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        onCreate(wrap(db));
     }
 
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        onUpgrade(wrap(db), oldVersion, newVersion);
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        onOpen(wrap(db));
+    }
+
+    @Override
+    public void onOpen(Database db) {
+    }
 }

@@ -15,60 +15,23 @@
  */
 package org.greenrobot.greendao.database;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.database.sqlite.SQLiteOpenHelper;
+public interface DatabaseOpenHelper {
+    /**
+     * See <a href="http://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html#onCreate(android.database.sqlite.SQLiteDatabase)">
+     * android.database.sqlite.SQLiteOpenHelper.onCreate</a>
+     */
+    void onCreate(Database db);
 
-/**
- * Like android.database.sqlite.SQLiteOpenHelper, but uses greenDAO's {@link Database} abstraction to create and update an unencrypted database.
- */
-public abstract class DatabaseOpenHelper extends AbstractDatabaseOpenHelper {
-    private SQLiteOpenHelper delegate;
+    /**
+     * See <a href="http://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html#onUpgrade(android.database.sqlite.SQLiteDatabase, int, int)">
+     * android.database.sqlite.SQLiteOpenHelper.onUpgrade</a>
+     */
+    void onUpgrade(Database db, int oldVersion, int newVersion);
 
-    public DatabaseOpenHelper(Context context, String name, int version) {
-        delegate = new Adapter(context, name, null, version);
-    }
-
-    public DatabaseOpenHelper(Context context, String name, CursorFactory factory, int version) {
-        delegate = new Adapter(context, name, factory, version);
-    }
-
-    public Database getWritableDatabase() {
-        return wrap(delegate.getWritableDatabase());
-    }
-
-    public Database getReadableDatabase() {
-        return wrap(delegate.getReadableDatabase());
-    }
-
-    public void close() {
-        delegate.close();
-    }
-
-    protected Database wrap(SQLiteDatabase sqLiteDatabase) {
-        return new StandardDatabase(sqLiteDatabase);
-    }
-
-    private class Adapter extends SQLiteOpenHelper {
-        public Adapter(Context context, String name, CursorFactory factory, int version) {
-            super(context, name, factory, version);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            DatabaseOpenHelper.this.onCreate(wrap(db));
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            DatabaseOpenHelper.this.onUpgrade(wrap(db), oldVersion, newVersion);
-        }
-
-        @Override
-        public void onOpen(SQLiteDatabase db) {
-            DatabaseOpenHelper.this.onOpen(wrap(db));
-        }
-    }
+    /**
+     * See <a href="http://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper.html#onOpen(android.database.sqlite.SQLiteDatabase)">
+     * android.database.sqlite.SQLiteOpenHelper.onOpen</a>
+     */
+    void onOpen(Database db);
 
 }
