@@ -2,7 +2,7 @@ language: android
 # Use the Travis Container-Based Infrastructure
 sudo: false
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 env:
   global:
     # increase adb timeout (2 minutes by default)
