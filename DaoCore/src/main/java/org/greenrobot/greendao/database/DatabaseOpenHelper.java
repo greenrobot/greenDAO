@@ -30,6 +30,7 @@ public abstract class DatabaseOpenHelper extends SQLiteOpenHelper {
     private final int version;
 
     private EncryptedHelper encryptedHelper;
+    private boolean loadSQLCipherNativeLibs = true;
 
     public DatabaseOpenHelper(Context context, String name, int version) {
         this(context, name, null, version);
@@ -42,10 +43,25 @@ public abstract class DatabaseOpenHelper extends SQLiteOpenHelper {
         this.version = version;
     }
 
+    /**
+     * Flag to load SQLCipher native libs (default: true).
+     */
+    public void setLoadSQLCipherNativeLibs(boolean loadSQLCipherNativeLibs) {
+        this.loadSQLCipherNativeLibs = loadSQLCipherNativeLibs;
+    }
+
+    /**
+     * Like {@link #getWritableDatabase()}, but returns a greenDAO abstraction of the database.
+     * The backing DB is an standard {@link SQLiteDatabase}.
+     */
     public Database getWritableDb() {
         return wrap(getWritableDatabase());
     }
 
+    /**
+     * Like {@link #getReadableDatabase()}, but returns a greenDAO abstraction of the database.
+     * The backing DB is an standard {@link SQLiteDatabase}.
+     */
     public Database getReadableDb() {
         return wrap(getReadableDatabase());
     }
@@ -54,63 +70,108 @@ public abstract class DatabaseOpenHelper extends SQLiteOpenHelper {
         return new StandardDatabase(sqLiteDatabase);
     }
 
+    /**
+     * Delegates to {@link #onCreate(Database)}, which uses greenDAO's database abstraction.
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         onCreate(wrap(db));
     }
 
+    /**
+     * Override this if you do not want to depend on {@link SQLiteDatabase}.
+     */
     public void onCreate(Database db) {
         // Do nothing by default
     }
 
+    /**
+     * Delegates to {@link #onUpgrade(Database, int, int)}, which uses greenDAO's database abstraction.
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(wrap(db), oldVersion, newVersion);
     }
 
+    /**
+     * Override this if you do not want to depend on {@link SQLiteDatabase}.
+     */
     public void onUpgrade(Database db, int oldVersion, int newVersion) {
         // Do nothing by default
     }
 
+    /**
+     * Delegates to {@link #onOpen(Database)}, which uses greenDAO's database abstraction.
+     */
     @Override
     public void onOpen(SQLiteDatabase db) {
         onOpen(wrap(db));
     }
 
+    /**
+     * Override this if you do not want to depend on {@link SQLiteDatabase}.
+     */
     public void onOpen(Database db) {
         // Do nothing by default
     }
 
     private EncryptedHelper checkEncryptedHelper() {
         if (encryptedHelper == null) {
-            encryptedHelper = new EncryptedHelper(context, name, version);
+            encryptedHelper = new EncryptedHelper(context, name, version, loadSQLCipherNativeLibs);
         }
         return (EncryptedHelper) encryptedHelper;
     }
 
+    /**
+     * Use this to initialize an encrypted SQLCipher database.
+     *
+     * @see #onCreate(Database)
+     * @see #onUpgrade(Database, int, int)
+     */
     public Database getEncryptedWritableDb(String password) {
         EncryptedHelper encryptedHelper = checkEncryptedHelper();
         return encryptedHelper.wrap(encryptedHelper.getReadableDatabase(password));
     }
 
+    /**
+     * Use this to initialize an encrypted SQLCipher database.
+     *
+     * @see #onCreate(Database)
+     * @see #onUpgrade(Database, int, int)
+     */
     public Database getEncryptedWritableDb(char[] password) {
         EncryptedHelper encryptedHelper = checkEncryptedHelper();
         return encryptedHelper.wrap(encryptedHelper.getWritableDatabase(password));
     }
 
+    /**
+     * Use this to initialize an encrypted SQLCipher database.
+     *
+     * @see #onCreate(Database)
+     * @see #onUpgrade(Database, int, int)
+     */
     public Database getEncryptedReadableDb(String password) {
         EncryptedHelper encryptedHelper = checkEncryptedHelper();
         return encryptedHelper.wrap(encryptedHelper.getReadableDatabase(password));
     }
 
+    /**
+     * Use this to initialize an encrypted SQLCipher database.
+     *
+     * @see #onCreate(Database)
+     * @see #onUpgrade(Database, int, int)
+     */
     public Database getEncryptedReadableDb(char[] password) {
         EncryptedHelper encryptedHelper = checkEncryptedHelper();
         return encryptedHelper.wrap(encryptedHelper.getReadableDatabase(password));
     }
 
     private class EncryptedHelper extends net.sqlcipher.database.SQLiteOpenHelper {
-        public EncryptedHelper(Context context, String name, int version) {
+        public EncryptedHelper(Context context, String name, int version, boolean loadLibs) {
             super(context, name, null, version);
+            if (loadLibs) {
+                net.sqlcipher.database.SQLiteDatabase.loadLibs(context);
+            }
         }
 
         @Override
