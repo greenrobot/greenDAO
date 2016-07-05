@@ -1,6 +1,6 @@
 greenDAO
 ========
-greenDAO is a light & fast ORM solution for Android that maps objects to SQLite databases. Being highly optimized for Android, greenDAO offers great performance and consumes minimal memory.
+greenDAO is a light & fast ORM for Android that maps objects to SQLite databases. Being highly optimized for Android, greenDAO offers great performance and consumes minimal memory.
 
 **<font size="+1">Home page, documentation, and support links: http://greenrobot.org/greendao/</font>**
 
@@ -12,12 +12,11 @@ greenDAO's unique set of features:
 
 * Rock solid: greenDAO has been around since 2011 and is used by countless famous apps
 * Super simple: concise and straight-forward API
-* Small: The library is <100K and it's just plain Java jar (no CPU dependent native parts)
+* Small: The library is <150K and it's just plain Java jar (no CPU dependent native parts)
 * Fast: Probably the fastest ORM for Android, driven by intelligent code generation
 * Safe and expressive query API: QueryBuilder uses property constants to avoid typos
 * Powerful joins: query across entities and even chain joins for complex relations
 * Flexible property types: use custom classes or enums to represent data in your entity
-
 
 Add greenDAO to your project
 ----------------------------
@@ -25,14 +24,13 @@ greenDAO is available on Maven Central. Please ensure that you are using the lat
 
 Gradle dependency for your Android app:
 ```
-    compile 'org.greenrobot:greendao-encryption:2.2.2'
+    compile 'org.greenrobot:greendao:3.0.0'
 ```
 
 Gradle dependency for your Java generator project:
 ```
-    compile 'org.greenrobot:greendao-generator:2.2.0'
+    compile 'org.greenrobot:greendao-generator:3.0.0'
 ```
-*Note:* to use encrypted databases using SQLCipher, you need to reference different artifacts (postfix '-encryption'). For all details, please refer to the documentation on [database encryption](http://greenrobot.org/greendao/documentation/database-encryption/).
 
 Homepage, Documentation, Links
 ------------------------------
@@ -47,17 +45,6 @@ For more details on greenDAO please check [greenDAO's website](http://greenrobot
 [Technical FAQ](http://greenrobot.org/greendao/documentation/technical-faq/)
 
 [Non-Technical FAQ](http://greenrobot.org/greendao/documentation/faq/)
-
-Features in Beta
-----------------
-Those features are already here for you to try out. Note: Documentation and test coverage may be lacking, and the API may change in the future.
-### Asynchronous API
-* New AsyncSession (acquired from DaoSession.startAsyncSession()) provides most operations for DAOs, Queries, and transactions in a asynchronously variant
-* AsyncOperations are processed in order by a background thread
-* waitForCompletion methods for AsyncSession and AsyncOperations
-* AsyncOperationListener for asynchronous callback when operations complete
-* Asynchronous operations can be merged in single transactions (details follow)
-* Added raw SQL queries returning a Query object (LazyList support etc.)
 
 More Open Source by greenrobot
 ==============================
