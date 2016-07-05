@@ -3,8 +3,8 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.greenrobot'
-archivesBaseName = 'greendao-encryption'
-version = '3.0.0-beta3'
+archivesBaseName = 'greendao'
+version = '3.0.0'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
@@ -23,13 +23,13 @@ dependencies {
 }
 
 javadoc {
-    def srcAnnotations = project(':greendao-api').file('src/main/java/')
-    if(!srcAnnotations.directory) throw new GradleScriptException("Not a directory: ${srcAnnotations}", null)
+    def srcApi = project(':greendao-api').file('src/main/java/')
+    if (!srcApi.directory) throw new GradleScriptException("Not a directory: ${srcApi}", null)
     failOnError = false
     title = " greenDAO ${version} API"
-	options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
-	excludes = ['de/greenrobot/dao/internal','de/greenrobot/dao/Internal*']
-    includes += srcAnnotations.absolutePath
+    options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
+    excludes = ['de/greenrobot/dao/internal', 'de/greenrobot/dao/Internal*']
+    includes += srcApi.absolutePath
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -53,19 +53,17 @@ uploadArchives {
         mavenDeployer {
             // Basic definitions are defined in root project
             pom.project {
-               name 'greenDAO (Encryption)'
-               packaging 'jar'
-               description 'greenDAO is a light and fast ORM for Android'
-               url 'http://greenrobot.org/greendao'
+                name 'greenDAO'
+                description 'greenDAO is a light and fast ORM for Android'
 
-               licenses {
-                   license {
-                       name 'The Apache Software License, Version 2.0'
-                       url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                       distribution 'repo'
-                   }
-               }
-           }
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+            }
         }
     }
 }

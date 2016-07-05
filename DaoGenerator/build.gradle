@@ -3,8 +3,8 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'org.greenrobot'
-archivesBaseName = 'greendao-generator-encryption'
-version = '3.0.0-beta3'
+archivesBaseName = 'greendao-generator'
+version = '3.0.0'
 sourceCompatibility = 1.7
 
 repositories {
@@ -36,7 +36,7 @@ test {
     doFirst {
         mkdir 'test-out'
     }
-    doLast{
+    doLast {
         delete 'test-out'
     }
 }
@@ -70,24 +70,17 @@ uploadArchives {
         mavenDeployer {
             // Basic definitions are defined in root project
             pom.project {
-               name 'greenDAO Generator'
-               packaging 'jar'
-               description 'Code generator for greenDAO, the light and fast ORM for Android'
+                name 'greenDAO Generator'
+                description 'Code generator for greenDAO, the light and fast ORM for Android'
 
-               scm {
-                   url 'https://github.com/greenrobot/greenDAO'
-                   connection 'scm:git@github.com:greenrobot/greenDAO.git'
-                   developerConnection 'scm:git@github.com:greenrobot/greenDAO.git'
-               }
-
-               licenses {
-                   license {
-                       name 'GNU General Public License, Version 3'
-                       url 'http://www.gnu.org/licenses/gpl.txt'
-                       distribution 'repo'
-                   }
-               }
-           }
+                licenses {
+                    license {
+                        name 'GNU General Public License, Version 3'
+                        url 'http://www.gnu.org/licenses/gpl.txt'
+                        distribution 'repo'
+                    }
+                }
+            }
         }
     }
 }

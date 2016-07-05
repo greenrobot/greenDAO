@@ -1,16 +1,16 @@
 apply plugin: 'java'
 
 group = 'org.greenrobot'
-version = '3.0.0-beta3'
+version = '3.0.0'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 javadoc {
     failOnError = false
-    title = " greenDAO Annotation ${version} API"
-	options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
-	excludes = ['de/greenrobot/dao/internal','de/greenrobot/dao/Internal*']
+    title = " greenDAO API ${version} API"
+    options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
+    excludes = ['de/greenrobot/dao/internal', 'de/greenrobot/dao/Internal*']
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -34,19 +34,17 @@ uploadArchives {
         mavenDeployer {
             // Basic definitions are defined in root project
             pom.project {
-               name 'greenDAO Annotations'
-               packaging 'jar'
-               description 'greenDAO is a light and fast ORM for Android'
-               url 'http://greenrobot.org/greendao'
+                name 'greenDAO API'
+                description 'greenDAO is a light and fast ORM for Android'
 
-               licenses {
-                   license {
-                       name 'The Apache Software License, Version 2.0'
-                       url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                       distribution 'repo'
-                   }
-               }
-           }
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+            }
         }
     }
 }
