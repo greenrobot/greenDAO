@@ -35,10 +35,6 @@ import net.sqlcipher.database.SQLiteDatabase;
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendao.database.EncryptedDatabase;
-import org.greenrobot.greendao.example.DaoMaster.EncryptedDevOpenHelper;
-
 public class NoteActivity extends ListActivity {
 
     private EditText editText;

@@ -5,7 +5,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.2'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0-beta3'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0'
     }
 }
 
@@ -39,7 +39,6 @@ android {
 
 greendao {
     schemaVersion 1000
-    encrypt true
 }
 
 dependencies {

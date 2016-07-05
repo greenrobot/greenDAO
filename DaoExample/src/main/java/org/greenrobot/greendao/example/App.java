@@ -2,8 +2,10 @@ package org.greenrobot.greendao.example;
 
 import android.app.Application;
 
+import net.sqlcipher.database.SQLiteDatabase;
+
 import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendao.example.DaoMaster.EncryptedDevOpenHelper;
+import org.greenrobot.greendao.example.DaoMaster.DevOpenHelper;
 
 public class App extends Application {
     private DaoSession daoSession;
@@ -12,8 +14,9 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        EncryptedDevOpenHelper helper = new EncryptedDevOpenHelper(this, "notes-db-encrypted");
-        Database db = helper.getWritableDatabase("super-secret");
+        SQLiteDatabase.loadLibs(getApplicationContext());
+        DevOpenHelper helper = new DevOpenHelper(this, "notes-db-encrypted");
+        Database db = helper.getEncryptedReadableDb("super-secret");
         daoSession = new DaoMaster(db).newSession();
     }
 
