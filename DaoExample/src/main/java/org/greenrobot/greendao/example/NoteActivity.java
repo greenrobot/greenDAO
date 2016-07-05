@@ -53,11 +53,17 @@ public class NoteActivity extends ListActivity {
         noteDao = daoSession.getNoteDao();
 
         // You usually do not need to work with the database directly when using greenDAO. But you still can...
-        SQLiteDatabase sqLiteDatabase = (SQLiteDatabase) daoSession.getDatabase().getRawDatabase();
+        Object rawDatabase = daoSession.getDatabase().getRawDatabase();
         String textColumn = NoteDao.Properties.Text.columnName;
         // SQLCipher 3.5.0 does not understand "COLLATE LOCALIZED ASC", so use standard sorting
         String orderBy = textColumn + " COLLATE NOCASE ASC";
-        cursor = sqLiteDatabase.query(noteDao.getTablename(), noteDao.getAllColumns(), null, null, null, null, orderBy);
+        if (rawDatabase instanceof SQLiteDatabase) {
+            cursor = ((SQLiteDatabase) rawDatabase)
+                    .query(noteDao.getTablename(), noteDao.getAllColumns(), null, null, null, null, orderBy);
+        } else {
+            cursor = ((android.database.sqlite.SQLiteDatabase) rawDatabase)
+                    .query(noteDao.getTablename(), noteDao.getAllColumns(), null, null, null, null, orderBy);
+        }
         String[] from = {textColumn, NoteDao.Properties.Comment.columnName};
         int[] to = {android.R.id.text1, android.R.id.text2};
 
