@@ -1,4 +1,4 @@
-package de.greenrobot.encryption;
+package org.greenrobot.greendao.daotest.encrypted;
 
 import java.io.File;
 import java.io.FileInputStream;

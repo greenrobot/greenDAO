@@ -1,4 +1,4 @@
-package de.greenrobot.encryption;
+package org.greenrobot.greendao.daotest.encrypted;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

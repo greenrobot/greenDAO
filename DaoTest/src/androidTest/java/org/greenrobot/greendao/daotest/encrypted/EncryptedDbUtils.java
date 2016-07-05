@@ -1,4 +1,4 @@
-package de.greenrobot.encryption;
+package org.greenrobot.greendao.daotest.encrypted;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -30,6 +30,7 @@ public class EncryptedDbUtils {
             sqLiteDatabase = SQLiteDatabase.create(null, password);
         } else {
             File dbFile = context.getDatabasePath(dbName);
+            dbFile.getParentFile().mkdir();
             context.deleteDatabase(dbName);
             sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(dbFile, password, null);
         }
