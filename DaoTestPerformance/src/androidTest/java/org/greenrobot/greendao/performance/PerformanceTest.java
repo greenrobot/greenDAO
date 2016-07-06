@@ -17,13 +17,13 @@
  */
 package org.greenrobot.greendao.performance;
 
+import android.app.Application;
 import android.os.Debug;
+import android.os.Environment;
+
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.DaoLog;
 import org.greenrobot.greendao.test.AbstractDaoTest;
-
-import android.os.Debug;
-import android.os.Environment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
     // disable for regular builds
     public void _testPerformanceOneByOne() throws Exception {
         int count = BATCH_SIZE / 10;
-        File benchFile = new File(Environment.getExternalStorageDirectory(), "greendao-1by1-" + count + ".tsv");
+        File benchFile = getBenchFile("greendao-1by1-" + count + ".tsv");
         benchmark = new Benchmark(benchFile);
         benchmark.addFixedColumnDevice().warmUpRuns(2);
         for (int i = 0; i < RUNS; i++) {
@@ -78,9 +78,21 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
         }
     }
 
+    private File getBenchFile(String name) {
+        File dir = Environment.getExternalStorageDirectory();
+        File file = new File(dir, name);
+        if (dir == null || !dir.canWrite()) {
+            Application app = createApplication(Application.class);
+            File appFile = new File(app.getFilesDir(), name);
+            DaoLog.d("Using file " + appFile.getAbsolutePath() + ", (cannot write to " + file.getAbsolutePath() + ")");
+            file = appFile;
+        }
+        return file;
+    }
+
     // disable for regular builds
     public void testPerformanceBatch() throws Exception {
-        File benchFile = new File(Environment.getExternalStorageDirectory(), "greendao-batch-" + BATCH_SIZE + ".tsv");
+        File benchFile = getBenchFile("greendao-batch-" + BATCH_SIZE + ".tsv");
         benchmark = new Benchmark(benchFile);
         benchmark.addFixedColumnDevice().warmUpRuns(2);
 

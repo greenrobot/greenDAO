@@ -28,7 +28,7 @@ public class MinimalEntityTest {
     @Before
     public void setUp() {
         DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(RuntimeEnvironment.application, null);
-        Database db = openHelper.getWritableDatabase();
+        Database db = openHelper.getWritableDb();
         daoSession = new DaoMaster(db).newSession();
         minimalEntityDao = daoSession.getMinimalEntityDao();
     }
