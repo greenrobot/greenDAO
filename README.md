@@ -24,8 +24,11 @@ Add greenDAO to your project
 greenDAO is available on Maven Central. Please ensure that you are using the latest versions by [checking here](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.greenrobot%22%20AND%20a%3A%22greendao%22) [and here](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.greenrobot%22%20AND%20a%3A%22greendao-generator%22)
 
 Add the following Gradle configuration to your Android project:
-```
+```groovy
 buildscript {
+    repositories {
+        mavenCentral()
+    }
     dependencies {
         classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0'
     }
@@ -34,7 +37,7 @@ buildscript {
 apply plugin: 'org.greenrobot.greendao'
  
 dependencies {
-    compile project('org.greenrobot:greendao:3.0.1')
+    compile 'org.greenrobot:greendao:3.0.1'
 }
 ```
 
