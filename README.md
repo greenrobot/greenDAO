@@ -26,6 +26,9 @@ greenDAO is available on Maven Central. Please ensure that you are using the lat
 Add the following Gradle configuration to your Android project:
 ```
 buildscript {
+    repositories {
+        mavenCentral()
+    }
     dependencies {
         classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0'
     }
@@ -34,7 +37,7 @@ buildscript {
 apply plugin: 'org.greenrobot.greendao'
  
 dependencies {
-    compile project('org.greenrobot:greendao:3.0.1')
+    compile 'org.greenrobot:greendao:3.0.1'
 }
 ```
 
