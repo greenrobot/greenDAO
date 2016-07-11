@@ -65,10 +65,10 @@ public class DaoSession extends AbstractDaoSession {
     }
     
     public void clear() {
-        keepEntityDaoConfig.getIdentityScope().clear();
-        toManyTarget2DaoConfig.getIdentityScope().clear();
-        toOneTarget2DaoConfig.getIdentityScope().clear();
-        relationSource2DaoConfig.getIdentityScope().clear();
+        keepEntityDaoConfig.clearIdentityScope();
+        toManyTarget2DaoConfig.clearIdentityScope();
+        toOneTarget2DaoConfig.clearIdentityScope();
+        relationSource2DaoConfig.clearIdentityScope();
     }
 
     public KeepEntityDao getKeepEntityDao() {

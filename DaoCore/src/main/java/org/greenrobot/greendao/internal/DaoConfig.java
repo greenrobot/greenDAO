@@ -145,6 +145,16 @@ public final class DaoConfig implements Cloneable {
         return identityScope;
     }
 
+    /**
+     * Clears the identify scope if it exists.
+     */
+    public void clearIdentityScope() {
+        IdentityScope<?, ?> identityScope = this.identityScope;
+        if(identityScope != null) {
+            identityScope.clear();
+        }
+    }
+
     public void setIdentityScope(IdentityScope<?, ?> identityScope) {
         this.identityScope = identityScope;
     }

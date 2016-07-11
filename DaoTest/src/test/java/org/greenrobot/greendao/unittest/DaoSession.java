@@ -38,7 +38,7 @@ public class DaoSession extends AbstractDaoSession {
     }
     
     public void clear() {
-        minimalEntityDaoConfig.getIdentityScope().clear();
+        minimalEntityDaoConfig.clearIdentityScope();
     }
 
     public MinimalEntityDao getMinimalEntityDao() {

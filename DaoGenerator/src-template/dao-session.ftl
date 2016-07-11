@@ -73,7 +73,7 @@ public class ${schema.prefix}DaoSession extends AbstractDaoSession {
     
     public void clear() {
 <#list schema.entities as entity>
-        ${entity.classNameDao?uncap_first}Config.getIdentityScope().clear();
+        ${entity.classNameDao?uncap_first}Config.clearIdentityScope();
 </#list>    
     }
 

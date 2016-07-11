@@ -191,24 +191,24 @@ public class DaoSession extends AbstractDaoSession {
     }
     
     public void clear() {
-        simpleEntityDaoConfig.getIdentityScope().clear();
-        simpleEntityNotNullDaoConfig.getIdentityScope().clear();
-        testEntityDaoConfig.getIdentityScope().clear();
-        relationEntityDaoConfig.getIdentityScope().clear();
-        dateEntityDaoConfig.getIdentityScope().clear();
-        specialNamesEntityDaoConfig.getIdentityScope().clear();
-        abcdefEntityDaoConfig.getIdentityScope().clear();
-        toManyTargetEntityDaoConfig.getIdentityScope().clear();
-        toManyEntityDaoConfig.getIdentityScope().clear();
-        joinManyToDateEntityDaoConfig.getIdentityScope().clear();
-        treeEntityDaoConfig.getIdentityScope().clear();
-        anActiveEntityDaoConfig.getIdentityScope().clear();
-        extendsImplementsEntityDaoConfig.getIdentityScope().clear();
-        stringKeyValueEntityDaoConfig.getIdentityScope().clear();
-        autoincrementEntityDaoConfig.getIdentityScope().clear();
-        sqliteMasterDaoConfig.getIdentityScope().clear();
-        customTypeEntityDaoConfig.getIdentityScope().clear();
-        indexedStringEntityDaoConfig.getIdentityScope().clear();
+        simpleEntityDaoConfig.clearIdentityScope();
+        simpleEntityNotNullDaoConfig.clearIdentityScope();
+        testEntityDaoConfig.clearIdentityScope();
+        relationEntityDaoConfig.clearIdentityScope();
+        dateEntityDaoConfig.clearIdentityScope();
+        specialNamesEntityDaoConfig.clearIdentityScope();
+        abcdefEntityDaoConfig.clearIdentityScope();
+        toManyTargetEntityDaoConfig.clearIdentityScope();
+        toManyEntityDaoConfig.clearIdentityScope();
+        joinManyToDateEntityDaoConfig.clearIdentityScope();
+        treeEntityDaoConfig.clearIdentityScope();
+        anActiveEntityDaoConfig.clearIdentityScope();
+        extendsImplementsEntityDaoConfig.clearIdentityScope();
+        stringKeyValueEntityDaoConfig.clearIdentityScope();
+        autoincrementEntityDaoConfig.clearIdentityScope();
+        sqliteMasterDaoConfig.clearIdentityScope();
+        customTypeEntityDaoConfig.clearIdentityScope();
+        indexedStringEntityDaoConfig.clearIdentityScope();
     }
 
     public SimpleEntityDao getSimpleEntityDao() {
