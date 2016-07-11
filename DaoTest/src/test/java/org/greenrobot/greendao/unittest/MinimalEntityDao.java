@@ -101,6 +101,11 @@ public class MinimalEntityDao extends AbstractDao<MinimalEntity, Long> {
     }
 
     @Override
+    public boolean hasKey(MinimalEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

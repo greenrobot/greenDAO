@@ -124,6 +124,11 @@ public class AnActiveEntityDao extends AbstractDao<AnActiveEntity, Long> {
     }
 
     @Override
+    public boolean hasKey(AnActiveEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

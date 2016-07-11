@@ -105,6 +105,11 @@ public class ToOneTarget2Dao extends AbstractDao<ToOneTarget2, Long> {
     }
 
     @Override
+    public boolean hasKey(ToOneTarget2 entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

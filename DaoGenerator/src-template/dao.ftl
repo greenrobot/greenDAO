@@ -267,6 +267,19 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
     }
 
     @Override
+    public boolean hasKey(${entity.className} entity) {
+<#if entity.pkProperty??>
+<#if entity.pkProperty.notNull>
+        throw new UnsupportedOperationException("Unsupported for entities with a non-null key");
+<#else>
+        return entity.get${entity.pkProperty.propertyName?cap_first}() != null;
+</#if>
+<#else>
+        return false;
+</#if>
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return ${(!entity.protobuf)?string};
     }

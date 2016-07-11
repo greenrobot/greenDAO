@@ -21,13 +21,10 @@ import org.greenrobot.greendao.DaoLog;
 
 /**
  * Base class for DAOs having a long/Long as a PK, which is quite common.
- * 
+ *
+ * @param <D> DAO class
+ * @param <T> Entity type of the DAO
  * @author Markus
- * 
- * @param <D>
- *            DAO class
- * @param <T>
- *            Entity type of the DAO
  */
 public abstract class AbstractDaoTestLongPk<D extends AbstractDao<T, Long>, T> extends AbstractDaoTestSinglePk<D, T, Long> {
 
@@ -39,7 +36,7 @@ public abstract class AbstractDaoTestLongPk<D extends AbstractDao<T, Long>, T> e
     protected Long createRandomPk() {
         return random.nextLong();
     }
-    
+
     public void testAssignPk() {
         if (daoAccess.isEntityUpdateable()) {
             T entity1 = createEntity(null);
@@ -65,6 +62,5 @@ public abstract class AbstractDaoTestLongPk<D extends AbstractDao<T, Long>, T> e
             DaoLog.d("Skipping testAssignPk for not updateable " + daoClass);
         }
     }
-
 
 }

@@ -59,9 +59,9 @@ public abstract class AbstractDao<T, K> {
     protected final DaoConfig config;
     protected final Database db;
     protected final boolean isStandardSQLite;
-    protected IdentityScope<K, T> identityScope;
-    protected IdentityScopeLong<T> identityScopeLong;
-    protected TableStatements statements;
+    protected final IdentityScope<K, T> identityScope;
+    protected final IdentityScopeLong<T> identityScopeLong;
+    protected final TableStatements statements;
 
     protected final AbstractDaoSession session;
     protected final int pkOrdinal;
@@ -79,6 +79,8 @@ public abstract class AbstractDao<T, K> {
         identityScope = (IdentityScope<K, T>) config.getIdentityScope();
         if (identityScope instanceof IdentityScopeLong) {
             identityScopeLong = (IdentityScopeLong<T>) identityScope;
+        } else {
+            identityScopeLong = null;
         }
         statements = config.statements;
         pkOrdinal = config.pkProperty != null ? config.pkProperty.ordinal : -1;
@@ -371,6 +373,71 @@ public abstract class AbstractDao<T, K> {
         } else {
             // TODO When does this actually happen? Should we throw instead?
             DaoLog.w("Could not insert row (executeInsert returned -1)");
+        }
+    }
+
+    /**
+     * "Saves" an entity to the database: depending on the existence of the key property, it will be inserted
+     * (key is null) or updated (key is not null).
+     * <p/>
+     * This is similar to {@link #insertOrReplace(Object)}, but may be more efficient, because if a key is present,
+     * it does not have to query if that key already exists.
+     */
+    public void save(T entity) {
+        if (hasKey(entity)) {
+            update(entity);
+        } else {
+            insert(entity);
+        }
+    }
+
+    /**
+     * Saves (see {@link #save(Object)}) the given entities in the database using a transaction.
+     *
+     * @param entities The entities to save.
+     */
+    public void saveInTx(T... entities) {
+        saveInTx(Arrays.asList(entities));
+    }
+
+    /**
+     * Saves (see {@link #save(Object)}) the given entities in the database using a transaction.
+     *
+     * @param entities The entities to save.
+     */
+    public void saveInTx(Iterable<T> entities) {
+        int updateCount = 0;
+        int insertCount = 0;
+        for (T entity : entities) {
+            if (hasKey(entity)) {
+                updateCount++;
+            } else {
+                insertCount++;
+            }
+        }
+        if (updateCount > 0 && insertCount > 0) {
+            List<T> toUpdate = new ArrayList<>(updateCount);
+            List<T> toInsert = new ArrayList<>(insertCount);
+            for (T entity : entities) {
+                if (hasKey(entity)) {
+                    toUpdate.add(entity);
+                } else {
+                    toInsert.add(entity);
+                }
+            }
+
+            db.beginTransaction();
+            try {
+                updateInTx(toUpdate);
+                insertInTx(toInsert);
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+        } else if (insertCount > 0) {
+            insertInTx(entities);
+        } else if (updateCount > 0) {
+            updateInTx(entities);
         }
     }
 
@@ -893,6 +960,12 @@ public abstract class AbstractDao<T, K> {
      * entity is null.
      */
     abstract protected K getKey(T entity);
+
+    /**
+     * Returns true if the entity is not null, and has a non-null key, which is also != 0.
+     * entity is null.
+     */
+    abstract protected boolean hasKey(T entity);
 
     /** Returns true if the Entity class can be updated, e.g. for setting the PK after insert. */
     abstract protected boolean isEntityUpdateable();

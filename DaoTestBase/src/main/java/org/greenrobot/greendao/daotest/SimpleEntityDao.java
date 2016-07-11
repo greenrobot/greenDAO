@@ -227,6 +227,11 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
     }
 
     @Override
+    public boolean hasKey(SimpleEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

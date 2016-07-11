@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.SQLException;
 import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.DaoLog;
 import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.SqlUtils;
 
@@ -258,6 +259,38 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
         runLoadPkTest(0);
     }
 
+    public void testSave() {
+        if(!checkKeyIsNullable()) {
+            return;
+        }
+        dao.deleteAll();
+        T entity = createEntity(null);
+        if (entity != null) {
+            dao.save(entity);
+            dao.save(entity);
+            assertEquals(1, dao.count());
+        }
+    }
+
+    public void testSaveInTx() {
+        if(!checkKeyIsNullable()) {
+            return;
+        }
+        dao.deleteAll();
+        List<T> listPartial = new ArrayList<T>();
+        List<T> listAll = new ArrayList<T>();
+        for (int i = 0; i < 20; i++) {
+            T entity = createEntity(null);
+            if (i % 2 == 0) {
+                listPartial.add(entity);
+            }
+            listAll.add(entity);
+        }
+        dao.saveInTx(listPartial);
+        dao.saveInTx(listAll);
+        assertEquals(listAll.size(), dao.count());
+    }
+
     protected void runLoadPkTest(int offset) {
         K pk = nextPk();
         T entity = createEntity(pk);
@@ -302,6 +335,14 @@ public abstract class AbstractDaoTestSinglePk<D extends AbstractDao<T, K>, T, K>
             throw ex;
         }
         return cursor;
+    }
+
+    protected boolean checkKeyIsNullable() {
+        if (createEntity(null) == null) {
+            DaoLog.d("Test is not available for entities with non-null keys");
+            return false;
+        }
+        return true;
     }
 
     /** Provides a collision free PK () not returned before in the current test. */

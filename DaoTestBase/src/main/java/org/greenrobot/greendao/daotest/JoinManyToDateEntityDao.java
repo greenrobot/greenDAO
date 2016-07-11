@@ -129,6 +129,11 @@ public class JoinManyToDateEntityDao extends AbstractDao<JoinManyToDateEntity, L
     }
 
     @Override
+    public boolean hasKey(JoinManyToDateEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

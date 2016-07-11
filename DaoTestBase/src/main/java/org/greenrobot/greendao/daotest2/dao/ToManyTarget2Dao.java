@@ -121,6 +121,11 @@ public class ToManyTarget2Dao extends AbstractDao<ToManyTarget2, Long> {
     }
 
     @Override
+    public boolean hasKey(ToManyTarget2 entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

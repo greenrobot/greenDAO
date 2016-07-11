@@ -130,6 +130,11 @@ public class TreeEntityDao extends AbstractDao<TreeEntity, Long> {
     }
 
     @Override
+    public boolean hasKey(TreeEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

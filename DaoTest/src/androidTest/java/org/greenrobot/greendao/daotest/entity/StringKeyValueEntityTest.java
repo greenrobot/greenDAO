@@ -13,6 +13,9 @@ public class StringKeyValueEntityTest extends AbstractDaoTestStringPk<StringKeyV
 
     @Override
     protected StringKeyValueEntity createEntity(String key) {
+        if(key == null) {
+            return null;
+        }
         StringKeyValueEntity entity = new StringKeyValueEntity();
         entity.setKey(key);
         return entity;

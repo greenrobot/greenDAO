@@ -163,6 +163,11 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     }
 
     @Override
+    public boolean hasKey(RelationEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

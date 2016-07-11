@@ -255,6 +255,11 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
     }
 
     @Override
+    public boolean hasKey(AbcdefEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

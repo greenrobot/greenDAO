@@ -136,6 +136,11 @@ public class SqliteMasterDao extends AbstractDao<SqliteMaster, Void> {
     }
 
     @Override
+    public boolean hasKey(SqliteMaster entity) {
+        return false;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

@@ -119,6 +119,11 @@ public class CustomTypeEntityDao extends AbstractDao<CustomTypeEntity, Long> {
     }
 
     @Override
+    public boolean hasKey(CustomTypeEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

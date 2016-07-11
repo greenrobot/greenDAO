@@ -53,7 +53,7 @@ public abstract class PerformanceTest<D extends AbstractDao<T, K>, T, K>
         DaoLog.d("####################");
         clearIdentityScopeIfAny();
 
-        entities = new ArrayList<T>(BATCH_SIZE);
+        entities = new ArrayList(BATCH_SIZE);
         for (int i = 0; i < BATCH_SIZE; i++) {
             entities.add(createEntity());
         }

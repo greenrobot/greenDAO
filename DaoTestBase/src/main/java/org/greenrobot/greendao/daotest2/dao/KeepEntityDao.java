@@ -103,6 +103,11 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
     }
 
     @Override
+    public boolean hasKey(KeepEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

@@ -118,6 +118,11 @@ public class IndexedStringEntityDao extends AbstractDao<IndexedStringEntity, Lon
     }
 
     @Override
+    public boolean hasKey(IndexedStringEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

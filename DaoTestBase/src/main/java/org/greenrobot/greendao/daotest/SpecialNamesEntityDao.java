@@ -227,6 +227,11 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
     }
 
     @Override
+    public boolean hasKey(SpecialNamesEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

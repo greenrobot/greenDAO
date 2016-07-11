@@ -114,6 +114,11 @@ public class StringKeyValueEntityDao extends AbstractDao<StringKeyValueEntity, S
     }
 
     @Override
+    public boolean hasKey(StringKeyValueEntity entity) {
+        return entity.getKey() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

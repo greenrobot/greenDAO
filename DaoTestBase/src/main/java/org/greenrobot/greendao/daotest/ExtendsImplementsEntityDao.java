@@ -115,6 +115,11 @@ public class ExtendsImplementsEntityDao extends AbstractDao<ExtendsImplementsEnt
     }
 
     @Override
+    public boolean hasKey(ExtendsImplementsEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

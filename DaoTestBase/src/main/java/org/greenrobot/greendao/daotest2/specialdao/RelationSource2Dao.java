@@ -133,6 +133,11 @@ public class RelationSource2Dao extends AbstractDao<RelationSource2, Long> {
     }
 
     @Override
+    public boolean hasKey(RelationSource2 entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

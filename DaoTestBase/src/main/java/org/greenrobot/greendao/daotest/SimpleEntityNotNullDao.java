@@ -147,6 +147,11 @@ public class SimpleEntityNotNullDao extends AbstractDao<SimpleEntityNotNull, Lon
     }
 
     @Override
+    public boolean hasKey(SimpleEntityNotNull entity) {
+        throw new UnsupportedOperationException("Unsupported for entities with a non-null key");
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

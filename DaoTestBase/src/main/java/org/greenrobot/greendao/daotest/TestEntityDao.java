@@ -216,6 +216,11 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
     }
 
     @Override
+    public boolean hasKey(TestEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }

@@ -125,6 +125,11 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
     }
 
     @Override
+    public boolean hasKey(DateEntity entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }
