@@ -3,7 +3,7 @@ task wrapper(type: Wrapper) {
 }
 
 ext {
-    buildToolsVersion = '23.0.1'
+    buildToolsVersion = '23.0.3'
     compileSdkVersion = 23
 
     minSdkVersion = 7
