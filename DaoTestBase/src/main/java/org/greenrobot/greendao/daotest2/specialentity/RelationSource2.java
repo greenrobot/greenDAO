@@ -90,9 +90,7 @@ public class RelationSource2 {
     public ToOneTarget2 getToOneTarget2() {
         Long __key = this.toOneId;
         if (toOneTarget2__resolvedKey == null || !toOneTarget2__resolvedKey.equals(__key)) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             ToOneTarget2Dao targetDao = daoSession.getToOneTarget2Dao();
             ToOneTarget2 toOneTarget2New = targetDao.load(__key);
             synchronized (this) {
@@ -116,9 +114,7 @@ public class RelationSource2 {
     @Generated
     public List<ToManyTarget2> getToManyTarget2List() {
         if (toManyTarget2List == null) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             ToManyTarget2Dao targetDao = daoSession.getToManyTarget2Dao();
             List<ToManyTarget2> toManyTarget2ListNew = targetDao._queryRelationSource2_ToManyTarget2List(id);
             synchronized (this) {
@@ -142,9 +138,7 @@ public class RelationSource2 {
     */
     @Generated
     public void delete() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.delete(this);
     }
 
@@ -154,9 +148,7 @@ public class RelationSource2 {
     */
     @Generated
     public void update() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.update(this);
     }
 
@@ -166,10 +158,15 @@ public class RelationSource2 {
     */
     @Generated
     public void refresh() {
+        __throwIfDetached();
+        myDao.refresh(this);
+    }
+
+    @Generated
+    private void __throwIfDetached() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }    
-        myDao.refresh(this);
+        }
     }
 
     // KEEP METHODS - put your custom methods here

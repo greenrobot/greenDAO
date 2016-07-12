@@ -78,9 +78,7 @@ public class TreeEntity {
     public TreeEntity getParent() {
         Long __key = this.parentId;
         if (parent__resolvedKey == null || !parent__resolvedKey.equals(__key)) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             TreeEntityDao targetDao = daoSession.getTreeEntityDao();
             TreeEntity parentNew = targetDao.load(__key);
             synchronized (this) {
@@ -104,9 +102,7 @@ public class TreeEntity {
     @Generated
     public List<TreeEntity> getChildren() {
         if (children == null) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             TreeEntityDao targetDao = daoSession.getTreeEntityDao();
             List<TreeEntity> childrenNew = targetDao._queryTreeEntity_Children(id);
             synchronized (this) {
@@ -130,9 +126,7 @@ public class TreeEntity {
     */
     @Generated
     public void delete() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.delete(this);
     }
 
@@ -142,9 +136,7 @@ public class TreeEntity {
     */
     @Generated
     public void update() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.update(this);
     }
 
@@ -154,10 +146,15 @@ public class TreeEntity {
     */
     @Generated
     public void refresh() {
+        __throwIfDetached();
+        myDao.refresh(this);
+    }
+
+    @Generated
+    private void __throwIfDetached() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }    
-        myDao.refresh(this);
+        }
     }
 
 }

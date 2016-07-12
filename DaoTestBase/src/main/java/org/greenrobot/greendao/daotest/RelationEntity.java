@@ -121,9 +121,7 @@ public class RelationEntity {
     public RelationEntity getParent() {
         Long __key = this.parentId;
         if (parent__resolvedKey == null || !parent__resolvedKey.equals(__key)) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             RelationEntityDao targetDao = daoSession.getRelationEntityDao();
             RelationEntity parentNew = targetDao.load(__key);
             synchronized (this) {
@@ -148,9 +146,7 @@ public class RelationEntity {
     public TestEntity getTestEntity() {
         Long __key = this.testId;
         if (testEntity__resolvedKey == null || !testEntity__resolvedKey.equals(__key)) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             TestEntityDao targetDao = daoSession.getTestEntityDao();
             TestEntity testEntityNew = targetDao.load(__key);
             synchronized (this) {
@@ -175,9 +171,7 @@ public class RelationEntity {
     public TestEntity getTestNotNull() {
         long __key = this.testIdNotNull;
         if (testNotNull__resolvedKey == null || !testNotNull__resolvedKey.equals(__key)) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             TestEntityDao targetDao = daoSession.getTestEntityDao();
             TestEntity testNotNullNew = targetDao.load(__key);
             synchronized (this) {
@@ -204,9 +198,7 @@ public class RelationEntity {
     @Generated
     public TestEntity getTestWithoutProperty() {
         if (testWithoutProperty != null || !testWithoutProperty__refreshed) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             TestEntityDao targetDao = daoSession.getTestEntityDao();
             targetDao.refresh(testWithoutProperty);
             testWithoutProperty__refreshed = true;
@@ -234,9 +226,7 @@ public class RelationEntity {
     */
     @Generated
     public void delete() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.delete(this);
     }
 
@@ -246,9 +236,7 @@ public class RelationEntity {
     */
     @Generated
     public void update() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.update(this);
     }
 
@@ -258,10 +246,15 @@ public class RelationEntity {
     */
     @Generated
     public void refresh() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.refresh(this);
+    }
+
+    @Generated
+    private void __throwIfDetached() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context (must be loaded/stored by greenDAO before)");
+        }
     }
 
 }

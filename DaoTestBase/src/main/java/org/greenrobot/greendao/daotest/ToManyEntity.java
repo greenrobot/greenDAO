@@ -95,9 +95,7 @@ public class ToManyEntity {
     @Generated
     public List<ToManyTargetEntity> getToManyTargetEntityList() {
         if (toManyTargetEntityList == null) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             ToManyTargetEntityDao targetDao = daoSession.getToManyTargetEntityDao();
             List<ToManyTargetEntity> toManyTargetEntityListNew = targetDao._queryToManyEntity_ToManyTargetEntityList(id);
             synchronized (this) {
@@ -119,9 +117,7 @@ public class ToManyEntity {
     @Generated
     public List<ToManyTargetEntity> getToManyDescList() {
         if (toManyDescList == null) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             ToManyTargetEntityDao targetDao = daoSession.getToManyTargetEntityDao();
             List<ToManyTargetEntity> toManyDescListNew = targetDao._queryToManyEntity_ToManyDescList(id);
             synchronized (this) {
@@ -143,9 +139,7 @@ public class ToManyEntity {
     @Generated
     public List<ToManyTargetEntity> getToManyByJoinProperty() {
         if (toManyByJoinProperty == null) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             ToManyTargetEntityDao targetDao = daoSession.getToManyTargetEntityDao();
             List<ToManyTargetEntity> toManyByJoinPropertyNew = targetDao._queryToManyEntity_ToManyByJoinProperty(sourceJoinProperty);
             synchronized (this) {
@@ -167,9 +161,7 @@ public class ToManyEntity {
     @Generated
     public List<ToManyTargetEntity> getToManyJoinTwo() {
         if (toManyJoinTwo == null) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             ToManyTargetEntityDao targetDao = daoSession.getToManyTargetEntityDao();
             List<ToManyTargetEntity> toManyJoinTwoNew = targetDao._queryToManyEntity_ToManyJoinTwo(id, sourceJoinProperty);
             synchronized (this) {
@@ -191,9 +183,7 @@ public class ToManyEntity {
     @Generated
     public List<DateEntity> getDateEntityList() {
         if (dateEntityList == null) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             DateEntityDao targetDao = daoSession.getDateEntityDao();
             List<DateEntity> dateEntityListNew = targetDao._queryToManyEntity_DateEntityList(id);
             synchronized (this) {
@@ -217,9 +207,7 @@ public class ToManyEntity {
     */
     @Generated
     public void delete() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.delete(this);
     }
 
@@ -229,9 +217,7 @@ public class ToManyEntity {
     */
     @Generated
     public void update() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.update(this);
     }
 
@@ -241,10 +227,15 @@ public class ToManyEntity {
     */
     @Generated
     public void refresh() {
+        __throwIfDetached();
+        myDao.refresh(this);
+    }
+
+    @Generated
+    private void __throwIfDetached() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }    
-        myDao.refresh(this);
+        }
     }
 
 }

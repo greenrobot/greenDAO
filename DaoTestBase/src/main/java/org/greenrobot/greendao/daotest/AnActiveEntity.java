@@ -67,9 +67,7 @@ public class AnActiveEntity {
     */
     @Generated
     public void delete() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.delete(this);
     }
 
@@ -79,9 +77,7 @@ public class AnActiveEntity {
     */
     @Generated
     public void update() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.update(this);
     }
 
@@ -91,10 +87,15 @@ public class AnActiveEntity {
     */
     @Generated
     public void refresh() {
+        __throwIfDetached();
+        myDao.refresh(this);
+    }
+
+    @Generated
+    private void __throwIfDetached() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }    
-        myDao.refresh(this);
+        }
     }
 
 }

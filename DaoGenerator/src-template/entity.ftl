@@ -254,9 +254,7 @@ ${property.javaDocSetter}
         if (${toOne.name}__resolvedKey == null || <#--
         --><#if toOne.resolvedKeyUseEquals[0]>!${toOne.name}__resolvedKey.equals(__key)<#--
         --><#else>${toOne.name}__resolvedKey != __key</#if>) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             ${toOne.targetEntity.classNameDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
             ${toOne.targetEntity.className} ${toOne.name}New = targetDao.load(__key);
             synchronized (this) {
@@ -266,9 +264,7 @@ ${property.javaDocSetter}
         }
 <#else>
         if (${toOne.name} != null || !${toOne.name}__refreshed) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             ${toOne.targetEntity.classNameDao} targetDao = daoSession.get${toOne.targetEntity.classNameDao?cap_first}();
             targetDao.refresh(${toOne.name});
             ${toOne.name}__refreshed = true;
@@ -314,9 +310,7 @@ ${property.javaDocSetter}
     @Generated
     public List<${toMany.targetEntity.className}> get${toMany.name?cap_first}() {
         if (${toMany.name} == null) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
+            __throwIfDetached();
             ${toMany.targetEntity.classNameDao} targetDao = daoSession.get${toMany.targetEntity.classNameDao?cap_first}();
             List<${toMany.targetEntity.className}> ${toMany.name}New = targetDao._query${toMany.sourceEntity.className?cap_first}_${toMany.name?cap_first}(<#--
                 --><#if toMany.sourceProperties??><#list toMany.sourceProperties as property>${property.propertyName}<#if property_has_next>, </#if></#list><#else><#--
@@ -349,9 +343,7 @@ ${property.javaDocSetter}
     */
     @Generated
     public void delete() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.delete(this);
     }
 
@@ -361,9 +353,7 @@ ${property.javaDocSetter}
     */
     @Generated
     public void update() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }    
+        __throwIfDetached();
         myDao.update(this);
     }
 
@@ -373,10 +363,15 @@ ${property.javaDocSetter}
     */
     @Generated
     public void refresh() {
+        __throwIfDetached();
+        myDao.refresh(this);
+    }
+
+    @Generated
+    private void __throwIfDetached() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }    
-        myDao.refresh(this);
+        }
     }
 
 </#if>
