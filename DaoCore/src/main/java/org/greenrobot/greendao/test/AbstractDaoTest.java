@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.identityscope.IdentityScope;
 
 /**
- * Base class for DAO related testing. Prepares an in-memory DB and DAO.
+ * Base class for DAO related testing without any tests. Prepares an in-memory DB and DAO.
  * 
  * @author Markus
  * 
