@@ -24,6 +24,7 @@ dependencies {
     compile project(':DaoTestBase')
     compile 'net.zetetic:android-database-sqlcipher:3.5.1'
     testCompile 'org.robolectric:robolectric:3.1'
+    androidTestCompile 'io.reactivex:rxjava:1.1.7'
 }
 
 uploadArchives.enabled = false
