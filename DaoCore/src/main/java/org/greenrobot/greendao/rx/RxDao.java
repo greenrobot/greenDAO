@@ -19,12 +19,10 @@ package org.greenrobot.greendao.rx;
 import org.greenrobot.greendao.AbstractDao;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import rx.Observable;
-import rx.Observable.OnSubscribe;
 import rx.Scheduler;
-import rx.Subscriber;
-import rx.exceptions.Exceptions;
 
 /**
  * Like {@link AbstractDao} but with Rx support. Most methods from AbstractDao are present here, but will return an
@@ -48,24 +46,20 @@ public class RxDao<T, K> {
     }
 
     public Observable<List<T>> loadAll() {
-        Observable<List<T>> observable = Observable.create(new OnSubscribe<List<T>>() {
+        return wrap(new Callable<List<T>>() {
             @Override
-            public void call(Subscriber<? super List<T>> subscriber) {
-                try {
-                    if (!subscriber.isUnsubscribed()) {
-                        subscriber.onNext(dao.loadAll());
-                        subscriber.onCompleted();
-                    }
-                } catch (Throwable e) {
-                    Exceptions.throwOrReport(e, subscriber);
-                }
+            public List<T> call() throws Exception {
+                return RxDao.this.dao.loadAll();
             }
         });
-        return wrap(observable);
+    }
+
+    private Observable<List<T>> wrap(Callable<List<T>> callable) {
+        return wrap(RxUtils.fromCallable(callable));
     }
 
     private <R> Observable<R> wrap(Observable<R> observable) {
-        if(scheduler != null) {
+        if (scheduler != null) {
             return observable.subscribeOn(scheduler);
         } else {
             return observable;
