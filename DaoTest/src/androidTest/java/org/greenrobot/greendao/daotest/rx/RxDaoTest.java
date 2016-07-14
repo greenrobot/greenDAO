@@ -62,6 +62,22 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
         assertEquals(1, bar);
     }
 
+    public void testLoad() {
+        TestEntity foo = insertEntity("foo");
+
+        TestSubscriber<TestEntity> testSubscriber = awaitTestSubscriber(rxDao.load(foo.getId()));
+        assertEquals(1, testSubscriber.getValueCount());
+        TestEntity foo2 = testSubscriber.getOnNextEvents().get(0);
+        assertEquals(foo.getSimpleStringNotNull(), foo2.getSimpleStringNotNull());
+    }
+
+    public void testLoad_noResult() {
+        TestSubscriber<TestEntity> testSubscriber = awaitTestSubscriber(rxDao.load(42));
+        assertEquals(1, testSubscriber.getValueCount());
+        // Should we really propagate null through Rx?
+        assertNull(testSubscriber.getOnNextEvents().get(0));
+    }
+
     private TestSubscriber<List<TestEntity>> awaitTestSubscriber(Observable<List<TestEntity>> observable) {
         TestSubscriber<List<TestEntity>> testSubscriber = new TestSubscriber<>();
         observable.subscribe(testSubscriber);

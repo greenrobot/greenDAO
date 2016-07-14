@@ -49,12 +49,21 @@ public class RxDao<T, K> {
         return wrap(new Callable<List<T>>() {
             @Override
             public List<T> call() throws Exception {
-                return RxDao.this.dao.loadAll();
+                return dao.loadAll();
             }
         });
     }
 
-    private Observable<List<T>> wrap(Callable<List<T>> callable) {
+    public Observable<T> load(final K key) {
+        return wrap(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                return dao.load(key);
+            }
+        });
+    }
+
+    private <R> Observable<R> wrap(Callable<R> callable) {
         return wrap(RxUtils.fromCallable(callable));
     }
 
