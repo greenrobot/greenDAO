@@ -66,7 +66,7 @@ public class RxDao<T, K> {
 
     private <R> Observable<R> wrap(Observable<R> observable) {
         if(scheduler != null) {
-            return observable.observeOn(scheduler);
+            return observable.subscribeOn(scheduler);
         } else {
             return observable;
         }

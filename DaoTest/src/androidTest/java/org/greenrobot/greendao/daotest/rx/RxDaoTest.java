@@ -36,6 +36,9 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
         testSubscriber.assertCompleted();
         testSubscriber.assertNoErrors();
 
+        Thread lastSeenThread = testSubscriber.getLastSeenThread();
+        assertNotSame(lastSeenThread, Thread.currentThread());
+
         assertEquals(1, testSubscriber.getValueCount());
         List<TestEntity> entities = testSubscriber.getOnNextEvents().get(0);
 
