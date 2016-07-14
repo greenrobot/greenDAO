@@ -22,6 +22,13 @@ import rx.Observable;
 import rx.Observable.OnSubscribe;
 import rx.Subscriber;
 
+/**
+ * Like {@link AbstractDao} but with Rx support. Most methods from AbstractDao are present here, but will return an
+ * {@link Observable}.
+ *
+ * @param <T> Entity type
+ * @param <K> Primary key (PK) type; use Void if entity does not have exactly one PK
+ */
 public class RxDao<T, K> {
 
     private final AbstractDao<T, K> dao;

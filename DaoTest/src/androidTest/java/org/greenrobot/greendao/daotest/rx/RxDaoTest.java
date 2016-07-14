@@ -21,7 +21,7 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        rxDao = new RxDao(dao);
+        rxDao = dao.rx();
     }
 
     public void testLoadAll() {
