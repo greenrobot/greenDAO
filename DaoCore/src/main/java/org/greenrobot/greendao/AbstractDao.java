@@ -31,15 +31,18 @@ import org.greenrobot.greendao.internal.FastCursor;
 import org.greenrobot.greendao.internal.TableStatements;
 import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
+import org.greenrobot.greendao.rx.RxDao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import rx.schedulers.Schedulers;
+
 /**
  * Base class for all DAOs: Implements entity operations like insert, load, delete, and query.
- * <p/>
+ * <p>
  * This class is thread-safe.
  *
  * @param <T> Entity type
@@ -65,6 +68,8 @@ public abstract class AbstractDao<T, K> {
 
     protected final AbstractDaoSession session;
     protected final int pkOrdinal;
+
+    private volatile RxDao<T, K> rxDao;
 
     public AbstractDao(DaoConfig config) {
         this(config, null);
@@ -314,7 +319,7 @@ public abstract class AbstractDao<T, K> {
 
     /**
      * Insert an entity into the table associated with a concrete DAO <b>without</b> setting key property.
-     * <p/>
+     * <p>
      * Warning: This may be faster, but the entity should not be used anymore. The entity also won't be attached to
      * identity scope.
      *
@@ -379,7 +384,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * "Saves" an entity to the database: depending on the existence of the key property, it will be inserted
      * (key is null) or updated (key is not null).
-     * <p/>
+     * <p>
      * This is similar to {@link #insertOrReplace(Object)}, but may be more efficient, because if a key is present,
      * it does not have to query if that key already exists.
      */
@@ -925,9 +930,16 @@ public abstract class AbstractDao<T, K> {
         }
     }
 
-    /** The returned RxDao is a special DAO that let's you interact with Rx Observables. */
-    public org.greenrobot.greendao.rx.RxDao<T,K> rx() {
-        return new org.greenrobot.greendao.rx.RxDao<>(this);
+    /**
+     * The returned RxDao is a special DAO that let's you interact with Rx Observables. Note, this instance will always
+     * use RX's IO scheduler. If you want a different set up, use {@link RxDao#RxDao(AbstractDao)} or
+     * {@link RxDao#RxDao(AbstractDao,rx.Scheduler)}
+     */
+    public RxDao<T, K> rx() {
+        if (rxDao == null) {
+            rxDao = new RxDao<>(this, Schedulers.io());
+        }
+        return rxDao;
     }
 
     /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */

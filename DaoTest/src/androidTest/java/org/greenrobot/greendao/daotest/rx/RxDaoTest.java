@@ -6,6 +6,7 @@ import org.greenrobot.greendao.daotest.TestEntityDao;
 import org.greenrobot.greendao.test.AbstractDaoTest;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.observers.TestSubscriber;
@@ -31,6 +32,7 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
         Observable<List<TestEntity>> observable = rxDao.loadAll();
         TestSubscriber<List<TestEntity>> testSubscriber = new TestSubscriber<>();
         observable.subscribe(testSubscriber);
+        testSubscriber.awaitTerminalEvent(3, TimeUnit.SECONDS);
         testSubscriber.assertCompleted();
         testSubscriber.assertNoErrors();
 

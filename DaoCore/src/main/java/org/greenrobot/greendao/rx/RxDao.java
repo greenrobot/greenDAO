@@ -22,7 +22,9 @@ import java.util.List;
 
 import rx.Observable;
 import rx.Observable.OnSubscribe;
+import rx.Scheduler;
 import rx.Subscriber;
+import rx.exceptions.Exceptions;
 
 /**
  * Like {@link AbstractDao} but with Rx support. Most methods from AbstractDao are present here, but will return an
@@ -34,25 +36,40 @@ import rx.Subscriber;
 public class RxDao<T, K> {
 
     private final AbstractDao<T, K> dao;
+    private final Scheduler scheduler;
 
     public RxDao(AbstractDao<T, K> dao) {
+        this(dao, null);
+    }
+
+    public RxDao(AbstractDao<T, K> dao, Scheduler scheduler) {
         this.dao = dao;
+        this.scheduler = scheduler;
     }
 
     public Observable<List<T>> loadAll() {
-        return Observable.create(new OnSubscribe<List<T>>() {
+        Observable<List<T>> observable = Observable.create(new OnSubscribe<List<T>>() {
             @Override
-            public void call(Subscriber<? super List<T>> observer) {
+            public void call(Subscriber<? super List<T>> subscriber) {
                 try {
-                    if (!observer.isUnsubscribed()) {
-                        observer.onNext(dao.loadAll());
-                        observer.onCompleted();
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onNext(dao.loadAll());
+                        subscriber.onCompleted();
                     }
-                } catch (Exception e) {
-                    observer.onError(e);
+                } catch (Throwable e) {
+                    Exceptions.throwOrReport(e, subscriber);
                 }
             }
         });
+        return wrap(observable);
+    }
+
+    private <R> Observable<R> wrap(Observable<R> observable) {
+        if(scheduler != null) {
+            return observable.observeOn(scheduler);
+        } else {
+            return observable;
+        }
     }
 
 }
