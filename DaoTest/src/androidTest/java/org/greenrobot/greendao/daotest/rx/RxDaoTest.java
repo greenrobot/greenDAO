@@ -1,6 +1,6 @@
 package org.greenrobot.greendao.daotest.rx;
 
-import org.greenrobot.greendao.RxDao;
+import org.greenrobot.greendao.rx.RxDao;
 import org.greenrobot.greendao.daotest.TestEntity;
 import org.greenrobot.greendao.daotest.TestEntityDao;
 import org.greenrobot.greendao.test.AbstractDaoTest;

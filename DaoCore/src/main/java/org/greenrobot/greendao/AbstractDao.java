@@ -926,8 +926,8 @@ public abstract class AbstractDao<T, K> {
     }
 
     /** The returned RxDao is a special DAO that let's you interact with Rx Observables. */
-    public RxDao<T,K> rx() {
-        return new RxDao<>(this);
+    public org.greenrobot.greendao.rx.RxDao<T,K> rx() {
+        return new org.greenrobot.greendao.rx.RxDao<>(this);
     }
 
     /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */

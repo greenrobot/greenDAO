@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.greenrobot.greendao;
+package org.greenrobot.greendao.rx;
+
+import org.greenrobot.greendao.AbstractDao;
 
 import java.util.List;
 
