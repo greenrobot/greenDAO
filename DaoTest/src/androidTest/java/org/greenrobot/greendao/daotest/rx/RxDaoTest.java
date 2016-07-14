@@ -7,7 +7,8 @@ import org.greenrobot.greendao.test.AbstractDaoTest;
 
 import java.util.List;
 
-import rx.observables.BlockingObservable;
+import rx.Observable;
+import rx.observers.TestSubscriber;
 
 public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> {
 
@@ -26,8 +27,17 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
     public void testLoadAll() {
         insertEntity("foo");
         insertEntity("bar");
-        BlockingObservable<List<TestEntity>> blockingObservable = rxDao.loadAll().toBlocking();
-        List<TestEntity> entities = blockingObservable.first();
+
+        Observable<List<TestEntity>> observable = rxDao.loadAll();
+        TestSubscriber<List<TestEntity>> testSubscriber = new TestSubscriber<>();
+        observable.subscribe(testSubscriber);
+        testSubscriber.assertCompleted();
+        testSubscriber.assertNoErrors();
+
+        assertEquals(1, testSubscriber.getValueCount());
+        List<TestEntity> entities = testSubscriber.getOnNextEvents().get(0);
+
+        // Order of entities is unspecified
         int foo = 0, bar = 0;
         for (TestEntity entity : entities) {
             String value = entity.getSimpleStringNotNull();
