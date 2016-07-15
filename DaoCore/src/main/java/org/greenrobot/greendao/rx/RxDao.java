@@ -17,6 +17,7 @@
 package org.greenrobot.greendao.rx;
 
 import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.AbstractDaoSession;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -92,6 +93,35 @@ public class RxDao<T, K> {
                 return entity;
             }
         });
+    }
+
+    /**
+     * Rx version of {@link AbstractDaoSession#runInTx(Runnable)} returning an Observable.
+     */
+    // TODO move to new RxSession ?
+    public Observable<Void> runInTx(final Runnable runnable) {
+        return wrap(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                dao.getSession().runInTx(runnable);
+                return null;
+            }
+        });
+    }
+
+    /**
+     * The plain DAO that may be useful if you are inside a transaction, e.g {@link #runInTx(Runnable)}.
+     */
+    public AbstractDao<T, K> getDao() {
+        return dao;
+    }
+
+    /**
+     * The default scheduler (or null), which is used
+     * @return
+     */
+    public Scheduler getScheduler() {
+        return scheduler;
     }
 
     private <R> Observable<R> wrap(Callable<R> callable) {

@@ -70,6 +70,13 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
         assertEquals(foo.getSimpleStringNotNull(), foo2.getSimpleStringNotNull());
     }
 
+    public void testLoad_noResult() {
+        TestSubscriber<TestEntity> testSubscriber = awaitTestSubscriber(rxDao.load(42));
+        assertEquals(1, testSubscriber.getValueCount());
+        // Should we really propagate null through Rx?
+        assertNull(testSubscriber.getOnNextEvents().get(0));
+    }
+
     public void testInsert() {
         TestEntity foo = createEntity("foo");
         TestSubscriber<TestEntity> testSubscriber = awaitTestSubscriber(rxDao.insert(foo));
@@ -82,11 +89,25 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
         assertEquals(foo.getSimpleStringNotNull(), all.get(0).getSimpleStringNotNull());
     }
 
-    public void testLoad_noResult() {
-        TestSubscriber<TestEntity> testSubscriber = awaitTestSubscriber(rxDao.load(42));
+    // TODO we need a DaoSession
+    public void _testRunInTx() {
+        TestEntity foo = createEntity("foo");
+        TestSubscriber<TestEntity> testSubscriber = awaitTestSubscriber(rxDao.runInTx(new Runnable() {
+            @Override
+            public void run() {
+                TestEntity entity = insertEntity("hello");
+                entity.setSimpleString("world");
+                dao.update(entity);
+            }
+        }));
         assertEquals(1, testSubscriber.getValueCount());
-        // Should we really propagate null through Rx?
         assertNull(testSubscriber.getOnNextEvents().get(0));
+
+        clearIdentityScopeIfAny();
+        List<TestEntity> all = dao.loadAll();
+        assertEquals(1, all.size());
+        assertEquals("hello", all.get(0).getSimpleStringNotNull());
+        assertEquals("world", all.get(0).getSimpleString());
     }
 
     private TestSubscriber<List<TestEntity>> awaitTestSubscriber(Observable<List<TestEntity>> observable) {
