@@ -22,8 +22,9 @@ android {
 
 dependencies {
     compile project(':DaoTestBase')
-    compile 'net.zetetic:android-database-sqlcipher:3.5.1'
     testCompile 'org.robolectric:robolectric:3.1'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    androidTestCompile 'net.zetetic:android-database-sqlcipher:3.5.1'
     androidTestCompile 'io.reactivex:rxjava:1.1.7'
 }
 
