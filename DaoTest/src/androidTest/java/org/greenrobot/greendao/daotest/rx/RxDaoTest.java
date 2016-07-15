@@ -64,11 +64,22 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
 
     public void testLoad() {
         TestEntity foo = insertEntity("foo");
-
         TestSubscriber<TestEntity> testSubscriber = awaitTestSubscriber(rxDao.load(foo.getId()));
         assertEquals(1, testSubscriber.getValueCount());
         TestEntity foo2 = testSubscriber.getOnNextEvents().get(0);
         assertEquals(foo.getSimpleStringNotNull(), foo2.getSimpleStringNotNull());
+    }
+
+    public void testInsert() {
+        TestEntity foo = createEntity("foo");
+        TestSubscriber<TestEntity> testSubscriber = awaitTestSubscriber(rxDao.insert(foo));
+        assertEquals(1, testSubscriber.getValueCount());
+        TestEntity foo2 = testSubscriber.getOnNextEvents().get(0);
+        assertSame(foo, foo2);
+
+        List<TestEntity> all = dao.loadAll();
+        assertEquals(1, all.size());
+        assertEquals(foo.getSimpleStringNotNull(), all.get(0).getSimpleStringNotNull());
     }
 
     public void testLoad_noResult() {
@@ -88,9 +99,14 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
     }
 
     protected TestEntity insertEntity(String simpleStringNotNull) {
+        TestEntity entity = createEntity(simpleStringNotNull);
+        dao.insert(entity);
+        return entity;
+    }
+
+    private TestEntity createEntity(String simpleStringNotNull) {
         TestEntity entity = new TestEntity();
         entity.setSimpleStringNotNull(simpleStringNotNull);
-        dao.insert(entity);
         return entity;
     }
 }
