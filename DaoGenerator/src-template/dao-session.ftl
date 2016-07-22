@@ -19,14 +19,13 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
 -->
 package ${schema.defaultJavaPackageDao};
 
-import android.database.sqlite.SQLiteDatabase;
-
 import java.util.Map;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.AbstractDaoSession;
-import de.greenrobot.dao.identityscope.IdentityScopeType;
-import de.greenrobot.dao.internal.DaoConfig;
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.AbstractDaoSession;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.identityscope.IdentityScopeType;
+import org.greenrobot.greendao.internal.DaoConfig;
 
 <#list schema.entities as entity>
 import ${entity.javaPackage}.${entity.className};
@@ -41,9 +40,9 @@ import ${entity.javaPackageDao}.${entity.classNameDao};
 /**
  * {@inheritDoc}
  * 
- * @see de.greenrobot.dao.AbstractDaoSession
+ * @see org.greenrobot.greendao.AbstractDaoSession
  */
-public class DaoSession extends AbstractDaoSession {
+public class ${schema.prefix}DaoSession extends AbstractDaoSession {
 
 <#list schema.entities as entity>
     private final DaoConfig ${entity.classNameDao?uncap_first}Config;
@@ -53,7 +52,7 @@ public class DaoSession extends AbstractDaoSession {
     private final ${entity.classNameDao} ${entity.classNameDao?uncap_first};
 </#list>        
 
-    public DaoSession(SQLiteDatabase db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
+    public ${schema.prefix}DaoSession(Database db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
             daoConfigMap) {
         super(db);
 
@@ -74,7 +73,7 @@ public class DaoSession extends AbstractDaoSession {
     
     public void clear() {
 <#list schema.entities as entity>
-        ${entity.classNameDao?uncap_first}Config.getIdentityScope().clear();
+        ${entity.classNameDao?uncap_first}Config.clearIdentityScope();
 </#list>    
     }
 

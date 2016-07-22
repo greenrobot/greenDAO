@@ -1,5 +1,9 @@
-include 'DaoCore', 'DaoGenerator', 'DaoExampleGenerator'
-include 'DaoTest' // Travis needs some Android setup for this
+include 'greendao-api'
+include 'DaoCore'
+include 'DaoGenerator'
+include 'DaoTestBase'
+include 'DaoTest'
+include 'DaoTestPerformance'
 include 'DaoTestGenerator'
-include ':DaoExample'
+include 'DaoExample'
 
