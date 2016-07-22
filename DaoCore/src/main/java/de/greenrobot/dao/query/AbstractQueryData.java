@@ -2,21 +2,19 @@ package de.greenrobot.dao.query;
 
 import java.lang.ref.WeakReference;
 
-import android.os.Process;
-import android.util.SparseArray;
 import de.greenrobot.dao.AbstractDao;
 
 abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
     final String sql;
     final AbstractDao<T, ?> dao;
     final String[] initialValues;
-    final SparseArray<WeakReference<Q>> queriesForThreads;
+    final ThreadLocal<WeakReference<Q>> queriesForThreads;
 
     AbstractQueryData(AbstractDao<T, ?> dao, String sql, String[] initialValues) {
         this.dao = dao;
         this.sql = sql;
         this.initialValues = initialValues;
-        queriesForThreads = new SparseArray<WeakReference<Q>>();
+        queriesForThreads = new ThreadLocal<WeakReference<Q>>();
     }
 
     /** Just an optimized version, which performs faster if the current thread is already the query's owner thread. */
@@ -30,22 +28,12 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
     }
 
     Q forCurrentThread() {
-        int threadId = Process.myTid();
-        if (threadId == 0) {
-            // Workaround for Robolectric, always returns 0
-            long id = Thread.currentThread().getId();
-            if (id < 0 || id > Integer.MAX_VALUE) {
-                throw new RuntimeException("Cannot handle thread ID: " + id);
-            }
-            threadId = (int) id;
-        }
         synchronized (queriesForThreads) {
-            WeakReference<Q> queryRef = queriesForThreads.get(threadId);
+            WeakReference<Q> queryRef = queriesForThreads.get();
             Q query = queryRef != null ? queryRef.get() : null;
             if (query == null) {
-                gc();
                 query = createQuery();
-                queriesForThreads.put(threadId, new WeakReference<Q>(query));
+                queriesForThreads.set(new WeakReference<Q>(query));
             } else {
                 System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
             }
@@ -54,15 +42,5 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
     }
 
     abstract protected Q createQuery();
-
-    void gc() {
-        synchronized (queriesForThreads) {
-            for (int i = queriesForThreads.size() - 1; i >= 0; i--) {
-                if (queriesForThreads.valueAt(i).get() == null) {
-                    queriesForThreads.remove(queriesForThreads.keyAt(i));
-                }
-            }
-        }
-    }
 
 }
