@@ -69,7 +69,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
     public void testGetToManyTwice() {
         prepareToMany(1, 3);
 
-        ToManyEntity testEntity = toManyEntityDao.load(1l);
+        ToManyEntity testEntity = toManyEntityDao.load(1L);
         List<ToManyTargetEntity> resolvedToMany1 = testEntity.getToManyTargetEntityList();
         List<ToManyTargetEntity> resolvedToMany2 = testEntity.getToManyTargetEntityList();
         assertSame(resolvedToMany1, resolvedToMany2);
@@ -78,7 +78,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
     public void testResetToMany() {
         ToManyTargetEntity[] targetEntities = prepareToMany(1, 3);
 
-        ToManyEntity testEntity = toManyEntityDao.load(1l);
+        ToManyEntity testEntity = toManyEntityDao.load(1L);
         List<ToManyTargetEntity> resolvedToMany1 = testEntity.getToManyTargetEntityList();
         testEntity.resetToManyTargetEntityList();
         List<ToManyTargetEntity> resolvedToMany2 = testEntity.getToManyTargetEntityList();
@@ -89,12 +89,12 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
     public void testChangeResetToMany() {
         prepareToMany(1, 3);
 
-        ToManyEntity testEntity = toManyEntityDao.load(1l);
+        ToManyEntity testEntity = toManyEntityDao.load(1L);
         List<ToManyTargetEntity> resolvedToMany1 = testEntity.getToManyTargetEntityList();
         testEntity.resetToManyTargetEntityList();
 
         ToManyTargetEntity newEntity = new ToManyTargetEntity();
-        newEntity.setToManyId(1l);
+        newEntity.setToManyId(1L);
         daoSession.insert(newEntity);
 
         List<ToManyTargetEntity> resolvedToMany2 = testEntity.getToManyTargetEntityList();
@@ -110,7 +110,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
     public void testToManyOrder() {
         prepareToMany(1, 3);
 
-        ToManyEntity testEntity = toManyEntityDao.load(1l);
+        ToManyEntity testEntity = toManyEntityDao.load(1L);
         List<ToManyTargetEntity> resolvedToManyAsc = testEntity.getToManyTargetEntityList();
         List<ToManyTargetEntity> resolvedToManyDesc = testEntity.getToManyDescList();
         assertNotSame(resolvedToManyAsc, resolvedToManyDesc);
@@ -121,12 +121,12 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
     }
 
     public void testJoinProperty() {
-        ToManyEntity entity = new ToManyEntity(1l);
+        ToManyEntity entity = new ToManyEntity(1L);
         entity.setSourceJoinProperty("JOIN ME");
         daoSession.insert(entity);
         insertTargetEntities(null, 3, "JOIN ME");
 
-        ToManyEntity testEntity = toManyEntityDao.load(1l);
+        ToManyEntity testEntity = toManyEntityDao.load(1L);
         List<ToManyTargetEntity> targetEntities = testEntity.getToManyByJoinProperty();
         assertEquals(3, targetEntities.size());
 
@@ -143,12 +143,12 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
     }
 
     public void testTwoJoinProperty() {
-        ToManyEntity entity = new ToManyEntity(1l);
+        ToManyEntity entity = new ToManyEntity(1L);
         entity.setSourceJoinProperty("JOIN ME");
         daoSession.insert(entity);
-        insertTargetEntities(1l, 3, "JOIN ME");
+        insertTargetEntities(1L, 3, "JOIN ME");
 
-        ToManyEntity testEntity = toManyEntityDao.load(1l);
+        ToManyEntity testEntity = toManyEntityDao.load(1L);
         List<ToManyTargetEntity> targetEntities = testEntity.getToManyJoinTwo();
         assertEquals(3, targetEntities.size());
 
@@ -165,7 +165,7 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
     }
 
     public void testToManyWithJoin() {
-        ToManyEntity entity = new ToManyEntity(1l);
+        ToManyEntity entity = new ToManyEntity(1L);
         daoSession.insert(entity);
         List<DateEntity> dateEntities = entity.getDateEntityList();
         assertEquals(0, dateEntities.size());
@@ -195,12 +195,12 @@ public class ToManyEntityTest extends AbstractDaoSessionTest<DaoMaster, DaoSessi
         int count = targetEntities.length;
         assertEquals(count, resolvedToMany.size());
 
-        Map<Long, ToManyTargetEntity> resolvedMap = new HashMap<Long, ToManyTargetEntity>();
+        Map<Long, ToManyTargetEntity> resolvedMap = new HashMap<>();
         for (ToManyTargetEntity resolvedEntity : resolvedToMany) {
             resolvedMap.put(resolvedEntity.getId(), resolvedEntity);
         }
         for (int i = 0; i < count; i++) {
-            long entityId = (long) targetEntities[i].getId();
+            long entityId = targetEntities[i].getId();
             assertTrue("ID=" + entityId, resolvedMap.containsKey(entityId));
             assertSame(targetEntities[i], resolvedMap.get(entityId));
         }

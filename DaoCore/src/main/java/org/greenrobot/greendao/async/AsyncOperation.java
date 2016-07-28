@@ -28,7 +28,7 @@ import org.greenrobot.greendao.database.Database;
  */
 // TODO Implement Future<V>
 public class AsyncOperation {
-    public static enum OperationType {
+    public enum OperationType {
         Insert, InsertInTxIterable, InsertInTxArray, //
         InsertOrReplace, InsertOrReplaceInTxIterable, InsertOrReplaceInTxArray, //
         Update, UpdateInTxIterable, UpdateInTxArray, //

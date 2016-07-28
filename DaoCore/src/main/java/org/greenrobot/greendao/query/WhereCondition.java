@@ -32,7 +32,7 @@ public interface WhereCondition {
 
     void appendValuesTo(List<Object> values);
 
-    public abstract static class AbstractCondition implements WhereCondition {
+    abstract class AbstractCondition implements WhereCondition {
 
         protected final boolean hasSingleValue;
         protected final Object value;
@@ -68,7 +68,7 @@ public interface WhereCondition {
         }
     }
 
-    public static class PropertyCondition extends AbstractCondition {
+    class PropertyCondition extends AbstractCondition {
 
         private static Object checkValueForType(Property property, Object value) {
             if (value != null && value.getClass().isArray()) {
@@ -140,7 +140,7 @@ public interface WhereCondition {
         }
     }
 
-    public static class StringCondition extends AbstractCondition {
+    class StringCondition extends AbstractCondition {
 
         protected final String string;
 
