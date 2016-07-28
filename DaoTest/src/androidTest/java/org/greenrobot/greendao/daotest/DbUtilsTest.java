@@ -27,8 +27,7 @@ import java.io.IOException;
 
 public class DbUtilsTest extends DbTest {
     public void testExecuteSqlScript() throws IOException {
-        SQLiteDatabase sqLiteDatabase = ((StandardDatabase) db).getSQLiteDatabase();
-        DbUtils.executeSqlScript(getContext(), sqLiteDatabase, "minimal-entity.sql");
+        DbUtils.executeSqlScript(getContext(), db, "minimal-entity.sql");
         Cursor cursor = db.rawQuery("SELECT count(*) from MINIMAL_ENTITY", null);
         try {
             cursor.moveToFirst();

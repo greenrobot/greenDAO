@@ -26,20 +26,22 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.greenrobot.greendao.database.Database;
+
 /** Database utils, for example to execute SQL scripts */
 // TODO add unit tests
 public class DbUtils {
 
-    public static void vacuum(SQLiteDatabase db) {
+    public static void vacuum(Database db) {
         db.execSQL("VACUUM");
     }
 
     /**
-     * Calls {@link #executeSqlScript(Context, SQLiteDatabase, String, boolean)} with transactional set to true.
+     * Calls {@link #executeSqlScript(Context, Database, String, boolean)} with transactional set to true.
      * 
      * @return number of statements executed.
      */
-    public static int executeSqlScript(Context context, SQLiteDatabase db, String assetFilename) throws IOException {
+    public static int executeSqlScript(Context context, Database db, String assetFilename) throws IOException {
         return executeSqlScript(context, db, assetFilename, true);
     }
 
@@ -51,7 +53,7 @@ public class DbUtils {
      * 
      * @return number of statements executed.
      */
-    public static int executeSqlScript(Context context, SQLiteDatabase db, String assetFilename, boolean transactional)
+    public static int executeSqlScript(Context context, Database db, String assetFilename, boolean transactional)
             throws IOException {
         byte[] bytes = readAsset(context, assetFilename);
         String sql = new String(bytes, "UTF-8");
@@ -66,7 +68,7 @@ public class DbUtils {
         return count;
     }
 
-    public static int executeSqlStatementsInTx(SQLiteDatabase db, String[] statements) {
+    public static int executeSqlStatementsInTx(Database db, String[] statements) {
         db.beginTransaction();
         try {
             int count = executeSqlStatements(db, statements);
@@ -77,7 +79,7 @@ public class DbUtils {
         }
     }
 
-    public static int executeSqlStatements(SQLiteDatabase db, String[] statements) {
+    public static int executeSqlStatements(Database db, String[] statements) {
         int count = 0;
         for (String line : statements) {
             line = line.trim();
