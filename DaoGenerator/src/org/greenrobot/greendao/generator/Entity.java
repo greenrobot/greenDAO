@@ -367,6 +367,7 @@ public class Entity {
         return constructors;
     }
 
+    /** Flag to define if constructors should be generated. */
     public void setConstructors(boolean constructors) {
         this.constructors = constructors;
     }
