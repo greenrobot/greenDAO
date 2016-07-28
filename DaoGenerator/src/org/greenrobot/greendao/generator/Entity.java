@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Markus Junginger, greenrobot (http://greenrobot.de)
+ * Copyright (C) 2011-2016 Markus Junginger, greenrobot (http://greenrobot.org)
  *
  * This file is part of greenDAO Generator.
  * 
@@ -16,6 +16,8 @@
  * along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.greenrobot.greendao.generator;
+
+import org.greenrobot.greendao.generator.Property.PropertyBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +38,7 @@ import java.util.TreeSet;
  * @see <a href="http://greendao-orm.com/documentation/modelling-entities/">Modelling Entities (Documentation page)</a>
  * @see <a href="http://greendao-orm.com/documentation/relations/">Relations (Documentation page)</a>
  */
+@SuppressWarnings("unused")
 public class Entity {
     private final Schema schema;
     private final String className;
@@ -78,74 +81,74 @@ public class Entity {
     Entity(Schema schema, String className) {
         this.schema = schema;
         this.className = className;
-        properties = new ArrayList<Property>();
-        propertiesPk = new ArrayList<Property>();
-        propertiesNonPk = new ArrayList<Property>();
-        propertyNames = new HashSet<String>();
-        indexes = new ArrayList<Index>();
-        multiIndexes = new ArrayList<Index>();
-        toOneRelations = new ArrayList<ToOne>();
-        toManyRelations = new ArrayList<ToManyBase>();
-        incomingToManyRelations = new ArrayList<ToManyBase>();
-        additionalImportsEntity = new TreeSet<String>();
-        additionalImportsDao = new TreeSet<String>();
-        interfacesToImplement = new ArrayList<String>();
-        contentProviders = new ArrayList<ContentProvider>();
+        properties = new ArrayList<>();
+        propertiesPk = new ArrayList<>();
+        propertiesNonPk = new ArrayList<>();
+        propertyNames = new HashSet<>();
+        indexes = new ArrayList<>();
+        multiIndexes = new ArrayList<>();
+        toOneRelations = new ArrayList<>();
+        toManyRelations = new ArrayList<>();
+        incomingToManyRelations = new ArrayList<>();
+        additionalImportsEntity = new TreeSet<>();
+        additionalImportsDao = new TreeSet<>();
+        interfacesToImplement = new ArrayList<>();
+        contentProviders = new ArrayList<>();
         constructors = true;
     }
 
-    public Property.PropertyBuilder addBooleanProperty(String propertyName) {
+    public PropertyBuilder addBooleanProperty(String propertyName) {
         return addProperty(PropertyType.Boolean, propertyName);
     }
 
-    public Property.PropertyBuilder addByteProperty(String propertyName) {
+    public PropertyBuilder addByteProperty(String propertyName) {
         return addProperty(PropertyType.Byte, propertyName);
     }
 
-    public Property.PropertyBuilder addShortProperty(String propertyName) {
+    public PropertyBuilder addShortProperty(String propertyName) {
         return addProperty(PropertyType.Short, propertyName);
     }
 
-    public Property.PropertyBuilder addIntProperty(String propertyName) {
+    public PropertyBuilder addIntProperty(String propertyName) {
         return addProperty(PropertyType.Int, propertyName);
     }
 
-    public Property.PropertyBuilder addLongProperty(String propertyName) {
+    public PropertyBuilder addLongProperty(String propertyName) {
         return addProperty(PropertyType.Long, propertyName);
     }
 
-    public Property.PropertyBuilder addFloatProperty(String propertyName) {
+    public PropertyBuilder addFloatProperty(String propertyName) {
         return addProperty(PropertyType.Float, propertyName);
     }
 
-    public Property.PropertyBuilder addDoubleProperty(String propertyName) {
+    public PropertyBuilder addDoubleProperty(String propertyName) {
         return addProperty(PropertyType.Double, propertyName);
     }
 
-    public Property.PropertyBuilder addByteArrayProperty(String propertyName) {
+    public PropertyBuilder addByteArrayProperty(String propertyName) {
         return addProperty(PropertyType.ByteArray, propertyName);
     }
 
-    public Property.PropertyBuilder addStringProperty(String propertyName) {
+    public PropertyBuilder addStringProperty(String propertyName) {
         return addProperty(PropertyType.String, propertyName);
     }
 
-    public Property.PropertyBuilder addDateProperty(String propertyName) {
+    public PropertyBuilder addDateProperty(String propertyName) {
         return addProperty(PropertyType.Date, propertyName);
     }
 
-    public Property.PropertyBuilder addProperty(PropertyType propertyType, String propertyName) {
+    public PropertyBuilder addProperty(PropertyType propertyType, String propertyName) {
         if (!propertyNames.add(propertyName)) {
             throw new RuntimeException("Property already defined: " + propertyName);
         }
-        Property.PropertyBuilder builder = new Property.PropertyBuilder(schema, this, propertyType, propertyName);
+        PropertyBuilder builder = new PropertyBuilder(schema, this, propertyType, propertyName);
         properties.add(builder.getProperty());
         return builder;
     }
 
     /** Adds a standard _id column required by standard Android classes, e.g. list adapters. */
-    public Property.PropertyBuilder addIdProperty() {
-        Property.PropertyBuilder builder = addLongProperty("id");
+    public PropertyBuilder addIdProperty() {
+        PropertyBuilder builder = addLongProperty("id");
         builder.columnName("_id").primaryKey();
         return builder;
     }
@@ -194,7 +197,6 @@ public class Entity {
         return toMany;
     }
 
-
     /**
      * Adds a to-one relationship to the given target entity using the given given foreign key property (which belongs
      * to this entity).
@@ -223,7 +225,7 @@ public class Entity {
 
     public ToOne addToOneWithoutProperty(String name, Entity target, String fkColumnName, boolean notNull,
                                          boolean unique) {
-        Property.PropertyBuilder propertyBuilder = new Property.PropertyBuilder(schema, this, null, name);
+        PropertyBuilder propertyBuilder = new PropertyBuilder(schema, this, null, name);
         if (notNull) {
             propertyBuilder.notNull();
         }
@@ -244,7 +246,7 @@ public class Entity {
     }
 
     public ContentProvider addContentProvider() {
-        List<Entity> entities = new ArrayList<Entity>();
+        List<Entity> entities = new ArrayList<>();
         entities.add(this);
         ContentProvider contentProvider = new ContentProvider(schema, entities);
         contentProviders.add(contentProvider);
@@ -515,7 +517,7 @@ public class Entity {
             pkType = "Void";
         }
 
-        propertiesColumns = new ArrayList<Property>(properties);
+        propertiesColumns = new ArrayList<>(properties);
         for (ToOne toOne : toOneRelations) {
             toOne.init2ndPass();
             Property[] fkProperties = toOne.getFkProperties();
@@ -612,7 +614,7 @@ public class Entity {
     }
 
     private void init3rdPassRelations() {
-        Set<String> toOneNames = new HashSet<String>();
+        Set<String> toOneNames = new HashSet<>();
         for (ToOne toOne : toOneRelations) {
             toOne.init3ndPass();
             if (!toOneNames.add(toOne.getName().toLowerCase())) {
@@ -620,7 +622,7 @@ public class Entity {
             }
         }
 
-        Set<String> toManyNames = new HashSet<String>();
+        Set<String> toManyNames = new HashSet<>();
         for (ToManyBase toMany : toManyRelations) {
             toMany.init3rdPass();
             if (toMany instanceof ToMany) {
