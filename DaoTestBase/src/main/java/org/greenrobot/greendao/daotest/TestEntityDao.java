@@ -20,7 +20,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
     /**
      * Properties of entity TestEntity.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-    */
+     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property SimpleInt = new Property(1, int.class, "simpleInt", false, "SIMPLE_INT");
@@ -32,7 +32,7 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         public final static Property SimpleDate = new Property(7, java.util.Date.class, "simpleDate", false, "SIMPLE_DATE");
         public final static Property SimpleBoolean = new Property(8, Boolean.class, "simpleBoolean", false, "SIMPLE_BOOLEAN");
         public final static Property SimpleByteArray = new Property(9, byte[].class, "simpleByteArray", false, "SIMPLE_BYTE_ARRAY");
-    };
+    }
 
 
     public TestEntityDao(DaoConfig config) {

@@ -20,12 +20,12 @@ public class JoinManyToDateEntityDao extends AbstractDao<JoinManyToDateEntity, L
     /**
      * Properties of entity JoinManyToDateEntity.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-    */
+     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property IdToMany = new Property(1, Long.class, "idToMany", false, "ID_TO_MANY");
         public final static Property IdDate = new Property(2, Long.class, "idDate", false, "ID_DATE");
-    };
+    }
 
 
     public JoinManyToDateEntityDao(DaoConfig config) {

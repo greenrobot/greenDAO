@@ -23,12 +23,12 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
     /**
      * Properties of entity DateEntity.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-    */
+     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Date = new Property(1, java.util.Date.class, "date", false, "DATE");
         public final static Property DateNotNull = new Property(2, java.util.Date.class, "dateNotNull", false, "DATE_NOT_NULL");
-    };
+    }
 
     private Query<DateEntity> toManyEntity_DateEntityListQuery;
 

@@ -20,10 +20,10 @@ public class MinimalEntityDao extends AbstractDao<MinimalEntity, Long> {
     /**
      * Properties of entity MinimalEntity.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-    */
+     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-    };
+    }
 
 
     public MinimalEntityDao(DaoConfig config) {

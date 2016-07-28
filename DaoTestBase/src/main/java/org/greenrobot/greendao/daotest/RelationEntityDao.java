@@ -23,7 +23,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     /**
      * Properties of entity RelationEntity.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-    */
+     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property ParentId = new Property(1, Long.class, "parentId", false, "PARENT_ID");
@@ -31,7 +31,7 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
         public final static Property TestIdNotNull = new Property(3, long.class, "testIdNotNull", false, "TEST_ID_NOT_NULL");
         public final static Property SimpleString = new Property(4, String.class, "simpleString", false, "SIMPLE_STRING");
         public final static Property TestWithoutProperty = new Property(5, Long.class, "testWithoutProperty", false, "WITHOUT_PROPERTY_TEST_ID");
-    };
+    }
 
     private DaoSession daoSession;
 

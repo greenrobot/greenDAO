@@ -20,11 +20,11 @@ public class IndexedStringEntityDao extends AbstractDao<IndexedStringEntity, Lon
     /**
      * Properties of entity IndexedStringEntity.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-    */
+     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property IndexedString = new Property(1, String.class, "indexedString", false, "INDEXED_STRING");
-    };
+    }
 
 
     public IndexedStringEntityDao(DaoConfig config) {

@@ -20,7 +20,7 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
     /**
      * Properties of entity SpecialNamesEntity.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-    */
+     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Count = new Property(1, String.class, "count", false, "COUNT");
@@ -32,7 +32,7 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
         public final static Property On = new Property(7, String.class, "on", false, "ON");
         public final static Property Index = new Property(8, String.class, "index", false, "INDEX");
         public final static Property Order = new Property(9, Integer.class, "order", false, "ORDER");
-    };
+    }
 
 
     public SpecialNamesEntityDao(DaoConfig config) {

@@ -20,14 +20,14 @@ public class SqliteMasterDao extends AbstractDao<SqliteMaster, Void> {
     /**
      * Properties of entity SqliteMaster.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-    */
+     */
     public static class Properties {
         public final static Property Type = new Property(0, String.class, "type", false, "TYPE");
         public final static Property Name = new Property(1, String.class, "name", false, "NAME");
         public final static Property TableName = new Property(2, String.class, "tableName", false, "tbl_name");
         public final static Property Rootpage = new Property(3, Long.class, "rootpage", false, "ROOTPAGE");
         public final static Property Sql = new Property(4, String.class, "sql", false, "SQL");
-    };
+    }
 
 
     public SqliteMasterDao(DaoConfig config) {
@@ -137,6 +137,7 @@ public class SqliteMasterDao extends AbstractDao<SqliteMaster, Void> {
 
     @Override
     public boolean hasKey(SqliteMaster entity) {
+        // TODO
         return false;
     }
 

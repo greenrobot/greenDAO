@@ -20,10 +20,10 @@ public class AutoincrementEntityDao extends AbstractDao<AutoincrementEntity, Lon
     /**
      * Properties of entity AutoincrementEntity.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-    */
+     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-    };
+    }
 
 
     public AutoincrementEntityDao(DaoConfig config) {

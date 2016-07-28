@@ -22,10 +22,10 @@ public class KeepEntityDao extends AbstractDao<KeepEntity, Long> {
     /**
      * Properties of entity KeepEntity.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-    */
+     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-    };
+    }
 
 
     public KeepEntityDao(DaoConfig config) {

@@ -20,7 +20,7 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
     /**
      * Properties of entity AbcdefEntity.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-    */
+     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property A = new Property(1, Integer.class, "a", false, "A");
@@ -34,7 +34,7 @@ public class AbcdefEntityDao extends AbstractDao<AbcdefEntity, Long> {
         public final static Property J = new Property(9, Integer.class, "j", false, "J");
         public final static Property I = new Property(10, Integer.class, "i", false, "I");
         public final static Property K = new Property(11, Integer.class, "k", false, "K");
-    };
+    }
 
 
     public AbcdefEntityDao(DaoConfig config) {

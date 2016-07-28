@@ -253,7 +253,7 @@ public class RelationEntity {
     @Generated
     private void __throwIfDetached() {
         if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context (must be loaded/stored by greenDAO before)");
+            throw new DaoException("Entity is detached from DAO context");
         }
     }
 

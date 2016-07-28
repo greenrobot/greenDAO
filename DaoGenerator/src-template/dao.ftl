@@ -80,7 +80,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 <#list entity.propertiesColumns as property>
         public final static Property ${property.propertyName?cap_first} = new Property(${property_index}, ${property.javaType}.class, "${property.propertyName}", ${property.primaryKey?string}, "${property.columnName}");
 </#list>
-    };
+    }
 
 <#if entity.active>
     private ${schema.prefix}DaoSession daoSession;
@@ -275,6 +275,7 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
         return entity.get${entity.pkProperty.propertyName?cap_first}() != null;
 </#if>
 <#else>
+        // TODO
         return false;
 </#if>
     }
