@@ -18,6 +18,7 @@ package org.greenrobot.greendao.rx;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.AbstractDaoSession;
+import org.greenrobot.greendao.annotation.apihint.Experimental;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -28,7 +29,7 @@ import rx.Scheduler;
 /**
  * Like {@link AbstractDao} but with Rx support. Most methods from AbstractDao are present here, but will return an
  * {@link Observable}. Modifying operations return the given entities, so they can be further processed in Rx.
- * <p/>
+ * <p>
  * Instances of RxDao may have an default {@link rx.Scheduler}, which is used to configure returned observables with
  * {@link Observable#subscribeOn(Scheduler)} (see {@link AbstractDao#rx()}, which uses the IO scheduler).
  *
@@ -36,6 +37,7 @@ import rx.Scheduler;
  * @param <K> Primary key (PK) type; use Void if entity does not have exactly one PK
  * @see AbstractDao#rx()
  */
+@Experimental
 public class RxDao<T, K> {
 
     private final AbstractDao<T, K> dao;
@@ -118,6 +120,7 @@ public class RxDao<T, K> {
 
     /**
      * The default scheduler (or null), which is used
+     *
      * @return
      */
     public Scheduler getScheduler() {

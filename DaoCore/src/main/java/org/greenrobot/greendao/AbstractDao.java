@@ -22,6 +22,7 @@ import android.database.CursorWindow;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
+import org.greenrobot.greendao.annotation.apihint.Experimental;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
 import org.greenrobot.greendao.identityscope.IdentityScope;
@@ -935,6 +936,7 @@ public abstract class AbstractDao<T, K> {
      * use RX's IO scheduler. If you want a different set up, use {@link RxDao#RxDao(AbstractDao)} or
      * {@link RxDao#RxDao(AbstractDao,rx.Scheduler)}
      */
+    @Experimental
     public RxDao<T, K> rx() {
         if (rxDao == null) {
             rxDao = new RxDao<>(this, Schedulers.io());
