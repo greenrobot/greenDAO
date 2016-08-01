@@ -53,7 +53,7 @@ public class AbstractDaoSession {
     private final Database db;
     private final Map<Class<?>, AbstractDao<?, ?>> entityToDao;
 
-    private volatile RxTransaction rxTx;
+    private volatile RxTransaction rxTxPlain;
     private volatile RxTransaction rxTxIo;
 
     public AbstractDaoSession(Database db) {
@@ -209,26 +209,27 @@ public class AbstractDaoSession {
     }
 
     /**
-     * The returned {@link RxTransaction} allows using DB transactions using Rx Observables.
-     *
-     * @see #rxTxIo()
-     */
-    @Experimental
-    public RxTransaction rxTx() {
-        if (rxTx == null) {
-            rxTx = new RxTransaction(this);
-        }
-        return rxTx;
-    }
-
-    /**
-     * The returned {@link RxTransaction} allows using DB transactions using Rx Observables. Note, this instance will
-     * always use RX's IO scheduler.
+     * The returned {@link RxTransaction} allows using DB transactions using Rx Observables without any Scheduler set
+     * for subscribeOn.
      *
      * @see #rxTx()
      */
     @Experimental
-    public RxTransaction rxTxIo() {
+    public RxTransaction rxTxPlain() {
+        if (rxTxPlain == null) {
+            rxTxPlain = new RxTransaction(this);
+        }
+        return rxTxPlain;
+    }
+
+    /**
+     * The returned {@link RxTransaction} allows using DB transactions using Rx Observables using RX's IO scheduler for
+     * subscribeOn.
+     *
+     * @see #rxTxPlain()
+     */
+    @Experimental
+    public RxTransaction rxTx() {
         if (rxTxIo == null) {
             rxTxIo = new RxTransaction(this, Schedulers.io());
         }

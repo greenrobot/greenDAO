@@ -42,7 +42,7 @@ public class RxTransactionTest extends AbstractDaoSessionTest<DaoMaster, DaoSess
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        rxTx = daoSession.rxTxIo();
+        rxTx = daoSession.rxTx();
     }
 
     public void testRun() {
@@ -59,6 +59,16 @@ public class RxTransactionTest extends AbstractDaoSessionTest<DaoMaster, DaoSess
     }
 
     public void testCall() {
+        testCall(rxTx);
+    }
+
+    public void testCallPlain() {
+        RxTransaction rxTxPlain = daoSession.rxTxPlain();
+        assertNotSame(rxTx, rxTxPlain);
+        testCall(rxTxPlain);
+    }
+
+    public void testCall(RxTransaction rxTx) {
         Observable<String> observable = rxTx.call(new Callable<String>() {
             @Override
             public String call() {

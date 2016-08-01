@@ -40,7 +40,7 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        rxDao = dao.rxIo();
+        rxDao = dao.rx();
     }
 
     public void testScheduler() {
@@ -50,7 +50,7 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
     }
 
     public void testNoScheduler() {
-        RxDao<TestEntity, Long> rxDaoNoScheduler = dao.rx();
+        RxDao<TestEntity, Long> rxDaoNoScheduler = dao.rxPlain();
         TestSubscriber<List<TestEntity>> testSubscriber = awaitTestSubscriber(rxDaoNoScheduler.loadAll());
         Thread lastSeenThread = testSubscriber.getLastSeenThread();
         assertSame(lastSeenThread, Thread.currentThread());
