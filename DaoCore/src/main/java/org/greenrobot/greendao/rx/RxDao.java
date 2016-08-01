@@ -38,10 +38,9 @@ import rx.Scheduler;
  * @see AbstractDao#rx()
  */
 @Experimental
-public class RxDao<T, K> {
+public class RxDao<T, K> extends RxBase {
 
     private final AbstractDao<T, K> dao;
-    private final Scheduler scheduler;
 
     /**
      * Creates a new RxDao without a default scheduler.
@@ -57,8 +56,8 @@ public class RxDao<T, K> {
      */
     @Experimental
     public RxDao(AbstractDao<T, K> dao, Scheduler scheduler) {
+        super(scheduler);
         this.dao = dao;
-        this.scheduler = scheduler;
     }
 
     /**
@@ -102,20 +101,6 @@ public class RxDao<T, K> {
         });
     }
 
-    /**
-     * Rx version of {@link AbstractDaoSession#runInTx(Runnable)} returning an Observable.
-     */
-    // TODO move to new RxSession ?
-    @Experimental
-    public Observable<Void> runInTx(final Runnable runnable) {
-        return wrap(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                dao.getSession().runInTx(runnable);
-                return null;
-            }
-        });
-    }
 
     /**
      * The plain DAO that may be useful if you are inside a transaction, e.g {@link #runInTx(Runnable)}.
@@ -123,28 +108,6 @@ public class RxDao<T, K> {
     @Experimental
     public AbstractDao<T, K> getDao() {
         return dao;
-    }
-
-    /**
-     * The default scheduler (or null), which is used
-     *
-     * @return
-     */
-    @Experimental
-    public Scheduler getScheduler() {
-        return scheduler;
-    }
-
-    private <R> Observable<R> wrap(Callable<R> callable) {
-        return wrap(RxUtils.fromCallable(callable));
-    }
-
-    private <R> Observable<R> wrap(Observable<R> observable) {
-        if (scheduler != null) {
-            return observable.subscribeOn(scheduler);
-        } else {
-            return observable;
-        }
     }
 
 }

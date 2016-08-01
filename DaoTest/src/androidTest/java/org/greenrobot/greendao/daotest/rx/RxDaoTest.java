@@ -40,7 +40,7 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        rxDao = dao.rx();
+        rxDao = dao.rxIo();
     }
 
     public void testScheduler() {
@@ -50,7 +50,7 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
     }
 
     public void testNoScheduler() {
-        RxDao<TestEntity, Long> rxDaoNoScheduler = new RxDao<>(dao);
+        RxDao<TestEntity, Long> rxDaoNoScheduler = dao.rx();
         TestSubscriber<List<TestEntity>> testSubscriber = awaitTestSubscriber(rxDaoNoScheduler.loadAll());
         Thread lastSeenThread = testSubscriber.getLastSeenThread();
         assertSame(lastSeenThread, Thread.currentThread());
@@ -105,27 +105,6 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
         List<TestEntity> all = dao.loadAll();
         assertEquals(1, all.size());
         assertEquals(foo.getSimpleStringNotNull(), all.get(0).getSimpleStringNotNull());
-    }
-
-    // TODO we need a DaoSession
-    public void _testRunInTx() {
-        TestEntity foo = createEntity("foo");
-        TestSubscriber<TestEntity> testSubscriber = awaitTestSubscriber(rxDao.runInTx(new Runnable() {
-            @Override
-            public void run() {
-                TestEntity entity = insertEntity("hello");
-                entity.setSimpleString("world");
-                dao.update(entity);
-            }
-        }));
-        assertEquals(1, testSubscriber.getValueCount());
-        assertNull(testSubscriber.getOnNextEvents().get(0));
-
-        clearIdentityScopeIfAny();
-        List<TestEntity> all = dao.loadAll();
-        assertEquals(1, all.size());
-        assertEquals("hello", all.get(0).getSimpleStringNotNull());
-        assertEquals("world", all.get(0).getSimpleString());
     }
 
     private TestSubscriber<List<TestEntity>> awaitTestSubscriber(Observable<List<TestEntity>> observable) {

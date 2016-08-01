@@ -70,6 +70,7 @@ public abstract class AbstractDao<T, K> {
     protected final AbstractDaoSession session;
     protected final int pkOrdinal;
 
+    private volatile RxDao<T, K> rxDaoIo;
     private volatile RxDao<T, K> rxDao;
 
     public AbstractDao(DaoConfig config) {
@@ -932,16 +933,30 @@ public abstract class AbstractDao<T, K> {
     }
 
     /**
-     * The returned RxDao is a special DAO that let's you interact with Rx Observables. Note, this instance will always
-     * use RX's IO scheduler. If you want a different set up, use {@link RxDao#RxDao(AbstractDao)} or
-     * {@link RxDao#RxDao(AbstractDao,rx.Scheduler)}
+     * The returned RxDao is a special DAO that let's you interact with Rx Observables.
+     *
+     * @see #rxIo()
      */
     @Experimental
     public RxDao<T, K> rx() {
         if (rxDao == null) {
-            rxDao = new RxDao<>(this, Schedulers.io());
+            rxDao = new RxDao<>(this);
         }
         return rxDao;
+    }
+
+    /**
+     * The returned RxDao is a special DAO that let's you interact with Rx Observables. Note, this instance will always
+     * use RX's IO scheduler.
+     *
+     * @see #rx()
+     */
+    @Experimental
+    public RxDao<T, K> rxIo() {
+        if (rxDaoIo == null) {
+            rxDaoIo = new RxDao<>(this, Schedulers.io());
+        }
+        return rxDaoIo;
     }
 
     /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
