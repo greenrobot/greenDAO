@@ -2,7 +2,7 @@ language: android
 # Use the Travis Container-Based Infrastructure
 sudo: false
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 env:
   global:
     # increase adb timeout (2 minutes by default)
@@ -11,7 +11,9 @@ env:
     - ANDROID_SDKS=android-23,sysimg-23  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
 android:
   components:
-    - build-tools-23.0.1
+    - platform-tools
+    - tools
+    - build-tools-23.0.3
     - android-23
     - extra-android-m2repository
 before_install:

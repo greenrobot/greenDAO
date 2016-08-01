@@ -4,14 +4,21 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.android.tools.build:gradle:2.1.2'
     }
 }
 
 apply plugin: 'com.android.application'
 
+repositories {
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+
 dependencies {
     compile project(':DaoTestBase')
+    androidTestCompile 'org.greenrobot:essentials:3.0.0-SNAPSHOT'
 }
 
 android {
@@ -19,7 +26,10 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
+        minSdkVersion 5
         testApplicationId "org.greenrobot.greendao.perftest"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 }
+
+uploadArchives.enabled = false

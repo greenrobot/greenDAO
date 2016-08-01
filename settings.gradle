@@ -1,4 +1,6 @@
-include 'DaoCore', 'DaoGenerator', 'DaoExampleGenerator'
+include 'greendao-api'
+include 'DaoCore'
+include 'DaoGenerator'
 include 'DaoTestBase'
 include 'DaoTest'
 include 'DaoTestPerformance'
