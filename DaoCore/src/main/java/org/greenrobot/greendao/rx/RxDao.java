@@ -46,6 +46,7 @@ public class RxDao<T, K> {
     /**
      * Creates a new RxDao without a default scheduler.
      */
+    @Experimental
     public RxDao(AbstractDao<T, K> dao) {
         this(dao, null);
     }
@@ -54,6 +55,7 @@ public class RxDao<T, K> {
      * Creates a new RxDao with a default scheduler, which is used to configure returned observables with
      * {@link Observable#subscribeOn(Scheduler)}.
      */
+    @Experimental
     public RxDao(AbstractDao<T, K> dao, Scheduler scheduler) {
         this.dao = dao;
         this.scheduler = scheduler;
@@ -62,6 +64,7 @@ public class RxDao<T, K> {
     /**
      * Rx version of {@link AbstractDao#loadAll()} returning an Observable.
      */
+    @Experimental
     public Observable<List<T>> loadAll() {
         return wrap(new Callable<List<T>>() {
             @Override
@@ -74,6 +77,7 @@ public class RxDao<T, K> {
     /**
      * Rx version of {@link AbstractDao#loadAll()} returning an Observable.
      */
+    @Experimental
     public Observable<T> load(final K key) {
         return wrap(new Callable<T>() {
             @Override
@@ -87,6 +91,7 @@ public class RxDao<T, K> {
      * Rx version of {@link AbstractDao#insert(Object)} returning an Observable.
      * Note that the Observable will emit the given entity back to its subscribers.
      */
+    @Experimental
     public Observable<T> insert(final T entity) {
         return wrap(new Callable<T>() {
             @Override
@@ -101,6 +106,7 @@ public class RxDao<T, K> {
      * Rx version of {@link AbstractDaoSession#runInTx(Runnable)} returning an Observable.
      */
     // TODO move to new RxSession ?
+    @Experimental
     public Observable<Void> runInTx(final Runnable runnable) {
         return wrap(new Callable<Void>() {
             @Override
@@ -114,6 +120,7 @@ public class RxDao<T, K> {
     /**
      * The plain DAO that may be useful if you are inside a transaction, e.g {@link #runInTx(Runnable)}.
      */
+    @Experimental
     public AbstractDao<T, K> getDao() {
         return dao;
     }
@@ -123,6 +130,7 @@ public class RxDao<T, K> {
      *
      * @return
      */
+    @Experimental
     public Scheduler getScheduler() {
         return scheduler;
     }
