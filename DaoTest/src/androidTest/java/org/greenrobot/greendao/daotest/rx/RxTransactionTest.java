@@ -26,7 +26,6 @@ import org.greenrobot.greendao.test.AbstractDaoSessionTest;
 
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.observers.TestSubscriber;
@@ -83,7 +82,7 @@ public class RxTransactionTest extends AbstractDaoSessionTest<DaoMaster, DaoSess
     }
 
     private <T> TestSubscriber<T> assertTxExecuted(Observable<T> observable) {
-        TestSubscriber<T> testSubscriber = awaitTestSubscriber(observable);
+        TestSubscriber<T> testSubscriber = RxTestHelper.awaitTestSubscriber(observable);
         assertEquals(1, testSubscriber.getValueCount());
 
         daoSession.clear();
@@ -94,24 +93,8 @@ public class RxTransactionTest extends AbstractDaoSessionTest<DaoMaster, DaoSess
         return testSubscriber;
     }
 
-    private <T> TestSubscriber<T> awaitTestSubscriber(Observable<T> observable) {
-        TestSubscriber<T> testSubscriber = new TestSubscriber<>();
-        observable.subscribe(testSubscriber);
-        testSubscriber.awaitTerminalEvent(3, TimeUnit.SECONDS);
-        testSubscriber.assertCompleted();
-        testSubscriber.assertNoErrors();
-        return testSubscriber;
-    }
-
     protected TestEntity insertEntity(String simpleStringNotNull) {
-        TestEntity entity = createEntity(simpleStringNotNull);
-        daoSession.insert(entity);
-        return entity;
+        return RxTestHelper.insertEntity(daoSession.getTestEntityDao(), simpleStringNotNull);
     }
 
-    private TestEntity createEntity(String simpleStringNotNull) {
-        TestEntity entity = new TestEntity();
-        entity.setSimpleStringNotNull(simpleStringNotNull);
-        return entity;
-    }
 }

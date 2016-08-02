@@ -16,62 +16,59 @@
 
 package org.greenrobot.greendao.rx;
 
-import org.greenrobot.greendao.AbstractDaoSession;
 import org.greenrobot.greendao.annotation.apihint.Experimental;
+import org.greenrobot.greendao.query.Query;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
 import rx.Scheduler;
 
 /**
- * Allows to do transactions using Rx Observable.
+ * Gets {@link org.greenrobot.greendao.query.Query} results in Rx fashion.
  */
 @Experimental
-public class RxTransaction extends RxBase {
-    private final AbstractDaoSession daoSession;
+public class RxQuery<T> extends RxBase {
+    private final Query<T> query;
 
-    public RxTransaction(AbstractDaoSession daoSession) {
-        this.daoSession = daoSession;
+    public RxQuery(Query<T> query) {
+        this.query = query;
     }
 
-    public RxTransaction(AbstractDaoSession daoSession, Scheduler scheduler) {
+    public RxQuery(Query<T> query, Scheduler scheduler) {
         super(scheduler);
-        this.daoSession = daoSession;
+        this.query = query;
     }
 
     /**
-     * Rx version of {@link AbstractDaoSession#runInTx(Runnable)} returning an Observable.
+     * Rx version of {@link Query#list()} returning an Observable.
      */
     @Experimental
-    public Observable<Void> run(final Runnable runnable) {
-        return wrap(new Callable<Void>() {
+    public Observable<List<T>> list() {
+        return wrap(new Callable<List<T>>() {
             @Override
-            public Void call() throws Exception {
-                daoSession.runInTx(runnable);
-                return null;
+            public List<T> call() throws Exception {
+                return query.forCurrentThread().list();
             }
         });
     }
 
     /**
-     * Rx version of {@link AbstractDaoSession#callInTx(Callable)} returning an Observable.
+     * Rx version of {@link Query#unique()} returning an Observable.
      */
     @Experimental
-    public <T> Observable<T> call(final Callable<T> callable) {
+    public Observable<T> unique() {
         return wrap(new Callable<T>() {
             @Override
             public T call() throws Exception {
-                return daoSession.callInTx(callable);
+                return query.forCurrentThread().unique();
             }
         });
     }
 
-    // Note: wrapping callInTxNoException does not make sense, because the Exception is handled by Rx anyway.
-
-
     @Experimental
-    public AbstractDaoSession getDaoSession() {
-        return daoSession;
+    public Query<T> getQuery() {
+        return query;
     }
 }

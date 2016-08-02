@@ -23,7 +23,9 @@ import org.greenrobot.greendao.AbstractDaoSession;
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.DaoLog;
 import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.annotation.apihint.Experimental;
 import org.greenrobot.greendao.internal.SqlUtils;
+import org.greenrobot.greendao.rx.RxQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -423,6 +425,22 @@ public class QueryBuilder<T> {
      */
     public List<T> list() {
         return build().list();
+    }
+
+    /**
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#rx()}.
+     */
+    @Experimental
+    public RxQuery<T> rx() {
+        return build().rx();
+    }
+
+    /**
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#rxPlain()}.
+     */
+    @Experimental
+    public RxQuery<T> rxPlain() {
+        return build().rxPlain();
     }
 
     /**

@@ -209,8 +209,8 @@ public class AbstractDaoSession {
     }
 
     /**
-     * The returned {@link RxTransaction} allows using DB transactions using Rx Observables without any Scheduler set
-     * for subscribeOn.
+     * The returned {@link RxTransaction} allows DB transactions using Rx Observables without any Scheduler set for
+     * subscribeOn.
      *
      * @see #rxTx()
      */
@@ -223,7 +223,7 @@ public class AbstractDaoSession {
     }
 
     /**
-     * The returned {@link RxTransaction} allows using DB transactions using Rx Observables using RX's IO scheduler for
+     * The returned {@link RxTransaction} allows DB transactions using Rx Observables using RX's IO scheduler for
      * subscribeOn.
      *
      * @see #rxTxPlain()
