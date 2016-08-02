@@ -23,6 +23,7 @@ import org.greenrobot.greendao.daotest.TestEntityDao;
 import org.greenrobot.greendao.rx.RxDao;
 import org.greenrobot.greendao.test.AbstractDaoTest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -105,6 +106,47 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
         List<TestEntity> all = dao.loadAll();
         assertEquals(1, all.size());
         assertEquals(foo.getSimpleStringNotNull(), all.get(0).getSimpleStringNotNull());
+    }
+
+    public void testInsertInTx() {
+        TestEntity foo = createEntity("foo");
+        TestEntity bar = createEntity("bar");
+        TestSubscriber<Object[]> testSubscriber = awaitTestSubscriber(rxDao.insertInTx(foo, bar));
+        assertEquals(1, testSubscriber.getValueCount());
+        Object[] array = testSubscriber.getOnNextEvents().get(0);
+        assertSame(foo, array[0]);
+        assertSame(bar, array[1]);
+
+        List<TestEntity> all = dao.loadAll();
+        assertEquals(2, all.size());
+        assertEquals(foo.getSimpleStringNotNull(), all.get(0).getSimpleStringNotNull());
+        assertEquals(bar.getSimpleStringNotNull(), all.get(1).getSimpleStringNotNull());
+    }
+
+    public void testInsertInTxList() {
+        TestEntity foo = createEntity("foo");
+        TestEntity bar = createEntity("bar");
+        List<TestEntity> list = new ArrayList<>();
+        list.add(foo);
+        list.add(bar);
+        TestSubscriber<List<TestEntity>> testSubscriber = awaitTestSubscriber(rxDao.insertInTx(list));
+        assertEquals(1, testSubscriber.getValueCount());
+        List<TestEntity> result= testSubscriber.getOnNextEvents().get(0);
+        assertSame(foo, result.get(0));
+        assertSame(bar, result.get(1));
+
+        List<TestEntity> all = dao.loadAll();
+        assertEquals(2, all.size());
+        assertEquals(foo.getSimpleStringNotNull(), all.get(0).getSimpleStringNotNull());
+        assertEquals(bar.getSimpleStringNotNull(), all.get(1).getSimpleStringNotNull());
+    }
+
+    public void testCount() {
+        TestEntity foo = insertEntity("foo");
+        TestSubscriber<Long> testSubscriber = awaitTestSubscriber(rxDao.count());
+        assertEquals(1, testSubscriber.getValueCount());
+        Long count = testSubscriber.getOnNextEvents().get(0);
+        assertEquals(1L, (long) count);
     }
 
     private TestSubscriber<List<TestEntity>> awaitTestSubscriber(Observable<List<TestEntity>> observable) {

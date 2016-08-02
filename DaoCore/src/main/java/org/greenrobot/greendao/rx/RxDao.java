@@ -32,6 +32,9 @@ import rx.Scheduler;
  * Instances of RxDao may have an default {@link rx.Scheduler}, which is used to configure returned observables with
  * {@link Observable#subscribeOn(Scheduler)} (see {@link AbstractDao#rxPlain()}, which uses the IO scheduler).
  *
+ * Note: DO NOT call more than one data modification operation when you can use a transaction instead (see
+ * {@link RxTransaction}. Individual calls use a transaction each and are much slower.
+ *
  * @param <T> Entity type
  * @param <K> Primary key (PK) type; use Void if entity does not have exactly one PK
  * @see AbstractDao#rxPlain()
@@ -100,9 +103,52 @@ public class RxDao<T, K> extends RxBase {
         });
     }
 
+    /**
+     * Rx version of {@link AbstractDao#insertInTx(Iterable)} returning an Observable.
+     * Note that the Observable will emit the given entities back to its subscribers.
+     */
+    @Experimental
+    public Observable<Iterable<T>> insertInTx(final Iterable<T> entities) {
+        return wrap(new Callable<Iterable<T>>() {
+            @Override
+            public Iterable<T> call() throws Exception {
+                dao.insertInTx(entities);
+                return entities;
+            }
+        });
+    }
 
     /**
-     * The plain DAO that may be useful if you are inside a transaction, e.g {@link #runInTx(Runnable)}.
+     * Rx version of {@link AbstractDao#insertInTx(Object[])} returning an Observable.
+     * Note that the Observable will emit the given entities back to its subscribers.
+     */
+    @Experimental
+    public Observable<Object[]> insertInTx(final T... entities) {
+        return wrap(new Callable<Object[]>() {
+            @Override
+            public Object[] call() throws Exception {
+                dao.insertInTx(entities);
+                return entities;
+            }
+        });
+    }
+
+
+    /**
+     * Rx version of {@link AbstractDao#count()} returning an Observable.
+     */
+    @Experimental
+    public Observable<Long> count() {
+        return wrap(new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                return dao.count();
+            }
+        });
+    }
+
+    /**
+     * The plain DAO.
      */
     @Experimental
     public AbstractDao<T, K> getDao() {
