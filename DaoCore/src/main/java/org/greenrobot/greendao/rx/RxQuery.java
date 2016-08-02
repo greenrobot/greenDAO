@@ -17,18 +17,23 @@
 package org.greenrobot.greendao.rx;
 
 import org.greenrobot.greendao.annotation.apihint.Experimental;
+import org.greenrobot.greendao.query.LazyList;
 import org.greenrobot.greendao.query.Query;
 
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
+import rx.Observable.OnSubscribe;
 import rx.Scheduler;
+import rx.Subscriber;
+import rx.exceptions.Exceptions;
 
 /**
  * Gets {@link org.greenrobot.greendao.query.Query} results in Rx fashion.
  */
 @Experimental
+// TODO Pass parameters: currently, parameters are always set to their initial values because of forCurrentThread()
 public class RxQuery<T> extends RxBase {
     private final Query<T> query;
 
@@ -67,8 +72,43 @@ public class RxQuery<T> extends RxBase {
         });
     }
 
-    @Experimental
-    public Query<T> getQuery() {
-        return query;
+    /**
+     * Emits the resulting entities one by one, producing them on the fly ("streaming" entities).
+     * Unlike {@link #list()}, it does not wait for the query to gather all results. Thus, the first entities are
+     * immediately available as soon the underlying database cursor has data. This approach may be more memory
+     * efficient for large number of entities (or large entities) at the cost of additional overhead caused by a
+     * per-entity delivery through Rx.
+     */
+    public Observable<T> oneByOne() {
+        Observable<T> observable = Observable.create(new OnSubscribe<T>() {
+            @Override
+            public void call(Subscriber<? super T> subscriber) {
+                try {
+                    LazyList<T> lazyList = query.forCurrentThread().listLazyUncached();
+                    try {
+                        for (T entity : lazyList) {
+                            if (subscriber.isUnsubscribed()) {
+                                break;
+                            }
+                            subscriber.onNext(entity);
+                        }
+                    } finally {
+                        lazyList.close();
+                    }
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onCompleted();
+                    }
+                } catch (Throwable e) {
+                    Exceptions.throwIfFatal(e);
+                    subscriber.onError(e);
+                }
+            }
+        });
+        return wrap(observable);
     }
+
+//    @Experimental
+//    public Query<T> getQuery() {
+//        return query;
+//    }
 }

@@ -16,9 +16,10 @@
 package org.greenrobot.greendao.query;
 
 import android.database.Cursor;
+
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.annotation.apihint.Experimental;
+import org.greenrobot.greendao.annotation.apihint.Internal;
 import org.greenrobot.greendao.rx.RxQuery;
 import org.greenrobot.greendao.rx.RxTransaction;
 
@@ -74,6 +75,9 @@ public class Query<T> extends AbstractQueryWithLimit<T> {
         this.queryData = queryData;
     }
 
+    /**
+     * Note: all parameters are reset to their initial values specified in {@link QueryBuilder}.
+     */
     public Query<T> forCurrentThread() {
         return queryData.forCurrentThread(this);
     }
@@ -156,13 +160,14 @@ public class Query<T> extends AbstractQueryWithLimit<T> {
     }
 
     /**
+     * DO NOT USE.
      * The returned {@link RxTransaction} allows getting query results using Rx Observables without any Scheduler set
      * for subscribeOn.
      *
-     * @see #rx()
+     * @see #__InternalRx()
      */
-    @Experimental
-    public RxQuery rxPlain() {
+    @Internal
+    public RxQuery __internalRxPlain() {
         if (rxTxPlain == null) {
             rxTxPlain = new RxQuery(this);
         }
@@ -170,13 +175,14 @@ public class Query<T> extends AbstractQueryWithLimit<T> {
     }
 
     /**
+     * DO NOT USE.
      * The returned {@link RxTransaction} allows getting query results using Rx Observables using RX's IO scheduler for
      * subscribeOn.
      *
-     * @see #rxPlain()
+     * @see #__internalRxPlain()
      */
-    @Experimental
-    public RxQuery rx() {
+    @Internal
+    public RxQuery __InternalRx() {
         if (rxTxIo == null) {
             rxTxIo = new RxQuery(this, Schedulers.io());
         }

@@ -18,6 +18,7 @@
 
 package org.greenrobot.greendao.daotest.rx;
 
+import org.greenrobot.greendao.DaoLog;
 import org.greenrobot.greendao.daotest.DaoMaster;
 import org.greenrobot.greendao.daotest.DaoSession;
 import org.greenrobot.greendao.daotest.TestEntity;
@@ -28,7 +29,10 @@ import org.greenrobot.greendao.test.AbstractDaoSessionTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import rx.Observable;
+import rx.Subscription;
 import rx.observers.TestSubscriber;
 
 public class RxQueryTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
@@ -44,7 +48,7 @@ public class RxQueryTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
     protected void setUp() throws Exception {
         super.setUp();
         query = daoSession.getTestEntityDao().queryBuilder().where(Properties.SimpleInt.lt(10)).build();
-        rxQuery = query.rx();
+        rxQuery = query.__InternalRx();
     }
 
     public void testList() {
@@ -55,12 +59,51 @@ public class RxQueryTest extends AbstractDaoSessionTest<DaoMaster, DaoSession> {
         assertEquals(10, entitiesRead.size());
     }
 
+    // TODO figure out how to pass params to rxQuery
+    public void _testListSetParameters() {
+        insertEntities(15);
+
+        // TODO how to pass those to rxQuery?
+        query.setParameter(0, 5);
+
+        TestSubscriber<List<TestEntity>> testSubscriber = RxTestHelper.awaitTestSubscriber(rxQuery.list());
+        assertEquals(1, testSubscriber.getValueCount());
+        List<TestEntity> entitiesRead = testSubscriber.getOnNextEvents().get(0);
+        assertEquals(5, entitiesRead.size());
+    }
+
     public void testUnique() {
         insertEntities(1);
         TestSubscriber<TestEntity> testSubscriber = RxTestHelper.awaitTestSubscriber(rxQuery.unique());
         assertEquals(1, testSubscriber.getValueCount());
         TestEntity entityRead = testSubscriber.getOnNextEvents().get(0);
         assertNotNull(entityRead);
+    }
+
+    public void testOneByOne() {
+        insertEntities(15);
+        TestSubscriber<TestEntity> testSubscriber = RxTestHelper.awaitTestSubscriber(rxQuery.oneByOne());
+        assertEquals(10, testSubscriber.getValueCount());
+        for (int i = 0; i < 10; i++) {
+            TestEntity entity = testSubscriber.getOnNextEvents().get(i);
+            assertEquals(i, entity.getSimpleInt());
+        }
+    }
+
+    public void testOneByOneUnsubscribe() {
+        insertEntities(1000);
+        RxQuery<TestEntity> bigQuery = daoSession.getTestEntityDao().queryBuilder().rx();
+        TestSubscriber<TestEntity> testSubscriber = new TestSubscriber<>();
+        Observable<TestEntity> observable = bigQuery.oneByOne();
+        Subscription subscription = observable.subscribe(testSubscriber);
+        subscription.unsubscribe();
+        testSubscriber.assertUnsubscribed();
+        int count = testSubscriber.getValueCount();
+        testSubscriber.awaitTerminalEvent(100, TimeUnit.MILLISECONDS);
+        int count2 = testSubscriber.getValueCount();
+        DaoLog.d("Count 1: " + count + " vs. count 2: " + count2);
+        // Not strictly multi-threading correct, but anyway:
+        assertTrue(count2 < 1000);
     }
 
     protected List<TestEntity> insertEntities(int count) {

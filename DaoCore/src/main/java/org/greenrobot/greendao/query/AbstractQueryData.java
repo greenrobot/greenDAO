@@ -20,6 +20,7 @@ import java.lang.ref.WeakReference;
 
 import android.os.Process;
 import android.util.SparseArray;
+
 import org.greenrobot.greendao.AbstractDao;
 
 abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
@@ -35,7 +36,10 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
         queriesForThreads = new SparseArray<WeakReference<Q>>();
     }
 
-    /** Just an optimized version, which performs faster if the current thread is already the query's owner thread. */
+    /**
+     * Just an optimized version, which performs faster if the current thread is already the query's owner thread.
+     * Note: all parameters are reset to their initial values specified in {@link QueryBuilder}.
+     */
     Q forCurrentThread(Q query) {
         if (Thread.currentThread() == query.ownerThread) {
             System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
@@ -45,6 +49,9 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
         }
     }
 
+    /**
+     * Note: all parameters are reset to their initial values specified in {@link QueryBuilder}.
+     */
     Q forCurrentThread() {
         int threadId = Process.myTid();
         if (threadId == 0) {

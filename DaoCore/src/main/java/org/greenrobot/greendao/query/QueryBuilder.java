@@ -428,19 +428,19 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#rx()}.
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#__InternalRx()}.
      */
     @Experimental
     public RxQuery<T> rx() {
-        return build().rx();
+        return build().__InternalRx();
     }
 
     /**
-     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#rxPlain()}.
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#__internalRxPlain()}.
      */
     @Experimental
     public RxQuery<T> rxPlain() {
-        return build().rxPlain();
+        return build().__internalRxPlain();
     }
 
     /**
