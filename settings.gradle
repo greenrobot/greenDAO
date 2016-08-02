@@ -5,5 +5,6 @@ include 'DaoTestBase'
 include 'DaoTest'
 include 'DaoTestPerformance'
 include 'DaoTestGenerator'
-include 'DaoExample'
+// Disable until new plugins are pushed:
+// include 'DaoExample'
 
