@@ -89,6 +89,21 @@ public class RxDao<T, K> extends RxBase {
     }
 
     /**
+     * Rx version of {@link AbstractDao#refresh(Object)} returning an Observable.
+     * Note that the Observable will emit the given entity back to its subscribers.
+     */
+    @Experimental
+    public Observable<T> refresh(final T entity) {
+        return wrap(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                dao.refresh(entity);
+                return entity;
+            }
+        });
+    }
+
+    /**
      * Rx version of {@link AbstractDao#insert(Object)} returning an Observable.
      * Note that the Observable will emit the given entity back to its subscribers.
      */
@@ -133,6 +148,239 @@ public class RxDao<T, K> extends RxBase {
         });
     }
 
+    /**
+     * Rx version of {@link AbstractDao#insertOrReplace(Object)} returning an Observable.
+     * Note that the Observable will emit the given entity back to its subscribers.
+     */
+    @Experimental
+    public Observable<T> insertOrReplace(final T entity) {
+        return wrap(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                dao.insertOrReplace(entity);
+                return entity;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#insertOrReplaceInTx(Iterable)} returning an Observable.
+     * Note that the Observable will emit the given entities back to its subscribers.
+     */
+    @Experimental
+    public Observable<Iterable<T>> insertOrReplaceInTx(final Iterable<T> entities) {
+        return wrap(new Callable<Iterable<T>>() {
+            @Override
+            public Iterable<T> call() throws Exception {
+                dao.insertOrReplaceInTx(entities);
+                return entities;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#insertOrReplaceInTx(Object[])} returning an Observable.
+     * Note that the Observable will emit the given entities back to its subscribers.
+     */
+    @Experimental
+    public Observable<Object[]> insertOrReplaceInTx(final T... entities) {
+        return wrap(new Callable<Object[]>() {
+            @Override
+            public Object[] call() throws Exception {
+                dao.insertOrReplaceInTx(entities);
+                return entities;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#save(Object)} returning an Observable.
+     * Note that the Observable will emit the given entity back to its subscribers.
+     */
+    @Experimental
+    public Observable<T> save(final T entity) {
+        return wrap(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                dao.save(entity);
+                return entity;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#saveInTx(Iterable)} returning an Observable.
+     * Note that the Observable will emit the given entities back to its subscribers.
+     */
+    @Experimental
+    public Observable<Iterable<T>> saveInTx(final Iterable<T> entities) {
+        return wrap(new Callable<Iterable<T>>() {
+            @Override
+            public Iterable<T> call() throws Exception {
+                dao.saveInTx(entities);
+                return entities;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#saveInTx(Object[])} returning an Observable.
+     * Note that the Observable will emit the given entities back to its subscribers.
+     */
+    @Experimental
+    public Observable<Object[]> saveInTx(final T... entities) {
+        return wrap(new Callable<Object[]>() {
+            @Override
+            public Object[] call() throws Exception {
+                dao.saveInTx(entities);
+                return entities;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#update(Object)} returning an Observable.
+     * Note that the Observable will emit the given entity back to its subscribers.
+     */
+    @Experimental
+    public Observable<T> update(final T entity) {
+        return wrap(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                dao.update(entity);
+                return entity;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#updateInTx(Iterable)} returning an Observable.
+     * Note that the Observable will emit the given entities back to its subscribers.
+     */
+    @Experimental
+    public Observable<Iterable<T>> updateInTx(final Iterable<T> entities) {
+        return wrap(new Callable<Iterable<T>>() {
+            @Override
+            public Iterable<T> call() throws Exception {
+                dao.updateInTx(entities);
+                return entities;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#updateInTx(Object[])} returning an Observable.
+     * Note that the Observable will emit the given entities back to its subscribers.
+     */
+    @Experimental
+    public Observable<Object[]> updateInTx(final T... entities) {
+        return wrap(new Callable<Object[]>() {
+            @Override
+            public Object[] call() throws Exception {
+                dao.updateInTx(entities);
+                return entities;
+            }
+        });
+    }
+
+
+    /**
+     * Rx version of {@link AbstractDao#delete(Object)} returning an Observable.
+     */
+    @Experimental
+    public Observable<Void> delete(final T entity) {
+        return wrap(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                dao.delete(entity);
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#deleteByKey(Object)} returning an Observable.
+     */
+    @Experimental
+    public Observable<Void> deleteByKey(final K key) {
+        return wrap(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                dao.deleteByKey(key);
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#deleteAll()} returning an Observable.
+     */
+    @Experimental
+    public Observable<Void> deleteAll() {
+        return wrap(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                dao.deleteAll();
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#deleteInTx(Iterable)} returning an Observable.
+     */
+    @Experimental
+    public Observable<Void> deleteInTx(final Iterable<T> entities) {
+        return wrap(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                dao.deleteInTx(entities);
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#deleteInTx(Object[])} returning an Observable.
+     */
+    @Experimental
+    public Observable<Void> deleteInTx(final T... entities) {
+        return wrap(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                dao.deleteInTx(entities);
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#deleteByKeyInTx(Iterable)} returning an Observable.
+     */
+    @Experimental
+    public Observable<Void> deleteByKeyInTx(final Iterable<K> keys) {
+        return wrap(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                dao.deleteByKeyInTx(keys);
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Rx version of {@link AbstractDao#deleteByKeyInTx(Object[])} returning an Observable.
+     */
+    @Experimental
+    public Observable<Void> deleteByKeyInTx(final K... keys) {
+        return wrap(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                dao.deleteByKeyInTx(keys);
+                return null;
+            }
+        });
+    }
 
     /**
      * Rx version of {@link AbstractDao#count()} returning an Observable.

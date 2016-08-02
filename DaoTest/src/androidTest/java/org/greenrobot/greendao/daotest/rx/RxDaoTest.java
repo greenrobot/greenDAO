@@ -149,6 +149,28 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
         assertEquals(1L, (long) count);
     }
 
+    public void testDelete() {
+        TestEntity foo = insertEntity("foo");
+        TestSubscriber<Long> testSubscriber = awaitTestSubscriber(rxDao.delete(foo));
+        assertEquals(1, testSubscriber.getValueCount());
+        assertNull(testSubscriber.getOnNextEvents().get(0));
+        assertEquals(0, dao.count());
+    }
+
+    public void testUpdate() {
+        TestEntity foo = insertEntity("foo");
+        foo.setSimpleString("foofoo");
+        TestSubscriber<Long> testSubscriber = awaitTestSubscriber(rxDao.update(foo));
+        assertEquals(1, testSubscriber.getValueCount());
+        assertSame(foo, testSubscriber.getOnNextEvents().get(0));
+        List<TestEntity> testEntities = dao.loadAll();
+        assertEquals(1, testEntities.size());
+        assertNotSame(foo, testEntities.get(0));
+        assertEquals("foofoo", testEntities.get(0).getSimpleString());
+    }
+
+    // TODO test remaining methods
+
     private TestSubscriber<List<TestEntity>> awaitTestSubscriber(Observable<List<TestEntity>> observable) {
         TestSubscriber<List<TestEntity>> testSubscriber = new TestSubscriber<>();
         observable.subscribe(testSubscriber);
