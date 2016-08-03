@@ -3,10 +3,10 @@ include 'DaoCore'
 include 'DaoGenerator'
 include 'tests'
 // Disable until new plugins are pushed:
-include 'DaoExample'
+//include 'DaoExample'
 
 include 'tests:DaoTestBase'
 include 'tests:DaoTest'
 include 'tests:DaoTestPerformance'
 include 'tests:DaoTestGenerator'
-
+include 'tests:DaoTestEntityAnnotation'
