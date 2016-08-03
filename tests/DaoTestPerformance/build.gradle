@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    compile project(':DaoTestBase')
+    compile project(':tests:DaoTestBase')
     androidTestCompile 'org.greenrobot:essentials:3.0.0-SNAPSHOT'
 }
 
