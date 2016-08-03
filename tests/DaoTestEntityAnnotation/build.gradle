@@ -1,21 +1,16 @@
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.2'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.1.0-SNAPSHOT'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.1.0'
     }
 }
 
 apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'com.android.application'
-
-repositories {
-    mavenCentral()
-}
 
 android {
     buildToolsVersion rootProject.ext.buildToolsVersion

@@ -16,11 +16,9 @@
 
 package org.greenrobot.greendao.rx;
 
-import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.annotation.apihint.Experimental;
 import org.greenrobot.greendao.annotation.apihint.Internal;
 
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
@@ -52,8 +50,6 @@ class RxBase {
 
     /**
      * The default scheduler (or null) used for wrapping.
-     *
-     * @return
      */
     @Experimental
     public Scheduler getScheduler() {

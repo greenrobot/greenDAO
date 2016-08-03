@@ -21,26 +21,28 @@ public class TypesInInnerClass {
 
         @Override
         public MyInnerType convertToEntityProperty(Long databaseValue) {
-            return databaseValue!=null? new MyInnerType(Long.toHexString(databaseValue)): null;
+            return databaseValue != null ? new MyInnerType(Long.toHexString(databaseValue)) : null;
         }
 
         @Override
         public Long convertToDatabaseValue(MyInnerType entityProperty) {
-            return entityProperty!= null? Long.parseLong(entityProperty.value, 16): null;
+            return entityProperty != null ? Long.parseLong(entityProperty.value, 16) : null;
         }
     }
 
     @Id
     Long id;
 
-    @Convert(converter = MyInnerTypeConverter.class, columnType = Long.class)
-    MyInnerType type;
+    // FIXME Remove "TypesInInnerClass."
+    @Convert(converter = TypesInInnerClass.MyInnerTypeConverter.class, columnType = Long.class)
+    TypesInInnerClass.MyInnerType type;
 
     public MyInnerType getType() {
         return this.type;
     }
 
-    public void setType(MyInnerType type) {
+    // FIXME Remove "TypesInInnerClass."
+    public void setType(TypesInInnerClass.MyInnerType type) {
         this.type = type;
     }
 
@@ -52,8 +54,8 @@ public class TypesInInnerClass {
         this.id = id;
     }
 
-    @Generated(hash = 1322981681)
-    public TypesInInnerClass(Long id, MyInnerType type) {
+    @Generated(hash = 582873426)
+    public TypesInInnerClass(Long id, TypesInInnerClass.MyInnerType type) {
         this.id = id;
         this.type = type;
     }

@@ -4,7 +4,7 @@ apply plugin: 'signing'
 
 group = 'org.greenrobot'
 archivesBaseName = 'greendao'
-version = '3.1.0-SNAPSHOT'
+version = '3.1.0'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
@@ -25,13 +25,20 @@ dependencies {
 }
 
 javadoc {
-    def srcApi = project(':greendao-api').file('src/main/java/')
-    if (!srcApi.directory) throw new GradleScriptException("Not a directory: ${srcApi}", null)
     failOnError = false
     title = " greenDAO ${version} API"
     options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
-    excludes = ['de/greenrobot/dao/internal', 'de/greenrobot/dao/Internal*']
-    includes += srcApi.absolutePath
+
+    excludes = ['org/greenrobot/dao/internal', 'org/greenrobot/dao/Internal*']
+    def srcApi = project(':greendao-api').file('src/main/java/')
+    if (!srcApi.directory) throw new GradleScriptException("Not a directory: ${srcApi}", null)
+    source += srcApi
+    doLast {
+        copy {
+            from '../javadoc-style'
+            into "build/docs/javadoc/"
+        }
+    }
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {

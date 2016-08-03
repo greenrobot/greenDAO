@@ -182,6 +182,7 @@ final public class FastCursor implements Cursor {
         return window.getDouble(position, columnIndex);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isNull(int columnIndex) {
         return window.isNull(position, columnIndex);
