@@ -32,6 +32,7 @@ import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 public class QueryForThreadTest extends TestEntityTestBase {
     /** Takes longer when activated */
@@ -53,7 +54,7 @@ public class QueryForThreadTest extends TestEntityTestBase {
         TestEntity entityFor2 = query.unique();
         assertEquals(value + 1, (int) entityFor2.getSimpleInteger());
         query = query.forCurrentThread();
-        TestEntity entityFor1 = query.unique();
+        assertNotNull(query.unique());
     }
 
     public void testGetForCurrentThread_ManyThreadsDontLeak() throws Exception {
@@ -83,7 +84,7 @@ public class QueryForThreadTest extends TestEntityTestBase {
 
         Method gcMethod = dataSuperclass.getDeclaredMethod("gc");
         gcMethod.setAccessible(true);
-        SparseArray<?> map = (SparseArray<?>) mapField.get(queryData);
+        Map map = (Map) mapField.get(queryData);
         for (int i = 0; map.size() > 1 && i < 1000; i++) {
             DaoLog.d("Queries left after " + i + ". GC: " + map.size());
             System.gc();
@@ -122,41 +123,49 @@ public class QueryForThreadTest extends TestEntityTestBase {
             queryFromOtherThread.list();
             fail("Did not throw");
         } catch (DaoException expected) {
+            // OK
         }
         try {
             queryFromOtherThread.listIterator();
             fail("Did not throw");
         } catch (DaoException expected) {
+            // OK
         }
         try {
             queryFromOtherThread.listLazyUncached();
             fail("Did not throw");
         } catch (DaoException expected) {
+            // OK
         }
         try {
             queryFromOtherThread.setLimit(2);
             fail("Did not throw");
         } catch (DaoException expected) {
+            // OK
         }
         try {
             queryFromOtherThread.setOffset(2);
             fail("Did not throw");
         } catch (DaoException expected) {
+            // OK
         }
         try {
             queryFromOtherThread.setParameter(0, 42);
             fail("Did not throw");
         } catch (DaoException expected) {
+            // OK
         }
         try {
             queryFromOtherThread.unique();
             fail("Did not throw");
         } catch (DaoException expected) {
+            // OK
         }
         try {
             queryFromOtherThread.uniqueOrThrow();
             fail("Did not throw");
         } catch (DaoException expected) {
+            // OK
         }
     }
 
