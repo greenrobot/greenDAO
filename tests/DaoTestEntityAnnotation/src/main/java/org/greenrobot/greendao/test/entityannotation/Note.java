@@ -1,4 +1,4 @@
-package org.greenrobot.greendao.entityannotation;
+package org.greenrobot.greendao.test.entityannotation;
 
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
@@ -36,7 +36,7 @@ public class Note {
         this.id = id;
     }
 
-    @Generated(hash = 1686394253)
+    @Generated(hash = 59778150)
     public Note(Long id, @NotNull String text, String comment, Date date, NoteType type) {
         this.id = id;
         this.text = text;

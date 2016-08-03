@@ -1,9 +1,9 @@
-package org.greenrobot.greendao.entityannotation;
+package org.greenrobot.greendao.test.entityannotation;
 
 import android.app.Application;
 
 import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendao.entityannotation.DaoMaster.DevOpenHelper;
+import org.greenrobot.greendao.test.entityannotation.DaoMaster.DevOpenHelper;
 
 public class App extends Application {
     private DaoSession daoSession;

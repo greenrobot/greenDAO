@@ -1,4 +1,4 @@
-package org.greenrobot.greendao.entityannotation;
+package org.greenrobot.greendao.test.entityannotation;
 
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
