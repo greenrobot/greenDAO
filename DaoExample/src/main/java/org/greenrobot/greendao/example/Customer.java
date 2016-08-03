@@ -53,13 +53,6 @@ public class Customer {
         this.name = name;
     }
 
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 462117449)
-    public void __setDaoSession(DaoSession daoSession) {
-        this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.getCustomerDao() : null;
-    }
-
     public Long getId() {
         return id;
     }
@@ -140,6 +133,13 @@ public class Customer {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.refresh(this);
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 462117449)
+    public void __setDaoSession(DaoSession daoSession) {
+        this.daoSession = daoSession;
+        myDao = daoSession != null ? daoSession.getCustomerDao() : null;
     }
 
 }
