@@ -79,7 +79,7 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
             Iterator<Entry<Long, WeakReference<Q>>> iterator = queriesForThreads.entrySet().iterator();
             while (iterator.hasNext()) {
                 Entry<Long, WeakReference<Q>> entry = iterator.next();
-                if (entry.getValue() == null) {
+                if (entry.getValue().get() == null) {
                     iterator.remove();
                 }
             }
