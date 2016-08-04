@@ -47,13 +47,6 @@ public class Order {
         this.customerId = customerId;
     }
 
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 965731666)
-    public void __setDaoSession(DaoSession daoSession) {
-        this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.getOrderDao() : null;
-    }
-
     public Long getId() {
         return id;
     }
@@ -135,6 +128,8 @@ public class Order {
         myDao.update(this);
     }
 
+
+
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
      * Entity must attached to an entity context.
@@ -145,6 +140,13 @@ public class Order {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.refresh(this);
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 965731666)
+    public void __setDaoSession(DaoSession daoSession) {
+        this.daoSession = daoSession;
+        myDao = daoSession != null ? daoSession.getOrderDao() : null;
     }
 
 }

@@ -1,56 +1,50 @@
-package org.greenrobot.greendao.example;
+package org.greenrobot.greendao.test.entityannotation;
 
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.JoinProperty;
 import org.greenrobot.greendao.annotation.NotNull;
-import org.greenrobot.greendao.annotation.OrderBy;
-import org.greenrobot.greendao.annotation.ToMany;
-import org.greenrobot.greendao.annotation.Unique;
-
-import java.util.List;
+import org.greenrobot.greendao.annotation.ToOne;
 
 /**
- * Entity mapped to table "CUSTOMER".
+ * Entity mapped to table "ORDERS".
  */
-@Entity(active = true)
-public class Customer {
+@Entity(active = true, nameInDb = "ORDERS")
+public class Order {
 
-    @Id(autoincrement = true)
+    @Id
     private Long id;
-
-    @NotNull
-    @Unique
-    private String name;
+    private java.util.Date date;
+    private long customerId;
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    @Generated(hash = 1697251196)
-    private transient CustomerDao myDao;
+    @Generated(hash = 949219203)
+    private transient OrderDao myDao;
 
-    @ToMany(joinProperties = {
-            @JoinProperty(name = "id", referencedName = "customerId")
-    })
-    @OrderBy("date ASC")
-    private List<Order> orders;
+    @ToOne(joinProperty = "customerId")
+    private Customer customer;
 
-    @Generated(hash = 60841032)
-    public Customer() {
+    @Generated(hash = 8592637)
+    private transient Long customer__resolvedKey;
+
+    @Generated(hash = 1105174599)
+    public Order() {
     }
 
-    public Customer(Long id) {
+    public Order(Long id) {
         this.id = id;
     }
 
-    @Generated(hash = 969486800)
-    public Customer(Long id, @NotNull String name) {
+    @Generated(hash = 767587610)
+    public Order(Long id, java.util.Date date, long customerId) {
         this.id = id;
-        this.name = name;
+        this.date = date;
+        this.customerId = customerId;
     }
 
     public Long getId() {
@@ -61,42 +55,53 @@ public class Customer {
         this.id = id;
     }
 
-    @NotNull
-    public String getName() {
-        return name;
+    public java.util.Date getDate() {
+        return date;
     }
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setName(@NotNull String name) {
-        this.name = name;
+    public void setDate(java.util.Date date) {
+        this.date = date;
     }
 
-    /**
-     * To-many relationship, resolved on first access (and after reset).
-     * Changes to to-many relations are not persisted, make changes to the target entity.
-     */
-    @Generated(hash = 1084217201)
-    public List<Order> getOrders() {
-        if (orders == null) {
+    public long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(long customerId) {
+        this.customerId = customerId;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 941511332)
+    public Customer getCustomer() {
+        long __key = this.customerId;
+        if (customer__resolvedKey == null || !customer__resolvedKey.equals(__key)) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            OrderDao targetDao = daoSession.getOrderDao();
-            List<Order> ordersNew = targetDao._queryCustomer_Orders(id);
+            CustomerDao targetDao = daoSession.getCustomerDao();
+            Customer customerNew = targetDao.load(__key);
             synchronized (this) {
-                if (orders == null) {
-                    orders = ordersNew;
-                }
+                customer = customerNew;
+                customer__resolvedKey = __key;
             }
         }
-        return orders;
+        return customer;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 1446109810)
-    public synchronized void resetOrders() {
-        orders = null;
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 625323961)
+    public void setCustomer(@NotNull Customer customer) {
+        if (customer == null) {
+            throw new DaoException(
+                    "To-one property 'customerId' has not-null constraint; cannot set to-one to null");
+        }
+        synchronized (this) {
+            this.customer = customer;
+            customerId = customer.getId();
+            customer__resolvedKey = customerId;
+        }
     }
 
     /**
@@ -123,6 +128,8 @@ public class Customer {
         myDao.update(this);
     }
 
+
+
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
      * Entity must attached to an entity context.
@@ -136,10 +143,10 @@ public class Customer {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 462117449)
+    @Generated(hash = 965731666)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.getCustomerDao() : null;
+        myDao = daoSession != null ? daoSession.getOrderDao() : null;
     }
 
 }

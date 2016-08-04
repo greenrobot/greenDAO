@@ -27,6 +27,7 @@ import rx.Scheduler;
 /**
  * Allows to do transactions using Rx Observable.
  */
+@Experimental
 public class RxTransaction extends RxBase {
     private final AbstractDaoSession daoSession;
 
@@ -69,6 +70,7 @@ public class RxTransaction extends RxBase {
     // Note: wrapping callInTxNoException does not make sense, because the Exception is handled by Rx anyway.
 
 
+    @Experimental
     public AbstractDaoSession getDaoSession() {
         return daoSession;
     }

@@ -16,11 +16,17 @@
 package org.greenrobot.greendao.query;
 
 import android.database.Cursor;
+
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.apihint.Internal;
+import org.greenrobot.greendao.rx.RxQuery;
+import org.greenrobot.greendao.rx.RxTransaction;
 
 import java.util.Date;
 import java.util.List;
+
+import rx.schedulers.Schedulers;
 
 /**
  * A repeatable query returning entities.
@@ -60,12 +66,18 @@ public class Query<T> extends AbstractQueryWithLimit<T> {
 
     private final QueryData<T> queryData;
 
+    private volatile RxQuery rxTxPlain;
+    private volatile RxQuery rxTxIo;
+
     private Query(QueryData<T> queryData, AbstractDao<T, ?> dao, String sql, String[] initialValues, int limitPosition,
                   int offsetPosition) {
         super(dao, sql, initialValues, limitPosition, offsetPosition);
         this.queryData = queryData;
     }
 
+    /**
+     * Note: all parameters are reset to their initial values specified in {@link QueryBuilder}.
+     */
     public Query<T> forCurrentThread() {
         return queryData.forCurrentThread(this);
     }
@@ -145,5 +157,35 @@ public class Query<T> extends AbstractQueryWithLimit<T> {
     @Override
     public Query<T> setParameter(int index, Boolean parameter) {
         return (Query<T>) super.setParameter(index, parameter);
+    }
+
+    /**
+     * DO NOT USE.
+     * The returned {@link RxTransaction} allows getting query results using Rx Observables without any Scheduler set
+     * for subscribeOn.
+     *
+     * @see #__InternalRx()
+     */
+    @Internal
+    public RxQuery __internalRxPlain() {
+        if (rxTxPlain == null) {
+            rxTxPlain = new RxQuery(this);
+        }
+        return rxTxPlain;
+    }
+
+    /**
+     * DO NOT USE.
+     * The returned {@link RxTransaction} allows getting query results using Rx Observables using RX's IO scheduler for
+     * subscribeOn.
+     *
+     * @see #__internalRxPlain()
+     */
+    @Internal
+    public RxQuery __InternalRx() {
+        if (rxTxIo == null) {
+            rxTxIo = new RxQuery(this, Schedulers.io());
+        }
+        return rxTxIo;
     }
 }

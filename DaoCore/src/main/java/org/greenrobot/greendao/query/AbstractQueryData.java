@@ -16,26 +16,31 @@
 
 package org.greenrobot.greendao.query;
 
-import java.lang.ref.WeakReference;
-
-import android.os.Process;
-import android.util.SparseArray;
 import org.greenrobot.greendao.AbstractDao;
+
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
     final String sql;
     final AbstractDao<T, ?> dao;
     final String[] initialValues;
-    final SparseArray<WeakReference<Q>> queriesForThreads;
+    final Map<Long, WeakReference<Q>> queriesForThreads;
 
     AbstractQueryData(AbstractDao<T, ?> dao, String sql, String[] initialValues) {
         this.dao = dao;
         this.sql = sql;
         this.initialValues = initialValues;
-        queriesForThreads = new SparseArray<WeakReference<Q>>();
+        queriesForThreads = new HashMap<>();
     }
 
-    /** Just an optimized version, which performs faster if the current thread is already the query's owner thread. */
+    /**
+     * Just an optimized version, which performs faster if the current thread is already the query's owner thread.
+     * Note: all parameters are reset to their initial values specified in {@link QueryBuilder}.
+     */
     Q forCurrentThread(Q query) {
         if (Thread.currentThread() == query.ownerThread) {
             System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
@@ -45,16 +50,14 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
         }
     }
 
+    /**
+     * Note: all parameters are reset to their initial values specified in {@link QueryBuilder}.
+     */
     Q forCurrentThread() {
-        int threadId = Process.myTid();
-        if (threadId == 0) {
-            // Workaround for Robolectric, always returns 0
-            long id = Thread.currentThread().getId();
-            if (id < 0 || id > Integer.MAX_VALUE) {
-                throw new RuntimeException("Cannot handle thread ID: " + id);
-            }
-            threadId = (int) id;
-        }
+        // Process.myTid() seems to have issues on some devices (see Github #376) and Robolectric (#171):
+        // We use currentThread().getId() instead (unfortunately return a long, can not use SparseArray).
+        // PS.: thread ID may be reused, which should be fine because old thread will be gone anyway.
+        long threadId = Thread.currentThread().getId();
         synchronized (queriesForThreads) {
             WeakReference<Q> queryRef = queriesForThreads.get(threadId);
             Q query = queryRef != null ? queryRef.get() : null;
@@ -73,9 +76,11 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
 
     void gc() {
         synchronized (queriesForThreads) {
-            for (int i = queriesForThreads.size() - 1; i >= 0; i--) {
-                if (queriesForThreads.valueAt(i).get() == null) {
-                    queriesForThreads.remove(queriesForThreads.keyAt(i));
+            Iterator<Entry<Long, WeakReference<Q>>> iterator = queriesForThreads.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Entry<Long, WeakReference<Q>> entry = iterator.next();
+                if (entry.getValue() == null) {
+                    iterator.remove();
                 }
             }
         }
