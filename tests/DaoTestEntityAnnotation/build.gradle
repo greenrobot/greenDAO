@@ -35,7 +35,6 @@ android {
 
 greendao {
     schemaVersion 1000
-    generateTests true
 }
 
 dependencies {
