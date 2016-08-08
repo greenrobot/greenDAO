@@ -4,6 +4,8 @@ include 'DaoGenerator'
 include 'tests'
 include 'DaoExample'
 
+include 'examples:RxDaoExample'
+
 include 'tests:DaoTestBase'
 include 'tests:DaoTest'
 include 'tests:DaoTestPerformance'
