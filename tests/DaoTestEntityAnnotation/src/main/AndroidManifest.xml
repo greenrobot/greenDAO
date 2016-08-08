@@ -3,7 +3,6 @@
     package="org.greenrobot.greendao.test.entityannotation">
 
     <application
-        android:name="org.greenrobot.greendao.test.entityannotation.App"
         android:label="greenDAO @Entity Test"
         android:allowBackup="true">
     </application>
