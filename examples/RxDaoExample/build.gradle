@@ -24,16 +24,13 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+}
+
+greendao {
+    schemaVersion 1000
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile "com.android.support:recyclerview-v7:23.4.0"
 
@@ -46,3 +43,5 @@ dependencies {
     // This is only needed if you want to use encrypted databases
     compile 'net.zetetic:android-database-sqlcipher:3.5.1'
 }
+
+uploadArchives.enabled = false

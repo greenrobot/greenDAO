@@ -15,8 +15,8 @@
  */
 package org.greenrobot.greendao.example;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -28,12 +28,14 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+
+import org.greenrobot.greendao.query.Query;
+
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import org.greenrobot.greendao.query.Query;
 
-public class NoteActivity extends Activity {
+public class NoteActivity extends AppCompatActivity {
 
     private EditText editText;
     private View addNoteButton;
@@ -65,6 +67,7 @@ public class NoteActivity extends Activity {
 
     protected void setUpViews() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewNotes);
+        //noinspection ConstantConditions
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -72,6 +75,7 @@ public class NoteActivity extends Activity {
         recyclerView.setAdapter(notesAdapter);
 
         addNoteButton = findViewById(R.id.buttonAdd);
+        //noinspection ConstantConditions
         addNoteButton.setEnabled(false);
 
         editText = (EditText) findViewById(R.id.editTextNote);
@@ -104,7 +108,7 @@ public class NoteActivity extends Activity {
         });
     }
 
-    public void onMyButtonClick(View view) {
+    public void onAddButtonClick(View view) {
         addNote();
     }
 

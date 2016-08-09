@@ -26,12 +26,6 @@ android {
 
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
-
-    compileOptions {
-        encoding = "UTF-8"
-        sourceCompatibility JavaVersion.VERSION_1_6
-        targetCompatibility JavaVersion.VERSION_1_6
-    }
 }
 
 greendao {
@@ -39,8 +33,11 @@ greendao {
 }
 
 dependencies {
-    compile project(':DaoCore')
+    compile 'com.android.support:appcompat-v7:23.4.0'
     compile "com.android.support:recyclerview-v7:23.4.0"
+
+    // in your app you would include "compile 'org.greenrobot:greendao:x.y.z'"
+    compile project(':DaoCore')
 
     // This is only needed if you want to use encrypted databases
     compile 'net.zetetic:android-database-sqlcipher:3.5.1'
