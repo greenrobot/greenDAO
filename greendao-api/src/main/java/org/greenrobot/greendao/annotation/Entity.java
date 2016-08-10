@@ -43,4 +43,10 @@ public @interface Entity {
      * If entity has defined {@link ToMany} or {@link ToOne} relations, then it is active independently from this value
      */
     boolean active() default false;
+
+    /**
+     * Whether constructors should be generated.
+     */
+    boolean generateConstructors() default true;
+
 }

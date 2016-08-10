@@ -22,9 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.greenrobot.greendao.annotation.apihint.Experimental;
 import org.greenrobot.greendao.async.AsyncSession;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.query.QueryBuilder;
+import org.greenrobot.greendao.rx.RxTransaction;
+
+import rx.schedulers.Schedulers;
 
 /**
  * DaoSession gives you access to your DAOs, offers convenient persistence methods, and also serves as a session cache.<br>
@@ -48,6 +52,9 @@ import org.greenrobot.greendao.query.QueryBuilder;
 public class AbstractDaoSession {
     private final Database db;
     private final Map<Class<?>, AbstractDao<?, ?>> entityToDao;
+
+    private volatile RxTransaction rxTxPlain;
+    private volatile RxTransaction rxTxIo;
 
     public AbstractDaoSession(Database db) {
         this.db = db;
@@ -199,6 +206,34 @@ public class AbstractDaoSession {
      */
     public AsyncSession startAsyncSession() {
         return new AsyncSession(this);
+    }
+
+    /**
+     * The returned {@link RxTransaction} allows DB transactions using Rx Observables without any Scheduler set for
+     * subscribeOn.
+     *
+     * @see #rxTx()
+     */
+    @Experimental
+    public RxTransaction rxTxPlain() {
+        if (rxTxPlain == null) {
+            rxTxPlain = new RxTransaction(this);
+        }
+        return rxTxPlain;
+    }
+
+    /**
+     * The returned {@link RxTransaction} allows DB transactions using Rx Observables using RX's IO scheduler for
+     * subscribeOn.
+     *
+     * @see #rxTxPlain()
+     */
+    @Experimental
+    public RxTransaction rxTx() {
+        if (rxTxIo == null) {
+            rxTxIo = new RxTransaction(this, Schedulers.io());
+        }
+        return rxTxIo;
     }
 
 }

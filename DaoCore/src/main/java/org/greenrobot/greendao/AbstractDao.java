@@ -22,6 +22,7 @@ import android.database.CursorWindow;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
+import org.greenrobot.greendao.annotation.apihint.Experimental;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
 import org.greenrobot.greendao.identityscope.IdentityScope;
@@ -70,6 +71,7 @@ public abstract class AbstractDao<T, K> {
     protected final int pkOrdinal;
 
     private volatile RxDao<T, K> rxDao;
+    private volatile RxDao<T, K> rxDaoPlain;
 
     public AbstractDao(DaoConfig config) {
         this(config, null);
@@ -931,10 +933,25 @@ public abstract class AbstractDao<T, K> {
     }
 
     /**
-     * The returned RxDao is a special DAO that let's you interact with Rx Observables. Note, this instance will always
-     * use RX's IO scheduler. If you want a different set up, use {@link RxDao#RxDao(AbstractDao)} or
-     * {@link RxDao#RxDao(AbstractDao,rx.Scheduler)}
+     * The returned RxDao is a special DAO that let's you interact with Rx Observables without any Scheduler set
+     * for subscribeOn.
+     * @see #rx()
      */
+    @Experimental
+    public RxDao<T, K> rxPlain() {
+        if (rxDaoPlain == null) {
+            rxDaoPlain = new RxDao<>(this);
+        }
+        return rxDaoPlain;
+    }
+
+    /**
+     * The returned RxDao is a special DAO that let's you interact with Rx Observables using RX's IO scheduler for
+     * subscribeOn.
+     *
+     * @see #rxPlain()
+     */
+    @Experimental
     public RxDao<T, K> rx() {
         if (rxDao == null) {
             rxDao = new RxDao<>(this, Schedulers.io());

@@ -19,6 +19,10 @@ package org.greenrobot.greendao.query;
 import org.greenrobot.greendao.AbstractDao;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
     final String sql;
@@ -33,7 +37,10 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
         queriesForThreads = new ThreadLocal<WeakReference<Q>>();
     }
 
-    /** Just an optimized version, which performs faster if the current thread is already the query's owner thread. */
+    /**
+     * Just an optimized version, which performs faster if the current thread is already the query's owner thread.
+     * Note: all parameters are reset to their initial values specified in {@link QueryBuilder}.
+     */
     Q forCurrentThread(Q query) {
         if (Thread.currentThread() == query.ownerThread) {
             System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
@@ -43,6 +50,9 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
         }
     }
 
+    /**
+     * Note: all parameters are reset to their initial values specified in {@link QueryBuilder}.
+     */
     Q forCurrentThread() {
         synchronized (queriesForThreads) {
             WeakReference<Q> queryRef = queriesForThreads.get();

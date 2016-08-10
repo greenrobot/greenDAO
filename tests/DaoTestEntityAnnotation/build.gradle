@@ -1,0 +1,44 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.1.0'
+    }
+}
+
+apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'com.android.application'
+
+android {
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        applicationId "org.greenrobot.greendao.test.entityannotation"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+
+    compileOptions {
+        encoding = "UTF-8"
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
+}
+
+greendao {
+    schemaVersion 1000
+}
+
+dependencies {
+    compile project(':DaoCore')
+}
+
+uploadArchives.enabled = false

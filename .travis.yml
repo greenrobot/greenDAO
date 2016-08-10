@@ -11,6 +11,8 @@ env:
     - ANDROID_SDKS=android-23,sysimg-23  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
 android:
   components:
+    - platform-tools
+    - tools
     - build-tools-23.0.3
     - android-23
     - extra-android-m2repository

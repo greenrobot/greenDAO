@@ -120,7 +120,7 @@ public abstract class DatabaseOpenHelper extends SQLiteOpenHelper {
         if (encryptedHelper == null) {
             encryptedHelper = new EncryptedHelper(context, name, version, loadSQLCipherNativeLibs);
         }
-        return (EncryptedHelper) encryptedHelper;
+        return encryptedHelper;
     }
 
     /**
