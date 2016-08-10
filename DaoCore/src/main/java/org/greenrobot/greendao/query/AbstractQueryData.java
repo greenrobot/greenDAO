@@ -16,11 +16,9 @@
 
 package org.greenrobot.greendao.query;
 
-import java.lang.ref.WeakReference;
-
-import de.greenrobot.dao.AbstractDao;
-import android.util.SparseArray;
 import org.greenrobot.greendao.AbstractDao;
+
+import java.lang.ref.WeakReference;
 
 abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
     final String sql;
