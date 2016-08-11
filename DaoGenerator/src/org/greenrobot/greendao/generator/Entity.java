@@ -558,7 +558,7 @@ public class Entity {
 
     protected void init2ndPassNamesWithDefaults() {
         if (tableName == null) {
-            tableName = DaoUtil.dbName(className);
+            tableName = DaoUtil.dbName(className, schema.isUseCamelCaseNameWithoutInsertions());
             nonDefaultTableName = false;
         }
 

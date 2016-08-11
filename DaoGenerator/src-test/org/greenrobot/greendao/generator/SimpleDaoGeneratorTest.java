@@ -53,11 +53,16 @@ public class SimpleDaoGeneratorTest {
 
     @Test
     public void testDbName() {
-        assertEquals("NORMAL", DaoUtil.dbName("normal"));
-        assertEquals("NORMAL", DaoUtil.dbName("Normal"));
-        assertEquals("CAMEL_CASE", DaoUtil.dbName("CamelCase"));
-        assertEquals("CAMEL_CASE_THREE", DaoUtil.dbName("CamelCaseThree"));
-        assertEquals("CAMEL_CASE_XXXX", DaoUtil.dbName("CamelCaseXXXX"));
+        assertEquals("NORMAL", DaoUtil.dbName("normal", false));
+        assertEquals("NORMAL", DaoUtil.dbName("Normal", false));
+        assertEquals("CAMEL_CASE", DaoUtil.dbName("CamelCase", false));
+        assertEquals("CAMEL_CASE_THREE", DaoUtil.dbName("CamelCaseThree", false));
+        assertEquals("CAMEL_CASE_XXXX", DaoUtil.dbName("CamelCaseXXXX", false));
+        assertEquals("NORMAL", DaoUtil.dbName("normal", true));
+        assertEquals("NORMAL", DaoUtil.dbName("Normal", true));
+        assertEquals("CAMELCASE", DaoUtil.dbName("CamelCase", true));
+        assertEquals("CAMELCASETHREE", DaoUtil.dbName("CamelCaseThree", true));
+        assertEquals("CAMELCASEXXXX", DaoUtil.dbName("CamelCaseXXXX", true));
     }
 
     @Test(expected = RuntimeException.class)

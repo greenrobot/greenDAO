@@ -27,14 +27,16 @@ import java.io.OutputStream;
 
 /** Internal API */
 public class DaoUtil {
-    public static String dbName(String javaName) {
+    public static String dbName(String javaName, boolean useCamelCaseNameWithoutInsertions) {
         StringBuilder builder = new StringBuilder(javaName);
-        for (int i = 1; i < builder.length(); i++) {
-            boolean lastWasUpper = Character.isUpperCase(builder.charAt(i - 1));
-            boolean isUpper = Character.isUpperCase(builder.charAt(i));
-            if (isUpper && !lastWasUpper) {
-                builder.insert(i, '_');
-                i++;
+        if(!useCamelCaseNameWithoutInsertions) {
+            for (int i = 1; i < builder.length(); i++) {
+                boolean lastWasUpper = Character.isUpperCase(builder.charAt(i - 1));
+                boolean isUpper = Character.isUpperCase(builder.charAt(i));
+                if (isUpper && !lastWasUpper) {
+                    builder.insert(i, '_');
+                    i++;
+                }
             }
         }
         return builder.toString().toUpperCase();

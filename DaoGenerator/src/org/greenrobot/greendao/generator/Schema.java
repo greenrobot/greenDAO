@@ -42,6 +42,7 @@ public class Schema {
     private Map<PropertyType, String> propertyToJavaTypeNullable;
     private boolean hasKeepSectionsByDefault;
     private boolean useActiveEntitiesByDefault;
+    private boolean useCamelCaseNameWithoutInsertions;
     private final String name;
     private final String prefix;
 
@@ -65,6 +66,8 @@ public class Schema {
     public void enableActiveEntitiesByDefault() {
         useActiveEntitiesByDefault = true;
     }
+
+    public void enableCamelCaseNameWithoutInsertions() { useCamelCaseNameWithoutInsertions = true; }
 
     private void initTypeMappings() {
         propertyToDbType = new HashMap<>();
@@ -179,6 +182,8 @@ public class Schema {
     public boolean isUseActiveEntitiesByDefault() {
         return useActiveEntitiesByDefault;
     }
+
+    public boolean isUseCamelCaseNameWithoutInsertions() { return useCamelCaseNameWithoutInsertions; }
 
     public String getName() {
         return name;
