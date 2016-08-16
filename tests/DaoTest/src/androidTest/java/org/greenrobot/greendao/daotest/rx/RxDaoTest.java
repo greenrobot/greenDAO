@@ -26,8 +26,10 @@ import org.greenrobot.greendao.test.AbstractDaoTest;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
 import rx.observers.TestSubscriber;
 
+@SuppressWarnings("unchecked")
 public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> {
 
     private RxDao rxDao;
@@ -94,6 +96,13 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
         assertNull(testSubscriber.getOnNextEvents().get(0));
     }
 
+    public void testRefresh() {
+        TestEntity entity = insertEntity("foo");
+        entity.setSimpleStringNotNull("temp");
+        RxTestHelper.awaitTestSubscriber(rxDao.refresh(entity));
+        assertEquals("foo", entity.getSimpleStringNotNull());
+    }
+
     public void testInsert() {
         TestEntity foo = RxTestHelper.createEntity("foo");
         TestSubscriber<TestEntity> testSubscriber = RxTestHelper.awaitTestSubscriber(rxDao.insert(foo));
@@ -139,26 +148,70 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
         assertEquals(bar.getSimpleStringNotNull(), all.get(1).getSimpleStringNotNull());
     }
 
-    public void testCount() {
+    public void testInsertOrReplace() {
         TestEntity foo = insertEntity("foo");
-        TestSubscriber<Long> testSubscriber = RxTestHelper.awaitTestSubscriber(rxDao.count());
-        assertEquals(1, testSubscriber.getValueCount());
-        Long count = testSubscriber.getOnNextEvents().get(0);
-        assertEquals(1L, (long) count);
+
+        foo.setSimpleStringNotNull("bar");
+
+        assertUpdatedEntity(foo, rxDao.insertOrReplace(foo));
     }
 
-    public void testDelete() {
+    public void testInsertOrReplaceInTx() {
         TestEntity foo = insertEntity("foo");
-        TestSubscriber<Long> testSubscriber = RxTestHelper.awaitTestSubscriber(rxDao.delete(foo));
-        assertEquals(1, testSubscriber.getValueCount());
-        assertNull(testSubscriber.getOnNextEvents().get(0));
-        assertEquals(0, dao.count());
+        TestEntity bar = insertEntity("bar");
+
+        foo.setSimpleStringNotNull("foo2");
+
+        assertUpdatedEntities(foo, bar, rxDao.insertOrReplaceInTx(foo, bar));
+    }
+
+    public void testInsertOrReplaceInTxList() {
+        TestEntity foo = insertEntity("foo");
+        TestEntity bar = insertEntity("bar");
+
+        foo.setSimpleStringNotNull("foo2");
+
+        List<TestEntity> list = new ArrayList<>();
+        list.add(foo);
+        list.add(bar);
+
+        assertUpdatedEntities(list, rxDao.insertOrReplaceInTx(list));
+    }
+
+    public void testSave() {
+        TestEntity foo = insertEntity("foo");
+
+        foo.setSimpleStringNotNull("bar");
+
+        assertUpdatedEntity(foo, rxDao.save(foo));
+    }
+
+    public void testSaveInTx() {
+        TestEntity foo = insertEntity("foo");
+        TestEntity bar = insertEntity("bar");
+
+        foo.setSimpleStringNotNull("foo2");
+
+        assertUpdatedEntities(foo, bar, rxDao.saveInTx(foo, bar));
+    }
+
+    public void testSaveInTxList() {
+        TestEntity foo = insertEntity("foo");
+        TestEntity bar = insertEntity("bar");
+
+        foo.setSimpleStringNotNull("foo2");
+
+        List<TestEntity> list = new ArrayList<>();
+        list.add(foo);
+        list.add(bar);
+
+        assertUpdatedEntities(list, rxDao.saveInTx(list));
     }
 
     public void testUpdate() {
         TestEntity foo = insertEntity("foo");
         foo.setSimpleString("foofoo");
-        TestSubscriber<Long> testSubscriber = RxTestHelper.awaitTestSubscriber(rxDao.update(foo));
+        TestSubscriber testSubscriber = RxTestHelper.awaitTestSubscriber(rxDao.update(foo));
         assertEquals(1, testSubscriber.getValueCount());
         assertSame(foo, testSubscriber.getOnNextEvents().get(0));
         List<TestEntity> testEntities = dao.loadAll();
@@ -167,8 +220,134 @@ public class RxDaoTest extends AbstractDaoTest<TestEntityDao, TestEntity, Long> 
         assertEquals("foofoo", testEntities.get(0).getSimpleString());
     }
 
-    // TODO test remaining methods
+    public void testUpdateInTx() {
+        TestEntity foo = insertEntity("foo");
+        TestEntity bar = insertEntity("bar");
 
+        foo.setSimpleStringNotNull("foo2");
+        bar.setSimpleStringNotNull("bar2");
+
+        assertUpdatedEntities(foo, bar, rxDao.updateInTx(foo, bar));
+    }
+
+    public void testUpdateInTxList() {
+        TestEntity foo = insertEntity("foo");
+        TestEntity bar = insertEntity("bar");
+
+        foo.setSimpleStringNotNull("foo2");
+        bar.setSimpleStringNotNull("bar2");
+
+        List<TestEntity> list = new ArrayList<>();
+        list.add(foo);
+        list.add(bar);
+
+        assertUpdatedEntities(list, rxDao.updateInTx(list));
+    }
+
+    private void assertUpdatedEntity(TestEntity foo, Observable<TestEntity> observable) {
+        TestSubscriber<TestEntity> testSubscriber = RxTestHelper.awaitTestSubscriber(observable);
+        assertEquals(1, testSubscriber.getValueCount());
+        TestEntity bar = testSubscriber.getOnNextEvents().get(0);
+        assertSame(foo, bar);
+
+        List<TestEntity> all = dao.loadAll();
+        assertEquals(1, all.size());
+        assertEquals(foo.getSimpleStringNotNull(), all.get(0).getSimpleStringNotNull());
+    }
+
+    private void assertUpdatedEntities(TestEntity foo, TestEntity bar, Observable<Object[]> observable) {
+        TestSubscriber<Object[]> testSubscriber = RxTestHelper.awaitTestSubscriber(observable);
+        assertEquals(1, testSubscriber.getValueCount());
+        Object[] array = testSubscriber.getOnNextEvents().get(0);
+        assertSame(foo, array[0]);
+        assertSame(bar, array[1]);
+
+        List<TestEntity> all = dao.loadAll();
+        assertEquals(2, all.size());
+        assertEquals(foo.getSimpleStringNotNull(), all.get(0).getSimpleStringNotNull());
+        assertEquals(bar.getSimpleStringNotNull(), all.get(1).getSimpleStringNotNull());
+    }
+
+    private void assertUpdatedEntities(List<TestEntity> entities, Observable<List<TestEntity>> observable) {
+        TestEntity foo = entities.get(0);
+        TestEntity bar = entities.get(1);
+
+        TestSubscriber<List<TestEntity>> testSubscriber = RxTestHelper.awaitTestSubscriber(observable);
+        assertEquals(1, testSubscriber.getValueCount());
+        List<TestEntity> result = testSubscriber.getOnNextEvents().get(0);
+        assertSame(foo, result.get(0));
+        assertSame(bar, result.get(1));
+
+        List<TestEntity> all = dao.loadAll();
+        assertEquals(2, all.size());
+        assertEquals(foo.getSimpleStringNotNull(), all.get(0).getSimpleStringNotNull());
+        assertEquals(bar.getSimpleStringNotNull(), all.get(1).getSimpleStringNotNull());
+    }
+
+    public void testDelete() {
+        TestEntity foo = insertEntity("foo");
+        assertDeleted(rxDao.delete(foo));
+    }
+
+    public void testDeleteByKey() {
+        TestEntity foo = insertEntity("foo");
+        assertDeleted(rxDao.deleteByKey(foo.getId()));
+    }
+
+    public void testDeleteAll() {
+        insertEntity("foo");
+        insertEntity("bar");
+        assertDeleted(rxDao.deleteAll());
+    }
+
+    public void testDeleteInTx() {
+        TestEntity foo = insertEntity("foo");
+        TestEntity bar = insertEntity("bar");
+        assertDeleted(rxDao.deleteInTx(foo, bar));
+    }
+
+    public void testDeleteInTxList() {
+        TestEntity foo = insertEntity("foo");
+        TestEntity bar = insertEntity("bar");
+
+        List<TestEntity> list = new ArrayList<>();
+        list.add(foo);
+        list.add(bar);
+
+        assertDeleted(rxDao.deleteInTx(list));
+    }
+
+    public void testDeleteByKeyInTx() {
+        TestEntity foo = insertEntity("foo");
+        TestEntity bar = insertEntity("bar");
+        assertDeleted(rxDao.deleteByKeyInTx(foo.getId(), bar.getId()));
+    }
+
+    public void testDeleteByKeyInTxList() {
+        TestEntity foo = insertEntity("foo");
+        TestEntity bar = insertEntity("bar");
+
+        List<Long> list = new ArrayList<>();
+        list.add(foo.getId());
+        list.add(bar.getId());
+
+        assertDeleted(rxDao.deleteByKeyInTx(list));
+    }
+
+    private void assertDeleted(Observable<Void> observable) {
+        TestSubscriber testSubscriber = RxTestHelper.awaitTestSubscriber(observable);
+        assertEquals(1, testSubscriber.getValueCount());
+        assertNull(testSubscriber.getOnNextEvents().get(0));
+        assertEquals(0, dao.count());
+    }
+
+    public void testCount() {
+        insertEntity("foo");
+        TestSubscriber<Long> testSubscriber = RxTestHelper.awaitTestSubscriber(rxDao.count());
+        assertEquals(1, testSubscriber.getValueCount());
+        Long count = testSubscriber.getOnNextEvents().get(0);
+        assertEquals(1L, (long) count);
+    }
 
     protected TestEntity insertEntity(String simpleStringNotNull) {
         return RxTestHelper.insertEntity(dao, simpleStringNotNull);
