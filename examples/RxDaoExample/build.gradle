@@ -5,8 +5,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.2'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.1.0'
+        classpath dep.androidPlugin
+        classpath dep.greendaoPlugin
     }
 }
 
@@ -31,8 +31,8 @@ greendao {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile "com.android.support:recyclerview-v7:23.4.0"
+    compile dep.appcompat
+    compile dep.recyclerview
 
     // in your app you would include "compile 'org.greenrobot:greendao:x.y.z'"
     compile project(':DaoCore')
