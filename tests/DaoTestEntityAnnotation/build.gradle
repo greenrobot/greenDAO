@@ -1,11 +1,12 @@
 buildscript {
     repositories {
+        jcenter()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.2'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.1.0'
+        classpath dep.androidPlugin
+        classpath dep.greendaoPlugin
     }
 }
 
