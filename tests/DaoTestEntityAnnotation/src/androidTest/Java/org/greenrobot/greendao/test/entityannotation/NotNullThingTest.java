@@ -14,15 +14,19 @@ public class NotNullThingTest extends AbstractDaoTestLongPk<NotNullThingDao, Not
         thing.setId(key);
         thing.setNotNullBoolean(true);
         thing.setNotNullInteger(42);
+        thing.setNotNullWrappedBoolean(true);
+        thing.setNotNullWrappedInteger(42);
         thing.setNullableBoolean(true);
         thing.setNullableInteger(42);
+        thing.setNullableWrappedBoolean(true);
+        thing.setNullableWrappedInteger(42);
         return thing;
     }
 
     public void testInsertNotNullProperties() {
         NotNullThing thing = createEntity(1L);
-        thing.setNotNullBoolean(null);
-        thing.setNotNullInteger(null);
+        thing.setNotNullWrappedBoolean(null);
+        thing.setNotNullWrappedInteger(null);
         try {
             dao.insert(thing);
             fail();
@@ -32,8 +36,8 @@ public class NotNullThingTest extends AbstractDaoTestLongPk<NotNullThingDao, Not
 
     public void testInsertNullableProperties() {
         NotNullThing thing = createEntity(1L);
-        thing.setNullableBoolean(null);
-        thing.setNullableInteger(null);
+        thing.setNullableWrappedBoolean(null);
+        thing.setNullableWrappedInteger(null);
         dao.insert(thing);
 
         loadAndAssertNullableProperties(thing);
@@ -42,8 +46,8 @@ public class NotNullThingTest extends AbstractDaoTestLongPk<NotNullThingDao, Not
     public void testUpdateNotNullProperties() {
         NotNullThing thing = insertEntity();
 
-        thing.setNotNullBoolean(null);
-        thing.setNotNullInteger(null);
+        thing.setNotNullWrappedBoolean(null);
+        thing.setNotNullWrappedInteger(null);
         try {
             dao.update(thing);
             fail();
@@ -54,8 +58,8 @@ public class NotNullThingTest extends AbstractDaoTestLongPk<NotNullThingDao, Not
     public void testUpdateNullableProperties() {
         NotNullThing thing = insertEntity();
 
-        thing.setNullableBoolean(null);
-        thing.setNullableInteger(null);
+        thing.setNullableWrappedBoolean(null);
+        thing.setNullableWrappedInteger(null);
         dao.update(thing);
 
         loadAndAssertNullableProperties(thing);
@@ -69,8 +73,16 @@ public class NotNullThingTest extends AbstractDaoTestLongPk<NotNullThingDao, Not
 
     private void loadAndAssertNullableProperties(NotNullThing thing) {
         NotNullThing loaded = dao.load(thing.getId());
-        assertNull(loaded.getNullableBoolean());
-        assertNull(loaded.getNullableInteger());
+        assertTrue(loaded.getNullableBoolean());
+        assertEquals(42, loaded.getNullableInteger());
+        assertTrue(loaded.getNotNullBoolean());
+        assertEquals(42, loaded.getNotNullInteger());
+
+        assertNull(loaded.getNullableWrappedBoolean());
+        assertNull(loaded.getNullableWrappedInteger());
+
+        assertNotNull(loaded.getNotNullWrappedBoolean());
+        assertNotNull(loaded.getNotNullWrappedInteger());
     }
 
 }
