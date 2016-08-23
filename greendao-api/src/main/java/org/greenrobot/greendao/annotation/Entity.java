@@ -45,8 +45,13 @@ public @interface Entity {
     boolean active() default false;
 
     /**
-     * Whether constructors should be generated.
+     * Whether an all properties constructor should be generated. A no-args constructor is always required.
      */
     boolean generateConstructors() default true;
+
+    /**
+     * Whether getters and setters for properties should be generated if missing.
+     */
+    boolean generateGettersSetters() default true;
 
 }
