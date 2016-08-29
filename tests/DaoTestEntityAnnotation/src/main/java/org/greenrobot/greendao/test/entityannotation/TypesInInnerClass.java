@@ -33,16 +33,14 @@ public class TypesInInnerClass {
     @Id
     Long id;
 
-    // FIXME Remove "TypesInInnerClass."
-    @Convert(converter = TypesInInnerClass.MyInnerTypeConverter.class, columnType = Long.class)
+    @Convert(converter = MyInnerTypeConverter.class, columnType = Long.class)
     TypesInInnerClass.MyInnerType type;
 
     public MyInnerType getType() {
         return this.type;
     }
 
-    // FIXME Remove "TypesInInnerClass."
-    public void setType(TypesInInnerClass.MyInnerType type) {
+    public void setType(MyInnerType type) {
         this.type = type;
     }
 
