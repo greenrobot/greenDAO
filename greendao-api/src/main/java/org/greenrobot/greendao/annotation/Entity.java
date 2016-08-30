@@ -54,4 +54,9 @@ public @interface Entity {
      */
     boolean generateGettersSetters() default true;
 
+    /**
+     * Define a protobuf class of this entity to create an additional, special DAO for.
+     */
+    Class protobuf() default void.class;
+
 }
