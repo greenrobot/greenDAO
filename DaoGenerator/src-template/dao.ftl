@@ -168,7 +168,7 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
     }
 
 </#list>
-<#if entity.active>
+<#if entity.active && !entity.protobuf>
     @Override
     protected final void attachEntity(${entity.className} entity) {
         super.attachEntity(entity);
@@ -272,7 +272,11 @@ as property>\"${property.columnName}\"<#if (index.propertiesOrder[property_index
 <#if entity.pkProperty.notNull>
         throw new UnsupportedOperationException("Unsupported for entities with a non-null key");
 <#else>
+<#if entity.protobuf>
+        return entity.has${entity.pkProperty.propertyName?cap_first}();
+<#else>
         return entity.get${entity.pkProperty.propertyName?cap_first}() != null;
+</#if>
 </#if>
 <#else>
         // TODO
