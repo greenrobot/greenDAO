@@ -404,7 +404,7 @@ public class Property {
             columnType = schema.mapToDbType(propertyType);
         }
         if (columnName == null) {
-            columnName = DaoUtil.dbName(propertyName);
+            columnName = DaoUtil.dbName(propertyName, schema.isUseCamelCaseNameWithoutInsertions());
             nonDefaultColumnName = false;
         } else if (primaryKey && propertyType == PropertyType.Long && columnName.equals("_id")) {
             nonDefaultColumnName = false;
