@@ -61,7 +61,7 @@ import ${additionalImport};
 ${entity.javaDoc}
 <#else>
 /**
- * Entity mapped to table "${entity.tableName}".
+ * Entity mapped to table "${entity.dbName}".
  */
 </#if>
 <#if entity.codeBeforeClass ??>
@@ -70,12 +70,12 @@ ${entity.codeBeforeClass}
 <#assign entityAttrs = []>
 <#if schema.name != "default"><#assign entityAttrs = entityAttrs + ["schema = \"${schema.name}\""]></#if>
 <#if entity.active><#assign entityAttrs = entityAttrs + ["active = true"]></#if>
-<#if entity.nonDefaultTableName><#assign entityAttrs = entityAttrs + ["nameInDb = \"${entity.tableName}\""]></#if>
+<#if entity.nonDefaultDbName><#assign entityAttrs = entityAttrs + ["nameInDb = \"${entity.dbName}\""]></#if>
 <#if (entity.multiIndexes?size > 0)>
     <#assign idxAttr>indexes = <@multiIndexes/></#assign>
     <#assign entityAttrs = entityAttrs + [idxAttr]>
 </#if>
-<#if entity.skipTableCreation><#assign entityAttrs = entityAttrs + ["createInDb = false"]></#if>
+<#if entity.skipCreationInDb><#assign entityAttrs = entityAttrs + ["createInDb = false"]></#if>
 @Entity<#if (entityAttrs?size > 0)>(${entityAttrs?join(", ")})</#if>
 public class ${entity.className}<#if
 entity.superclass?has_content> extends ${entity.superclass} </#if><#if
@@ -83,7 +83,7 @@ entity.interfacesToImplement?has_content> implements <#list entity.interfacesToI
 as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 <#list entity.properties as property>
 <#assign notNull = property.notNull && !primitiveTypes?seq_contains(property.javaTypeInEntity)>
-<#if property.primaryKey||notNull||property.unique||property.index??||property.nonDefaultColumnName||property.converter??>
+<#if property.primaryKey||notNull||property.unique||property.index??||property.nonDefaultDbName||property.converter??>
 
 </#if>
 <#if property.javaDocField ??>
@@ -95,8 +95,8 @@ ${property.javaDocField}
 <#if property.primaryKey>
     @Id<#if property.autoincrement>(autoincrement = true)</#if>
 </#if>
-<#if property.nonDefaultColumnName>
-    @Property(nameInDb = "${property.columnName}")
+<#if property.nonDefaultDbName>
+    @Property(nameInDb = "${property.dbName}")
 </#if>
 <#if property.converter??>
     @Convert(converter = ${property.converter}.class, columnType = ${property.javaType}.class)
@@ -137,8 +137,8 @@ ${property.javaDocField}
     private transient ${toOne.resolvedKeyJavaType[0]} ${toOne.name}__resolvedKey;
 <#else>
     @ToOne
-<#if toOne.fkProperties[0].nonDefaultColumnName>
-    @Property(nameInDb = "${toOne.fkProperties[0].columnName}")
+<#if toOne.fkProperties[0].nonDefaultDbName>
+    @Property(nameInDb = "${toOne.fkProperties[0].dbName}")
 </#if>
 <#if toOne.fkProperties[0].unique>
     @Unique

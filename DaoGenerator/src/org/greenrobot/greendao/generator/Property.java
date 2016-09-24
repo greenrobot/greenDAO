@@ -29,14 +29,30 @@ public class Property {
             property = new Property(schema, entity, propertyType, propertyName);
         }
 
+        @Deprecated
+        /**
+         * @deprecated use dbName
+         */
         public PropertyBuilder columnName(String columnName) {
-            property.columnName = columnName;
-            property.nonDefaultColumnName = columnName != null;
+            return dbName(columnName);
+        }
+
+        public PropertyBuilder dbName(String dbName) {
+            property.dbName = dbName;
+            property.nonDefaultDbName = dbName != null;
             return this;
         }
 
+        @Deprecated
+        /**
+         * @deprecated use dbType
+         */
         public PropertyBuilder columnType(String columnType) {
-            property.columnType = columnType;
+            return dbType(columnType);
+        }
+
+        public PropertyBuilder dbType(String dbType) {
+            property.dbType = dbType;
             return this;
         }
 
@@ -77,7 +93,7 @@ public class Property {
         }
 
         public PropertyBuilder nonPrimitiveType() {
-            if(!property.propertyType.isScalar()) {
+            if (!property.propertyType.isScalar()) {
                 throw new RuntimeException("Type is already non-primitive");
             }
             property.nonPrimitiveType = true;
@@ -178,8 +194,8 @@ public class Property {
     private PropertyType propertyType;
     private final String propertyName;
 
-    private String columnName;
-    private String columnType;
+    private String dbName;
+    private String dbType;
 
     private String customType;
     private String customTypeClassName;
@@ -210,7 +226,7 @@ public class Property {
 
     private String javaType;
 
-    private boolean nonDefaultColumnName;
+    private boolean nonDefaultDbName;
 
     /**
      * Index, which has only this property
@@ -238,16 +254,16 @@ public class Property {
         this.propertyType = propertyType;
     }
 
-    public String getColumnName() {
-        return columnName;
+    public String getDbName() {
+        return dbName;
     }
 
-    public boolean isNonDefaultColumnName() {
-        return nonDefaultColumnName;
+    public boolean isNonDefaultDbName() {
+        return nonDefaultDbName;
     }
 
-    public String getColumnType() {
-        return columnType;
+    public String getDbType() {
+        return dbType;
     }
 
     public boolean isPrimaryKey() {
@@ -413,14 +429,14 @@ public class Property {
 
     void init2ndPass() {
         initConstraint();
-        if (columnType == null) {
-            columnType = schema.mapToDbType(propertyType);
+        if (dbType == null) {
+            dbType = schema.mapToDbType(propertyType);
         }
-        if (columnName == null) {
-            columnName = DaoUtil.dbName(propertyName);
-            nonDefaultColumnName = false;
-        } else if (primaryKey && propertyType == PropertyType.Long && columnName.equals("_id")) {
-            nonDefaultColumnName = false;
+        if (dbName == null) {
+            dbName = DaoUtil.dbName(propertyName);
+            nonDefaultDbName = false;
+        } else if (primaryKey && propertyType == PropertyType.Long && dbName.equals("_id")) {
+            nonDefaultDbName = false;
         }
         if (!nonPrimitiveType) {
             javaType = schema.mapToJavaTypeNotNull(propertyType);

@@ -193,7 +193,7 @@ public class TestDaoGenerator {
 
     protected void createSpecialNames() {
         Entity specialNamesEntity = schema.addEntity("SpecialNamesEntity");
-        specialNamesEntity.setTableName("ORDER TRANSACTION GROUP BY");
+        specialNamesEntity.setDbName("ORDER TRANSACTION GROUP BY");
         specialNamesEntity.addIdProperty();
         specialNamesEntity.addStringProperty("count");
         specialNamesEntity.addStringProperty("select");
@@ -251,11 +251,11 @@ public class TestDaoGenerator {
 
     protected void createSqliteMaster() {
         Entity entity = schema.addEntity("SqliteMaster");
-        entity.setSkipTableCreation(true);
+        entity.setSkipCreationInDb(true);
         entity.setHasKeepSections(true);
         entity.addStringProperty("type");
         entity.addStringProperty("name");
-        entity.addStringProperty("tableName").columnName("tbl_name");
+        entity.addStringProperty("tableName").dbName("tbl_name");
         entity.addLongProperty("rootpage");
         entity.addStringProperty("sql");
     }

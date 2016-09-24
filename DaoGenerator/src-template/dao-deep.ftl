@@ -31,10 +31,10 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
             builder.append(',');
 </#if>
 </#list>
-            builder.append(" FROM ${entity.tableName} T");
+            builder.append(" FROM ${entity.dbName} T");
 <#list entity.toOneRelations as toOne>
-            builder.append(" LEFT JOIN ${toOne.targetEntity.tableName} T${toOne_index}<#--
---> ON T.\"${toOne.fkProperties[0].columnName}\"=T${toOne_index}.\"${toOne.targetEntity.pkProperty.columnName}\"");
+            builder.append(" LEFT JOIN ${toOne.targetEntity.dbName} T${toOne_index}<#--
+--> ON T.\"${toOne.fkProperties[0].dbName}\"=T${toOne_index}.\"${toOne.targetEntity.pkProperty.dbName}\"");
 </#list>
             builder.append(' ');
             selectDeep = builder.toString();

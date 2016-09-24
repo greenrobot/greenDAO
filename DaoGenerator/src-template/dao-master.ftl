@@ -47,7 +47,7 @@ public class ${schema.prefix}DaoMaster extends AbstractDaoMaster {
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
 <#list schema.entities as entity>
-<#if !entity.skipTableCreation>
+<#if !entity.skipCreationInDb>
         ${entity.classNameDao}.createTable(db, ifNotExists);
 </#if>
 </#list>
@@ -56,7 +56,7 @@ public class ${schema.prefix}DaoMaster extends AbstractDaoMaster {
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
 <#list schema.entities as entity>
-<#if !entity.skipTableCreation>
+<#if !entity.skipCreationInDb>
         ${entity.classNameDao}.dropTable(db, ifExists);
 </#if>
 </#list>

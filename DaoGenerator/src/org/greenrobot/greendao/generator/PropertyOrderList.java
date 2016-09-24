@@ -69,7 +69,7 @@ public class PropertyOrderList {
                 if(tablePrefixOrNull != null) {
                     builder.append(tablePrefixOrNull).append('.');
                 }
-                builder.append('\'').append(property.getColumnName()).append('\'').append(' ');
+                builder.append('\'').append(property.getDbName()).append('\'').append(' ');
             }
             if (order != null) {
                 builder.append(order);

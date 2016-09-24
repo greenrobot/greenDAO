@@ -58,8 +58,8 @@ public class Entity {
     private final List<String> interfacesToImplement;
     private final List<ContentProvider> contentProviders;
 
-    private String tableName;
-    private boolean nonDefaultTableName;
+    private String dbName;
+    private boolean nonDefaultDbName;
     private String classNameDao;
     private String classNameTest;
     private String javaPackage;
@@ -75,7 +75,7 @@ public class Entity {
     private boolean constructors;
     private boolean skipGeneration;
     private boolean skipGenerationTest;
-    private boolean skipTableCreation;
+    private boolean skipCreationInDb;
     private Boolean active;
     private Boolean hasKeepSections;
 
@@ -150,7 +150,7 @@ public class Entity {
     /** Adds a standard _id column required by standard Android classes, e.g. list adapters. */
     public PropertyBuilder addIdProperty() {
         PropertyBuilder builder = addLongProperty("id");
-        builder.columnName("_id").primaryKey();
+        builder.dbName("_id").primaryKey();
         return builder;
     }
 
@@ -233,7 +233,7 @@ public class Entity {
         if (unique) {
             propertyBuilder.unique();
         }
-        propertyBuilder.columnName(fkColumnName);
+        propertyBuilder.dbName(fkColumnName);
         Property column = propertyBuilder.getProperty();
         Property[] fkColumns = {column};
         ToOne toOne = new ToOne(schema, this, target, fkColumns, false);
@@ -279,13 +279,21 @@ public class Entity {
         return schema;
     }
 
-    public String getTableName() {
-        return tableName;
+    public String getDbName() {
+        return dbName;
     }
 
+    @Deprecated
+    /**
+     * @deprecated Use setDbName
+     */
     public void setTableName(String tableName) {
-        this.tableName = tableName;
-        this.nonDefaultTableName = tableName != null;
+        setDbName(tableName);
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+        this.nonDefaultDbName = dbName != null;
     }
 
     public String getClassName() {
@@ -385,13 +393,21 @@ public class Entity {
         this.skipGeneration = skipGeneration;
     }
 
-    /** Flag if CREATE & DROP TABLE scripts should be skipped in Dao. */
+    @Deprecated
+    /**
+     * @deprecated Use setSkipCreationInDb
+     */
     public void setSkipTableCreation(boolean skipTableCreation) {
-        this.skipTableCreation = skipTableCreation;
+        setSkipCreationInDb(skipTableCreation);
     }
 
-    public boolean isSkipTableCreation() {
-        return skipTableCreation;
+    /** Flag if CREATE & DROP TABLE scripts should be skipped in Dao. */
+    public void setSkipCreationInDb(boolean skipCreationInDb) {
+        this.skipCreationInDb = skipCreationInDb;
+    }
+
+    public boolean isSkipCreationInDb() {
+        return skipCreationInDb;
     }
 
     public boolean isSkipGenerationTest() {
@@ -557,9 +573,9 @@ public class Entity {
     }
 
     protected void init2ndPassNamesWithDefaults() {
-        if (tableName == null) {
-            tableName = DaoUtil.dbName(className);
-            nonDefaultTableName = false;
+        if (dbName == null) {
+            dbName = DaoUtil.dbName(className);
+            nonDefaultDbName = false;
         }
 
         if (classNameDao == null) {
@@ -591,11 +607,11 @@ public class Entity {
         for (int i = 0; i < indexes.size(); i++) {
             Index index = indexes.get(i);
             if (index.getName() == null) {
-                String indexName = "IDX_" + getTableName();
+                String indexName = "IDX_" + getDbName();
                 List<Property> properties = index.getProperties();
                 for (int j = 0; j < properties.size(); j++) {
                     Property property = properties.get(j);
-                    indexName += "_" + property.getColumnName();
+                    indexName += "_" + property.getDbName();
                     if ("DESC".equalsIgnoreCase(index.getPropertiesOrder().get(j))) {
                         indexName += "_DESC";
                     }
@@ -714,8 +730,8 @@ public class Entity {
         return multiIndexes;
     }
 
-    public boolean isNonDefaultTableName() {
-        return nonDefaultTableName;
+    public boolean isNonDefaultDbName() {
+        return nonDefaultDbName;
     }
 
     @Override
