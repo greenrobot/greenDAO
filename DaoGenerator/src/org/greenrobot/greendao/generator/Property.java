@@ -438,7 +438,9 @@ public class Property {
         } else if (primaryKey && propertyType == PropertyType.Long && dbName.equals("_id")) {
             nonDefaultDbName = false;
         }
-        if (!nonPrimitiveType) {
+
+        // For backwards compatibility, consider notNull. It should be only dependent on nonPrimitiveType in the future.
+        if (notNull && !nonPrimitiveType) {
             javaType = schema.mapToJavaTypeNotNull(propertyType);
         } else {
             javaType = schema.mapToJavaTypeNullable(propertyType);
