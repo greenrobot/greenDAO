@@ -76,6 +76,14 @@ public class Property {
             return this;
         }
 
+        public PropertyBuilder nonPrimitiveType() {
+            if(!property.propertyType.isScalar()) {
+                throw new RuntimeException("Type is already non-primitive");
+            }
+            property.nonPrimitiveType = true;
+            return this;
+        }
+
         public PropertyBuilder index() {
             Index index = new Index();
             index.addProperty(property);
@@ -193,6 +201,7 @@ public class Property {
 
     private boolean unique;
     private boolean notNull;
+    private boolean nonPrimitiveType;
 
     /** Initialized in 2nd pass */
     private String constraints;
@@ -267,6 +276,10 @@ public class Property {
 
     public boolean isNotNull() {
         return notNull;
+    }
+
+    public boolean isNonPrimitiveType() {
+        return nonPrimitiveType || !propertyType.isScalar();
     }
 
     public String getJavaType() {
@@ -409,7 +422,7 @@ public class Property {
         } else if (primaryKey && propertyType == PropertyType.Long && columnName.equals("_id")) {
             nonDefaultColumnName = false;
         }
-        if (notNull) {
+        if (!nonPrimitiveType) {
             javaType = schema.mapToJavaTypeNotNull(propertyType);
         } else {
             javaType = schema.mapToJavaTypeNullable(propertyType);

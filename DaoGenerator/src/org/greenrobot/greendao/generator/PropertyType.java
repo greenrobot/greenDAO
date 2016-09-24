@@ -20,9 +20,22 @@ package org.greenrobot.greendao.generator;
 
 /**
  * Currently available types for properties.
- * 
+ *
  * @author Markus
  */
 public enum PropertyType {
-    Byte, Short, Int, Long, Boolean, Float, Double, String, ByteArray, Date
+
+    Byte(true), Short(true), Int(true), Long(true), Boolean(true), Float(true), Double(true),
+    String(false), ByteArray(false), Date(false);
+
+    private final boolean scalar;
+
+    PropertyType(boolean scalar) {
+        this.scalar = scalar;
+    }
+
+    /** True if the type can be prepresented using a scalar (primitive type). */
+    public boolean isScalar() {
+        return scalar;
+    }
 }
