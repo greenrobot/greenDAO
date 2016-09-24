@@ -7,6 +7,7 @@ import org.greenrobot.greendao.annotation.*;
 // KEEP INCLUDES - put your custom includes here
 import android.os.Build;
 // KEEP INCLUDES END
+
 /**
  * Entity mapped to table "KEEP_ENTITY".
  */

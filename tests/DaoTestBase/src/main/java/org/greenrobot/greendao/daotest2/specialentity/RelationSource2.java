@@ -16,6 +16,7 @@ import org.greenrobot.greendao.daotest2.to1_specialentity.ToOneTarget2;
 
 // KEEP INCLUDES - put your custom includes here
 // KEEP INCLUDES END
+
 /**
  * Entity mapped to table "RELATION_SOURCE2".
  */
