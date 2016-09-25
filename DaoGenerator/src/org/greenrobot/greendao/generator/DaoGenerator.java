@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import freemarker.template.TemplateNotFoundException;
 
 /**
  * Once you have your model created, use this class to generate entities and DAOs.
@@ -58,15 +59,38 @@ public class DaoGenerator {
         patternKeepFields = compilePattern("FIELDS");
         patternKeepMethods = compilePattern("METHODS");
 
-        Configuration config = new Configuration(Configuration.VERSION_2_3_23);
-        config.setClassForTemplateLoading(this.getClass(), "/");
-
+        Configuration config = getConfiguration("dao.ftl");
         templateDao = config.getTemplate("dao.ftl");
         templateDaoMaster = config.getTemplate("dao-master.ftl");
         templateDaoSession = config.getTemplate("dao-session.ftl");
         templateEntity = config.getTemplate("entity.ftl");
         templateDaoUnitTest = config.getTemplate("dao-unit-test.ftl");
         templateContentProvider = config.getTemplate("content-provider.ftl");
+    }
+
+    private Configuration getConfiguration(String probingTemplate) throws IOException {
+        Configuration config = new Configuration(Configuration.VERSION_2_3_23);
+        config.setClassForTemplateLoading(getClass(), "/");
+
+        try {
+            config.getTemplate(probingTemplate);
+        } catch (TemplateNotFoundException e) {
+            // When running from an IDE like IntelliJ, class loading resources may fail for some reason (Gradle is OK)
+
+            // Working dir is module dir
+            File dir = new File("src/main/resources/");
+            if (!dir.exists()) {
+                // Working dir is base module dir
+                dir = new File("DaoGenerator/src/main/resources/");
+            }
+            if (dir.exists() && new File(dir, probingTemplate).exists()) {
+                config.setDirectoryForTemplateLoading(dir);
+                config.getTemplate(probingTemplate);
+            } else {
+                throw e;
+            }
+        }
+        return config;
     }
 
     private Pattern compilePattern(String sectionName) {
