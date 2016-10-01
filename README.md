@@ -30,14 +30,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.1.1'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.0'
     }
 }
  
 apply plugin: 'org.greenrobot.greendao'
  
 dependencies {
-    compile 'org.greenrobot:greendao:3.1.1'
+    compile 'org.greenrobot:greendao:3.2.0'
 }
 ```
 
