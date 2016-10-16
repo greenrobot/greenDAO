@@ -407,8 +407,8 @@ public class Property {
 			}
 			break;
 		case Byte:
+			parcelableReadStatement = propertyName + " = in.readByte();";
 			if (notNull) {
-				parcelableReadStatement = propertyName + " = in.readByte();";
 				parcelableWriteStatement = "out.writeByte(" + propertyName + ");";
 			} else {
 				parcelableWriteStatement = "if (" + propertyName + " == null) out.writeByte(0); else out.writeByte(" + propertyName + ");";
@@ -425,40 +425,40 @@ public class Property {
 			parcelableWriteStatement = "out.writeLong(" + propertyName + " == null ? 0 : " + propertyName + ".getTime());";
 			break;
 		case Double:
+			parcelableReadStatement = propertyName + " = in.readDouble();";
 			if (notNull) {
-				parcelableReadStatement = propertyName + " = in.readDouble();";
 				parcelableWriteStatement = "out.writeDouble(" + propertyName + ");";
 			} else {
 				parcelableWriteStatement = "if (" + propertyName + " == null) out.writeDouble(0); else out.writeDouble(" + propertyName + ");";
 			}
 			break;
 		case Float:
+			parcelableReadStatement = propertyName + " = in.readFloat();";
 			if (notNull) {
-				parcelableReadStatement = propertyName + " = in.readFloat();";
 				parcelableWriteStatement = "out.writeFloat(" + propertyName + ");";
 			} else {
 				parcelableWriteStatement = "if (" + propertyName + " == null) out.writeFloat(0); else out.writeFloat(" + propertyName + ");";
 			}
 			break;
 		case Int:
+			parcelableReadStatement = propertyName + " = in.readInt();";
 			if (notNull) {
-				parcelableReadStatement = propertyName + " = in.readInt();";
 				parcelableWriteStatement = "out.writeInt(" + propertyName + ");";
 			} else {
 				parcelableWriteStatement = "if (" + propertyName + " == null) out.writeInt(0); else out.writeInt(" + propertyName + ");";
 			}
 			break;
 		case Long:
+			parcelableReadStatement = propertyName + " = in.readLong();";
 			if (notNull) {
-				parcelableReadStatement = propertyName + " = in.readLong();";
 				parcelableWriteStatement = "out.writeLong(" + propertyName + ");";
 			} else {
 				parcelableWriteStatement = "if (" + propertyName + " == null) out.writeLong(0); else out.writeLong(" + propertyName + ");";
 			}
 			break;
 		case Short:
+			parcelableReadStatement = propertyName + " = in.readInt();";
 			if (notNull) {
-				parcelableReadStatement = propertyName + " = in.readInt();";
 				parcelableWriteStatement = "out.writeInt(" + propertyName + ");";
 			} else {
 				parcelableWriteStatement = "if (" + propertyName + " == null) out.writeInt(0); else out.writeInt(" + propertyName + ");";
