@@ -41,7 +41,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.8'
 
     // This is only needed if you want to use encrypted databases
-    compile 'net.zetetic:android-database-sqlcipher:3.5.1'
+    compile 'net.zetetic:android-database-sqlcipher:3.5.4'
 }
 
 uploadArchives.enabled = false
