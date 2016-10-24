@@ -8,13 +8,14 @@ env:
     # increase adb timeout (2 minutes by default)
     - ADB_INSTALL_TIMEOUT=8
   matrix:
-    - ANDROID_SDKS=android-23,sysimg-23  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
+    - ANDROID_SDKS=android-25,sysimg-25  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
 android:
   components:
+    - tools # to get the new `repository-11.xml`
+    - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
     - platform-tools
-    - tools
-    - build-tools-23.0.3
-    - android-23
+    - build-tools-25.0.0
+    - android-25
     - extra-android-m2repository
 before_install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
@@ -25,4 +26,4 @@ before_script:
   - ./ci/wait_for_emulator
   - adb shell input keyevent 82 &
 script:
-    - TERM=dumb ./gradlew connectedCheck
+    - TERM=dumb ./gradlew build connectedCheck
