@@ -28,4 +28,4 @@ before_script:
   - ./ci/wait_for_emulator
   - adb shell input keyevent 82 &
 script:
-    - TERM=dumb ./gradlew build connectedCheck --stacktrace
+    - TERM=dumb ./gradlew connectedCheck --stacktrace
