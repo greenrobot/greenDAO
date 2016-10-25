@@ -7,6 +7,8 @@ env:
   global:
     # increase adb timeout (2 minutes by default)
     - ADB_INSTALL_TIMEOUT=8
+    # Reduce heap size to prevent memory issues
+    - GRADLE_OPTS="-Xms128m"
   matrix:
     - ANDROID_SDKS=android-25,sysimg-25  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
 android:
