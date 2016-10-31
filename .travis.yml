@@ -10,7 +10,7 @@ env:
     # Reduce heap size to prevent memory issues
     - GRADLE_OPTS="-Xms128m"
   matrix:
-    - ANDROID_SDKS=android-25,sysimg-25  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
+    - ANDROID_SDKS=android-25,sysimg-25  ANDROID_TARGET=android-22  ANDROID_ABI=armeabi-v7a
 android:
   components:
     - tools # to get the new `repository-11.xml`
@@ -19,6 +19,7 @@ android:
     - build-tools-25.0.0
     - android-25
     - extra-android-m2repository
+    - sys-img-armeabi-v7a-android-22
 before_install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
