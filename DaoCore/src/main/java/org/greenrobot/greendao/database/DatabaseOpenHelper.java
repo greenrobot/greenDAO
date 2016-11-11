@@ -131,7 +131,7 @@ public abstract class DatabaseOpenHelper extends SQLiteOpenHelper {
      */
     public Database getEncryptedWritableDb(String password) {
         EncryptedHelper encryptedHelper = checkEncryptedHelper();
-        return encryptedHelper.wrap(encryptedHelper.getReadableDatabase(password));
+        return encryptedHelper.wrap(encryptedHelper.getWritableDatabase(password));
     }
 
     /**
