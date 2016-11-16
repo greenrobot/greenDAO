@@ -53,6 +53,8 @@ For more details on greenDAO please check [greenDAO's website](http://greenrobot
 
 [Documentation](http://greenrobot.org/greendao/documentation/)
 
+[中文版文档](https://github.com/huayicheng2015/greenDAO/wiki)
+
 [Changelog](http://greenrobot.org/greendao/changelog/)
 
 [Technical FAQ](http://greenrobot.org/greendao/documentation/technical-faq/)
