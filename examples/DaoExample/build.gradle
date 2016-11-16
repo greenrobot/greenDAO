@@ -5,8 +5,8 @@ buildscript {
     }
 
     dependencies {
-        classpath dep.androidPlugin
-        classpath dep.greendaoPlugin
+        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
     }
 }
 
@@ -14,13 +14,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
 
 android {
-    buildToolsVersion rootProject.ext.buildToolsVersion
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion '25.0.0'
+    compileSdkVersion 25
 
     defaultConfig {
         applicationId "org.greenrobot.greendao.example"
         minSdkVersion 15
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        targetSdkVersion 25
         versionCode 1
         versionName "3"
 
@@ -33,14 +33,13 @@ greendao {
 }
 
 dependencies {
-    compile dep.appcompat
-    compile dep.recyclerview
-
-    // in your app you would include "compile 'org.greenrobot:greendao:x.y.z'"
-    compile project(':DaoCore')
+    compile 'org.greenrobot:greendao:3.2.0'
 
     // This is only needed if you want to use encrypted databases
     compile 'net.zetetic:android-database-sqlcipher:3.5.4'
+
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:recyclerview-v7:25.0.1'
 }
 
 uploadArchives.enabled = false

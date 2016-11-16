@@ -9,12 +9,10 @@ ext {
     minSdkVersion = 7
     targetSdkVersion = 25
 
-    // common dependencies for Android projects
+    // common dependencies for Android projects (not to be used in example projects for better copy and paste)
     dep = [
             androidPlugin: 'com.android.tools.build:gradle:2.2.2',
-            greendaoPlugin: 'org.greenrobot:greendao-gradle-plugin:3.1.1',
-            appcompat: 'com.android.support:appcompat-v7:25.0.0',
-            recyclerview: 'com.android.support:recyclerview-v7:25.0.0'
+            greendaoPlugin: 'org.greenrobot:greendao-gradle-plugin:3.2.1'
     ]
 }
 
