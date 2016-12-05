@@ -403,7 +403,7 @@ public class Property {
 			if (notNull) {
 				parcelableWriteStatement = "out.writeByte((byte)(" + propertyName + " ? 1 : 0));";
 			} else {
-				parcelableWriteStatement = "if (" + propertyName + " == null) out.writeByte(0); else out.writeByte((byte)(" + propertyName + " ? 1 : 0));";
+				parcelableWriteStatement = "if (" + propertyName + " == null) out.writeByte((byte)0); else out.writeByte((byte)(" + propertyName + " ? 1 : 0));";
 			}
 			break;
 		case Byte:
@@ -411,7 +411,7 @@ public class Property {
 			if (notNull) {
 				parcelableWriteStatement = "out.writeByte(" + propertyName + ");";
 			} else {
-				parcelableWriteStatement = "if (" + propertyName + " == null) out.writeByte(0); else out.writeByte(" + propertyName + ");";
+				parcelableWriteStatement = "if (" + propertyName + " == null) out.writeByte((byte)0); else out.writeByte(" + propertyName + ");";
 			}
 			break;
 		case ByteArray:
