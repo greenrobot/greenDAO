@@ -27,7 +27,9 @@ import rx.Observable;
 import rx.Observable.OnSubscribe;
 import rx.Scheduler;
 import rx.Subscriber;
+import rx.exceptions.CompositeException;
 import rx.exceptions.Exceptions;
+import rx.plugins.RxJavaHooks;
 
 /**
  * Gets {@link org.greenrobot.greendao.query.Query} results in Rx fashion.
@@ -98,9 +100,14 @@ public class RxQuery<T> extends RxBase {
                     if (!subscriber.isUnsubscribed()) {
                         subscriber.onCompleted();
                     }
-                } catch (Throwable e) {
-                    Exceptions.throwIfFatal(e);
-                    subscriber.onError(e);
+                } catch (Throwable t) {
+                    Exceptions.throwIfFatal(t);
+                    try {
+                        subscriber.onError(t);
+                    } catch (Throwable inner) {
+                        Exceptions.throwIfFatal(inner);
+                        RxJavaHooks.onError(new CompositeException(t, inner));
+                    }
                 }
             }
         });
