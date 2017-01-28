@@ -164,7 +164,7 @@ public class LazyList<E> implements List<E>, Closeable {
     }
 
     /** Like get but does not load the entity if it was not loaded before. */
-    public E peak(int location) {
+    public E peek(int location) {
         if (entities != null) {
             return entities.get(location);
         } else {

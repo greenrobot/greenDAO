@@ -36,16 +36,16 @@ public class LazyListTest extends TestEntityTestBase {
 
         LazyList<TestEntity> listLazy = dao.queryBuilder().build().listLazy();
         assertEquals(list.size(), listLazy.size());
-        assertNull(listLazy.peak(0));
-        assertNull(listLazy.peak(1));
+        assertNull(listLazy.peek(0));
+        assertNull(listLazy.peek(1));
 
         assertNotNull(listLazy.get(1));
-        assertNull(listLazy.peak(0));
-        assertNotNull(listLazy.peak(1));
+        assertNull(listLazy.peek(0));
+        assertNotNull(listLazy.peek(1));
 
         assertNotNull(listLazy.get(0));
-        assertNotNull(listLazy.peak(0));
-        assertNotNull(listLazy.peak(1));
+        assertNotNull(listLazy.peek(0));
+        assertNotNull(listLazy.peek(1));
     }
 
     public void testGetAll100() {
@@ -84,7 +84,7 @@ public class LazyListTest extends TestEntityTestBase {
     public void testIterator() {
         ArrayList<TestEntity> list = insert(100);
         LazyList<TestEntity> listLazy = dao.queryBuilder().orderAsc(Properties.SimpleInteger).build().listLazy();
-        testIerator(list, listLazy, false);
+        testIterator(list, listLazy, false);
         assertTrue(listLazy.isClosed());
     }
 
@@ -92,12 +92,12 @@ public class LazyListTest extends TestEntityTestBase {
         ArrayList<TestEntity> list = insert(100);
         LazyList<TestEntity> listLazy = dao.queryBuilder().orderAsc(Properties.SimpleInteger).build()
                 .listLazyUncached();
-        testIerator(list, listLazy, true);
+        testIterator(list, listLazy, true);
         assertFalse(listLazy.isClosed());
         listLazy.close();
     }
 
-    protected void testIerator(ArrayList<TestEntity> list, LazyList<TestEntity> listLazy, boolean uncached) {
+    protected void testIterator(ArrayList<TestEntity> list, LazyList<TestEntity> listLazy, boolean uncached) {
         ListIterator<TestEntity> iterator = listLazy.listIterator();
         try {
             iterator.previous();
@@ -119,12 +119,12 @@ public class LazyListTest extends TestEntityTestBase {
             }
 
             TestEntity entity = list.get(i);
-            assertNull(listLazy.peak(i));
+            assertNull(listLazy.peek(i));
             TestEntity lazyEntity = iterator.next();
             if (uncached) {
-                assertNull(listLazy.peak(i));
+                assertNull(listLazy.peek(i));
             } else {
-                assertNotNull(listLazy.peak(i));
+                assertNotNull(listLazy.peek(i));
             }
             assertEquals(entity.getId(), lazyEntity.getId());
         }

@@ -76,16 +76,16 @@ public class RawQueryTest extends TestEntityTestBase {
 
         LazyList<TestEntity> listLazy = dao.queryRawCreate("").listLazy();
         assertEquals(list.size(), listLazy.size());
-        assertNull(listLazy.peak(0));
-        assertNull(listLazy.peak(1));
+        assertNull(listLazy.peek(0));
+        assertNull(listLazy.peek(1));
 
         assertNotNull(listLazy.get(1));
-        assertNull(listLazy.peak(0));
-        assertNotNull(listLazy.peak(1));
+        assertNull(listLazy.peek(0));
+        assertNotNull(listLazy.peek(1));
 
         assertNotNull(listLazy.get(0));
-        assertNotNull(listLazy.peak(0));
-        assertNotNull(listLazy.peak(1));
+        assertNotNull(listLazy.peek(0));
+        assertNotNull(listLazy.peek(1));
     }
 
 }
