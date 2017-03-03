@@ -1,5 +1,5 @@
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.14.1'
+    gradleVersion = '3.3.0'
 }
 
 ext {
@@ -11,7 +11,7 @@ ext {
 
     // common dependencies for Android projects (not to be used in example projects for better copy and paste)
     dep = [
-            androidPlugin: 'com.android.tools.build:gradle:2.2.2',
+            androidPlugin: 'com.android.tools.build:gradle:2.3.0',
             greendaoPlugin: 'org.greenrobot:greendao-gradle-plugin:3.2.1'
     ]
 }
