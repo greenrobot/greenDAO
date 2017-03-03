@@ -119,7 +119,11 @@ public class NoteActivity extends AppCompatActivity {
         final DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
         String comment = "Added on " + df.format(new Date());
 
-        Note note = new Note(null, noteText, comment, new Date(), NoteType.TEXT);
+        Note note = new Note();
+        note.setText(noteText);
+        note.setComment(comment);
+        note.setDate(new Date());
+        note.setType(NoteType.TEXT);
         noteDao.insert(note);
         Log.d("DaoExample", "Inserted new note, ID: " + note.getId());
 
