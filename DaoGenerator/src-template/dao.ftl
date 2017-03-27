@@ -115,7 +115,7 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 <#if entity.indexes?has_content >
         // Add Indexes
 <#list entity.indexes as index>
-        db.execSQL("CREATE <#if index.unique>UNIQUE </#if>INDEX " + constraint + "${index.name} ON ${entity.dbName}" +
+        db.execSQL("CREATE <#if index.unique>UNIQUE </#if>INDEX " + constraint + "${index.name} ON \"${entity.dbName}\"" +
                 " (<#list index.properties 
 as property>\"${property.dbName}\"<#if (index.propertiesOrder[property_index])??> ${index.propertiesOrder[property_index]}</#if><#sep>,</#list>);");
 </#list>
