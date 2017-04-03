@@ -859,6 +859,7 @@ public abstract class AbstractDao<T, K> {
     public void updateInTx(Iterable<T> entities) {
         DatabaseStatement stmt = statements.getUpdateStatement();
         db.beginTransaction();
+        // txEx: just to preserve original exception in case another exceptions is thrown in endTransaction()
         RuntimeException txEx = null;
         try {
             synchronized (stmt) {
@@ -896,6 +897,9 @@ public abstract class AbstractDao<T, K> {
                     throw e;
                 }
             }
+        }
+        if (txEx != null) {
+            throw txEx;
         }
     }
 
@@ -935,6 +939,7 @@ public abstract class AbstractDao<T, K> {
     /**
      * The returned RxDao is a special DAO that let's you interact with Rx Observables without any Scheduler set
      * for subscribeOn.
+     *
      * @see #rx()
      */
     @Experimental
