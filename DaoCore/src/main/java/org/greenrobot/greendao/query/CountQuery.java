@@ -20,6 +20,8 @@ import android.database.Cursor;
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.DaoException;
 
+import java.util.Date;
+
 public class CountQuery<T> extends AbstractQuery<T> {
 
     private final static class QueryData<T2> extends AbstractQueryData<T2, CountQuery<T2>> {
@@ -66,6 +68,22 @@ public class CountQuery<T> extends AbstractQuery<T> {
         } finally {
             cursor.close();
         }
+    }
+
+    // copy setParameter methods to allow easy chaining
+    @Override
+    public CountQuery<T> setParameter(int index, Object parameter) {
+        return (CountQuery<T>) super.setParameter(index, parameter);
+    }
+
+    @Override
+    public CountQuery<T> setParameter(int index, Date parameter) {
+        return (CountQuery<T>) super.setParameter(index, parameter);
+    }
+
+    @Override
+    public CountQuery<T> setParameter(int index, Boolean parameter) {
+        return (CountQuery<T>) super.setParameter(index, parameter);
     }
 
 }
