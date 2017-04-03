@@ -18,6 +18,8 @@ package org.greenrobot.greendao.query;
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.database.Database;
 
+import java.util.Date;
+
 /**
  * A repeatable query for deleting entities.<br/>
  * New API note: this is more likely to change.
@@ -76,6 +78,22 @@ public class DeleteQuery<T> extends AbstractQuery<T> {
                 db.endTransaction();
             }
         }
+    }
+
+    // copy setParameter methods to allow easy chaining
+    @Override
+    public DeleteQuery<T> setParameter(int index, Object parameter) {
+        return (DeleteQuery<T>) super.setParameter(index, parameter);
+    }
+
+    @Override
+    public DeleteQuery<T> setParameter(int index, Date parameter) {
+        return (DeleteQuery<T>) super.setParameter(index, parameter);
+    }
+
+    @Override
+    public DeleteQuery<T> setParameter(int index, Boolean parameter) {
+        return (DeleteQuery<T>) super.setParameter(index, parameter);
     }
 
 }

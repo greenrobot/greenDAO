@@ -19,6 +19,8 @@ import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.InternalQueryDaoAccess;
 
+import java.util.Date;
+
 /**
  * A repeatable query returning entities.
  * 
@@ -74,6 +76,22 @@ abstract class AbstractQuery<T> {
             parameters[index] = null;
         }
         return this;
+    }
+
+    /**
+     * @see #setParameter(int, Object)
+     */
+    public AbstractQuery<T> setParameter(int index, Date parameter) {
+        Long converted = parameter != null ? parameter.getTime() : null;
+        return setParameter(index, converted);
+    }
+
+    /**
+     * @see #setParameter(int, Object)
+     */
+    public AbstractQuery<T> setParameter(int index, Boolean parameter) {
+        Integer converted = parameter != null ? (parameter ? 1 : 0) : null;
+        return setParameter(index, converted);
     }
 
     protected void checkThread() {

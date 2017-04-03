@@ -18,6 +18,8 @@ package org.greenrobot.greendao.query;
 import android.database.Cursor;
 import org.greenrobot.greendao.AbstractDao;
 
+import java.util.Date;
+
 /**
  * A repeatable query returning a raw android.database.Cursor. Note, that using cursors is usually a hassle and
  * greenDAO provides a higher level abstraction using entities (see {@link org.greenrobot.greendao.query.Query}). This class
@@ -72,6 +74,22 @@ public class CursorQuery<T> extends AbstractQueryWithLimit<T> {
     public Cursor query() {
         checkThread();
         return dao.getDatabase().rawQuery(sql, parameters);
+    }
+
+    // copy setParameter methods to allow easy chaining
+    @Override
+    public CursorQuery<T> setParameter(int index, Object parameter) {
+        return (CursorQuery<T>) super.setParameter(index, parameter);
+    }
+
+    @Override
+    public CursorQuery<T> setParameter(int index, Date parameter) {
+        return (CursorQuery<T>) super.setParameter(index, parameter);
+    }
+
+    @Override
+    public CursorQuery<T> setParameter(int index, Boolean parameter) {
+        return (CursorQuery<T>) super.setParameter(index, parameter);
     }
 
 }
