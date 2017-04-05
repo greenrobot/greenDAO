@@ -33,16 +33,16 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.0'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1' <-- add plugin
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2' // add plugin
     }
 }
  
 // In your app projects build.gradle file:
 apply plugin: 'com.android.application'
-apply plugin: 'org.greenrobot.greendao' <-- apply plugin
+apply plugin: 'org.greenrobot.greendao' // apply plugin
  
 dependencies {
-    compile 'org.greenrobot:greendao:3.2.0' <-- add library
+    compile 'org.greenrobot:greendao:3.2.2' // add library
 }
 ```
 
