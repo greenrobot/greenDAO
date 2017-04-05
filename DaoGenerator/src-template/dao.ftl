@@ -128,6 +128,22 @@ as property>\"${property.columnName}\"<#if property_has_next>,</#if></#list>);")
     public static void updateTable(SQLiteDatabase db, int oldVer, int newVer) {
 	    for (Property p : Properties.all) {
 			if (p.version > oldVer) {
+			    Cursor cursor = db.rawQuery("PRAGMA table_info("+ TABLENAME +")", null);
+                if (cursor != null) {
+                    boolean skip = false;
+                    while (cursor.moveToNext()) {
+                        String name = cursor.getString(cursor.getColumnIndex("name"));
+                        if (p.columnName.equalsIgnoreCase(name)) {
+                            skip = true;
+                            break;
+                        }
+                    }
+                    if (skip) {
+	    		        Log.w(TAG, "Skipping add column '" + p.columnName + "' because already exists");
+	    		        continue;
+                    }
+                    cursor.close();
+                }
 	    		Log.i(TAG, "Alter table " + TABLENAME + " add column '" + p.columnName + "' " + p.sqlType);
 	    		db.execSQL("ALTER TABLE \"" + TABLENAME + "\" ADD \"" + p.columnName + "\" " + p.sqlType);
 	    	}
