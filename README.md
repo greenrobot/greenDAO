@@ -29,7 +29,7 @@ Add the following Gradle configuration to your Android project:
 buildscript {
     repositories {
         jcenter()
-        mavenCentral() <-- add repository
+        mavenCentral() // add repository
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.0'
