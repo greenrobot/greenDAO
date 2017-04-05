@@ -11,7 +11,7 @@ cache:
 env:
   global:
     - ANDROID_API_LEVEL=24
-    - ANDROID_BUILD_TOOLS_VERSION=25.0.0
+    - ANDROID_BUILD_TOOLS_VERSION=25.0.2
     - ANDROID_ABI=armeabi-v7a
     - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
     
