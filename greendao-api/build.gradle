@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 group = 'org.greenrobot'
-version = '3.2.2'
+version = rootProject.version
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -9,7 +9,7 @@ targetCompatibility = 1.7
 javadoc {
     failOnError = false
     title = " greenDAO API ${version} API"
-    options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
+    options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2017 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
     doLast {
         copy {
             from '../javadoc-style'

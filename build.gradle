@@ -1,9 +1,13 @@
+// Sub projects may reference rootProject.version
+version = '3.2.3-SNAPSHOT'
+
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.3.0'
+    gradleVersion = '3.5'
+    distributionType = org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 }
 
 ext {
-    buildToolsVersion = '25.0.0'
+    buildToolsVersion = '25.0.2'
     compileSdkVersion = 25
 
     minSdkVersion = 7
@@ -11,8 +15,8 @@ ext {
 
     // common dependencies for Android projects (not to be used in example projects for better copy and paste)
     dep = [
-            androidPlugin: 'com.android.tools.build:gradle:2.3.0',
-            greendaoPlugin: 'org.greenrobot:greendao-gradle-plugin:3.2.1'
+            androidPlugin: 'com.android.tools.build:gradle:2.3.1',
+            greendaoPlugin: 'org.greenrobot:greendao-gradle-plugin:3.2.2'
     ]
 }
 

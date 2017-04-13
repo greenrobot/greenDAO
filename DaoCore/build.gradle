@@ -4,7 +4,7 @@ apply plugin: 'signing'
 
 group = 'org.greenrobot'
 archivesBaseName = 'greendao'
-version = '3.2.2'
+version = rootProject.version
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
@@ -27,7 +27,7 @@ dependencies {
 javadoc {
     failOnError = false
     title = " greenDAO ${version} API"
-    options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
+    options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2017 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
 
     excludes = ['org/greenrobot/dao/internal', 'org/greenrobot/dao/Internal*']
     def srcApi = project(':greendao-api').file('src/main/java/')
