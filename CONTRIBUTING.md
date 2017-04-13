@@ -34,12 +34,6 @@ Requesting features:
 
  * Ask yourself: is the feature useful for a majority users? One of our major goals is to keep the API simple and concise. We do not want to cover all possible use cases, but those that make 80% of users happy.
 
-A Note on Pull Requests
-=======================
-Pull requests (and issues) may queue up up a bit. Usually, pull requests and issues are checked when new releases are planned.
-
-For bigger pull requests, it's a good idea to check with the maintainer upfront about the idea and the implementation outline.
-
 Thanks for reading!
 ===================
-It's your contributions and feedback that makes maintaining this library fun.
+It's your feedback that makes maintaining this library fun.

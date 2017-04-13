@@ -1,3 +1,5 @@
+**Looking for object persistence faster than SQLite? Check out our new mobile database [ObjectBox](https://github.com/greenrobot/ObjectBox) (beta).**  
+
 greenDAO
 ========
 greenDAO is a light & fast ORM for Android that maps objects to SQLite databases. Being highly optimized for Android, greenDAO offers great performance and consumes minimal memory.
@@ -32,7 +34,7 @@ buildscript {
         mavenCentral() // add repository
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:2.3.1'
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2' // add plugin
     }
 }
@@ -66,6 +68,8 @@ For more details on greenDAO please check [greenDAO's website](http://greenrobot
 
 More Open Source by greenrobot
 ==============================
+[__ObjectBox__](https://github.com/greenrobot/ObjectBox) is a new superfast mobile database currently in beta.
+
 [__EventBus__](https://github.com/greenrobot/EventBus) is a central publish/subscribe bus for Android with optional delivery threads, priorities, and sticky events. A great tool to decouple components (e.g. Activities, Fragments, logic components) from each other.
 
 [__Essentials__](https://github.com/greenrobot/essentials) is a set of utility classes and hash functions for Android & Java projects.
