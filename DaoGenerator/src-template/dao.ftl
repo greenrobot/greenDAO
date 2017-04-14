@@ -206,13 +206,12 @@ as property>\"${property.dbName}\"<#if (index.propertiesOrder[property_index])??
 <#--
 ############################## readEntity non-protobuff, constructor ############################## 
 -->
-        ${entity.className} entity = new ${entity.className}( //
+        ${entity.className} entity = new ${entity.className}();
 <#list entity.properties as property>
-            <#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#--
-            -->${property.getEntityValueExpression("cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})")}<#--
-            --><#if property_has_next>,</#if> // ${property.propertyName}
+        entity.set${property.propertyName?cap_first}(<#if !property.notNull>cursor.isNull(offset + ${property_index}) ? null : </#if><#--
+                       -->${property.getEntityValueExpression("cursor.get${toCursorType[property.propertyType]}(offset + ${property_index})")});
 </#list>        
-        );
+
         return entity;
 <#else>
 <#--
