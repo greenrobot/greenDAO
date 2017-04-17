@@ -1,0 +1,907 @@
+ 目前android经常用的orm框架主要有greenDAO、OrmLite、AndrORM。 综合了网上的各种评价，greenDAO的运行效率最高，内存消耗最少，性能最佳。因此决定采用greenDAO框架，对项目的orm框架进行改进。
+
+wKioL1LjvcbQqp7UAALzTaGquzw329.jpg
+
+greenDAO与ORMLite性能对比 
+
+
+
+
+经过两天的修改，终于将项目里的数据库相关的都优化完了。在这过程中，发现greenDAO的性能确实不错，而且使用相当方便，不再需要涉及到任何的sql语言，可以直接通过对象类进行建表、增删改查等，尤其是api接口又方便易懂。在摸索学习中发现国内相关学习资料实在实在是太少，遂决定在此记录下自己对使用这个orm框架的一些心得和方法总结。
+
+
+
+
+一、greenDAO相关
+
+1.greenDAO官网：http://greendao-orm.com/
+
+2.项目下载地址：https://github.com/greenrobot/greenDAO（或者官网）
+
+greenDAO是一个可以帮助Android开发者快速将Java对象映射到SQLite数据库的表单中的ORM解决方案，通过使用一个简单的面向对象API，开发者可以对Java对象进行存储、更新、删除和查询。
+
+greenDAO的主要设计目标：
+
+   *最大性能（最快的Android ORM）
+
+
+   *易于使用API
+
+    *高度优化
+
+   *最小内存消耗
+
+
+二、使用步骤
+
+ 官方Demo里共有六个工程目录，分别为：
+
+(1).DaoCore：库目录，即jar文件greendao-1.3.0-beta-1.jar的代码；
+
+(2).DaoExample：android范例工程；
+
+(3).DaoExampleGenerator：DaoExample工程的DAO类构造器，java工程；
+
+(4).DaoGenerator：DAO类构造器，java工程；
+
+(5).DaoTest、PerformanceTestOrmLite：其他测试相关的工程。
+
+
+
+（一）DAO类构造
+
+ 首先需要新建一个java工程来生成DAO类文件，该工程需要导入greendao-generator.jar和freemarker.jar文件到项目中。
+
+
+package de.greenrobot.daogenerator.gentest;
+
+import de.greenrobot.daogenerator.DaoGenerator;
+
+import de.greenrobot.daogenerator.Entity;
+
+import de.greenrobot.daogenerator.Property;
+
+import de.greenrobot.daogenerator.Schema;
+
+import de.greenrobot.daogenerator.ToMany;
+
+/**
+
+ * Generates entities and DAOs for the example project DaoExample.
+
+ *
+
+ * Run it as a Java application (not Android).
+
+ *
+
+ * @author Markus
+
+ */
+
+public class ExampleDaoGenerator
+
+{
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
+    public static void main(String[] args) throws Exception
+
+    {
+
+        Schema schema = new Schema(3, "de.greenrobot.daoexample");
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+        addNote(schema);
+
+        addCustomerOrder(schema);
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+        new DaoGenerator().generateAll(schema, "../DaoExample/src-gen");
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
+    private static void addNote(Schema schema)
+
+    {
+
+        Entity note = schema.addEntity("Note");
+
+        note.addIdProperty();
+
+        note.addStringProperty("text").notNull();
+
+        note.addStringProperty("comment");
+
+        note.addDateProperty("date");
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
+    private static void addCustomerOrder(Schema schema)
+
+    {
+
+        Entity customer = schema.addEntity("Customer");
+
+        customer.addIdProperty();
+
+        customer.addStringProperty("name").notNull();
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+        Entity order = schema.addEntity("Order");
+
+        order.setTableName("ORDERS"); // "ORDER" is a reserved keyword
+
+        order.addIdProperty();
+
+        Property orderDate = order.addDateProperty("date").getProperty();
+
+        Property customerId = order.addLongProperty("customerId").notNull().getProperty();
+
+        order.addToOne(customer, customerId);
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+        ToMany customerToOrders = customer.addToMany(order, customerId);
+
+        customerToOrders.setName("orders");
+
+        customerToOrders.orderAsc(orderDate);
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
+} 
+
+
+
+
+
+在main方法中，
+
+
+
+
+
+1
+ 
+
+Schema schema = new Schema(3, "de.greenrobot.daoexample"); 
+
+
+该方法第一个参数用来更新数据库版本号，第二个参数为要生成的DAO类所在包路径。
+
+
+
+
+然后进行建表和设置要生成DAO文件的目标工程的项目路径。
+
+
+
+
+
+
+
+1
+2
+3
+ 
+
+addNote(schema);
+
+addCustomerOrder(schema);
+
+new DaoGenerator().generateAll(schema, "../DaoExample/src-gen"); 
+
+
+其中src-gen这个目录名需要在运行前手动创建，否则会报错。
+
+
+
+
+如果运行后出现以下错误，则导入DaoGenerator项目的dao.ftl文件即可(或者直接使用DaoGenerator来生成DAO文件)。
+
+
+
+
+
+1
+2
+3
+4
+5
+ 
+
+Exception in thread "main" java.io.FileNotFoundException: Template "dao.ftl" not found.
+
+    at freemarker.template.Configuration.getTemplate(Configuration.java:742)
+
+    at freemarker.template.Configuration.getTemplate(Configuration.java:665)
+
+    at de.greenrobot.daogenerator.DaoGenerator.<init>(DaoGenerator.java:68)
+
+    at de.greenrobot.daogenerator.gentest.ExampleDaoGenerator.main(ExampleDaoGenerator.java:41) 
+
+
+
+
+
+运行后出现以下的提示说明DAO文件自动生成成功了，刷新一下DaoExample项目即可看到。
+
+
+
+greenDAO Generator
+
+Copyright 2011-2013 Markus Junginger, greenrobot.de. Licensed under GPL V3.
+
+This program comes with ABSOLUTELY NO WARRANTY
+
+Processing schema version 3...
+
+Written F:\Android_Ex\work_10\DaoExample\src-gen\de\greenrobot\daoexample\NoteDao.java
+
+Written F:\Android_Ex\work_10\DaoExample\src-gen\de\greenrobot\daoexample\Note.java
+
+Written F:\Android_Ex\work_10\DaoExample\src-gen\de\greenrobot\daoexample\CustomerDao.java
+
+Written F:\Android_Ex\work_10\DaoExample\src-gen\de\greenrobot\daoexample\Customer.java
+
+Written F:\Android_Ex\work_10\DaoExample\src-gen\de\greenrobot\daoexample\OrderDao.java
+
+Written F:\Android_Ex\work_10\DaoExample\src-gen\de\greenrobot\daoexample\Order.java
+
+Written F:\Android_Ex\work_10\DaoExample\src-gen\de\greenrobot\daoexample\DaoMaster.java
+
+Written F:\Android_Ex\work_10\DaoExample\src-gen\de\greenrobot\daoexample\DaoSession.java
+
+Processed 3 entities in 204ms 
+
+
+
+
+
+运行后可以看到，DaoExample项目src-gen下面自动生成了8个文件，3个实体对象，3个dao，1个DaoMaster,1个DaoSession.
+
+
+
+
+(二)创建表
+
+
+1.创建一个实体类
+
+
+
+
+
+1
+ 
+
+Entity note = schema.addEntity("Note"); 
+
+
+默认表名就是类名，也可以自定义表名
+
+
+
+
+
+1
+ 
+
+dao.setTableName("NoteList"); 
+
+
+greenDAO会自动根据实体类属性创建表字段，并赋予默认值。例如在数据库方面的表名和列名都来源于实体类名和属性名。默认的数据库名称是大写使用下划线分隔单词，而不是在Java中使用的驼峰式大小写风格。例如，一个名为“CREATIONDATE”属性将成为一个数据库列“CREATION_DATE”。
+
+
+
+
+设置一个自增长ID列为主键：
+
+
+dao.addIdProperty().primaryKey().autoincrement(); 
+
+
+
+
+设置其他各种类型的属性：
+
+
+
+
+dao.addIntProperty("cityId");
+
+dao.addStringProperty("infoType").notNull();//非null字段
+
+dao.addDoubleProperty("Id"); 
+
+
+在生成的实体类中,int类型为自动转为long类型。
+
+如果在编译过程中出现以下错误，那么有可能是主键的类型错误所致：
+
+
+
+java.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.String 
+
+
+
+
+
+       在使用greenDAO时，一个实体类只能对应一个表，目前没法做到一个表对应多个实体类，或者多个表共用一种对象类型。后续的升级也不会针对这一点进行扩展。
+
+
+
+
+(二)表的增删改查
+
+     增删改查相当方便，完全的面向对象，不需要涉及到任何的sql语言。
+
+1.查询
+
+范例1：查询某个表是否包含某个id:
+
+
+
+
+public boolean isSaved(int ID)
+
+{
+
+    QueryBuilder<SaveList> qb = saveListDao.queryBuilder();
+
+    qb.where(Properties.Id.eq(ID));
+
+    qb.buildCount().count();
+
+    return qb.buildCount().count() > 0 ? true : false;
+
+} 
+
+
+
+
+
+范例2：获取整个表的数据集合,一句代码就搞定！
+
+
+
+
+public List<PhotoGalleryDB> getPhotoGallery()
+
+{
+
+    return photoGalleryDao.loadAll();// 获取图片相册
+
+} 
+
+
+
+
+
+范例3：通过一个字段值查找对应的另一个字段值(为简便直接使用下面方法，也许有更简单的方法，尚未尝试)
+
+
+
+
+
+
+
+/** 通过图片id查找其目录id */
+
+public int getTypeId(int picId)
+
+{
+
+    QueryBuilder<PhotoGalleryDB> qb = photoGalleryDao.queryBuilder();
+
+    qb.where(Properties.Id.eq(picId));
+
+    if (qb.list().size() > 0)
+
+    {
+
+        return qb.list().get(0).getTypeId();
+
+    }
+
+    else
+
+    {
+
+        return -1;
+
+    }
+
+} 
+
+
+
+
+
+范例4：查找所有第一姓名是“Joe”并且以lastname排序。
+
+
+
+List joes = userDao.queryBuilder()
+
+.where(Properties.FirstName.eq("Joe"))
+
+.orderAsc(Properties.LastName)
+
+.list(); 
+
+
+
+
+
+范例5：多重条件查询
+
+
+(1)获取id为cityId并且infotype为HBContant.CITYINFO_SL的数据集合：
+
+
+ 
+
+public List<CityInfoDB> getSupportingList(int cityId)
+
+{
+
+    QueryBuilder<CityInfoDB> qb = cityInfoDao.queryBuilder();
+
+    qb.where(qb.and(Properties.CityId.eq(cityId),Properties.InfoType.eq(HBContant.CITYINFO_SL)));
+
+    qb.orderAsc(Properties.Id);// 排序依据
+
+    return qb.list();
+
+} 
+
+
+
+
+
+(2)获取firstname为“Joe”并且出生于1970年10月以后的所有user集合:
+
+
+
+QueryBuilder qb = userDao.queryBuilder();
+
+qb.where(Properties.FirstName.eq("Joe"),
+
+qb.or(Properties.YearOfBirth.gt(1970),
+
+qb.and(Properties.YearOfBirth.eq(1970), Properties.MonthOfBirth.ge(10))));
+
+List youngJoes = qb.list(); 
+
+
+
+
+
+范例6：获取某列对象
+
+
+
+picJsonDao.loadByRowId(picId); 
+
+
+
+
+
+
+
+
+2.增添/插入、修改
+
+
+插入数据更加简单，也是只要一句代码便能搞定!
+
+
+
+public void addToPhotoTable(Photo p)
+
+{
+
+    photoDao.insert(p);
+
+} 
+
+
+
+
+
+插入时需要new一个新的对象，范例如下:
+
+
+
+DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "notes-db", null);
+
+ db = helper.getWritableDatabase();
+
+ daoMaster = new DaoMaster(db);
+
+ daoSession = daoMaster.newSession();
+
+ noteDao = daoSession.getNoteDao();
+
+ Note note = new Note(null, noteText, comment, new Date());
+
+ noteDao.insert(note); 
+
+
+
+
+
+修改更新： 
+
+
+
+photoDao.insertOrReplace(photo);
+
+photoDao.insertInTx(photo); 
+
+
+
+
+
+3.删除:
+
+(1)清空表格数据
+
+
+ 
+
+/** 清空相册图片列表的数据 */
+
+public void clearPhoto()
+
+{
+
+    photoDao.deleteAll();
+
+} 
+
+
+
+
+
+(2)删除某个对象
+
+
+
+public void deleteCityInfo(int cityId)
+
+{
+
+    QueryBuilder<DBCityInfo> qb = cityInfoDao.queryBuilder();
+
+    DeleteQuery<DBCityInfo> bd = qb.where(Properties.CityId.eq(cityId)).buildDelete();
+
+    bd.executeDeleteWithoutDetachingEntities();
+
+} 
+
+
+
+
+
+参考：https://github.com/greenrobot/greenDAO/issues/34
+
+
+
+
+由上可见，使用greenDAO进行数据库的增删改查时及其方便，而且性能极佳。
+
+
+
+
+(三)常用方法笔记
+
+1.在Application实现得到DaoMaster和DaoSession的方法：
+
+
+ 
+
+private static DaoMaster daoMaster;
+
+private static DaoSession daoSession;
+
+/**
+
+ * 取得DaoMaster
+
+ *
+
+ * @param context
+
+ * @return
+
+ */
+
+public static DaoMaster getDaoMaster(Context context)
+
+{
+
+    if (daoMaster == null)
+
+    {
+
+        OpenHelper helper = new DaoMaster.DevOpenHelper(context, HBContant.DATABASE_NAME, null);
+
+        daoMaster = new DaoMaster(helper.getWritableDatabase());
+
+    }
+
+    return daoMaster;
+
+}
+
+/**
+
+ * 取得DaoSession
+
+ *
+
+ * @param context
+
+ * @return
+
+ */
+
+public static DaoSession getDaoSession(Context context)
+
+{
+
+    if (daoSession == null)
+
+    {
+
+        if (daoMaster == null)
+
+        {
+
+            daoMaster = getDaoMaster(context);
+
+        }
+
+        daoSession = daoMaster.newSession();
+
+    }
+
+    return daoSession;
+
+} 
+
+
+
+
+
+2.增删改查工具类:
+
+
+public class DBHelper
+
+{
+
+    private static Context mContext;
+
+    private static DBHelper instance;
+
+                                                                                                                                                                                                                                                                                                                                   
+
+    private CityInfoDBDao cityInfoDao;
+
+                                                                                                                                                                                                                                                                                                                                   
+
+    private DBHelper()
+
+    {
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                   
+
+    public static DBHelper getInstance(Context context)
+
+    {
+
+        if (instance == null)
+
+        {
+
+            instance = new DBHelper();
+
+            if (mContext == null)
+
+            {
+
+                mContext = context;
+
+            }
+
+                                                                                                                                                                                                                                                                                                                                           
+
+            // 数据库对象
+
+            DaoSession daoSession = HBApplication.getDaoSession(mContext);
+
+            instance.cityInfoDao = daoSession.getCityInfoDBDao();
+
+        }
+
+        return instance;
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                   
+
+    /** 添加数据 */
+
+    public void addToCityInfoTable(CityInfo item)
+
+    {
+
+        cityInfoDao.insert(item);
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                   
+
+    /** 查询 */
+
+    public List<EstateLoveListJson> getCityInfoList()
+
+    {
+
+        QueryBuilder<CityInfo> qb = cityInfoDao.queryBuilder();
+
+        return qb.list();
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                   
+
+    /** 查询 */
+
+    public List<CityInfo> getCityInfo()
+
+    {
+
+        return cityInfoDao.loadAll();// 查找图片相册
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                   
+
+    /** 查询 */
+
+    public boolean isSaved(int Id)
+
+    {
+
+        QueryBuilder<CityInfo> qb = cityInfoDao.queryBuilder();
+
+        qb.where(Properties.Id.eq(Id));
+
+        qb.buildCount().count();
+
+        return qb.buildCount().count() > 0 ? true : false;// 查找收藏表
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                   
+
+    /** 删除 */
+
+    public void deleteCityInfoList(int Id)
+
+    {
+
+        QueryBuilder<CityInfo> qb = cityInfoDao.queryBuilder();
+
+        DeleteQuery<CityInfo> bd = qb.where(Properties.Id.eq(Id)).buildDelete();
+
+        bd.executeDeleteWithoutDetachingEntities();
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                   
+
+    /** 删除 */
+
+    public void clearCityInfo()
+
+    {
+
+        cityInfoDao.deleteAll();
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                   
+
+    /** 通过城市id查找其类型id */
+
+    public int getTypeId(int cityId)
+
+    {
+
+        QueryBuilder<CityInfo> qb = cityInfoDao.queryBuilder();
+
+        qb.where(Properties.Id.eq(cityId));
+
+        if (qb.list().size() > 0)
+
+        {
+
+            return qb.list().get(0).getTypeId();
+
+        }
+
+        else
+
+        {
+
+            return 0;
+
+        }
+
+    }
+
+                                                                                                                                                                                                                                                                                                                                   
+
+    /** 多重查询 */
+
+    public List<CityInfo> getIphRegionList(int cityId)
+
+    {
+
+        QueryBuilder<CityInfoDB> qb = cityInfoDao.queryBuilder();
+
+        qb.where(qb.and(Properties.CityId.eq(cityId), Properties.InfoType.eq(HBContant.CITYINFO_IR)));
+
+        qb.orderAsc(Properties.Id);// 排序依据
+
+        return qb.list();
+
+    }
+
+} 
+
+
+
+
+
+
+
+
+另外，还有多表关联、惰性加载等功能，待后续研究。
+
+参考资料：
+
+
+1.https://github.com/greenrobot/greenDAO
+
+2.http://greendao-orm.com/documentation/how-to-get-started/
+
+3.http://blog.csdn.net/krislight/article/details/9391455
+
+4.http://blog.loadlimits.info/2013/01/androidのorm、greendaoを使ってみた/
+
+5.http://leebart.tumblr.com/post/58408230144/how-to-daogenerator
+
+6.http://www.androidanalyse.com/greendao-an-android-orm-for-sqlite/
+
+博客地址:http://glblong.blog.51cto.com/3058613/1354953
+
+
+
