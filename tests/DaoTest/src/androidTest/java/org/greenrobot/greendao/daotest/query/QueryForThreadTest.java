@@ -57,42 +57,6 @@ public class QueryForThreadTest extends TestEntityTestBase {
         assertNotNull(query.unique());
     }
 
-    public void testGetForCurrentThread_ManyThreadsDontLeak() throws Exception {
-        if (VERSION.SDK_INT > VERSION_CODES.LOLLIPOP_MR1) {
-            DaoLog.i("testGetForCurrentThread_ManyThreadsDontLeak does not work on API level " + VERSION.SDK_INT);
-            return;
-        }
-        QueryBuilder<TestEntity> builder = dao.queryBuilder().where(Properties.SimpleInteger.eq("dummy"));
-        final Query<TestEntity> query = builder.build();
-        for (int i = 1; i <= LEAK_TEST_ITERATIONS; i++) {
-            Thread thread = new Thread() {
-                public void run() {
-                    query.forCurrentThread();
-                }
-            };
-            thread.start();
-            if (i % 10 == 0) {
-                thread.join();
-            }
-        }
-        Field queryDataField = Query.class.getDeclaredField("queryData");
-        queryDataField.setAccessible(true);
-        Object queryData = queryDataField.get(query);
-        Class<?> dataSuperclass = queryData.getClass().getSuperclass();
-        Field mapField = dataSuperclass.getDeclaredField("queriesForThreads");
-        mapField.setAccessible(true);
-
-        Method gcMethod = dataSuperclass.getDeclaredMethod("gc");
-        gcMethod.setAccessible(true);
-        Map map = (Map) mapField.get(queryData);
-        for (int i = 0; map.size() > 1 && i < 1000; i++) {
-            DaoLog.d("Queries left after " + i + ". GC: " + map.size());
-            System.gc();
-            gcMethod.invoke(queryData);
-        }
-        assertEquals(1, map.size());
-    }
-
     public void testBuildQueryDoesntLeak() {
         QueryBuilder<TestEntity> builder = dao.queryBuilder().where(Properties.SimpleInteger.eq("dummy"));
         for (int i = 0; i < LEAK_TEST_ITERATIONS; i++) {

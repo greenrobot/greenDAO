@@ -28,13 +28,13 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
     final String sql;
     final AbstractDao<T, ?> dao;
     final String[] initialValues;
-    final Map<Long, WeakReference<Q>> queriesForThreads;
+    final ThreadLocal<WeakReference<Q>> queriesForThreads;
 
     AbstractQueryData(AbstractDao<T, ?> dao, String sql, String[] initialValues) {
         this.dao = dao;
         this.sql = sql;
         this.initialValues = initialValues;
-        queriesForThreads = new HashMap<>();
+        queriesForThreads = new ThreadLocal<WeakReference<Q>>();
     }
 
     /**
@@ -54,17 +54,12 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
      * Note: all parameters are reset to their initial values specified in {@link QueryBuilder}.
      */
     Q forCurrentThread() {
-        // Process.myTid() seems to have issues on some devices (see Github #376) and Robolectric (#171):
-        // We use currentThread().getId() instead (unfortunately return a long, can not use SparseArray).
-        // PS.: thread ID may be reused, which should be fine because old thread will be gone anyway.
-        long threadId = Thread.currentThread().getId();
         synchronized (queriesForThreads) {
-            WeakReference<Q> queryRef = queriesForThreads.get(threadId);
+            WeakReference<Q> queryRef = queriesForThreads.get();
             Q query = queryRef != null ? queryRef.get() : null;
             if (query == null) {
-                gc();
                 query = createQuery();
-                queriesForThreads.put(threadId, new WeakReference<Q>(query));
+                queriesForThreads.set(new WeakReference<Q>(query));
             } else {
                 System.arraycopy(initialValues, 0, query.parameters, 0, initialValues.length);
             }
@@ -73,17 +68,5 @@ abstract class AbstractQueryData<T, Q extends AbstractQuery<T>> {
     }
 
     abstract protected Q createQuery();
-
-    void gc() {
-        synchronized (queriesForThreads) {
-            Iterator<Entry<Long, WeakReference<Q>>> iterator = queriesForThreads.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Entry<Long, WeakReference<Q>> entry = iterator.next();
-                if (entry.getValue().get() == null) {
-                    iterator.remove();
-                }
-            }
-        }
-    }
 
 }
