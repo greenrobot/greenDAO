@@ -529,7 +529,7 @@ public abstract class AbstractDao<T, K> {
     }
 
     /** Internal use only. Considers identity scope. */
-    final protected T loadCurrent(Cursor cursor, int offset, boolean lock) {
+    final public T loadCurrent(Cursor cursor, int offset, boolean lock) {
         if (identityScopeLong != null) {
             if (offset != 0) {
                 // Occurs with deep loads (left outer joins)
