@@ -804,6 +804,22 @@ public abstract class AbstractDao<T, K> {
         return entity;
     }
 
+    protected void updateInsideSynchronized(T entity, DatabaseStatement stmt, boolean lock) {
+        // To do? Check if it's worth not to bind PKs here (performance).
+        bindValues(stmt, entity);
+        int index = config.allColumns.length + 1;
+        K key = getKey(entity);
+        if (key instanceof Long) {
+            stmt.bindLong(index, (Long) key);
+        } else if (key == null) {
+            throw new DaoException("Cannot update entity without key - was it inserted before?");
+        } else {
+            stmt.bindString(index, key.toString());
+        }
+        stmt.execute();
+        attachEntity(key, entity, lock);
+    }
+
     protected void updateInsideSynchronized(T entity, SQLiteStatement stmt, boolean lock) {
         // To do? Check if it's worth not to bind PKs here (performance).
         bindValues(stmt, entity);
