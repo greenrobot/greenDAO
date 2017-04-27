@@ -1,0 +1,11 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+    compile project(':DaoCore')
+    compileOnly 'com.google.android:android:4.1.1.4'
+}
+
+uploadArchives.enabled = false

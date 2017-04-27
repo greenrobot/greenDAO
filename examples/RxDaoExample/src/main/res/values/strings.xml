@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">greenDAO Rx Note Example</string>
+
+    <string name="enter_new_note">Enter new note</string>
+    <string name="add">Add</string>
+    <string name="click_to_remove">Click a note to remove it</string>
+
+</resources>

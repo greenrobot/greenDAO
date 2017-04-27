@@ -4,39 +4,41 @@ apply plugin: 'signing'
 
 group = 'org.greenrobot'
 archivesBaseName = 'greendao'
-version = '2.2.1'
-sourceCompatibility = 1.6
-
-def isSnapshot = version.endsWith('-SNAPSHOT')
-def sonatypeRepositoryUrl
-if(isSnapshot) {
-	sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-} else {
-	sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-}
+version = rootProject.version
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
 }
 
-configurations {
-    deployerJars
-}
-
 dependencies {
+    compile project(':greendao-api')
     compileOnly 'com.google.android:android:4.1.1.4'
     compileOnly 'com.google.android:android-test:4.1.1.4'
     compileOnly 'com.google.android:annotations:4.1.1.4'
     compileOnly 'com.google.android:support-v4:r7'
-    // deployerJars 'org.apache.maven.wagon:wagon-webdav-jackrabbit:2.4'
-    deployerJars 'org.apache.maven.wagon:wagon-webdav:1.0-beta-2'
+
+    compileOnly 'io.reactivex:rxjava:1.1.8'
+
+    compileOnly files('libs/sqlcipher.jar')
 }
 
 javadoc {
     failOnError = false
     title = " greenDAO ${version} API"
-	options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2016 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
-	excludes = ['de/greenrobot/dao/internal','de/greenrobot/dao/Internal*']
+    options.bottom = 'Available under the Apache License, Version 2.0 - <i>Copyright &#169; 2011-2017 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
+
+    excludes = ['org/greenrobot/dao/internal', 'org/greenrobot/dao/Internal*']
+    def srcApi = project(':greendao-api').file('src/main/java/')
+    if (!srcApi.directory) throw new GradleScriptException("Not a directory: ${srcApi}", null)
+    source += srcApi
+    doLast {
+        copy {
+            from '../javadoc-style'
+            into "build/docs/javadoc/"
+        }
+    }
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -55,70 +57,22 @@ artifacts {
     archives sourcesJar
 }
 
-signing {
-    if(project.hasProperty('signing.keyId') && project.hasProperty('signing.password') &&
-    project.hasProperty('signing.secretKeyRingFile')) {
-        sign configurations.archives
-    } else {
-        println "Signing information missing/incomplete for ${project.name}"
-    }
-}
-
 uploadArchives {
     repositories {
         mavenDeployer {
-            if(project.hasProperty('preferedRepo') && project.hasProperty('preferedUsername') 
-                && project.hasProperty('preferedPassword')) {
-                configuration = configurations.deployerJars
-                repository(url: preferedRepo) {
-                    authentication(userName: preferedUsername, password: preferedPassword)
-                }
-            } else if(project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')) {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-                repository(url: sonatypeRepositoryUrl) {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                }
-            } else {
-                println "Settings sonatypeUsername/sonatypePassword missing/incomplete for ${project.name}"
-            }
-
+            // Basic definitions are defined in root project
             pom.project {
-               name 'greenDAO'
-               packaging 'jar'
-               description 'greenDAO is a light and fast ORM for Android'
-               url 'http://greenrobot.org/greendao'
+                name 'greenDAO'
+                description 'greenDAO is a light and fast ORM for Android'
 
-               scm {
-                   url 'https://github.com/greenrobot/greenDAO'
-                   connection 'scm:git@github.com:greenrobot/greenDAO.git'
-                   developerConnection 'scm:git@github.com:greenrobot/greenDAO.git'
-               }
-
-               licenses {
-                   license {
-                       name 'The Apache Software License, Version 2.0'
-                       url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                       distribution 'repo'
-                   }
-               }
-
-               developers {
-                   developer {
-                       id 'greenrobot'
-                       name 'greenrobot'
-                   }
-               }
-               
-               issueManagement {
-                   system 'GitHub Issues'
-                   url 'https://github.com/greenrobot/greenDAO/issues'
-               }
-               
-               organization {
-                   name 'greenrobot'
-                   url 'http://greenrobot.org'
-               }
-           }
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+            }
         }
     }
 }
