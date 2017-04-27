@@ -1,31 +1,31 @@
 <config>
 	<context-values>
 		<resource path="src-template/dao-master.ftl">
-			<value key="schema" object-class="de.greenrobot.daogenerator.Schema"/>
+			<value key="schema" object-class="org.greenrobot.greendao.generator.Schema"/>
 		</resource>
 		<resource path="src-template/content-provider.ftl">
-			<value key="entity" object-class="de.greenrobot.daogenerator.Entity"/>
-			<value key="contentProvider" object-class="de.greenrobot.daogenerator.ContentProvider"/>
-			<value key="schema" object-class="de.greenrobot.daogenerator.Schema"/>
+			<value key="entity" object-class="org.greenrobot.greendao.generator.Entity"/>
+			<value key="contentProvider" object-class="org.greenrobot.greendao.generator.ContentProvider"/>
+			<value key="schema" object-class="org.greenrobot.greendao.generator.Schema"/>
 		</resource>
 		<resource path="src-template/dao.ftl">
-			<value key="entity" object-class="de.greenrobot.daogenerator.Entity"/>
-			<value key="schema" object-class="de.greenrobot.daogenerator.Schema"/>
+			<value key="entity" object-class="org.greenrobot.greendao.generator.Entity"/>
+			<value key="schema" object-class="org.greenrobot.greendao.generator.Schema"/>
 		</resource>
 		<resource path="src-template/dao-deep.ftl">
-			<value key="entity" object-class="de.greenrobot.daogenerator.Entity"/>
-			<value key="schema" object-class="de.greenrobot.daogenerator.Schema"/>
+			<value key="entity" object-class="org.greenrobot.greendao.generator.Entity"/>
+			<value key="schema" object-class="org.greenrobot.greendao.generator.Schema"/>
 		</resource>
 		<resource path="src-template/entity.ftl">
-			<value key="entity" object-class="de.greenrobot.daogenerator.Entity"/>
-			<value key="schema" object-class="de.greenrobot.daogenerator.Schema"/>
+			<value key="entity" object-class="org.greenrobot.greendao.generator.Entity"/>
+			<value key="schema" object-class="org.greenrobot.greendao.generator.Schema"/>
 		</resource>
 		<resource path="src-template/dao-unit-test.ftl">
-			<value key="schema" object-class="de.greenrobot.daogenerator.Schema"/>
-			<value key="entity" object-class="de.greenrobot.daogenerator.Entity"/>
+			<value key="schema" object-class="org.greenrobot.greendao.generator.Schema"/>
+			<value key="entity" object-class="org.greenrobot.greendao.generator.Entity"/>
 		</resource>
 		<resource path="template/dao.ftl">
-			<value key="table" object-class="de.greenrobot.daogenerator.Entity"/>
+			<value key="table" object-class="org.greenrobot.greendao.generator.Entity"/>
 		</resource>
 	</context-values>
 	<macro-library>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.greenrobot.greendao.test.entityannotation">
+
+    <application
+        android:label="greenDAO @Entity Test"
+        android:allowBackup="true">
+    </application>
+
+</manifest>
