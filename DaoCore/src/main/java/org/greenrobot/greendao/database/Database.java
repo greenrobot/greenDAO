@@ -40,6 +40,8 @@ public interface Database {
 
     boolean isDbLockedByCurrentThread();
 
+    boolean isOpen();
+
     void close();
 
     Object getRawDatabase();
