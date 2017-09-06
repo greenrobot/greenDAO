@@ -26,6 +26,7 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.annotation.apihint.Experimental;
 import org.greenrobot.greendao.internal.SqlUtils;
 import org.greenrobot.greendao.rx.RxQuery;
+import org.greenrobot.greendao.rx2.Rx2Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -425,6 +426,22 @@ public class QueryBuilder<T> {
      */
     public List<T> list() {
         return build().list();
+    }
+
+    /**
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#__InternalRx2()}.
+     */
+    @Experimental
+    public Rx2Query<T> rx2() {
+        return build().__InternalRx2();
+    }
+
+    /**
+     * Shorthand for {@link QueryBuilder#build() build()}.{@link Query#__internalRx2Plain()}.
+     */
+    @Experimental
+    public Rx2Query<T> rx2Plain() {
+        return build().__internalRx2Plain();
     }
 
     /**
