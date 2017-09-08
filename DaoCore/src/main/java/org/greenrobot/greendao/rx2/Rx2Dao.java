@@ -268,7 +268,7 @@ public class Rx2Dao<T, K> extends Rx2Base {
             @Override
             public Void call() throws Exception {
                 mDao.delete(entity);
-                return null;
+                return Void.TYPE.newInstance();
             }
         });
     }
@@ -282,7 +282,7 @@ public class Rx2Dao<T, K> extends Rx2Base {
             @Override
             public Void call() throws Exception {
                 mDao.deleteByKey(key);
-                return null;
+                return Void.TYPE.newInstance();
             }
         });
     }
@@ -296,7 +296,7 @@ public class Rx2Dao<T, K> extends Rx2Base {
             @Override
             public Void call() throws Exception {
                 mDao.deleteAll();
-                return null;
+                return Void.TYPE.newInstance();
             }
         });
     }
@@ -310,7 +310,7 @@ public class Rx2Dao<T, K> extends Rx2Base {
             @Override
             public Void call() throws Exception {
                 mDao.deleteInTx(entities);
-                return null;
+                return Void.TYPE.newInstance();
             }
         });
     }
@@ -324,7 +324,7 @@ public class Rx2Dao<T, K> extends Rx2Base {
             @Override
             public Void call() throws Exception {
                 mDao.deleteInTx(entities);
-                return null;
+                return Void.TYPE.newInstance();
             }
         });
     }
@@ -338,7 +338,7 @@ public class Rx2Dao<T, K> extends Rx2Base {
             @Override
             public Void call() throws Exception {
                 mDao.deleteByKeyInTx(keys);
-                return null;
+                return Void.TYPE.newInstance();
             }
         });
     }
@@ -352,7 +352,7 @@ public class Rx2Dao<T, K> extends Rx2Base {
             @Override
             public Void call() throws Exception {
                 mDao.deleteByKeyInTx(keys);
-                return null;
+                return Void.TYPE.newInstance();
             }
         });
     }
