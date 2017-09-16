@@ -1,4 +1,4 @@
-**Looking for object persistence faster than SQLite? Check out our new mobile database [ObjectBox](https://github.com/greenrobot/ObjectBox) (beta).**  
+**Looking for object persistence faster than SQLite? Check out our new mobile database [ObjectBox](http://objectbox.io/) ([GitHub](https://github.com/greenrobot/ObjectBox)).**  
 
 greenDAO
 ========
@@ -34,7 +34,7 @@ buildscript {
         mavenCentral() // add repository
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.android.tools.build:gradle:2.3.3'
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2' // add plugin
     }
 }
@@ -68,7 +68,7 @@ For more details on greenDAO please check [greenDAO's website](http://greenrobot
 
 More Open Source by greenrobot
 ==============================
-[__ObjectBox__](https://github.com/greenrobot/ObjectBox) is a new superfast mobile database currently in beta.
+[__ObjectBox__](https://github.com/objectbox/objectbox-java) is a new superfast object-oriented database for mobile.
 
 [__EventBus__](https://github.com/greenrobot/EventBus) is a central publish/subscribe bus for Android with optional delivery threads, priorities, and sticky events. A great tool to decouple components (e.g. Activities, Fragments, logic components) from each other.
 
