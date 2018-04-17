@@ -122,11 +122,8 @@ public class QueryBuilder<T> {
      * @see #preferLocalizedStringOrder
      */
     public QueryBuilder<T> stringOrderCollation(String stringOrderCollation) {
-        // SQLCipher 3.5.0+ does not understand "COLLATE LOCALIZED"
-        if (dao.getDatabase().getRawDatabase() instanceof SQLiteDatabase) {
-            this.stringOrderCollation = stringOrderCollation == null || stringOrderCollation.startsWith(" ") ?
-                    stringOrderCollation : " " + stringOrderCollation;
-        }
+        this.stringOrderCollation = stringOrderCollation == null || stringOrderCollation.startsWith(" ") ?
+                stringOrderCollation : " " + stringOrderCollation;
         return this;
     }
 
