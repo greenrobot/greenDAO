@@ -8,7 +8,7 @@ task wrapper(type: Wrapper) {
 }
 
 ext {
-    compileSdkVersion = 25
+    compileSdkVersion = 27
 
     minSdkVersion = 7
     targetSdkVersion = 25

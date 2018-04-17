@@ -15,12 +15,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 27
 
     defaultConfig {
         applicationId "org.greenrobot.greendao.example"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 1
         versionName "3"
 
@@ -38,8 +38,8 @@ dependencies {
     // This is only needed if you want to use encrypted databases
     implementation 'net.zetetic:android-database-sqlcipher:3.5.6'
 
-    implementation 'com.android.support:appcompat-v7:25.3.1'
-    implementation 'com.android.support:recyclerview-v7:25.3.1'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
 }
 
 uploadArchives.enabled = false

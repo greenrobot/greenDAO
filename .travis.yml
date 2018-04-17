@@ -22,7 +22,7 @@ android:
     - tools # to install Android SDK tools 25.1.x, https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943
     - build-tools-$ANDROID_BUILD_TOOLS_VERSION
     - android-$ANDROID_API_LEVEL
-    - android-25
+    - android-27
     # Support library
     - extra-android-support
     # Latest artifacts in local repository
