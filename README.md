@@ -34,7 +34,7 @@ buildscript {
         mavenCentral() // add repository
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.1.1'
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2' // add plugin
     }
 }
@@ -44,7 +44,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao' // apply plugin
  
 dependencies {
-    compile 'org.greenrobot:greendao:3.2.2' // add library
+    implementation 'org.greenrobot:greendao:3.2.2' // add library
 }
 ```
 
