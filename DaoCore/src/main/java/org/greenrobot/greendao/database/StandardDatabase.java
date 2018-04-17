@@ -73,6 +73,11 @@ public class StandardDatabase implements Database {
     }
 
     @Override
+    public boolean isOpen() {
+        return delegate.isOpen();
+    }
+
+    @Override
     public void close() {
         delegate.close();
     }
