@@ -1,11 +1,12 @@
 buildscript {
     repositories {
         jcenter()
+        google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.android.tools.build:gradle:3.1.1'
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2'
     }
 }
@@ -14,7 +15,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
 
 android {
-    buildToolsVersion '25.0.2'
     compileSdkVersion 25
 
     defaultConfig {
@@ -31,17 +31,17 @@ greendao {
 }
 
 dependencies {
-    compile 'org.greenrobot:greendao:3.2.2'
+    implementation 'org.greenrobot:greendao:3.2.2'
 
     // This is only needed if you want to use encrypted databases
-    compile 'net.zetetic:android-database-sqlcipher:3.5.6'
+    implementation 'net.zetetic:android-database-sqlcipher:3.5.6'
 
-    compile 'com.jakewharton.rxbinding:rxbinding:1.0.1'
-    compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'io.reactivex:rxjava:1.2.9'
+    implementation 'com.jakewharton.rxbinding:rxbinding:1.0.1'
+    implementation 'io.reactivex:rxandroid:1.2.1'
+    implementation 'io.reactivex:rxjava:1.2.9'
 
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
+    implementation 'com.android.support:appcompat-v7:25.3.1'
+    implementation 'com.android.support:recyclerview-v7:25.3.1'
 }
 
 uploadArchives.enabled = false

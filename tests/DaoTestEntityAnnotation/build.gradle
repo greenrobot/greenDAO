@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         jcenter()
+        google()
         mavenCentral()
     }
 
@@ -14,7 +15,6 @@ apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'com.android.application'
 
 android {
-    buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
@@ -40,7 +40,7 @@ greendao {
 }
 
 dependencies {
-    compile project(':DaoCore')
+    implementation project(':DaoCore')
 }
 
 uploadArchives.enabled = false

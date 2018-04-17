@@ -2,12 +2,12 @@
 version = '3.2.3-SNAPSHOT'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
+    group 'build setup'
+    gradleVersion = '4.6'
     distributionType = org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 }
 
 ext {
-    buildToolsVersion = '25.0.2'
     compileSdkVersion = 25
 
     minSdkVersion = 7
@@ -15,7 +15,7 @@ ext {
 
     // common dependencies for Android projects (not to be used in example projects for better copy and paste)
     dep = [
-            androidPlugin: 'com.android.tools.build:gradle:2.3.1',
+            androidPlugin: 'com.android.tools.build:gradle:3.1.1',
             greendaoPlugin: 'org.greenrobot:greendao-gradle-plugin:3.2.2'
     ]
 }
@@ -35,6 +35,7 @@ subprojects {
     repositories {
         mavenCentral()
         jcenter()
+        google()
     }
 
     configurations {
