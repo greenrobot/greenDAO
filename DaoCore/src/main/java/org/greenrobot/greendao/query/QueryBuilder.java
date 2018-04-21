@@ -58,6 +58,7 @@ public class QueryBuilder<T> {
 
     private final List<Object> values;
     private final List<Join<T, ?>> joins;
+    private final List<Join<T, ?>> leftJoins;
     private final AbstractDao<T, ?> dao;
     private final String tablePrefix;
 
@@ -82,6 +83,7 @@ public class QueryBuilder<T> {
         this.tablePrefix = tablePrefix;
         values = new ArrayList<Object>();
         joins = new ArrayList<Join<T, ?>>();
+        leftJoins = new ArrayList<Join<T, ?>>();
         whereCollector = new WhereCollector<T>(dao, tablePrefix);
         stringOrderCollation = " COLLATE NOCASE";
     }
@@ -202,12 +204,60 @@ public class QueryBuilder<T> {
         return addJoin(sourceJoin.tablePrefix, sourceProperty, destinationDao, destinationProperty);
     }
 
+    /**
+     * Expands the query to another entity type by using a LEFT JOIN. The primary key property of the primary entity for
+     * this QueryBuilder is used to match the given destinationProperty.
+     */
+    public <J> Join<T, J> leftJoin(Class<J> destinationEntityClass, Property destinationProperty) {
+        return leftJoin(dao.getPkProperty(), destinationEntityClass, destinationProperty);
+    }
+
+    /**
+     * Expands the query to another entity type by using a LEFT JOIN. The given sourceProperty is used to match the primary
+     * key property of the given destinationEntity.
+     */
+    public <J> Join<T, J> leftJoin(Property sourceProperty, Class<J> destinationEntityClass) {
+        AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
+        Property destinationProperty = destinationDao.getPkProperty();
+        return addLeftJoin(tablePrefix, sourceProperty, destinationDao, destinationProperty);
+    }
+
+    /**
+     * Expands the query to another entity type by using a LEFT JOIN. The given sourceProperty is used to match the given
+     * destinationProperty of the given destinationEntity.
+     */
+    public <J> Join<T, J> leftJoin(Property sourceProperty, Class<J> destinationEntityClass, Property destinationProperty) {
+        AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
+        return addLeftJoin(tablePrefix, sourceProperty, destinationDao, destinationProperty);
+    }
+
+    /**
+     * Expands the query to another entity type by using a LEFT JOIN. The given sourceJoin's property is used to match the
+     * given destinationProperty of the given destinationEntity. Note that destination entity of the given join is used
+     * as the source for the new join to add. In this way, it is possible to compose complex "join of joins" across
+     * several entities if required.
+     */
+    public <J> Join<T, J> leftJoin(Join<?, T> sourceJoin, Property sourceProperty, Class<J> destinationEntityClass,
+                               Property destinationProperty) {
+        AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
+        return addLeftJoin(sourceJoin.tablePrefix, sourceProperty, destinationDao, destinationProperty);
+    }
+
     private <J> Join<T, J> addJoin(String sourceTablePrefix, Property sourceProperty, AbstractDao<J, ?> destinationDao,
                                    Property destinationProperty) {
         String joinTablePrefix = "J" + (joins.size() + 1);
         Join<T, J> join = new Join<T, J>(sourceTablePrefix, sourceProperty, destinationDao, destinationProperty,
                 joinTablePrefix);
         joins.add(join);
+        return join;
+    }
+
+    private <J> Join<T, J> addLeftJoin(String sourceTablePrefix, Property sourceProperty, AbstractDao<J, ?> destinationDao,
+                                   Property destinationProperty) {
+        String joinTablePrefix = "LJ" + (leftJoins.size() + 1);
+        Join<T, J> join = new Join<T, J>(sourceTablePrefix, sourceProperty, destinationDao, destinationProperty,
+            joinTablePrefix);
+        leftJoins.add(join);
         return join;
     }
 
@@ -344,7 +394,7 @@ public class QueryBuilder<T> {
      * QueryBuilder for each execution.
      */
     public DeleteQuery<T> buildDelete() {
-        if (!joins.isEmpty()) {
+        if (!joins.isEmpty() || !leftJoins.isEmpty()) {
             throw new DaoException("JOINs are not supported for DELETE queries");
         }
         String tablename = dao.getTablename();
@@ -391,17 +441,27 @@ public class QueryBuilder<T> {
 
     private void appendJoinsAndWheres(StringBuilder builder, String tablePrefixOrNull) {
         values.clear();
-        for (Join<T, ?> join : joins) {
-            builder.append(" JOIN ").append(join.daoDestination.getTablename()).append(' ');
-            builder.append(join.tablePrefix).append(" ON ");
-            SqlUtils.appendProperty(builder, join.sourceTablePrefix, join.joinPropertySource).append('=');
-            SqlUtils.appendProperty(builder, join.tablePrefix, join.joinPropertyDestination);
-        }
+        appendJoins(builder, joins, " JOIN ");
+        appendJoins(builder, leftJoins, " LEFT JOIN ");
         boolean whereAppended = !whereCollector.isEmpty();
         if (whereAppended) {
             builder.append(" WHERE ");
             whereCollector.appendWhereClause(builder, tablePrefixOrNull, values);
         }
+        appendJoinWheres(builder, joins, whereAppended);
+        appendJoinWheres(builder, leftJoins, whereAppended);
+    }
+
+    private void appendJoins(StringBuilder builder, List<Join<T, ?>> joins, String joinType) {
+        for (Join<T, ?> join : joins) {
+            builder.append(joinType).append(join.daoDestination.getTablename()).append(' ');
+            builder.append(join.tablePrefix).append(" ON ");
+            SqlUtils.appendProperty(builder, join.sourceTablePrefix, join.joinPropertySource).append('=');
+            SqlUtils.appendProperty(builder, join.tablePrefix, join.joinPropertyDestination);
+        }
+    }
+
+    private void appendJoinWheres(StringBuilder builder, List<Join<T, ?>> joins, boolean whereAppended) {
         for (Join<T, ?> join : joins) {
             if (!join.whereCollector.isEmpty()) {
                 if (!whereAppended) {
