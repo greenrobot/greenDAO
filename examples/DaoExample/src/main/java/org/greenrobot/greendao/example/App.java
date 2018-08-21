@@ -3,11 +3,8 @@ package org.greenrobot.greendao.example;
 import android.app.Application;
 
 import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendao.example.DaoMaster.DevOpenHelper;
 
 public class App extends Application {
-    /** A flag to show how easily you can switch from standard SQLite to the encrypted SQLCipher. */
-    public static final boolean ENCRYPTED = true;
 
     private DaoSession daoSession;
 
@@ -15,8 +12,15 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        DevOpenHelper helper = new DevOpenHelper(this, ENCRYPTED ? "notes-db-encrypted" : "notes-db");
-        Database db = ENCRYPTED ? helper.getEncryptedWritableDb("super-secret") : helper.getWritableDb();
+        // regular SQLite database
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "notes-db");
+        Database db = helper.getWritableDb();
+
+        // encrypted SQLCipher database
+        // note: you need to add SQLCipher to your dependencies, check the build.gradle file
+        // DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "notes-db-encrypted");
+        // Database db = helper.getEncryptedWritableDb("encryption-key");
+
         daoSession = new DaoMaster(db).newSession();
     }
 

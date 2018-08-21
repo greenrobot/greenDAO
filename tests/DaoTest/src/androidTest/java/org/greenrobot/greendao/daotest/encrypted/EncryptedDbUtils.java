@@ -23,11 +23,10 @@ import android.database.Cursor;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
-import java.io.File;
-
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.EncryptedDatabase;
 
+import java.io.File;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -66,7 +65,7 @@ public class EncryptedDbUtils {
     }
 
     public static void assertEncryptedDbUsed(Database db) {
-        assertEquals("3.11.0", queryString(db, "select sqlite_version()"));
+        assertEquals("3.15.2", queryString(db, "select sqlite_version()"));
         String cipherProvider = queryString(db, "PRAGMA cipher_provider_version");
         assertTrue(cipherProvider, cipherProvider.contains("OpenSSL"));
     }
