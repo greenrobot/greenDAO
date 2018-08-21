@@ -1,44 +1,33 @@
 # Use the Travis Container-Based Infrastructure
 sudo: false
 language: android
-jdk: oraclejdk8
+
+jdk:
+  - oraclejdk8
+
+before_install:
+  # Install the rest of tools (e.g., avdmanager)
+  - yes | sdkmanager tools
+  # Install the system image
+  - yes | sdkmanager "system-images;android-18;default;armeabi-v7a"
+  # Create and start emulator for the script. Meant to race the install task.
+  - echo no | avdmanager create avd --force -n test -k "system-images;android-18;default;armeabi-v7a"
+  - $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window &
+
+install: ./gradlew clean assemble assembleAndroidTest --stacktrace
+
+before_script:
+  - android-wait-for-emulator
+  - adb shell input keyevent 82
+
+script: ./gradlew check connectedCheck --stacktrace
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
 cache:
   directories:
-    - ${TRAVIS_BUILD_DIR}/gradle/caches/
-    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
-  
-env:
-  global:
-    - ANDROID_API_LEVEL=24 # 25 Error: Invalid --abi armeabi-v7a for the selected target
-    - ANDROID_BUILD_TOOLS_VERSION=27.0.3
-    - ANDROID_ABI=armeabi-v7a
-    - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
-    
-android:
-  components:
-    - tools # to get the new `repository-11.xml`
-    - platform-tools
-    - tools # to install Android SDK tools 25.1.x, https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943
-    - build-tools-$ANDROID_BUILD_TOOLS_VERSION
-    - android-$ANDROID_API_LEVEL
-    - android-27
-    # Support library
-    - extra-android-support
-    # Latest artifacts in local repository
-    - extra-android-m2repository
-    # Specify at least one system image
-    - sys-img-armeabi-v7a-android-$ANDROID_API_LEVEL
-    
-before_install:
-  - mkdir "$ANDROID_HOME/licenses" || true
-  - echo -e "\nd56f5187479451eabf01fb78af6dfcb131a6481e" > "$ANDROID_HOME/licenses/android-sdk-license"
-
-before_script:
-  # Create and start emulator
-  - echo no | android create avd --force -n test -t "android-"$ANDROID_API_LEVEL --abi $ANDROID_ABI
-  - emulator -avd test -no-skin -no-window &
-  - android-wait-for-emulator
-
-script:
-    - ./gradlew clean connectedCheck --stacktrace
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
