@@ -1,24 +1,22 @@
 package org.greenrobot.greendao.unittest;
 
+import org.greenrobot.greendao.daotest.dummyapp.BuildConfig;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.query.Query;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.concurrent.CountDownLatch;
 
-import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendao.query.Query;
-import org.greenrobot.greendao.daotest.dummyapp.BuildConfig;
-
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 16)
 public class MinimalEntityTest {
 
