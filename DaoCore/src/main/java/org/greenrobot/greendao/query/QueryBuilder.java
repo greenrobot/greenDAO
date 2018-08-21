@@ -392,7 +392,8 @@ public class QueryBuilder<T> {
     private void appendJoinsAndWheres(StringBuilder builder, String tablePrefixOrNull) {
         values.clear();
         for (Join<T, ?> join : joins) {
-            builder.append(" JOIN ").append(join.daoDestination.getTablename()).append(' ');
+            builder.append(" JOIN ");
+            builder.append('"').append(join.daoDestination.getTablename()).append('"').append(' ');
             builder.append(join.tablePrefix).append(" ON ");
             SqlUtils.appendProperty(builder, join.sourceTablePrefix, join.joinPropertySource).append('=');
             SqlUtils.appendProperty(builder, join.tablePrefix, join.joinPropertyDestination);
