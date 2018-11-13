@@ -15,7 +15,7 @@ ext {
 
     // common dependencies for Android projects (not to be used in example projects for better copy and paste)
     dep = [
-            androidPlugin: 'com.android.tools.build:gradle:3.1.4',
+            androidPlugin: 'com.android.tools.build:gradle:3.2.1',
             greendaoPlugin: 'org.greenrobot:greendao-gradle-plugin:3.2.2'
     ]
 }
