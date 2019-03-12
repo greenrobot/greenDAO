@@ -42,8 +42,7 @@ buildscript {
 }
 ```
 In your app modules `app/build.gradle` file:
-```
-// 
+```groovy
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao' // apply plugin
  
