@@ -1,10 +1,8 @@
 // Sub projects may reference rootProject.version
 version = '3.2.3-SNAPSHOT'
 
-task wrapper(type: Wrapper) {
-    group 'build setup'
-    gradleVersion = '4.6'
-    distributionType = org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
+wrapper {
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 ext {
