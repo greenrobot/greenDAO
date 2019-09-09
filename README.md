@@ -55,6 +55,23 @@ Note that this hooks up the greenDAO Gradle plugin to your build process. When y
 
 Continue at the [Getting Started](http://greenrobot.org/greendao/documentation/how-to-get-started/) page.
 
+R8, ProGuard
+------------
+
+If your project uses R8 or ProGuard add the following rules:
+
+```bash
+-keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
+public static java.lang.String TABLENAME;
+}
+-keep class **$Properties {*;}
+
+# If you do not use SQLCipher:
+-dontwarn net.sqlcipher.database.**
+# If you do not use RxJava:
+-dontwarn rx.**
+```
+
 Homepage, Documentation, Links
 ------------------------------
 For more details on greenDAO please check [greenDAO's website](http://greenrobot.org/greendao). Here are some direct links you may find useful:
@@ -67,7 +84,7 @@ For more details on greenDAO please check [greenDAO's website](http://greenrobot
 
 [Changelog](http://greenrobot.org/greendao/changelog/)
 
-[Technical FAQ](http://greenrobot.org/greendao/documentation/technical-faq/) (incl. ProGuard rules)
+[Technical FAQ](http://greenrobot.org/greendao/documentation/technical-faq/)
 
 [Non-Technical FAQ](http://greenrobot.org/greendao/documentation/faq/)
 
