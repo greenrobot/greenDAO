@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
+import freemarker.template.Version;
 
 /**
  * Once you have your model created, use this class to generate entities and DAOs.
@@ -38,6 +39,8 @@ import freemarker.template.TemplateNotFoundException;
  * @author Markus
  */
 public class DaoGenerator {
+
+    private static final Version CONFIG_VERSION = Configuration.VERSION_2_3_23;
 
     private Pattern patternKeepIncludes;
     private Pattern patternKeepFields;
@@ -51,6 +54,10 @@ public class DaoGenerator {
     private Template templateContentProvider;
 
     public DaoGenerator() throws IOException {
+        this(null);
+    }
+
+    public DaoGenerator(File templatesDir) throws IOException {
         System.out.println("greenDAO Generator");
         System.out.println("Copyright 2011-2016 Markus Junginger, greenrobot.de. Licensed under GPL V3.");
         System.out.println("This program comes with ABSOLUTELY NO WARRANTY");
@@ -59,7 +66,9 @@ public class DaoGenerator {
         patternKeepFields = compilePattern("FIELDS");
         patternKeepMethods = compilePattern("METHODS");
 
-        Configuration config = getConfiguration("dao.ftl");
+        Configuration config = templatesDir == null || !templatesDir.isDirectory()
+            ? getConfiguration("dao.ftl")
+            : getConfiguration(templatesDir, "dao.ftl");
         templateDao = config.getTemplate("dao.ftl");
         templateDaoMaster = config.getTemplate("dao-master.ftl");
         templateDaoSession = config.getTemplate("dao-session.ftl");
@@ -69,7 +78,7 @@ public class DaoGenerator {
     }
 
     private Configuration getConfiguration(String probingTemplate) throws IOException {
-        Configuration config = new Configuration(Configuration.VERSION_2_3_23);
+        Configuration config = new Configuration(CONFIG_VERSION);
         config.setClassForTemplateLoading(getClass(), "/");
 
         try {
@@ -84,12 +93,18 @@ public class DaoGenerator {
                 dir = new File("DaoGenerator/src/main/resources/");
             }
             if (dir.exists() && new File(dir, probingTemplate).exists()) {
-                config.setDirectoryForTemplateLoading(dir);
-                config.getTemplate(probingTemplate);
+                return getConfiguration(dir, probingTemplate);
             } else {
                 throw e;
             }
         }
+        return config;
+    }
+
+    private Configuration getConfiguration(File templatesDir, String probingTemplate) throws IOException {
+        Configuration config = new Configuration(CONFIG_VERSION);
+        config.setDirectoryForTemplateLoading(templatesDir);
+        config.getTemplate(probingTemplate);
         return config;
     }
 
