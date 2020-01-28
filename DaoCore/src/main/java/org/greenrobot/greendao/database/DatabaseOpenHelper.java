@@ -16,7 +16,9 @@
 
 package org.greenrobot.greendao.database;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -39,6 +41,14 @@ public abstract class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     public DatabaseOpenHelper(Context context, String name, CursorFactory factory, int version) {
         super(context, name, factory, version);
+        this.context = context;
+        this.name = name;
+        this.version = version;
+    }
+
+    @SuppressLint("NewApi")
+    public DatabaseOpenHelper(Context context, String name, CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
+        super(context, name, factory, version, errorHandler);
         this.context = context;
         this.name = name;
         this.version = version;
