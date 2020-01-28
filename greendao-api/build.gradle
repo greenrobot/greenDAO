@@ -6,6 +6,8 @@ version = rootProject.version
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
+apply from: rootProject.file("gradle/publish.gradle")
+
 javadoc {
     failOnError = false
     title = " greenDAO API ${version} API"
@@ -29,7 +31,7 @@ task sourcesJar(type: Jar) {
 }
 
 artifacts {
-    archives jar
+    // jar added by Java plugin.
     archives javadocJar
     archives sourcesJar
 }

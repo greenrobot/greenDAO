@@ -1,6 +1,4 @@
 apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'signing'
 
 group = 'org.greenrobot'
 archivesBaseName = 'greendao-generator'
@@ -41,6 +39,8 @@ test {
     }
 }
 
+apply from: rootProject.file("gradle/publish.gradle")
+
 javadoc {
     failOnError = false
     title = "greenDAO Generator ${version} API"
@@ -66,7 +66,7 @@ task sourcesJar(type: Jar) {
 }
 
 artifacts {
-    archives jar
+    // jar added by Java plugin.
     archives javadocJar
     archives sourcesJar
 }

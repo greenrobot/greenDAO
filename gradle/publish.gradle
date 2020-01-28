@@ -1,0 +1,97 @@
+// Configures common publishing settings
+
+apply plugin: "maven"
+apply plugin: "signing"
+
+configurations {
+    deployerJars
+}
+
+dependencies {
+    // Using an older version to remain compatible with Wagon API used by Gradle/Maven
+    deployerJars 'org.apache.maven.wagon:wagon-webdav-jackrabbit:3.2.0'
+    deployerJars 'org.apache.maven.wagon:wagon-ftp:3.3.2'
+}
+
+javadoc {
+    if(JavaVersion.current().isJava8Compatible()) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
+signing {
+    if (project.hasProperty('signing.keyId') && project.hasProperty('signing.password') &&
+            project.hasProperty('signing.secretKeyRingFile')) {
+        sign configurations.archives
+    } else {
+        println "Signing information missing/incomplete for ${project.name}"
+    }
+}
+
+// Use afterEvaluate or dependencies might be lost in the generated POM
+afterEvaluate { project ->
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                def preferredRepo = project.findProperty('preferredRepo')
+                println "preferredRepo=$preferredRepo"
+
+                if (preferredRepo == 'local') {
+                    repository url: repositories.mavenLocal().url
+                } else if (preferredRepo != null
+                        && project.hasProperty('preferredUsername')
+                        && project.hasProperty('preferredPassword')) {
+                    configuration = configurations.deployerJars
+                    // replace placeholders
+                    def repositoryUrl = preferredRepo
+                            .replace('__groupId__', project.group)
+                            .replace('__artifactId__', project.archivesBaseName)
+                    repository(url: repositoryUrl) {
+                        authentication(userName: preferredUsername, password: preferredPassword)
+                    }
+                } else if (project.hasProperty('sonatypeUsername')
+                        && project.hasProperty('sonatypePassword')) {
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                    def isSnapshot = version.endsWith('-SNAPSHOT')
+                    def sonatypeRepositoryUrl = isSnapshot ?
+                            "https://oss.sonatype.org/content/repositories/snapshots/"
+                            : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                    repository(url: sonatypeRepositoryUrl) {
+                        authentication(userName: sonatypeUsername, password: sonatypePassword)
+                    }
+                } else {
+                    println "Deployment settings missing/incomplete for ${project.name}."
+                }
+
+                // Common properties, projects still need to set name, description and license
+                pom.project {
+                    packaging 'jar'
+                    url 'https://github.com/greenrobot/greenDAO'
+
+                    scm {
+                        url 'https://github.com/greenrobot/greenDAO'
+                        connection 'scm:git@github.com:greenrobot/greenDAO.git'
+                        developerConnection 'scm:git@github.com:greenrobot/greenDAO.git'
+                    }
+
+                    developers {
+                        developer {
+                            id 'greenrobot'
+                            name 'greenrobot'
+                        }
+                    }
+
+                    issueManagement {
+                        system 'GitHub Issues'
+                        url 'https://github.com/greenrobot/greenDAO/issues'
+                    }
+
+                    organization {
+                        name 'greenrobot'
+                        url 'http://greenrobot.org'
+                    }
+                }
+            }
+        }
+    }
+}

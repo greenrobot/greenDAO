@@ -1,6 +1,4 @@
 apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'signing'
 
 group = 'org.greenrobot'
 archivesBaseName = 'greendao'
@@ -23,6 +21,8 @@ dependencies {
 
     compileOnly files('libs/sqlcipher.jar')
 }
+
+apply from: rootProject.file("gradle/publish.gradle")
 
 javadoc {
     failOnError = false
@@ -52,7 +52,7 @@ task sourcesJar(type: Jar) {
 }
 
 artifacts {
-    archives jar
+    // jar added by Java plugin.
     archives javadocJar
     archives sourcesJar
 }
