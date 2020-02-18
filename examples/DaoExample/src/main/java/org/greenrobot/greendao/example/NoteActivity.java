@@ -16,9 +16,6 @@
 package org.greenrobot.greendao.example;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,6 +31,10 @@ import org.greenrobot.greendao.query.Query;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -66,8 +67,7 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     protected void setUpViews() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewNotes);
-        //noinspection ConstantConditions
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewNotes);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -75,10 +75,9 @@ public class NoteActivity extends AppCompatActivity {
         recyclerView.setAdapter(notesAdapter);
 
         addNoteButton = findViewById(R.id.buttonAdd);
-        //noinspection ConstantConditions
         addNoteButton.setEnabled(false);
 
-        editText = (EditText) findViewById(R.id.editTextNote);
+        editText = findViewById(R.id.editTextNote);
         editText.setOnEditorActionListener(new OnEditorActionListener() {
 
             @Override

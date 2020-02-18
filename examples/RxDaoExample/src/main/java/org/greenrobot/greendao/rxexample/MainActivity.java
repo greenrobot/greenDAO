@@ -1,9 +1,6 @@
 package org.greenrobot.greendao.rxexample;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -19,6 +16,9 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
@@ -59,8 +59,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void setUpViews() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewNotes);
-        //noinspection ConstantConditions
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewNotes);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -69,8 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         addNoteButton = findViewById(R.id.buttonAdd);
 
-        editText = (EditText) findViewById(R.id.editTextNote);
-        //noinspection ConstantConditions
+        editText = findViewById(R.id.editTextNote);
         RxTextView.editorActions(editText).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<Integer>() {
                     @Override
