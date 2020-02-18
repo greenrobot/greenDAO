@@ -64,11 +64,14 @@ If your project uses R8 or ProGuard add the following rules:
 -keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
 public static java.lang.String TABLENAME;
 }
--keep class **$Properties {*;}
+-keep class **$Properties { *; }
 
-# If you do not use SQLCipher:
+# If you DO use SQLCipher:
+-keep class org.greenrobot.greendao.database.SqlCipherEncryptedHelper { *; }
+
+# If you do NOT use SQLCipher:
 -dontwarn net.sqlcipher.database.**
-# If you do not use RxJava:
+# If you do NOT use RxJava:
 -dontwarn rx.**
 ```
 
