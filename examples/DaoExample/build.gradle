@@ -17,6 +17,10 @@ apply plugin: 'org.greenrobot.greendao'
 android {
     compileSdkVersion 29
 
+    // To use deprecated test classes on SDK 28+. https://developer.android.com/training/testing/set-up-project
+    useLibrary 'android.test.runner'
+    useLibrary 'android.test.base'
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

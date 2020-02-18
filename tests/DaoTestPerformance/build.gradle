@@ -26,6 +26,10 @@ dependencies {
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    // To use deprecated test classes on SDK 28+. https://developer.android.com/training/testing/set-up-project
+    useLibrary 'android.test.runner'
+    useLibrary 'android.test.base'
+
     defaultConfig {
         minSdkVersion 5
         testApplicationId "org.greenrobot.greendao.perftest"
