@@ -69,7 +69,7 @@ public class DaoGenerator {
     }
 
     private Configuration getConfiguration(String probingTemplate) throws IOException {
-        Configuration config = new Configuration(Configuration.VERSION_2_3_23);
+        Configuration config = new Configuration(Configuration.VERSION_2_3_29);
         config.setClassForTemplateLoading(getClass(), "/");
 
         try {
