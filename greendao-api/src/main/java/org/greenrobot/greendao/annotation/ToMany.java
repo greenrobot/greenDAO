@@ -18,7 +18,7 @@ public @interface ToMany {
     String referencedJoinProperty() default "";
 
     /**
-     * Array of matching source -> target properties
+     * Array of matching source -&gt; target properties
      * Required unless {@link #referencedJoinProperty()} or {@link JoinEntity} is specified
      */
     JoinProperty[] joinProperties() default {};

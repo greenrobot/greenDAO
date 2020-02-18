@@ -47,7 +47,7 @@ public class Property {
         return new PropertyCondition(this, "=?", value);
     }
 
-    /** Creates an "not equal ('<>')" condition  for this property. */
+    /** Creates an "not equal ('&lt;&gt;')" condition  for this property. */
     public WhereCondition notEq(Object value) {
         return new PropertyCondition(this, "<>?", value);
     }
@@ -87,22 +87,22 @@ public class Property {
         return notIn(notInValues.toArray());
     }
 
-    /** Creates an "greater than ('>')" condition  for this property. */
+    /** Creates an "greater than ('&gt;')" condition  for this property. */
     public WhereCondition gt(Object value) {
         return new PropertyCondition(this, ">?", value);
     }
 
-    /** Creates an "less than ('<')" condition  for this property. */
+    /** Creates an "less than ('&lt;')" condition  for this property. */
     public WhereCondition lt(Object value) {
         return new PropertyCondition(this, "<?", value);
     }
 
-    /** Creates an "greater or equal ('>=')" condition  for this property. */
+    /** Creates an "greater or equal ('&gt;=')" condition  for this property. */
     public WhereCondition ge(Object value) {
         return new PropertyCondition(this, ">=?", value);
     }
 
-    /** Creates an "less or equal ('<=')" condition  for this property. */
+    /** Creates an "less or equal ('&lt;=')" condition  for this property. */
     public WhereCondition le(Object value) {
         return new PropertyCondition(this, "<=?", value);
     }

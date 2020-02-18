@@ -401,7 +401,7 @@ public class Entity {
         setSkipCreationInDb(skipTableCreation);
     }
 
-    /** Flag if CREATE & DROP TABLE scripts should be skipped in Dao. */
+    /** Flag if CREATE and DROP TABLE scripts should be skipped in Dao. */
     public void setSkipCreationInDb(boolean skipCreationInDb) {
         this.skipCreationInDb = skipCreationInDb;
     }
