@@ -6,7 +6,7 @@ wrapper {
 }
 
 ext {
-    compileSdkVersion = 27
+    compileSdkVersion = 29
 
     minSdkVersion = 7
     targetSdkVersion = 25
