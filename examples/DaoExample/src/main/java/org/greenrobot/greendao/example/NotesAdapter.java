@@ -29,12 +29,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             super(itemView);
             text = itemView.findViewById(R.id.textViewNoteText);
             comment = itemView.findViewById(R.id.textViewNoteComment);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (clickListener != null) {
-                        clickListener.onNoteClick(getAdapterPosition());
-                    }
+            itemView.setOnClickListener(view -> {
+                if (clickListener != null) {
+                    clickListener.onNoteClick(getAdapterPosition());
                 }
             });
         }

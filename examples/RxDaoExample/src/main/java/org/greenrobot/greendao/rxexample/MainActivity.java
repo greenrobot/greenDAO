@@ -7,20 +7,17 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
-import com.jakewharton.rxbinding.widget.TextViewAfterTextChangeEvent;
 
 import org.greenrobot.greendao.rx.RxDao;
 import org.greenrobot.greendao.rx.RxQuery;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,12 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateNotes() {
         notesQuery.list()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<Note>>() {
-                    @Override
-                    public void call(List<Note> notes) {
-                        notesAdapter.setNotes(notes);
-                    }
-                });
+                .subscribe(notes -> notesAdapter.setNotes(notes));
     }
 
     protected void setUpViews() {
@@ -70,21 +62,15 @@ public class MainActivity extends AppCompatActivity {
 
         editText = findViewById(R.id.editTextNote);
         RxTextView.editorActions(editText).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Integer>() {
-                    @Override
-                    public void call(Integer actionId) {
-                        if (actionId == EditorInfo.IME_ACTION_DONE) {
-                            addNote();
-                        }
+                .subscribe(actionId -> {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        addNote();
                     }
                 });
         RxTextView.afterTextChangeEvents(editText).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<TextViewAfterTextChangeEvent>() {
-                    @Override
-                    public void call(TextViewAfterTextChangeEvent textViewAfterTextChangeEvent) {
-                        boolean enable = textViewAfterTextChangeEvent.editable().length() > 0;
-                        addNoteButton.setEnabled(enable);
-                    }
+                .subscribe(textViewAfterTextChangeEvent -> {
+                    boolean enable = textViewAfterTextChangeEvent.editable().length() > 0;
+                    addNoteButton.setEnabled(enable);
                 });
     }
 
@@ -102,12 +88,9 @@ public class MainActivity extends AppCompatActivity {
         Note note = new Note(null, noteText, comment, new Date(), NoteType.TEXT);
         noteDao.insert(note)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Note>() {
-                    @Override
-                    public void call(Note note) {
-                        Log.d("DaoExample", "Inserted new note, ID: " + note.getId());
-                        updateNotes();
-                    }
+                .subscribe(note1 -> {
+                    Log.d("DaoExample", "Inserted new note, ID: " + note1.getId());
+                    updateNotes();
                 });
     }
 
@@ -119,12 +102,9 @@ public class MainActivity extends AppCompatActivity {
 
             noteDao.deleteByKey(noteId)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Action1<Void>() {
-                        @Override
-                        public void call(Void aVoid) {
-                            Log.d("DaoExample", "Deleted note, ID: " + noteId);
-                            updateNotes();
-                        }
+                    .subscribe(aVoid -> {
+                        Log.d("DaoExample", "Deleted note, ID: " + noteId);
+                        updateNotes();
                     });
         }
     };
