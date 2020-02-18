@@ -7,9 +7,10 @@ greenDAO
 ========
 greenDAO is a light & fast ORM for Android that maps objects to SQLite databases. Being highly optimized for Android, greenDAO offers great performance and consumes minimal memory.
 
-**<font size="+1">Home page, documentation, and support links: http://greenrobot.org/greendao/</font>**
+**<font size="+1">Home page, documentation, and support links: https://greenrobot.org/greendao/</font>**
 
 [![Build Status](https://travis-ci.org/greenrobot/greenDAO.svg?branch=master)](https://travis-ci.org/greenrobot/greenDAO)
+[![Follow greenrobot on Twitter](https://img.shields.io/twitter/follow/greenrobot_de.svg?style=flat-square&logo=twitter)](https://twitter.com/greenrobot_de)
 
 Features
 --------
@@ -53,7 +54,7 @@ dependencies {
 
 Note that this hooks up the greenDAO Gradle plugin to your build process. When you build your project, it generates classes like DaoMaster, DaoSession and DAOs.
 
-Continue at the [Getting Started](http://greenrobot.org/greendao/documentation/how-to-get-started/) page.
+Continue at the [Getting Started](https://greenrobot.org/greendao/documentation/how-to-get-started/) page.
 
 R8, ProGuard
 ------------
@@ -77,21 +78,21 @@ public static java.lang.String TABLENAME;
 
 Homepage, Documentation, Links
 ------------------------------
-For more details on greenDAO please check [greenDAO's website](http://greenrobot.org/greendao). Here are some direct links you may find useful:
+For more details on greenDAO please check [greenDAO's website](https://greenrobot.org/greendao). Here are some direct links you may find useful:
 
-[Features](http://greenrobot.org/greendao/features/)
+[Features](https://greenrobot.org/greendao/features/)
 
-[Getting Started](http://greenrobot.org/greendao/documentation/how-to-get-started/)
+[Getting Started](https://greenrobot.org/greendao/documentation/how-to-get-started/)
 
-[Documentation](http://greenrobot.org/greendao/documentation/)
+[Documentation](https://greenrobot.org/greendao/documentation/)
 
-[Changelog](http://greenrobot.org/greendao/changelog/)
+[Changelog](https://greenrobot.org/greendao/changelog/)
 
-[Technical FAQ](http://greenrobot.org/greendao/documentation/technical-faq/)
+[Technical FAQ](https://greenrobot.org/greendao/documentation/technical-faq/)
 
-[Non-Technical FAQ](http://greenrobot.org/greendao/documentation/faq/)
+[Non-Technical FAQ](https://greenrobot.org/greendao/documentation/faq/)
 
-[Migrating to greenDAO 3](http://greenrobot.org/greendao/documentation/updating-to-greendao-3-and-annotations/)
+[Migrating to greenDAO 3](https://greenrobot.org/greendao/documentation/updating-to-greendao-3-and-annotations/)
 
 More Open Source by greenrobot
 ==============================

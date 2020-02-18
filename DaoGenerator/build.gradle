@@ -46,7 +46,7 @@ javadoc {
     title = "greenDAO Generator ${version} API"
     // Unfinished APIs:
     excludes = ['org/greenrobot/daogenerator/Query*']
-    options.bottom = 'Available under the GPLv3 - <i>Copyright &#169; 2011-2017 <a href="http://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
+    options.bottom = 'Available under the GPLv3 - <i>Copyright &#169; 2011-2020 <a href="https://greenrobot.org/">greenrobot.org</a>. All Rights Reserved.</i>'
     doLast {
         copy {
             from '../javadoc-style/'

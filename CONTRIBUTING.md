@@ -4,9 +4,7 @@ Before you create an Issue...
 There are better Places for Support
 -----------------------------------
 We want your question to be answered, so it is important that you ask at the right place. Be aware that an issue tracker is not the best place to ask for support. An issue tracker is used to track issues (bugs or feature requests).
-Instead, please use [stackoverflow.com](http://stackoverflow.com/questions/tagged/greendao?sort=frequent) and use the tag [greendao](http://stackoverflow.com/tags/greendao/info) for your question.
-
-If you want professional support, check http://greenrobot.org/contact-support/.
+Instead, please use [stackoverflow.com](https://stackoverflow.com/questions/tagged/greendao?sort=frequent) and use the tag [greendao](https://stackoverflow.com/tags/greendao/info) for your question.
 
 Examples for support questions that are more likely to be answered on StackOverflow:
 
