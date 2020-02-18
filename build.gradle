@@ -6,14 +6,14 @@ wrapper {
 }
 
 ext {
-    compileSdkVersion = 27
+    compileSdkVersion = 29
 
     minSdkVersion = 7
     targetSdkVersion = 25
 
     // common dependencies for Android projects (not to be used in example projects for better copy and paste)
     dep = [
-            androidPlugin: 'com.android.tools.build:gradle:3.2.1',
+            androidPlugin: 'com.android.tools.build:gradle:3.5.3',
             greendaoPlugin: 'org.greenrobot:greendao-gradle-plugin:3.2.2'
     ]
 }

@@ -16,24 +16,22 @@
 package org.greenrobot.greendao.example;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 
 import org.greenrobot.greendao.query.Query;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -66,8 +64,7 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     protected void setUpViews() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewNotes);
-        //noinspection ConstantConditions
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewNotes);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -75,20 +72,15 @@ public class NoteActivity extends AppCompatActivity {
         recyclerView.setAdapter(notesAdapter);
 
         addNoteButton = findViewById(R.id.buttonAdd);
-        //noinspection ConstantConditions
         addNoteButton.setEnabled(false);
 
-        editText = (EditText) findViewById(R.id.editTextNote);
-        editText.setOnEditorActionListener(new OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    addNote();
-                    return true;
-                }
-                return false;
+        editText = findViewById(R.id.editTextNote);
+        editText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                addNote();
+                return true;
             }
+            return false;
         });
         editText.addTextChangedListener(new TextWatcher() {
 

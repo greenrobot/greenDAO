@@ -1,7 +1,5 @@
 package org.greenrobot.greendao.rxexample;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +7,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder> {
 
@@ -26,14 +27,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
 
         public NoteViewHolder(View itemView, final NoteClickListener clickListener) {
             super(itemView);
-            text = (TextView) itemView.findViewById(R.id.textViewNoteText);
-            comment = (TextView) itemView.findViewById(R.id.textViewNoteComment);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (clickListener != null) {
-                        clickListener.onNoteClick(getAdapterPosition());
-                    }
+            text = itemView.findViewById(R.id.textViewNoteText);
+            comment = itemView.findViewById(R.id.textViewNoteComment);
+            itemView.setOnClickListener(view -> {
+                if (clickListener != null) {
+                    clickListener.onNoteClick(getAdapterPosition());
                 }
             });
         }
@@ -41,7 +39,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
 
     public NotesAdapter(NoteClickListener clickListener) {
         this.clickListener = clickListener;
-        this.dataset = new ArrayList<Note>();
+        this.dataset = new ArrayList<>();
     }
 
     public void setNotes(@NonNull List<Note> notes) {
@@ -53,6 +51,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         return dataset.get(position);
     }
 
+    @NonNull
     @Override
     public NotesAdapter.NoteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
