@@ -23,6 +23,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import org.greenrobot.greendao.DaoException;
+
+import java.lang.reflect.Constructor;
+
 /**
  * SQLiteOpenHelper to allow working with greenDAO's {@link Database} abstraction to create and update database schemas.
  */
@@ -126,9 +130,36 @@ public abstract class DatabaseOpenHelper extends SQLiteOpenHelper {
         // Do nothing by default
     }
 
+    interface EncryptedHelper {
+        Database getEncryptedReadableDb(String password);
+        Database getEncryptedReadableDb(char[] password);
+        Database getEncryptedWritableDb(String password);
+        Database getEncryptedWritableDb(char[] password);
+    }
+
     private EncryptedHelper checkEncryptedHelper() {
         if (encryptedHelper == null) {
-            encryptedHelper = new EncryptedHelper(context, name, version, loadSQLCipherNativeLibs);
+            try {
+                Class.forName("net.sqlcipher.database.SQLiteOpenHelper");
+            } catch (ClassNotFoundException e) {
+                throw new DaoException("Using an encrypted database requires SQLCipher, " +
+                        "make sure to add it to dependencies: " +
+                        "https://greenrobot.org/greendao/documentation/database-encryption/");
+            }
+
+            // Avoid referencing SqlCipherEncryptedHelper to avoid
+            // "Rejecting re-init on previously-failed class java.lang.NoClassDefFoundError" logs
+            // if SQLCipher is not in classpath.
+            try {
+                Class<?> helperClass = Class.forName(
+                        "org.greenrobot.greendao.database.SqlCipherEncryptedHelper");
+                Constructor<?> constructor = helperClass.getConstructor(
+                        DatabaseOpenHelper.class, Context.class, String.class, int.class, boolean.class);
+                encryptedHelper = (EncryptedHelper) constructor.newInstance(
+                        this, context, name, version, loadSQLCipherNativeLibs);
+            } catch (Exception e) {
+                throw new DaoException(e);
+            }
         }
         return encryptedHelper;
     }
@@ -141,7 +172,7 @@ public abstract class DatabaseOpenHelper extends SQLiteOpenHelper {
      */
     public Database getEncryptedWritableDb(String password) {
         EncryptedHelper encryptedHelper = checkEncryptedHelper();
-        return encryptedHelper.wrap(encryptedHelper.getWritableDatabase(password));
+        return encryptedHelper.getEncryptedWritableDb(password);
     }
 
     /**
@@ -152,7 +183,7 @@ public abstract class DatabaseOpenHelper extends SQLiteOpenHelper {
      */
     public Database getEncryptedWritableDb(char[] password) {
         EncryptedHelper encryptedHelper = checkEncryptedHelper();
-        return encryptedHelper.wrap(encryptedHelper.getWritableDatabase(password));
+        return encryptedHelper.getEncryptedWritableDb(password);
     }
 
     /**
@@ -163,7 +194,7 @@ public abstract class DatabaseOpenHelper extends SQLiteOpenHelper {
      */
     public Database getEncryptedReadableDb(String password) {
         EncryptedHelper encryptedHelper = checkEncryptedHelper();
-        return encryptedHelper.wrap(encryptedHelper.getReadableDatabase(password));
+        return encryptedHelper.getEncryptedReadableDb(password);
     }
 
     /**
@@ -174,35 +205,7 @@ public abstract class DatabaseOpenHelper extends SQLiteOpenHelper {
      */
     public Database getEncryptedReadableDb(char[] password) {
         EncryptedHelper encryptedHelper = checkEncryptedHelper();
-        return encryptedHelper.wrap(encryptedHelper.getReadableDatabase(password));
+        return encryptedHelper.getEncryptedReadableDb(password);
     }
 
-    private class EncryptedHelper extends net.sqlcipher.database.SQLiteOpenHelper {
-        public EncryptedHelper(Context context, String name, int version, boolean loadLibs) {
-            super(context, name, null, version);
-            if (loadLibs) {
-                net.sqlcipher.database.SQLiteDatabase.loadLibs(context);
-            }
-        }
-
-        @Override
-        public void onCreate(net.sqlcipher.database.SQLiteDatabase db) {
-            DatabaseOpenHelper.this.onCreate(wrap(db));
-        }
-
-        @Override
-        public void onUpgrade(net.sqlcipher.database.SQLiteDatabase db, int oldVersion, int newVersion) {
-            DatabaseOpenHelper.this.onUpgrade(wrap(db), oldVersion, newVersion);
-        }
-
-        @Override
-        public void onOpen(net.sqlcipher.database.SQLiteDatabase db) {
-            DatabaseOpenHelper.this.onOpen(wrap(db));
-        }
-
-        protected Database wrap(net.sqlcipher.database.SQLiteDatabase sqLiteDatabase) {
-            return new EncryptedDatabase(sqLiteDatabase);
-        }
-
-    }
 }
