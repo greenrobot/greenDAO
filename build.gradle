@@ -1,5 +1,5 @@
 // Sub projects may reference rootProject.version
-version = '3.2.3-SNAPSHOT'
+version = '3.3.0'
 
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
@@ -14,6 +14,8 @@ ext {
     // common dependencies for Android projects (not to be used in example projects for better copy and paste)
     dep = [
             androidPlugin: 'com.android.tools.build:gradle:3.5.3',
+
+            // Used only in tests, should point to the latest *published* version (not relevant to publishing)
             greendaoPlugin: 'org.greenrobot:greendao-gradle-plugin:3.2.2'
     ]
 }
