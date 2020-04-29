@@ -7,7 +7,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.3.0'
     }
 }
 
@@ -42,7 +42,7 @@ greendao {
 }
 
 dependencies {
-    implementation 'org.greenrobot:greendao:3.2.2'
+    implementation 'org.greenrobot:greendao:3.3.0'
 
     // optional: add if you want to use encrypted databases, see the App class for details
     // implementation 'net.zetetic:android-database-sqlcipher:3.5.6'

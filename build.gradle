@@ -16,7 +16,7 @@ ext {
             androidPlugin: 'com.android.tools.build:gradle:3.5.3',
 
             // Used only in tests, should point to the latest *published* version (not relevant to publishing)
-            greendaoPlugin: 'org.greenrobot:greendao-gradle-plugin:3.2.2'
+            greendaoPlugin: 'org.greenrobot:greendao-gradle-plugin:3.3.0'
     ]
 }
 
