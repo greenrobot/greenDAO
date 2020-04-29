@@ -117,7 +117,14 @@ public class SqlUtils {
 
     /** Creates SELECT COUNT(*) with a trailing space. */
     public static String createSqlSelectCountStar(String tablename, String tableAliasOrNull) {
-        StringBuilder builder = new StringBuilder("SELECT COUNT(*) FROM ");
+        return createSqlSelectCount("*", tablename, tableAliasOrNull);
+    }
+
+    /** Creates SELECT COUNT($expression) with a trailing space. */
+    public static String createSqlSelectCount(String expression, String tablename, String tableAliasOrNull) {
+        StringBuilder builder = new StringBuilder("SELECT COUNT(");
+        builder.append(expression);
+        builder.append(") FROM ");
         builder.append('"').append(tablename).append('"').append(' ');
         if (tableAliasOrNull != null) {
             builder.append(tableAliasOrNull).append(' ');
