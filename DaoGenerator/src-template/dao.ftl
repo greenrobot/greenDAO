@@ -245,7 +245,7 @@ as property>\"${property.dbName}\"<#if (index.propertiesOrder[property_index])??
 </#if>
         return rowId;
 <#else>
-        return entity.get${entity.pkProperty.propertyName?cap_first}();
+        return (${entity.pkType}) entity.get${entity.pkProperty.propertyName?cap_first}();
 </#if>
 <#else>
         // Unsupported or missing PK type
@@ -257,7 +257,7 @@ as property>\"${property.dbName}\"<#if (index.propertiesOrder[property_index])??
     public ${entity.pkType} getKey(${entity.className} entity) {
 <#if entity.pkProperty??>
         if(entity != null) {
-            return entity.get${entity.pkProperty.propertyName?cap_first}();
+            return (${entity.pkType}) entity.get${entity.pkProperty.propertyName?cap_first}();
         } else {
             return null;
         }
