@@ -1,7 +1,7 @@
 Check out ObjectBox
 ===================
 
-<img width="466" src="https://raw.githubusercontent.com/greenrobot/greenDAO/master/images/objectbox-logo.png">
+<img width="466" src="https://github.com/greenrobot/greenDAO/raw/readme-update/images/objectbox-logo.png">
 
 **Check out our new mobile database [ObjectBox](https://objectbox.io/) ([GitHub repo](https://github.com/objectbox/objectbox-java)).**
 
