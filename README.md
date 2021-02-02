@@ -1,7 +1,11 @@
 Check out ObjectBox
 ===================
 
-Looking for object persistence faster than SQLite? Check out our new mobile database [ObjectBox](https://objectbox.io/) ([GitHub](https://github.com/objectbox/objectbox-java)). 
+<a href="https://objectbox.io/"><img width="466" src="https://github.com/greenrobot/greenDAO/raw/readme-update/images/objectbox-logo.png"></a>
+
+**Check out our new mobile database [ObjectBox](https://objectbox.io/) ([GitHub repo](https://github.com/objectbox/objectbox-java)).**
+
+ObjectBox is a superfast object-oriented database with strong relation support. ObjectBox is embedded into your Android, Linux, macOS, or Windows app. 
 
 greenDAO
 ========
