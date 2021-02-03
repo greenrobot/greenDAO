@@ -18,6 +18,7 @@ dependencies {
     compileOnly 'com.google.android:support-v4:r7'
 
     compileOnly 'io.reactivex:rxjava:1.1.8'
+    compileOnly 'io.reactivex.rxjava2:rxjava:2.0.9'
 
     compileOnly files('libs/sqlcipher.jar')
 }
