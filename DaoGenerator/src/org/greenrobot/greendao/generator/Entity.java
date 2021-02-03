@@ -61,6 +61,7 @@ public class Entity {
     private String dbName;
     private boolean nonDefaultDbName;
     private String classNameDao;
+    private String daoSuperclass;
     private String classNameTest;
     private String javaPackage;
     private String javaPackageDao;
@@ -332,6 +333,14 @@ public class Entity {
         this.classNameDao = classNameDao;
     }
 
+    public String getDaoSuperclass() {
+        return daoSuperclass;
+    }
+
+    public void setDaoSuperclass(String daoSuperclass) {
+        this.daoSuperclass = daoSuperclass;
+    }
+
     public String getClassNameTest() {
         return classNameTest;
     }
@@ -580,6 +589,9 @@ public class Entity {
 
         if (classNameDao == null) {
             classNameDao = className + "Dao";
+        }
+        if (daoSuperclass == null) {
+            daoSuperclass = "AbstractDao";
         }
         if (classNameTest == null) {
             classNameTest = className + "Test";

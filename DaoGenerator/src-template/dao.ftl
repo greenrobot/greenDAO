@@ -33,7 +33,9 @@ import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
+<#if !entity.daoSuperclass?has_content>
 import org.greenrobot.greendao.AbstractDao;
+</#if>
 import org.greenrobot.greendao.Property;
 <#if entity.toOneRelations?has_content>
 import org.greenrobot.greendao.internal.SqlUtils;
@@ -68,7 +70,7 @@ import ${entity.javaPackage}.${entity.className}.Builder;
 /** 
  * DAO for table "${entity.dbName}".
 */
-public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${entity.pkType}> {
+public class ${entity.classNameDao} extends ${entity.daoSuperclass}<${entity.className}, ${entity.pkType}> {
 
     public static final String TABLENAME = "${entity.dbName}";
 
