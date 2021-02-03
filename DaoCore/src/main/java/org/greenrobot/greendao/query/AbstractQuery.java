@@ -16,6 +16,7 @@
 package org.greenrobot.greendao.query;
 
 import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.AbstractDaoSession;
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.InternalQueryDaoAccess;
 
@@ -101,4 +102,7 @@ abstract class AbstractQuery<T> {
         }
     }
 
+	public AbstractDaoSession getSession() {
+        return dao.getSession();
+    }
 }
