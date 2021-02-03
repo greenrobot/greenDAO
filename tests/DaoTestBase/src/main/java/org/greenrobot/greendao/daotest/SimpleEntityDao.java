@@ -181,6 +181,12 @@ public class SimpleEntityDao extends AbstractDao<SimpleEntity, Long> {
     }    
 
     @Override
+    protected SimpleEntity newEmptyEntity() {
+        return new SimpleEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public SimpleEntity readEntity(Cursor cursor, int offset) {
         SimpleEntity entity = new SimpleEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id

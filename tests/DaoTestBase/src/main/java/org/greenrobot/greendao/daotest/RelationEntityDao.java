@@ -139,6 +139,12 @@ public class RelationEntityDao extends AbstractDao<RelationEntity, Long> {
     }
      
     @Override
+    protected RelationEntity newEmptyEntity() {
+        return new RelationEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public void readEntity(Cursor cursor, RelationEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setParentId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));

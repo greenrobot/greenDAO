@@ -181,6 +181,12 @@ public class SpecialNamesEntityDao extends AbstractDao<SpecialNamesEntity, Long>
     }    
 
     @Override
+    protected SpecialNamesEntity newEmptyEntity() {
+        return new SpecialNamesEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public SpecialNamesEntity readEntity(Cursor cursor, int offset) {
         SpecialNamesEntity entity = new SpecialNamesEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id

@@ -94,6 +94,12 @@ public class ToManyEntityDao extends AbstractDao<ToManyEntity, Long> {
     }    
 
     @Override
+    protected ToManyEntity newEmptyEntity() {
+        return new ToManyEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public ToManyEntity readEntity(Cursor cursor, int offset) {
         ToManyEntity entity = new ToManyEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id

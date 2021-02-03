@@ -88,6 +88,12 @@ public class IndexedStringEntityDao extends AbstractDao<IndexedStringEntity, Lon
     }    
 
     @Override
+    protected IndexedStringEntity newEmptyEntity() {
+        return new IndexedStringEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public IndexedStringEntity readEntity(Cursor cursor, int offset) {
         IndexedStringEntity entity = new IndexedStringEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id

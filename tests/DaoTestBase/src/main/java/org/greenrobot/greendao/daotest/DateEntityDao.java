@@ -93,6 +93,12 @@ public class DateEntityDao extends AbstractDao<DateEntity, Long> {
     }    
 
     @Override
+    protected DateEntity newEmptyEntity() {
+        return new DateEntity();
+    }
+
+    /** @inheritdoc */
+    @Override
     public DateEntity readEntity(Cursor cursor, int offset) {
         DateEntity entity = new DateEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id

@@ -185,6 +185,12 @@ public class TestEntityDao extends AbstractDao<TestEntity, Long> {
         );
         return entity;
     }
+
+    /** @inheritdoc */
+    @Override
+    protected TestEntity newEmptyEntity() {
+        return new TestEntity();
+    }
      
     @Override
     public void readEntity(Cursor cursor, TestEntity entity, int offset) {
