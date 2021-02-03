@@ -187,7 +187,7 @@ ${keepFields!}    // KEEP FIELDS END
 <#if entity.propertiesPk?has_content && entity.propertiesPk?size != entity.properties?size>
 
     public ${entity.className}(<#list entity.propertiesPk as
-property>${property.javaType} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
+property>${property.javaTypeInEntity} ${property.propertyName}<#if property_has_next>, </#if></#list>) {
 <#list entity.propertiesPk as property>
         this.${property.propertyName} = ${property.propertyName};
 </#list>

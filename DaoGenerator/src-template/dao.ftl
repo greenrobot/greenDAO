@@ -181,7 +181,8 @@ as property>\"${property.dbName}\"<#if (index.propertiesOrder[property_index])??
 <#if entity.pkProperty??>
         return <#if !entity.pkProperty.notNull>cursor.isNull(offset + ${entity.pkProperty.ordinal}) ? null : </#if><#if
             entity.pkProperty.propertyType == "Byte">(byte) </#if><#if
-            entity.pkProperty.propertyType == "Date">new java.util.Date(</#if>cursor.get${toCursorType[entity.pkProperty.propertyType]}(offset + ${entity.pkProperty.ordinal})<#if
+            entity.pkProperty.propertyType == "Date">new java.util.Date(</#if><#--
+            -->${entity.pkProperty.getEntityValueExpression("cursor.get${toCursorType[entity.pkProperty.propertyType]}(offset + ${entity.pkProperty.ordinal})")}<#if
             entity.pkProperty.propertyType == "Boolean"> != 0</#if><#if
             entity.pkProperty.propertyType == "Date">)</#if>;
 <#else>
