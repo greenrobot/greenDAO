@@ -41,8 +41,8 @@ buildscript {
         mavenCentral() // add repository
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.3.0' // add plugin
+        classpath 'com.android.tools.build:gradle:<agp-version>'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.3.1' // add plugin
     }
 }
 ```
