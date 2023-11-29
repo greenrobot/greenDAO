@@ -20,6 +20,7 @@ package org.greenrobot.greendao.daotest.query;
 
 import java.util.ArrayList;
 
+import org.greenrobot.greendao.daotest.TestEntityDao;
 import org.greenrobot.greendao.daotest.entity.TestEntityTestBase;
 import org.greenrobot.greendao.query.CountQuery;
 import org.greenrobot.greendao.query.Query;
@@ -123,4 +124,19 @@ public class CountQueryTest extends TestEntityTestBase {
         assertEquals(1, countQuery.count());
     }
 
+    public void testDistinctExpressionCountQuery() {
+        int value = getSimpleInteger(1);
+        CountQuery<TestEntity> query = dao.queryBuilder().buildCount(Properties.SimpleInteger.columnName, true);
+        assertEquals(0, query.count());
+
+        ArrayList<TestEntity> inserted = insert(3);
+        assertEquals(3, query.count());
+
+        inserted.get(2).setSimpleInteger(value);
+        dao.update(inserted.get(2));
+        assertEquals(2, query.count());
+
+        dao.deleteAll();
+        assertEquals(0, query.count());
+    }
 }
