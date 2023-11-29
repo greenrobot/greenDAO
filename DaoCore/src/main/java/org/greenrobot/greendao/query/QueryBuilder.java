@@ -57,7 +57,7 @@ public class QueryBuilder<T> {
     private StringBuilder orderBuilder;
 
     private final List<Object> values;
-    private final List<Join<T, ?>> joins;
+    private final List<Join<?, ?>> joins;
     private final AbstractDao<T, ?> dao;
     private final String tablePrefix;
 
@@ -81,7 +81,7 @@ public class QueryBuilder<T> {
         this.dao = dao;
         this.tablePrefix = tablePrefix;
         values = new ArrayList<Object>();
-        joins = new ArrayList<Join<T, ?>>();
+        joins = new ArrayList<Join<?, ?>>();
         whereCollector = new WhereCollector<T>(dao, tablePrefix);
         stringOrderCollation = " COLLATE NOCASE";
     }
@@ -178,7 +178,7 @@ public class QueryBuilder<T> {
     public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass) {
         AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
         Property destinationProperty = destinationDao.getPkProperty();
-        return addJoin(tablePrefix, sourceProperty, destinationDao, destinationProperty);
+        return (Join<T, J>) addJoin(tablePrefix, sourceProperty, destinationDao, destinationProperty);
     }
 
     /**
@@ -187,7 +187,7 @@ public class QueryBuilder<T> {
      */
     public <J> Join<T, J> join(Property sourceProperty, Class<J> destinationEntityClass, Property destinationProperty) {
         AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
-        return addJoin(tablePrefix, sourceProperty, destinationDao, destinationProperty);
+        return (Join<T, J>) addJoin(tablePrefix, sourceProperty, destinationDao, destinationProperty);
     }
 
     /**
@@ -196,16 +196,16 @@ public class QueryBuilder<T> {
      * as the source for the new join to add. In this way, it is possible to compose complex "join of joins" across
      * several entities if required.
      */
-    public <J> Join<T, J> join(Join<?, T> sourceJoin, Property sourceProperty, Class<J> destinationEntityClass,
+    public <J, K> Join<J, K> join(Join<?, J> sourceJoin, Property sourceProperty, Class<K> destinationEntityClass,
                                Property destinationProperty) {
-        AbstractDao<J, ?> destinationDao = (AbstractDao<J, ?>) dao.getSession().getDao(destinationEntityClass);
-        return addJoin(sourceJoin.tablePrefix, sourceProperty, destinationDao, destinationProperty);
+        AbstractDao<K, ?> destinationDao = (AbstractDao<K, ?>) dao.getSession().getDao(destinationEntityClass);
+        return (Join<J, K>) addJoin(sourceJoin.tablePrefix, sourceProperty, destinationDao, destinationProperty);
     }
 
-    private <J> Join<T, J> addJoin(String sourceTablePrefix, Property sourceProperty, AbstractDao<J, ?> destinationDao,
+    private <J> Join<?, J> addJoin(String sourceTablePrefix, Property sourceProperty, AbstractDao<J, ?> destinationDao,
                                    Property destinationProperty) {
         String joinTablePrefix = "J" + (joins.size() + 1);
-        Join<T, J> join = new Join<T, J>(sourceTablePrefix, sourceProperty, destinationDao, destinationProperty,
+        Join<?, J> join = new Join<>(sourceTablePrefix, sourceProperty, destinationDao, destinationProperty,
                 joinTablePrefix);
         joins.add(join);
         return join;
@@ -391,7 +391,7 @@ public class QueryBuilder<T> {
 
     private void appendJoinsAndWheres(StringBuilder builder, String tablePrefixOrNull) {
         values.clear();
-        for (Join<T, ?> join : joins) {
+        for (Join<?, ?> join : joins) {
             builder.append(" JOIN ");
             builder.append('"').append(join.daoDestination.getTablename()).append('"').append(' ');
             builder.append(join.tablePrefix).append(" ON ");
@@ -403,7 +403,7 @@ public class QueryBuilder<T> {
             builder.append(" WHERE ");
             whereCollector.appendWhereClause(builder, tablePrefixOrNull, values);
         }
-        for (Join<T, ?> join : joins) {
+        for (Join<?, ?> join : joins) {
             if (!join.whereCollector.isEmpty()) {
                 if (!whereAppended) {
                     builder.append(" WHERE ");
