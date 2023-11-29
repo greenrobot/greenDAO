@@ -33,6 +33,7 @@ import org.greenrobot.greendao.internal.TableStatements;
 import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.rx.RxDao;
+import org.greenrobot.greendao.rx2.Rx2Dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,6 +73,9 @@ public abstract class AbstractDao<T, K> {
 
     private volatile RxDao<T, K> rxDao;
     private volatile RxDao<T, K> rxDaoPlain;
+
+    private volatile Rx2Dao<T, K> rx2Dao;
+    private volatile Rx2Dao<T, K> rx2DaoPlain;
 
     public AbstractDao(DaoConfig config) {
         this(config, null);
@@ -962,6 +966,34 @@ public abstract class AbstractDao<T, K> {
             rxDao = new RxDao<>(this, Schedulers.io());
         }
         return rxDao;
+    }
+
+    /**
+     * The returned Rx2Dao is a special DAO that let's you interact with Rx Observables without any Scheduler set
+     * for subscribeOn.
+     *
+     * @see #rx2()
+     */
+    @Experimental
+    public Rx2Dao<T, K> rx2Plain() {
+        if (rx2DaoPlain == null) {
+            rx2DaoPlain = new Rx2Dao<>(this);
+        }
+        return rx2DaoPlain;
+    }
+
+    /**
+     * The returned Rx2Dao is a special DAO that let's you interact with Rx Observables using RX's IO scheduler for
+     * subscribeOn.
+     *
+     * @see #rx2Plain()
+     */
+    @Experimental
+    public Rx2Dao<T, K> rx2() {
+        if (rx2Dao == null) {
+            rx2Dao = new Rx2Dao<>(this, io.reactivex.schedulers.Schedulers.io());
+        }
+        return rx2Dao;
     }
 
     /** Gets the SQLiteDatabase for custom database access. Not needed for greenDAO entities. */
