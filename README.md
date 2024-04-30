@@ -1,3 +1,6 @@
+⚠️ **This project is not longer actively maintained.** If you are looking for an easy to use and efficient database solution,
+please:
+
 Check out ObjectBox
 ===================
 
