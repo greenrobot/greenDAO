@@ -276,7 +276,7 @@ public class QueryBuilder<T> {
 
     /**
      * Builds a reusable query object (Query objects can be executed more efficiently than creating a QueryBuilder for
-     * each execution.
+     * each execution.)
      */
     public Query<T> build() {
         StringBuilder builder = createSelectBuilder();
@@ -291,7 +291,7 @@ public class QueryBuilder<T> {
 
     /**
      * Builds a reusable query object for low level android.database.Cursor access.
-     * (Query objects can be executed more efficiently than creating a QueryBuilder for each execution.
+     * (Query objects can be executed more efficiently than creating a QueryBuilder for each execution.)
      */
     public CursorQuery buildCursor() {
         StringBuilder builder = createSelectBuilder();
@@ -341,7 +341,7 @@ public class QueryBuilder<T> {
 
     /**
      * Builds a reusable query object for deletion (Query objects can be executed more efficiently than creating a
-     * QueryBuilder for each execution.
+     * QueryBuilder for each execution.)
      */
     public DeleteQuery<T> buildDelete() {
         if (!joins.isEmpty()) {
@@ -366,11 +366,31 @@ public class QueryBuilder<T> {
 
     /**
      * Builds a reusable query object for counting rows (Query objects can be executed more efficiently than creating a
-     * QueryBuilder for each execution.
+     * QueryBuilder for each execution.)
      */
     public CountQuery<T> buildCount() {
         String tablename = dao.getTablename();
         String baseSql = SqlUtils.createSqlSelectCountStar(tablename, tablePrefix);
+        StringBuilder builder = new StringBuilder(baseSql);
+        appendJoinsAndWheres(builder, tablePrefix);
+
+        String sql = builder.toString();
+        checkLog(sql);
+
+        return CountQuery.create(dao, sql, values.toArray());
+    }
+
+    /**
+     * Builds a reusable query object for counting optionally distinct rows according to a column expression.
+     * (Query objects can be executed more efficiently than creating a QueryBuilder for each execution.)
+     *
+     * @param expression column or expression that involves columns to which the COUNT function should be applied
+     * @param distinct whether the COUNT should be DISTINCT instead of ALL
+     */
+    public CountQuery<T> buildCount(String expression, boolean distinct) {
+        String tablename = dao.getTablename();
+        String optionExpression = distinct ? "DISTINCT " + expression : expression;
+        String baseSql = SqlUtils.createSqlSelectCount(optionExpression, tablename, tablePrefix);
         StringBuilder builder = new StringBuilder(baseSql);
         appendJoinsAndWheres(builder, tablePrefix);
 
