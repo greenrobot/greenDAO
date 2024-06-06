@@ -22,6 +22,8 @@ import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.apihint.Internal;
 import org.greenrobot.greendao.rx.RxQuery;
 import org.greenrobot.greendao.rx.RxTransaction;
+import org.greenrobot.greendao.rx2.Rx2Query;
+import org.greenrobot.greendao.rx2.Rx2Transaction;
 
 import java.util.Date;
 import java.util.List;
@@ -68,6 +70,9 @@ public class Query<T> extends AbstractQueryWithLimit<T> {
 
     private volatile RxQuery rxTxPlain;
     private volatile RxQuery rxTxIo;
+
+    private volatile Rx2Query rx2TxPlain;
+    private volatile Rx2Query rx2TxIo;
 
     private Query(QueryData<T> queryData, AbstractDao<T, ?> dao, String sql, String[] initialValues, int limitPosition,
                   int offsetPosition) {
@@ -187,5 +192,35 @@ public class Query<T> extends AbstractQueryWithLimit<T> {
             rxTxIo = new RxQuery(this, Schedulers.io());
         }
         return rxTxIo;
+    }
+
+    /**
+     * DO NOT USE.
+     * The returned {@link Rx2Transaction} allows getting query results using Rx Observables without any Scheduler set
+     * for subscribeOn.
+     *
+     * @see #__InternalRx()
+     */
+    @Internal
+    public Rx2Query __internalRx2Plain() {
+        if (rx2TxPlain == null) {
+            rx2TxPlain = new Rx2Query(this);
+        }
+        return rx2TxPlain;
+    }
+
+    /**
+     * DO NOT USE.
+     * The returned {@link Rx2Transaction} allows getting query results using Rx Observables using RX's IO scheduler for
+     * subscribeOn.
+     *
+     * @see #__internalRxPlain()
+     */
+    @Internal
+    public Rx2Query __InternalRx2() {
+        if (rx2TxIo == null) {
+            rx2TxIo = new Rx2Query(this, io.reactivex.schedulers.Schedulers.io());
+        }
+        return rx2TxIo;
     }
 }
