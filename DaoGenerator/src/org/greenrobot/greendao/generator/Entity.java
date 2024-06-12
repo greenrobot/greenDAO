@@ -530,7 +530,9 @@ public class Entity {
 
         if (propertiesPk.size() == 1) {
             pkProperty = propertiesPk.get(0);
-            pkType = schema.mapToJavaTypeNullable(pkProperty.getPropertyType());
+            pkType = pkProperty.getCustomTypeClassName() != null ?
+                pkProperty.getCustomTypeClassName() :
+                schema.mapToJavaTypeNullable(pkProperty.getPropertyType());
         } else {
             pkType = "Void";
         }

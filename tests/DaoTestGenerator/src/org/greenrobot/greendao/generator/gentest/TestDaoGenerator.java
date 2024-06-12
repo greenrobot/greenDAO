@@ -61,6 +61,7 @@ public class TestDaoGenerator {
         createAutoincrement();
         createSqliteMaster();
         createCustomType();
+        createCustomPkTypeEntity();
         createIndexedString();
 
         schema2 = createSchema2();
@@ -102,6 +103,12 @@ public class TestDaoGenerator {
         notNull.addDoubleProperty("simpleDouble").notNull();
         notNull.addStringProperty("simpleString").notNull();
         notNull.addByteArrayProperty("simpleByteArray").notNull();
+    }
+
+    protected void createCustomPkTypeEntity() {
+        Entity entity = schema.addEntity("CustomPkTypeEntity");
+        entity.addStringProperty("id").customType("java.util.UUID", "org.greenrobot.greendao.daotest.customtype.UuidConverter").primaryKey();
+        entity.addIntProperty("value");
     }
 
     protected Entity createTest() {

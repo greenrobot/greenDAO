@@ -37,6 +37,7 @@ public class DaoMaster extends AbstractDaoMaster {
         StringKeyValueEntityDao.createTable(db, ifNotExists);
         AutoincrementEntityDao.createTable(db, ifNotExists);
         CustomTypeEntityDao.createTable(db, ifNotExists);
+        CustomPkTypeEntityDao.createTable(db, ifNotExists);
         IndexedStringEntityDao.createTable(db, ifNotExists);
     }
 
@@ -58,6 +59,7 @@ public class DaoMaster extends AbstractDaoMaster {
         StringKeyValueEntityDao.dropTable(db, ifExists);
         AutoincrementEntityDao.dropTable(db, ifExists);
         CustomTypeEntityDao.dropTable(db, ifExists);
+        CustomPkTypeEntityDao.dropTable(db, ifExists);
         IndexedStringEntityDao.dropTable(db, ifExists);
     }
 
@@ -94,6 +96,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(AutoincrementEntityDao.class);
         registerDaoClass(SqliteMasterDao.class);
         registerDaoClass(CustomTypeEntityDao.class);
+        registerDaoClass(CustomPkTypeEntityDao.class);
         registerDaoClass(IndexedStringEntityDao.class);
     }
 
