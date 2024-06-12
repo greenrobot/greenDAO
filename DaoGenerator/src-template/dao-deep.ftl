@@ -61,7 +61,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
         return entity;    
     }
 
-    public ${entity.className} loadDeep(Long key) {
+    public ${entity.className} loadDeep(${entity.pkType} key) {
         assertSinglePk();
         if (key == null) {
             return null;
