@@ -18,6 +18,8 @@ package org.greenrobot.greendao.example;
 import org.greenrobot.greendao.test.AbstractDaoTestLongPk;
 
 public class NoteTest extends AbstractDaoTestLongPk<NoteDao, Note> {
+    
+    private final static String GREEN_NOTE = "green note";
 
     public NoteTest() {
         super(NoteDao.class);
@@ -27,7 +29,7 @@ public class NoteTest extends AbstractDaoTestLongPk<NoteDao, Note> {
     protected Note createEntity(Long key) {
         Note entity = new Note();
         entity.setId(key);
-        entity.setText("green note"); // Has to be set as it is "not null"
+        entity.setText(GREEN_NOTE); // Has to be set as it is "not null"
         return entity;
     }
 
