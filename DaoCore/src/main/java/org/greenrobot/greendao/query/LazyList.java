@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.RandomAccess;
 import java.util.concurrent.locks.ReentrantLock;
 
 import android.database.Cursor;
@@ -42,7 +43,7 @@ import org.greenrobot.greendao.InternalQueryDaoAccess;
  * @param <E>
  *            Entity type.
  */
-public class LazyList<E> implements List<E>, Closeable {
+public class LazyList<E> implements List<E>, Closeable, RandomAccess {
     protected class LazyIterator implements CloseableListIterator<E> {
         private int index;
         private final boolean closeWhenDone;
