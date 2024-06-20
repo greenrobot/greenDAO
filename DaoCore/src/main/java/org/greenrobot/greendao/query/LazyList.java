@@ -151,9 +151,14 @@ public class LazyList<E> implements List<E>, Closeable {
     /** Loads the remaining entities (if any) that were not loaded before. Applies to cached lazy lists only. */
     public void loadRemaining() {
         checkCached();
-        int size = entities.size();
-        for (int i = 0; i < size; i++) {
-            get(i);
+        lock.lock();
+        try {
+            int size = entities.size();
+            for (int i = 0; i < size; i++) {
+                get(i);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
